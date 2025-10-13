@@ -101,7 +101,8 @@ window.onCharacterNameChange = onCharacterNameChange;
 const BUDGETS = {
     aspects: 4,
     edges: 3,
-    skillPoints: 8
+    skillPoints: 8,
+    maxAspectsAdvancement: 7
 };
 
 function getAvailableAspects() {
@@ -161,22 +162,25 @@ function onCharacterNameChange(value) {
 
 function toggleAspect(aspectId) {
     if (character.mode !== 'creation' && character.mode !== 'advancement') return;
-    
+
     const index = character.selectedAspects.findIndex(a => a.id === aspectId);
-    
+
     if (index >= 0) {
     character.selectedAspects.splice(index, 1);
     } else {
     if (character.mode === 'creation' && character.selectedAspects.length >= BUDGETS.aspects) {
         return;
     }
-    
+    if (character.mode === 'advancement' && character.selectedAspects.length >= BUDGETS.maxAspectsAdvancement) {
+        return;
+    }
+
     const allAspects = getAvailableAspects();
     const aspect = allAspects.find(a => {
         const id = a.source + '-' + a.name;
         return id === aspectId;
     });
-    
+
     if (aspect) {
         character.selectedAspects.push({
         id: aspectId,
@@ -186,7 +190,7 @@ function toggleAspect(aspectId) {
         });
     }
     }
-    
+
     render();
 }
 
@@ -1247,16 +1251,18 @@ function renderAdvancementMode(app) {
     const bloodlineAspects = allAspects.filter(a => a.category === 'Bloodline');
     const originAspects = allAspects.filter(a => a.category === 'Origin');
     const postAspects = allAspects.filter(a => a.category === 'Post');
-    
+
+    const aspectsSelected = character.selectedAspects.length;
+
     app.innerHTML = `
     <div style="padding: 20px; max-width: 1400px; margin: 0 auto; padding-bottom: 80px;">
         <div style="margin-bottom: 32px; padding-bottom: 24px; border-bottom: 2px solid #E5E7EB;">
         <div style="display: flex; gap: 48px; align-items: baseline;">
             <div>
             <label style="display: block; margin-bottom: 8px; font-weight: 600;">Character Name</label>
-            <input type="text" value="${character.name}" 
+            <input type="text" value="${character.name}"
                     onchange="onCharacterNameChange(this.value)"
-                    placeholder="Enter name..." 
+                    placeholder="Enter name..."
                     style="width: 300px; font-size: 16px;">
             </div>
             <div>
@@ -1273,7 +1279,7 @@ function renderAdvancementMode(app) {
             </div>
         </div>
         </div>
-        
+
         <div style="margin-bottom: 40px;">
         <h2 class="section-header">Aspects</h2>
         <div class="grid-3col">
@@ -1284,9 +1290,10 @@ function renderAdvancementMode(app) {
                 const escapedId = id.replace(/'/g, "\\'");
                 const selectedAspect = character.selectedAspects.find(a => a.id === id);
                 const isSelected = !!selectedAspect;
-                
+                const isDisabled = !isSelected && aspectsSelected >= BUDGETS.maxAspectsAdvancement;
+
                 return `
-                <div class="aspect-card ${isSelected ? 'selected' : ''}" 
+                <div class="aspect-card ${isSelected ? 'selected' : ''} ${isDisabled ? 'disabled' : ''}"
                         onclick="toggleAspect('${escapedId}')"
                         style="position: relative;">
                     ${isSelected ? renderInteractiveTrack(selectedAspect, escapedId) : renderSmallTrack(aspect.track)}
@@ -1299,7 +1306,7 @@ function renderAdvancementMode(app) {
                 `;
             }).join('')}
             </div>
-            
+
             <div class="flex-col-gap">
             <h3 class="subsection-header">${character.origin}</h3>
             ${originAspects.map(aspect => {
@@ -1307,9 +1314,10 @@ function renderAdvancementMode(app) {
                 const escapedId = id.replace(/'/g, "\\'");
                 const selectedAspect = character.selectedAspects.find(a => a.id === id);
                 const isSelected = !!selectedAspect;
-                
+                const isDisabled = !isSelected && aspectsSelected >= BUDGETS.maxAspectsAdvancement;
+
                 return `
-                <div class="aspect-card ${isSelected ? 'selected' : ''}" 
+                <div class="aspect-card ${isSelected ? 'selected' : ''} ${isDisabled ? 'disabled' : ''}"
                         onclick="toggleAspect('${escapedId}')"
                         style="position: relative;">
                     ${isSelected ? renderInteractiveTrack(selectedAspect, escapedId) : renderSmallTrack(aspect.track)}
@@ -1322,7 +1330,7 @@ function renderAdvancementMode(app) {
                 `;
             }).join('')}
             </div>
-            
+
             <div class="flex-col-gap">
             <h3 class="subsection-header">${character.post}</h3>
             ${postAspects.map(aspect => {
@@ -1330,9 +1338,10 @@ function renderAdvancementMode(app) {
                 const escapedId = id.replace(/'/g, "\\'");
                 const selectedAspect = character.selectedAspects.find(a => a.id === id);
                 const isSelected = !!selectedAspect;
-                
+                const isDisabled = !isSelected && aspectsSelected >= BUDGETS.maxAspectsAdvancement;
+
                 return `
-                <div class="aspect-card ${isSelected ? 'selected' : ''}" 
+                <div class="aspect-card ${isSelected ? 'selected' : ''} ${isDisabled ? 'disabled' : ''}"
                         onclick="toggleAspect('${escapedId}')"
                         style="position: relative;">
                     ${isSelected ? renderInteractiveTrack(selectedAspect, escapedId) : renderSmallTrack(aspect.track)}
@@ -1348,15 +1357,15 @@ function renderAdvancementMode(app) {
         </div>
         </div>
         <hr />
-        
+
         ${renderEdgesSkillsLanguagesRow()}
         <hr />
-        
+
         <div style="margin-bottom: 32px;">
         ${renderMilestones()}
         </div>
     </div>
-    
+
     <div class="sticky-action-bar" style="display: flex; justify-content: flex-end;">
         <button onclick="setMode('play')" class="primary">Save Changes</button>
         <button onclick="setMode('play')">Cancel</button>
