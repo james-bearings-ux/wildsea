@@ -102,6 +102,7 @@ const BUDGETS = {
     aspects: 4,
     edges: 3,
     skillPoints: 8,
+    resources: 6,
     maxAspectsAdvancement: 7
 };
 
@@ -573,7 +574,7 @@ function renderResources() {
     if (isCreationMode) {
         html += '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">';
         html += '<h2 class="section-header" style="margin: 0;">Resources</h2>';
-        html += '<button onclick="populateDefaultResources()">Load Default Resources</button>';
+        html += '<p>A new character may have up to 6 starting resources.</p> <button onclick="populateDefaultResources()">Load Suggested Resources</button>';
         html += '</div>';
     } else {
         html += '<h2 class="section-header">Resources</h2>';
@@ -937,22 +938,32 @@ function createCharacter() {
     alert('Please select exactly ' + BUDGETS.aspects + ' aspects');
     return;
     }
-    
+
     if (character.selectedEdges.length !== BUDGETS.edges) {
     alert('Please select exactly ' + BUDGETS.edges + ' edges');
     return;
     }
-    
+
     const skillPoints = Object.values(character.skills).reduce((sum, v) => sum + v, 0);
     const languagePoints = Object.entries(character.languages)
     .filter(function(entry) { return entry[0] !== 'Low Sour'; })
     .reduce((sum, entry) => sum + entry[1], 0);
-    
+
     if (skillPoints + languagePoints !== BUDGETS.skillPoints) {
     alert('Please allocate all ' + BUDGETS.skillPoints + ' skill/language points (currently allocated: ' + (skillPoints + languagePoints) + ')');
     return;
     }
-    
+
+    const totalResources = character.resources.charts.length +
+                          character.resources.salvage.length +
+                          character.resources.specimens.length +
+                          character.resources.whispers.length;
+
+    if (totalResources > BUDGETS.resources) {
+    alert('A new character can have up to 6 starting resources');
+    return;
+    }
+
     character.mode = 'play';
     render();
 }
