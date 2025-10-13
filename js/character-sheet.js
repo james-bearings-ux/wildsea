@@ -87,6 +87,7 @@ window.toggleMireCheckbox = toggleMireCheckbox;
 window.addResource = addResource;
 window.updateResourceName = updateResourceName;
 window.removeResource = removeResource;
+window.populateDefaultResources = populateDefaultResources;
 window.generateRandomCharacter = generateRandomCharacter;
 window.createCharacter = createCharacter;
 window.setMode = setMode;
@@ -373,6 +374,56 @@ function removeResource(type, id) {
     }
 }
 
+function populateDefaultResources() {
+    // Clear existing resources
+    character.resources = {
+        charts: [],
+        salvage: [],
+        specimens: [],
+        whispers: []
+    };
+
+    // Collect resources from bloodline, origin, and post
+    const sources = [character.bloodline, character.origin, character.post];
+    const seenResources = {
+        charts: new Set(),
+        salvage: new Set(),
+        specimens: new Set(),
+        whispers: new Set()
+    };
+
+    for (let i = 0; i < sources.length; i++) {
+        const source = sources[i];
+        const resourceData = GAME_DATA.startingResources[source];
+
+        if (resourceData) {
+            const resourceTypes = ['charts', 'salvage', 'specimens', 'whispers'];
+
+            for (let j = 0; j < resourceTypes.length; j++) {
+                const type = resourceTypes[j];
+                const items = resourceData[type];
+
+                if (items) {
+                    for (let k = 0; k < items.length; k++) {
+                        const itemName = items[k];
+
+                        // Only add if not already seen (avoid duplicates)
+                        if (!seenResources[type].has(itemName)) {
+                            seenResources[type].add(itemName);
+                            character.resources[type].push({
+                                id: Date.now().toString() + '-' + type + '-' + k + '-' + i,
+                                name: itemName
+                            });
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    render();
+}
+
 // Helper function to render small track boxes (used in Creation and Advancement for unselected)
 function renderSmallTrack(trackSize) {
     let html = '<div style="display: flex; gap: 4px; padding-top: 4px; margin-bottom: 4px;">';
@@ -510,9 +561,12 @@ function renderResources() {
     { key: 'specimens', label: 'Specimens', placeholder: 'Name your Specimen...', singular: 'Specimen' },
     { key: 'whispers', label: 'Whispers', placeholder: 'Name your Whisper...', singular: 'Whisper' }
     ];
-    
+
     let html = '<div style="margin-bottom: 32px;">';
-    html += '<h2 class="section-header">Resources</h2>';
+    html += '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">';
+    html += '<h2 class="section-header" style="margin: 0;">Resources</h2>';
+    html += '<button onclick="populateDefaultResources()">Load Default Resources</button>';
+    html += '</div>';
     html += '<div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px;">';
     
     for (let i = 0; i < resourceTypes.length; i++) {
@@ -1078,7 +1132,10 @@ function renderCreationMode(app) {
         
         ${renderEdgesSkillsLanguagesRow()}
         <hr />
-        
+
+        ${renderResources()}
+        <hr />
+
         <div style="margin-bottom: 32px;">
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 32px;">
             ${renderDrives()}
