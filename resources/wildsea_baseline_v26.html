@@ -1,0 +1,1621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wildsea Character Sheet</title>
+  <link href="https://fonts.googleapis.com/css2?family=Faustina:wght@400;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    
+    #app {
+		body {
+	      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+	      margin: 0;
+	      padding: 0;
+	      background: #FFFFFF;
+	      color: #111827;
+	    }
+    
+	    button, select, input {
+	      font-family: inherit;
+	      font-size: inherit;
+	    }
+    
+	    button {
+	      border: 2px solid #6B7280;
+	      background: #F3F4F6;
+	      padding: 0px 6px;
+	      border-radius: 2px;
+	      cursor: pointer;
+	      transition: all 0.2s;
+	      font-size: 14px;
+	      font-weight: 600;
+	    }
+    
+	    button:hover:not(:disabled) {
+	      background: #F3F4F6;
+	    }
+    
+	    button:disabled {
+	      opacity: 0.5;
+	      cursor: not-allowed;
+	    }
+    
+	    button.bg-black {
+	      background: #000000;
+	      color: white;
+	      border-color: #6B7280;
+	    }
+    
+	    button.bg-black:hover:not(:disabled) {
+	      background: #1F2937;
+	    }
+    
+	    button.primary {
+	      background: #A91D3A;
+	      color: white;
+	      border-color: #A91D3A;
+	    }
+    
+	    button.primary:hover:not(:disabled) {
+	      background: #8B1730;
+	    }
+    
+	    select {
+	      border: 2px solid #6B7280;
+	      background: white;
+	      padding: 8px;
+	      border-radius: 2px;
+	      cursor: pointer;
+	    }
+    
+	    input {
+	      border: none;
+	      border-bottom: 2px solid #000000;
+	      background: white;
+	      padding: 8px 10px;
+	      outline: none;
+	    }
+    
+	    input:disabled {
+	      border-bottom-color: #E5E7EB;
+	      color: #D1D5DB;
+	    }
+    
+	    input::placeholder {
+	      color: #9CA3AF;
+	    }
+    	
+	    input[type="checkbox"] {
+	      width: 18px;
+	      height: 18px;
+	      border: 2px solid #6B7280;
+	      border-radius: 2px;
+	      cursor: pointer;
+	      appearance: none;
+	      -webkit-appearance: none;
+	      -moz-appearance: none;
+	      display: inline-flex;
+	      align-items: center;
+	      justify-content: center;
+	      flex-shrink: 0;
+	    }
+    
+	    input[type="checkbox"]:checked {
+	      background: #000000;
+	      border-color: #000000;
+	    }
+    
+	    input[type="checkbox"]:checked::after {
+	      content: '✓';
+	      color: white;
+	      font-size: 14px;
+	      font-weight: bold;
+	    }
+    
+	    input[type="checkbox"]:disabled {
+	      opacity: 0.5;
+	      cursor: not-allowed;
+	    }
+		
+		.sticky-action-bar button {
+			padding: 8px 12px;
+		}
+	
+		button.ghost {
+			border: 0;
+			text-align: left;
+			background: transparent;
+		}
+		
+		hr {
+		    border-color: #6B7280;
+		    margin: 20px 0;
+		}
+		
+    }
+	
+    .font-faustina {
+      font-family: 'Faustina', serif;
+    }
+	
+    .aspect-card {
+      border: 2px solid #6B7280;
+      border-radius: 2px;
+      padding: 12px 16px;
+      background: white;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .aspect-card.selected {
+      background: #000000;
+      border-color: #0F172A;
+      color: white;
+    }
+    
+    .aspect-card.selected .aspect-type {
+      color: #9CA3AF;
+    }
+    
+    .aspect-card.disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    
+    .track-box {
+      width: 26px;
+      height: 26px;
+      border: 2px solid #6B7280;
+      border-radius: 4px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+	  background: white;
+    }
+    
+    .track-box.small {
+      width: 16px;
+      height: 16px;
+    }
+    
+    .track-box.marked {
+      background: #DC2626;
+      border-color: #B91C1C;
+      color: white;
+    }
+    
+    .track-box.active {
+      background: #000000;
+      border-color: #000000;
+      color: white;
+    }
+    
+    .track-box.burned {
+      background: #92400E;
+      border-color: #78350F;
+      color: white;
+    }
+    
+    .track-box.new {
+      background: #84CC16;
+      border-color: #4D7C0F;
+    }
+    
+    .edge-card {
+      border: 2px solid #6B7280;
+      border-radius: 2px;
+      padding: 12px 16px;
+      background: white;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .edge-card.selected {
+      background: #000000;
+      border-color: #0F172A;
+      color: white;
+    }
+    
+    .edge-card.selected .edge-tagline {
+      color: #9CA3AF;
+    }
+    
+    .edge-card.disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    
+    .sticky-action-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: white;
+      border-top: 1px solid #9CA3AF;
+      padding: 10px;
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+      z-index: 1000;
+    }
+    
+    .budget-indicator {
+      background: #000000;
+      color: white;
+      padding: 4px 8px;
+      border-radius: 2px;
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 40px;
+      font-size: 18px;
+      color: #6B7280;
+    }
+        
+    .section-header {
+      font-family: 'Faustina', serif;
+      font-size: 22px;
+      font-weight: 600;
+      color: #9CA3AF;
+      margin: 0 0 12px 0;
+    }
+    
+    .subsection-header {
+      font-family: 'Faustina', serif;
+      font-size: 16px;
+      font-weight: 600;
+      color: #9CA3AF;
+      margin: 0;
+    }
+    
+    .char-name-header {
+      font-family: 'Faustina', serif;
+      font-size: 24px;
+      font-weight: 700;
+    }
+    
+    .char-label {
+      font-family: 'Faustina', serif;
+      font-size: 12px;
+      color: #6B7280;
+      margin-bottom: 4px;
+    }
+    
+    .grid-3col {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      align-items: start;
+    }
+    
+    .grid-milestone {
+      display: grid;
+      grid-template-columns: 60px 1fr 110px;
+      gap: 8px;
+      align-items: center;
+    }
+    
+    .flex-between {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .flex-col-gap {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    
+    .text-input {
+      border: none;
+      border-bottom: 2px solid #000000;
+      background: white;
+      padding: 8px 10px;
+      outline: none;
+      width: 100%;
+      font-size: 14px;
+    }
+    
+    .text-input:disabled {
+      border-bottom-color: #E5E7EB;
+      color: #D1D5DB;
+    }
+    
+    .text-input::placeholder {
+      color: #9CA3AF;
+    }
+    
+    .select-input {
+      border: 2px solid #6B7280;
+      background: white;
+      padding: 8px;
+      border-radius: 2px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    
+    .aspect-name {
+      font-weight: 600;
+      font-size: 16px;
+    }
+    
+    .aspect-meta {
+      font-size: 12px;
+      color: #6B7280;
+      margin-bottom: 4px;
+    }
+    
+    .aspect-description {
+      font-size: 12px;
+      color: #6B7280;
+    }
+    
+    .skill-name {
+      font-weight: 600;
+    }
+    
+    .skill-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 4px 0;
+      border-bottom: 1px solid #E5E7EB;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <div class="loading">Loading aspect data...</div>
+  </div>
+  
+  <script>    
+    const GAME_DATA = {
+      bloodlines: ['Ardent', 'Ektus', 'Gau', 'Ironbound', 'Ketra', 'Mothryn', 'Tzelicrae'],
+      origins: ['Amberclad', 'Anchored', 'Ridgeback', 'Rootless', 'Shankling', 'Spit-Born'],
+      posts: ['Alchemist', 'Char', 'Corsair', 'Crash', 'Dredger', 'Hacker', 'Horizoneer', 'Hunter', 'Mesmer', 'Navigator', 'Rattlehand', 'Screw', 'Slinger', 'Steep', 'Surgeon', 'Tempest', 'Wordbearer'],
+      edges: [
+        { name: 'Grace', tagline: 'An edge of elegance, precision, & agility' },
+        { name: 'Iron', tagline: 'An edge of strength, endurance, & fortitude' },
+        { name: 'Instinct', tagline: 'An edge of awareness, intuition, & reaction' },
+        { name: 'Teeth', tagline: 'An edge of combat, violence, & aggression' },
+        { name: 'Sharps', tagline: 'An edge of cunning, knowledge, & expertise' },
+        { name: 'Tides', tagline: 'An edge of luck, fortune, & supernatural' },
+        { name: 'Veils', tagline: 'An edge of stealth, deception, & subterfuge' }
+      ],
+      skills: [
+        'Break', 'Concoct', 'Cook', 'Delve', 'Flourish', 'Hack',
+        'Harvest', 'Hunt', 'Outwit', 'Rattle', 'Scavenge', 'Sense',
+        'Study', 'Sway', 'Tend', 'Vault', 'Wavewalk'
+      ],
+      languages: [
+        'Low Sour', 'Raka Spit', 'Chthonic', 'Lyre-Bite',
+        'Saprekk', 'Old Hand', 'Gaudimm', 'Signaling', 'Knock'
+      ],
+      aspects: {
+        'Ardent': [
+          { name: 'Tough as Nails', type: 'Trait', track: 4, description: "You're a natural survivor. Rolls made to treat or heal an injury you're suffering from treat conflicts as triumphs." },
+          { name: 'Ghostsight', type: 'Trait', track: 3, description: 'You can clearly see spirits and the spectral realm.' },
+          { name: 'Strong Stomach', type: 'Trait', track: 3, description: 'Reduce the impact of poisons, diseases and sickness.' }
+        ],
+        'Tzelicrae': [
+          { name: 'Iron Satchel', type: 'Gear', track: 4, description: 'A secure, wearable lockbox that can only be opened by a single specific spider within you.' },
+          { name: 'Blade of Husks', type: 'Gear', track: 3, description: 'A ritual weapon made from the chitin of lost colony members. Deals CQ keen or salt damage.' },
+          { name: 'Swarm-Scout', type: 'Companion', track: 3, description: 'A single spider you can send ahead as a scout, allowing you to see and hear at a distance.' },
+          { name: 'Rogue Doomsayer', type: 'Companion', track: 3, description: 'An unsettled fragment of personality. Mark to request a dark and unbidden (but likely pertinent) thought from the Firefly.' },
+          { name: 'Bidingweb', type: 'Trait', track: 2, description: 'Slim filaments surround you, almost impossible to see. Mark to entangle a target.' }
+        ],
+        'Ridgeback': [
+          { name: 'Cargo Hauler', type: 'Gear', track: 2, description: 'A sturdy pack or set of bags that can hold twice what a normal pack could.' },
+          { name: 'Wilderness Survival', type: 'Trait', track: 2, description: 'You can easily forage food from the environment. Treat conflicts as triumphs when searching for supplies.' }
+        ],
+        'Mesmer': [
+          { name: 'Intricate Tattoos', type: 'Trait', track: 3, description: "You're immune to confusion and hallucinations that you don't invite or create yourself." },
+          { name: 'Staredown', type: 'Trait', track: 5, description: 'Locking eyes with an opponent allows you to assail their mind with unwanted sensation, manifesting as LR Salt damage. Only works on creatures with sight.' },
+          { name: 'Chameleon Veil', type: 'Gear', track: 3, description: 'Use a task to hold still and blend in with your surroundings, becoming almost impossible to notice until you move again.' },
+          { name: 'Shard of Dream-Soaked Amber', type: 'Gear', track: 3, description: 'Consume a specimen to experience a thought or memory from a nearby individual.' },
+          { name: 'Seven-Eye Scrawl', type: 'Gear', track: 2, description: 'Eyes are daubed across your body, each of them able to perceive the world in a different way. Mark to gain a specialized form of sight for a brief time (such as the ability to see ghosts, heat, or magnetism).' },
+          { name: 'Smoked-Glass Hookah', type: 'Gear', track: 3, description: 'Releases a steady stream of wispy smoke. Mark to control smoke or vapours.' },
+          { name: 'Chromiguana', type: 'Companion', track: 4, description: "Slow-moving and sleepy, usually found curled up around your shoulders or at the bottom of a bag. A surprisingly relaxing presence - treat conflicts as triumphs when trying to calm yourself or others." },
+          { name: 'Pinned Butterfly', type: 'Companion', track: 3, description: 'Mark to wake the butterfly for a brief time. While awake, the hypnotic patterns of the butterfly\'s wings induce drowsiness in those that catch sight of them.' }
+        ]
+      }
+    };
+    
+    let character = {
+      mode: 'creation',
+      name: '',
+      bloodline: 'Tzelicrae',
+      origin: 'Ridgeback',
+      post: 'Mesmer',
+      selectedAspects: [],
+      selectedEdges: [],
+      skills: {},
+      languages: { 'Low Sour': 3 },
+      milestones: [],
+      drives: ['Send other spirits to a peaceful rest', 'Reconnect with your friends and family', 'Help those suffering from great distraction'],
+      mires: [
+        { text: 'Your material control wavers erratically', checkbox1: false, checkbox2: false },
+        { text: 'Visions of your past death are difficult to banish', checkbox1: false, checkbox2: false },
+        { text: 'Your own thoughts are cloudy, mercurial', checkbox1: false, checkbox2: false }
+      ],
+      resources: {
+        charts: [
+			{id:'001', name:'A Sketch of Shadowed Paths'}
+		],
+        salvage: [
+			{id:'004', name:'Old Memento'},
+			{id:'005', name:'Broken Locket'}
+		],
+        specimens: [
+			{id:'007', name:'Glowing Plasm'},
+			{id:'008', name:'Spectral Flower'}
+		],
+        whispers: [
+			{id:'010', name:'Back from Beyond'},
+			{id:'011', name:'Drowned and Not'}
+		]
+      }
+    };
+    
+    const BUDGETS = {
+      aspects: 4,
+      edges: 3,
+      skillPoints: 8
+    };
+
+
+    
+    function getAvailableAspects() {
+      const available = [];
+      
+      const bloodlineAspects = GAME_DATA.aspects[character.bloodline] || [];
+      bloodlineAspects.forEach(aspect => {
+        available.push({
+          ...aspect,
+          source: character.bloodline,
+          category: 'Bloodline'
+        });
+      });
+      
+      const originAspects = GAME_DATA.aspects[character.origin] || [];
+      originAspects.forEach(aspect => {
+        available.push({
+          ...aspect,
+          source: character.origin,
+          category: 'Origin'
+        });
+      });
+      
+      const postAspects = GAME_DATA.aspects[character.post] || [];
+      postAspects.forEach(aspect => {
+        available.push({
+          ...aspect,
+          source: character.post,
+          category: 'Post'
+        });
+      });
+      
+      return available;
+    }
+    
+    function toggleAspect(aspectId) {
+      if (character.mode !== 'creation' && character.mode !== 'advancement') return;
+      
+      const index = character.selectedAspects.findIndex(a => a.id === aspectId);
+      
+      if (index >= 0) {
+        character.selectedAspects.splice(index, 1);
+      } else {
+        if (character.mode === 'creation' && character.selectedAspects.length >= BUDGETS.aspects) {
+          return;
+        }
+        
+        const allAspects = getAvailableAspects();
+        const aspect = allAspects.find(a => {
+          const id = a.source + '-' + a.name;
+          return id === aspectId;
+        });
+        
+        if (aspect) {
+          character.selectedAspects.push({
+            id: aspectId,
+            ...aspect,
+            trackSize: aspect.track,
+            damageStates: Array(aspect.track).fill('default')
+          });
+        }
+      }
+      
+      render();
+    }
+    
+    function toggleEdge(edgeName) {
+      if (character.mode !== 'creation') return;
+      
+      const index = character.selectedEdges.indexOf(edgeName);
+      
+      if (index >= 0) {
+        character.selectedEdges.splice(index, 1);
+      } else {
+        if (character.selectedEdges.length >= BUDGETS.edges) {
+          return;
+        }
+        character.selectedEdges.push(edgeName);
+      }
+      
+      render();
+    }
+    
+    function adjustSkill(name, delta) {
+      const current = character.skills[name] || 0;
+      const newValue = Math.max(0, Math.min(character.mode === 'creation' ? 2 : 3, current + delta));
+      
+      if (character.mode === 'creation') {
+        const totalPoints = Object.values(character.skills).reduce((sum, v) => sum + v, 0);
+        const languagePoints = Object.entries(character.languages)
+          .filter(function(entry) { return entry[0] !== 'Low Sour'; })
+          .reduce((sum, entry) => sum + entry[1], 0);
+        
+        if (delta > 0 && totalPoints + languagePoints >= BUDGETS.skillPoints) {
+          return;
+        }
+      }
+      
+      if (newValue === 0) {
+        delete character.skills[name];
+      } else {
+        character.skills[name] = newValue;
+      }
+      
+      render();
+    }
+    
+    function adjustLanguage(name, delta) {
+      if (name === 'Low Sour' && character.mode === 'creation') {
+        return;
+      }
+      
+      const current = character.languages[name] || 0;
+      const newValue = Math.max(0, Math.min(character.mode === 'creation' ? 2 : 3, current + delta));
+      
+      if (character.mode === 'creation') {
+        const skillPoints = Object.values(character.skills).reduce((sum, v) => sum + v, 0);
+        const totalPoints = Object.entries(character.languages)
+          .filter(function(entry) { return entry[0] !== 'Low Sour'; })
+          .reduce((sum, entry) => sum + entry[1], 0);
+        
+        if (delta > 0 && skillPoints + totalPoints >= BUDGETS.skillPoints) {
+          return;
+        }
+      }
+      
+      if (newValue === 0 && name !== 'Low Sour') {
+        delete character.languages[name];
+      } else {
+        character.languages[name] = newValue;
+      }
+      
+      render();
+    }
+    
+    function cycleAspectDamage(aspectId, boxIndex) {
+      if (character.mode !== 'play') return;
+      
+      const aspect = character.selectedAspects.find(a => a.id === aspectId);
+      if (!aspect) return;
+      
+      const states = ['default', 'marked', 'burned'];
+      const currentState = aspect.damageStates[boxIndex];
+      const currentIndex = states.indexOf(currentState);
+      const nextIndex = (currentIndex + 1) % states.length;
+      
+      aspect.damageStates[boxIndex] = states[nextIndex];
+      render();
+    }
+    
+    function expandAspectTrack(aspectId, delta) {
+      if (character.mode !== 'advancement') return;
+      
+      const aspect = character.selectedAspects.find(a => a.id === aspectId);
+      if (!aspect) return;
+      
+      const newSize = aspect.trackSize + delta;
+      if (newSize < aspect.track || newSize > 5) return;
+      
+      if (delta > 0) {
+        aspect.damageStates.push('default');
+      } else {
+        aspect.damageStates.pop();
+      }
+      
+      aspect.trackSize = newSize;
+      render();
+    }
+    
+    function addMilestone() {
+      character.milestones.push({
+        id: Date.now().toString(),
+        used: false,
+        name: '',
+        scale: 'Minor'
+      });
+      render();
+    }
+    
+    function updateMilestoneName(id, name) {
+      const milestone = character.milestones.find(m => m.id === id);
+      if (milestone) {
+        milestone.name = name;
+      }
+    }
+    
+    function updateMilestoneScale(id, scale) {
+      const milestone = character.milestones.find(m => m.id === id);
+      if (milestone) {
+        milestone.scale = scale;
+        render();
+      }
+    }
+    
+    function toggleMilestoneUsed(id) {
+      const milestone = character.milestones.find(m => m.id === id);
+      if (milestone) {
+        milestone.used = !milestone.used;
+        render();
+      }
+    }
+    
+    function deleteMilestone(id) {
+      const index = character.milestones.findIndex(m => m.id === id);
+      if (index >= 0) {
+        character.milestones.splice(index, 1);
+        render();
+      }
+    }
+    
+    function updateDrive(index, value) {
+      character.drives[index] = value;
+    }
+    
+    function updateMire(index, value) {
+      character.mires[index].text = value;
+    }
+    
+    function toggleMireCheckbox(index, checkboxNum) {
+      if (checkboxNum === 1) {
+        character.mires[index].checkbox1 = !character.mires[index].checkbox1;
+      } else {
+        character.mires[index].checkbox2 = !character.mires[index].checkbox2;
+      }
+      render();
+    }
+    
+    function addResource(type) {
+      character.resources[type].push({
+        id: Date.now().toString(),
+        name: ''
+      });
+      render();
+    }
+    
+    function updateResourceName(type, id, name) {
+      const resource = character.resources[type].find(r => r.id === id);
+      if (resource) {
+        resource.name = name;
+      }
+    }
+    
+    function removeResource(type, id) {
+      const index = character.resources[type].findIndex(r => r.id === id);
+      if (index >= 0) {
+        character.resources[type].splice(index, 1);
+        render();
+      }
+    }
+    
+    function renderDrives() {
+      let html = '<div><h2 class="section-header">Drives</h2>';
+      html += '<div style="display: flex; flex-direction: column; gap: 2px;">';
+      
+      for (let i = 0; i < character.drives.length; i++) {
+        html += '<input type="text" ';
+        html += 'value="' + character.drives[i] + '" ';
+        html += 'placeholder="Enter a drive..." ';
+        html += 'onchange="updateDrive(' + i + ', this.value)" ';
+        html += 'style="width: 100%; padding: 8px 10px 8px 10px;">';
+      }
+      
+      html += '</div></div>';
+      return html;
+    }
+    
+    function renderMires() {
+      const showCheckboxes = character.mode === 'play';
+      
+      let html = '<div><h2 class="section-header">Mires</h2>';
+      html += '<div style="display: flex; flex-direction: column; gap: 2px;">';
+      
+      for (let i = 0; i < character.mires.length; i++) {
+        const mire = character.mires[i];
+        
+        if (showCheckboxes) {
+          html += '<div style="display: flex; gap: 10px; align-items: center;">';
+          html += '<div style="width: 8px;"></div>';
+          html += '<input type="checkbox" ';
+          if (mire.checkbox1) html += 'checked ';
+          html += 'onchange="toggleMireCheckbox(' + i + ', 1)">';
+          html += '<input type="checkbox" ';
+          if (mire.checkbox2) html += 'checked ';
+          html += 'onchange="toggleMireCheckbox(' + i + ', 2)">';
+          html += '<input type="text" ';
+          html += 'value="' + mire.text + '" ';
+          html += 'placeholder="Enter a mire..." ';
+          html += 'onchange="updateMire(' + i + ', this.value)" ';
+          html += 'style="width: 100%; padding: 8px 10px 8px 10px;">';
+          html += '</div>';
+        } else {
+          html += '<input type="text" ';
+          html += 'value="' + mire.text + '" ';
+          html += 'placeholder="Enter a mire..." ';
+          html += 'onchange="updateMire(' + i + ', this.value)" ';
+          html += 'style="width: 100%; padding: 8px 10px 8px 10px;">';
+        }
+      }
+      
+      html += '</div></div>';
+      return html;
+    }
+    
+    function renderMilestones() {
+      let html = '<div><h2 class="section-header">Milestones</h2>';
+      
+      if (character.milestones.length > 0) {
+        html += '<div class="grid-milestone" style="margin-bottom: 8px;">';
+        html += '<h3 class="subsection-header">Used</h3>';
+        html += '<h3 class="subsection-header">Name</h3>';
+        html += '<h3 class="subsection-header">Scale</h3>';
+        html += '</div>';
+      }
+      
+      for (let i = 0; i < character.milestones.length; i++) {
+        const milestone = character.milestones[i];
+        
+        html += '<div class="grid-milestone" style="margin-bottom: 8px;">';
+        html += '<div style="display: flex; align-items: center; gap: 10px;">';
+        html += '<div style="width: 34px;"></div>';
+        html += '<input type="checkbox" ';
+        if (milestone.used) html += 'checked ';
+        html += 'onchange="toggleMilestoneUsed(\'' + milestone.id + '\')">';
+        html += '</div>';
+        html += '<input type="text" ';
+        html += 'value="' + milestone.name + '" ';
+        html += 'placeholder="Enter milestone name..." ';
+        if (milestone.used) html += 'disabled ';
+        html += 'onchange="updateMilestoneName(\'' + milestone.id + '\', this.value)" ';
+        html += 'style="width: 100%;">';
+        html += '<select ';
+        if (milestone.used) html += 'disabled ';
+        html += 'onchange="updateMilestoneScale(\'' + milestone.id + '\', this.value)" ';
+        html += 'style="width: 100%;">';
+        html += '<option value="Minor"';
+        if (milestone.scale === 'Minor') html += ' selected';
+        html += '>Minor</option>';
+        html += '<option value="Major"';
+        if (milestone.scale === 'Major') html += ' selected';
+        html += '>Major</option>';
+        html += '</select>';
+        html += '</div>';
+      }
+      
+      const marginTop = character.milestones.length > 0 ? '12' : '0';
+      html += '<button class="ghost" onclick="addMilestone()" style="width: 100%; margin-top: ' + marginTop + 'px;">+ New Milestone</button>';
+      html += '</div>';
+      
+      return html;
+    }
+    
+    function renderResources() {
+      const resourceTypes = [
+        { key: 'charts', label: 'Charts', placeholder: 'Name your Chart...', singular: 'Chart' },
+        { key: 'salvage', label: 'Salvage', placeholder: 'Name your Salvage...', singular: 'Salvage' },
+        { key: 'specimens', label: 'Specimens', placeholder: 'Name your Specimen...', singular: 'Specimen' },
+        { key: 'whispers', label: 'Whispers', placeholder: 'Name your Whisper...', singular: 'Whisper' }
+      ];
+      
+      let html = '<div style="margin-bottom: 32px;">';
+      html += '<h2 class="section-header">Resources</h2>';
+      html += '<div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px;">';
+      
+      for (let i = 0; i < resourceTypes.length; i++) {
+        const type = resourceTypes[i];
+        const items = character.resources[type.key];
+        
+        html += '<div>';
+        html += '<h3 class="subsection-header" style="margin-bottom: 12px;">' + type.label + '</h3>';
+        html += '<div style="display: flex; flex-direction: column; gap: 12px;">';
+        
+        for (let j = 0; j < items.length; j++) {
+          const item = items[j];
+          html += '<div style="display: flex; gap: 8px; align-items: center;">';
+          html += '<input type="text" ';
+          html += 'value="' + item.name + '" ';
+          html += 'placeholder="' + type.placeholder + '" ';
+          html += 'onchange="updateResourceName(\'' + type.key + '\', \'' + item.id + '\', this.value)" ';
+          html += 'style="width: 100%; padding: 8px 10px;">';
+          html += '<button onclick="removeResource(\'' + type.key + '\', \'' + item.id + '\')" ';
+          html += 'style="padding: 8px; flex-shrink: 0; border: 0;">✕</button>';
+          html += '</div>';
+        }
+        
+        const marginTop = items.length > 0 ? '12' : '0';
+        html += '<button class="ghost" onclick="addResource(\'' + type.key + '\')" style="width: 100%; margin-top: ' + marginTop + 'px;">+ New ' + type.singular + '</button>';
+        html += '</div>';
+        html += '</div>';
+      }
+      
+      html += '</div>';
+      html += '</div>';
+      
+      return html;
+    }
+    
+    function renderEdges() {
+      const isCreationMode = character.mode === 'creation';
+      const edgesSelected = character.selectedEdges.length;
+      
+      if (isCreationMode) {
+        let html = '<div>';
+        html += '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">';
+        html += '<h2 class="section-header" style="margin: 0;">Edges</h2>';
+        html += '<div class="budget-indicator">' + edgesSelected + '/' + BUDGETS.edges + '</div>';
+        html += '</div>';
+        html += '<div style="display: flex; flex-direction: column; gap: 12px;">';
+        
+        for (let i = 0; i < GAME_DATA.edges.length; i++) {
+          const edge = GAME_DATA.edges[i];
+          const isSelected = character.selectedEdges.includes(edge.name);
+          const isDisabled = !isSelected && edgesSelected >= BUDGETS.edges;
+          
+          html += '<div class="edge-card';
+          if (isSelected) html += ' selected';
+          if (isDisabled) html += ' disabled';
+          html += '" onclick="toggleEdge(\'' + edge.name + '\')">';
+          html += '<div class="aspect-name" style="margin-bottom: 4px;">' + edge.name + '</div>';
+          html += '<div class="edge-tagline" style="font-size: 12px; color: ';
+          html += isSelected ? '#9CA3AF' : '#6B7280';
+          html += ';">' + edge.tagline + '</div>';
+          html += '</div>';
+        }
+        
+        html += '</div></div>';
+        return html;
+      } else {
+        let html = '<div><h2 class="section-header">Edges</h2>';
+        
+        for (let i = 0; i < character.selectedEdges.length; i++) {
+          html += '<div class="aspect-name" style="color: #111827; margin-bottom: 4px;">';
+          html += character.selectedEdges[i];
+          html += '</div>';
+        }
+        
+        html += '</div>';
+        return html;
+      }
+    }
+    
+    function renderSkills() {
+      const isCreationMode = character.mode === 'creation';
+      const isPlayMode = character.mode === 'play';
+      
+      if (isPlayMode) {
+        let html = '<div><h2 class="section-header">Skills</h2>';
+        
+        for (let i = 0; i < GAME_DATA.skills.length; i++) {
+          const skill = GAME_DATA.skills[i];
+          const rank = character.skills[skill] || 0;
+          
+          html += '<div class="skill-row">';
+          html += '<div class="skill-name">' + skill + '</div>';
+          html += '<div style="display: flex; gap: 4px;">';
+          
+          for (let j = 0; j < 3; j++) {
+            html += '<div class="track-box small';
+            if (j < rank) html += ' active';
+            html += '"></div>';
+          }
+          
+          html += '</div></div>';
+        }
+        
+        html += '</div>';
+        return html;
+      } else if (isCreationMode) {
+        let html = '<div style="display: flex; flex-direction: column; gap: 4px;">';
+        html += '<h3 class="subsection-header" style="margin-bottom: 12px;">Skills</h3>';
+        
+        const skillPoints = Object.values(character.skills).reduce(function(sum, v) { return sum + v; }, 0);
+        const languagePoints = Object.entries(character.languages)
+          .filter(function(entry) { return entry[0] !== 'Low Sour'; })
+          .reduce(function(sum, entry) { return sum + entry[1]; }, 0);
+        const totalPoints = skillPoints + languagePoints;
+        
+        for (let i = 0; i < GAME_DATA.skills.length; i++) {
+          const skill = GAME_DATA.skills[i];
+          const rank = character.skills[skill] || 0;
+          const canIncrease = rank < 2 && totalPoints < BUDGETS.skillPoints;
+          
+          html += '<div class="flex-between" style="margin-bottom: 8px;">';
+          html += '<div class="skill-name">' + skill + '</div>';
+          html += '<div style="display: flex; gap: 8px; align-items: center;">';
+          html += '<button onclick="adjustSkill(\'' + skill + '\', -1)"';
+          if (rank === 0) html += ' disabled';
+          html += '>−</button>';
+          
+          for (let j = 0; j < 3; j++) {
+            html += '<div class="track-box';
+            if (j < rank) html += ' active';
+            html += '"></div>';
+          }
+          
+          html += '<button onclick="adjustSkill(\'' + skill + '\', 1)"';
+          if (!canIncrease) html += ' disabled';
+          html += '>+</button>';
+          html += '</div></div>';
+        }
+        
+        html += '</div>';
+        return html;
+      } else {
+        let html = '<div><h2 class="section-header">Skills</h2>';
+        
+        for (let i = 0; i < GAME_DATA.skills.length; i++) {
+          const skill = GAME_DATA.skills[i];
+          const rank = character.skills[skill] || 0;
+          
+          html += '<div class="flex-between" style="margin-bottom: 8px;">';
+          html += '<div class="skill-name">' + skill + '</div>';
+          html += '<div style="display: flex; gap: 8px; align-items: center;">';
+          html += '<button onclick="adjustSkill(\'' + skill + '\', -1)"';
+          if (rank === 0) html += ' disabled';
+          html += '>−</button>';
+          
+          for (let j = 0; j < 3; j++) {
+            html += '<div class="track-box';
+            if (j < rank) html += ' active';
+            html += '"></div>';
+          }
+          
+          html += '<button onclick="adjustSkill(\'' + skill + '\', 1)"';
+          if (rank >= 3) html += ' disabled';
+          html += '>+</button>';
+          html += '</div></div>';
+        }
+        
+        html += '</div>';
+        return html;
+      }
+    }
+    
+    function renderLanguages() {
+      const isCreationMode = character.mode === 'creation';
+      const isPlayMode = character.mode === 'play';
+      
+      if (isPlayMode) {
+        let html = '<div><h2 class="section-header">Languages</h2>';
+        
+        for (let i = 0; i < GAME_DATA.languages.length; i++) {
+          const lang = GAME_DATA.languages[i];
+          const rank = character.languages[lang] || 0;
+          
+          html += '<div class="skill-row">';
+          html += '<div class="skill-name">' + lang + '</div>';
+          html += '<div style="display: flex; gap: 4px;">';
+          
+          for (let j = 0; j < 3; j++) {
+            html += '<div class="track-box small';
+            if (j < rank) html += ' active';
+            html += '"></div>';
+          }
+          
+          html += '</div></div>';
+        }
+        
+        html += '</div>';
+        return html;
+      } else if (isCreationMode) {
+        let html = '<div style="display: flex; flex-direction: column; gap: 4px;">';
+        html += '<h3 class="subsection-header" style="margin-bottom: 12px;">Languages</h3>';
+        
+        const skillPoints = Object.values(character.skills).reduce(function(sum, v) { return sum + v; }, 0);
+        const languagePoints = Object.entries(character.languages)
+          .filter(function(entry) { return entry[0] !== 'Low Sour'; })
+          .reduce(function(sum, entry) { return sum + entry[1]; }, 0);
+        const totalPoints = skillPoints + languagePoints;
+        
+        for (let i = 0; i < GAME_DATA.languages.length; i++) {
+          const lang = GAME_DATA.languages[i];
+          const rank = character.languages[lang] || 0;
+          const isLowSour = lang === 'Low Sour';
+          const canIncrease = !isLowSour && rank < 2 && totalPoints < BUDGETS.skillPoints;
+          const canDecrease = !isLowSour && rank > 0;
+          
+          html += '<div class="flex-between" style="margin-bottom: 8px;">';
+          html += '<div class="skill-name">' + lang + '</div>';
+          html += '<div style="display: flex; gap: 8px; align-items: center;">';
+          html += '<button onclick="adjustLanguage(\'' + lang + '\', -1)"';
+          if (!canDecrease) html += ' disabled';
+          html += '>−</button>';
+          
+          for (let j = 0; j < 3; j++) {
+            html += '<div class="track-box';
+            if (j < rank) html += ' active';
+            html += '"></div>';
+          }
+          
+          html += '<button onclick="adjustLanguage(\'' + lang + '\', 1)"';
+          if (!canIncrease) html += ' disabled';
+          html += '>+</button>';
+          html += '</div></div>';
+        }
+        
+        html += '</div>';
+        return html;
+      } else {
+        let html = '<div><h2 class="section-header">Languages</h2>';
+        
+        for (let i = 0; i < GAME_DATA.languages.length; i++) {
+          const lang = GAME_DATA.languages[i];
+          const rank = character.languages[lang] || 0;
+          
+          html += '<div class="flex-between" style="margin-bottom: 8px;">';
+          html += '<div class="skill-name">' + lang + '</div>';
+          html += '<div style="display: flex; gap: 8px; align-items: center;">';
+          html += '<button onclick="adjustLanguage(\'' + lang + '\', -1)"';
+          if (rank === 0 || lang === 'Low Sour') html += ' disabled';
+          html += '>−</button>';
+          
+          for (let j = 0; j < 3; j++) {
+            html += '<div class="track-box';
+            if (j < rank) html += ' active';
+            html += '"></div>';
+          }
+          
+          html += '<button onclick="adjustLanguage(\'' + lang + '\', 1)"';
+          if (rank >= 3) html += ' disabled';
+          html += '>+</button>';
+          html += '</div></div>';
+        }
+        
+        html += '</div>';
+        return html;
+      }
+    }
+    
+    function renderEdgesSkillsLanguagesRow() {
+      const isCreationMode = character.mode === 'creation';
+      
+      if (isCreationMode) {
+        const skillPoints = Object.values(character.skills).reduce(function(sum, v) { return sum + v; }, 0);
+        const languagePoints = Object.entries(character.languages)
+          .filter(function(entry) { return entry[0] !== 'Low Sour'; })
+          .reduce(function(sum, entry) { return sum + entry[1]; }, 0);
+        const totalPoints = skillPoints + languagePoints;
+        
+        let html = '<div style="display: grid; grid-template-columns: 1fr 2fr; gap: 32px; margin-bottom: 40px;">';
+        html += renderEdges();
+        html += '<div>';
+        html += '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">';
+        html += '<h2 class="section-header" style="margin: 0;">Skills & Languages</h2>';
+        html += '<div class="budget-indicator">' + totalPoints + '/' + BUDGETS.skillPoints + '</div>';
+        html += '</div>';
+        html += '<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 32px;">';
+        html += renderSkills();
+        html += renderLanguages();
+        html += '</div></div></div>';
+        
+        return html;
+      } else {
+        let html = '<div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 32px; margin-bottom: 32px;">';
+        html += renderEdges();
+        html += renderSkills();
+        html += renderLanguages();
+        html += '</div>';
+        
+        return html;
+      }
+    }
+    
+    function generateRandomCharacter() {
+      character.name = 'Random Character';
+      character.bloodline = GAME_DATA.bloodlines[Math.floor(Math.random() * GAME_DATA.bloodlines.length)];
+      character.origin = GAME_DATA.origins[Math.floor(Math.random() * GAME_DATA.origins.length)];
+      character.post = GAME_DATA.posts[Math.floor(Math.random() * GAME_DATA.posts.length)];
+      
+      character.selectedAspects = [];
+      character.selectedEdges = [];
+      character.skills = {};
+      character.languages = { 'Low Sour': 3 };
+      character.milestones = [];
+      character.drives = ['', '', ''];
+      character.mires = [
+        { text: '', checkbox1: false, checkbox2: false },
+        { text: '', checkbox1: false, checkbox2: false },
+        { text: '', checkbox1: false, checkbox2: false }
+      ];
+      character.resources = {
+        charts: [],
+        salvage: [],
+        specimens: [],
+        whispers: []
+      };
+      
+      const allAspects = getAvailableAspects();
+      const shuffled = allAspects.slice().sort(() => Math.random() - 0.5);
+      for (let i = 0; i < Math.min(4, shuffled.length); i++) {
+        const aspect = shuffled[i];
+        character.selectedAspects.push({
+          id: aspect.source + '-' + aspect.name,
+          ...aspect,
+          trackSize: aspect.track,
+          damageStates: Array(aspect.track).fill('default')
+        });
+      }
+      
+      const shuffledEdges = GAME_DATA.edges.slice().sort(() => Math.random() - 0.5);
+      character.selectedEdges = shuffledEdges.slice(0, 3).map(e => e.name);
+      
+      let pointsLeft = BUDGETS.skillPoints;
+      while (pointsLeft > 0) {
+        const skill = GAME_DATA.skills[Math.floor(Math.random() * GAME_DATA.skills.length)];
+        const current = character.skills[skill] || 0;
+        if (current < 2) {
+          character.skills[skill] = current + 1;
+          pointsLeft--;
+        }
+      }
+      
+      render();
+    }
+    
+    function createCharacter() {
+      if (character.selectedAspects.length !== BUDGETS.aspects) {
+        alert('Please select exactly ' + BUDGETS.aspects + ' aspects');
+        return;
+      }
+      
+      if (character.selectedEdges.length !== BUDGETS.edges) {
+        alert('Please select exactly ' + BUDGETS.edges + ' edges');
+        return;
+      }
+      
+      const skillPoints = Object.values(character.skills).reduce((sum, v) => sum + v, 0);
+      const languagePoints = Object.entries(character.languages)
+        .filter(function(entry) { return entry[0] !== 'Low Sour'; })
+        .reduce((sum, entry) => sum + entry[1], 0);
+      
+      if (skillPoints + languagePoints !== BUDGETS.skillPoints) {
+        alert('Please allocate all ' + BUDGETS.skillPoints + ' skill/language points (currently allocated: ' + (skillPoints + languagePoints) + ')');
+        return;
+      }
+      
+      character.mode = 'play';
+      render();
+    }
+    
+    function setMode(mode) {
+      character.mode = mode;
+      render();
+    }
+    
+    function render() {
+      const app = document.getElementById('app');
+      
+      if (character.mode === 'creation') {
+        renderCreationMode(app);
+      } else if (character.mode === 'play') {
+        renderPlayMode(app);
+      } else if (character.mode === 'advancement') {
+        renderAdvancementMode(app);
+      }
+    }
+    
+    function renderCreationMode(app) {
+      const allAspects = getAvailableAspects();
+      const bloodlineAspects = allAspects.filter(a => a.category === 'Bloodline');
+      const originAspects = allAspects.filter(a => a.category === 'Origin');
+      const postAspects = allAspects.filter(a => a.category === 'Post');
+      
+      const aspectsSelected = character.selectedAspects.length;
+      
+      app.innerHTML = `
+        <div style="padding: 20px; max-width: 1400px; margin: 0 auto; padding-bottom: 80px;">
+          <div style="margin-bottom: 20px;">
+            <label style="display: block; margin-bottom: 8px; font-weight: 600;">Character Name</label>
+            <input type="text" value="${character.name}" 
+                   onchange="character.name = this.value; render();"
+                   placeholder="Enter name..." 
+                   style="width: 300px; font-size: 16px;">
+          </div>
+          
+          <div style="margin-bottom: 40px;">
+            <h2 class="section-header">Core Elements</h2>
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px;">
+              <div>
+                <label style="display: block; margin-bottom: 8px; font-weight: 600;">Bloodline</label>
+                <select onchange="character.bloodline = this.value; character.selectedAspects = []; render();" 
+                        style="width: 100%; font-size: 16px;">
+                  ${GAME_DATA.bloodlines.map(b => '<option value="' + b + '"' + (character.bloodline === b ? ' selected' : '') + '>' + b + '</option>').join('')}
+                </select>
+              </div>
+              <div>
+                <label style="display: block; margin-bottom: 8px; font-weight: 600;">Origin</label>
+                <select onchange="character.origin = this.value; character.selectedAspects = []; render();" 
+                        style="width: 100%; font-size: 16px;">
+                  ${GAME_DATA.origins.map(o => '<option value="' + o + '"' + (character.origin === o ? ' selected' : '') + '>' + o + '</option>').join('')}
+                </select>
+              </div>
+              <div>
+                <label style="display: block; margin-bottom: 8px; font-weight: 600;">Post</label>
+                <select onchange="character.post = this.value; character.selectedAspects = []; render();" 
+                        style="width: 100%; font-size: 16px;">
+                  ${GAME_DATA.posts.map(p => '<option value="' + p + '"' + (character.post === p ? ' selected' : '') + '>' + p + '</option>').join('')}
+                </select>
+              </div>
+            </div>
+          </div>
+          
+          <div style="margin-bottom: 40px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+              <h2 class="section-header" style="margin: 0;">Aspects</h2>
+              <div class="budget-indicator">${aspectsSelected}/${BUDGETS.aspects}</div>
+            </div>
+            <div class="grid-3col">
+              <div class="flex-col-gap">
+                <h3 class="subsection-header">${character.bloodline}</h3>
+                ${bloodlineAspects.map(aspect => {
+                  const id = aspect.source + '-' + aspect.name;
+                  const escapedId = id.replace(/'/g, "\\'");
+                  const isSelected = character.selectedAspects.some(a => a.id === id);
+                  const isDisabled = !isSelected && aspectsSelected >= BUDGETS.aspects;
+                  return `
+                    <div class="aspect-card ${isSelected ? 'selected' : ''} ${isDisabled ? 'disabled' : ''}" 
+                         onclick="toggleAspect('${escapedId}')">
+                		<div style="display: flex; gap: 4px; padding-top: 4px; margin-bottom: 4px;">
+                  			${Array(aspect.track).fill(0).map(() => `<div class="track-box small"></div>`).join('')}
+                		</div>
+                      <div class="aspect-meta">${aspect.source} ${aspect.type}</div>
+                      <div class="aspect-name" style="margin-bottom: 4px;">${aspect.name}</div>
+                      <div class="aspect-description">${aspect.description}</div>
+                    </div>
+                  `;
+                }).join('')}
+              </div>
+              
+              <div class="flex-col-gap">
+                <h3 class="subsection-header">${character.origin}</h3>
+                ${originAspects.map(aspect => {
+                  const id = aspect.source + '-' + aspect.name;
+                  const escapedId = id.replace(/'/g, "\\'");
+                  const isSelected = character.selectedAspects.some(a => a.id === id);
+                  const isDisabled = !isSelected && aspectsSelected >= BUDGETS.aspects;
+                  return `
+                    <div class="aspect-card ${isSelected ? 'selected' : ''} ${isDisabled ? 'disabled' : ''}" 
+                         onclick="toggleAspect('${escapedId}')">
+      			  		<div style="display: flex; gap: 4px; padding-top: 4px; margin-bottom: 4px;">
+        					${Array(aspect.track).fill(0).map(() => `<div class="track-box small"></div>`).join('')}
+      					</div>
+                      <div class="aspect-meta">${aspect.source} ${aspect.type}</div>
+                      <div class="aspect-name" style="margin-bottom: 4px;">${aspect.name}</div>
+                      <div class="aspect-description">${aspect.description}</div>
+                    </div>
+                  `;
+                }).join('')}
+              </div>
+              
+              <div class="flex-col-gap">
+                <h3 class="subsection-header">${character.post}</h3>
+                ${postAspects.map(aspect => {
+                  const id = aspect.source + '-' + aspect.name;
+                  const escapedId = id.replace(/'/g, "\\'");
+                  const isSelected = character.selectedAspects.some(a => a.id === id);
+                  const isDisabled = !isSelected && aspectsSelected >= BUDGETS.aspects;
+                  return `
+                    <div class="aspect-card ${isSelected ? 'selected' : ''} ${isDisabled ? 'disabled' : ''}" 
+                         onclick="toggleAspect('${escapedId}')">
+      			  		<div style="display: flex; gap: 4px; padding-top: 4px; margin-bottom: 4px;">
+        					${Array(aspect.track).fill(0).map(() => `<div class="track-box small"></div>`).join('')}
+      					</div>
+                      <div class="aspect-meta">${aspect.source} ${aspect.type}</div>
+                      <div class="aspect-name" style="margin-bottom: 4px;">${aspect.name}</div>
+                      <div class="aspect-description">${aspect.description}</div>
+                    </div>
+                  `;
+                }).join('')}
+              </div>
+            </div>
+          </div>
+		  <hr />
+          
+          ${renderEdgesSkillsLanguagesRow()}
+		  <hr />
+          
+          <div style="margin-bottom: 32px;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 32px;">
+              ${renderDrives()}
+              ${renderMires()}
+            </div>
+          </div>
+        </div>
+        
+        <div class="sticky-action-bar">
+          <button onclick="generateRandomCharacter()">Generate Random Character</button>
+          <button onclick="createCharacter()" class="primary">Create Character</button>
+        </div>
+      `;
+    }
+    
+    function renderPlayMode(app) {
+      app.innerHTML = `
+        <div style="padding: 20px; max-width: 1400px; margin: 0 auto; padding-bottom: 80px;">
+          <div style="margin-bottom: 32px; padding-bottom: 24px; border-bottom: 2px solid #E5E7EB;">
+            <div style="display: flex; gap: 48px; align-items: baseline;">
+              <div>
+                <div class="char-label">Character Name</div>
+                <div class="char-name-header">${character.name}</div>
+              </div>
+              <div>
+                <div class="char-label">Bloodline</div>
+                <div class="char-name-header">${character.bloodline}</div>
+              </div>
+              <div>
+                <div class="char-label">Origin</div>
+                <div class="char-name-header">${character.origin}</div>
+              </div>
+              <div>
+                <div class="char-label">Post</div>
+                <div class="char-name-header">${character.post}</div>
+              </div>
+            </div>
+          </div>
+          
+          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 3fr; gap: 32px; margin-bottom: 32px;">
+            ${renderEdges()}
+            ${renderSkills()}
+            ${renderLanguages()}
+            
+            <div>
+              <h2 class="section-header">Aspects</h2>
+              ${character.selectedAspects.map(aspect => {
+                let trackHTML = '<div style="display: flex; gap: 8px; padding-top: 4px; flex-shrink: 0; width: 165px;">';
+                for (let i = 0; i < 5; i++) {
+                  if (i < aspect.trackSize) {
+                    const state = aspect.damageStates[i];
+                    const stateChar = state === 'marked' ? '/' : state === 'burned' ? 'X' : '';
+                    trackHTML += '<div class="track-box ' + state + '" onclick="cycleAspectDamage(\'' + aspect.id + '\', ' + i + ')" style="cursor: pointer;">' + stateChar + '</div>';
+                  } else {
+                    trackHTML += '<div style="width: 26px; height: 26px;"></div>';
+                  }
+                }
+                trackHTML += '</div>';
+                
+                return `
+                  <div style="margin-bottom: 8px; padding: 8px; border-radius: 2px;">
+                    <div style="display: flex; gap: 8px; align-items: flex-start;">
+                      ${trackHTML}
+                      <div style="flex: 1; min-width: 0;">
+                        <div class="aspect-name" style="margin-bottom: 4px;">${aspect.name}</div>
+                        <div class="aspect-meta">${aspect.source} ${aspect.type}</div>
+                        <div class="aspect-description">${aspect.description}</div>
+                      </div>
+                    </div>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          </div>
+          <hr />
+          ${renderResources()}
+          <hr />
+          <div style="margin-bottom: 32px;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 32px;">
+              ${renderDrives()}
+              ${renderMires()}
+              ${renderMilestones()}
+            </div>
+          </div>
+        </div>
+        
+        <div class="sticky-action-bar">
+          <button onclick="setMode('advancement')">Advancement</button>
+        </div>
+      `;
+    }
+    
+    function renderAdvancementMode(app) {
+      const allAspects = getAvailableAspects();
+      const bloodlineAspects = allAspects.filter(a => a.category === 'Bloodline');
+      const originAspects = allAspects.filter(a => a.category === 'Origin');
+      const postAspects = allAspects.filter(a => a.category === 'Post');
+      
+      app.innerHTML = `
+        <div style="padding: 20px; max-width: 1400px; margin: 0 auto; padding-bottom: 80px;">
+          <div style="margin-bottom: 32px; padding-bottom: 24px; border-bottom: 2px solid #E5E7EB;">
+            <div style="display: flex; gap: 48px; align-items: baseline;">
+              <div>
+                <label style="display: block; margin-bottom: 8px; font-weight: 600;">Character Name</label>
+                <input type="text" value="${character.name}" 
+                       onchange="character.name = this.value; render();"
+                       placeholder="Enter name..." 
+                       style="width: 300px; font-size: 16px;">
+              </div>
+              <div>
+                <div class="char-label">Bloodline</div>
+                <div class="char-name-header">${character.bloodline}</div>
+              </div>
+              <div>
+                <div class="char-label">Origin</div>
+                <div class="char-name-header">${character.origin}</div>
+              </div>
+              <div>
+                <div class="char-label">Post</div>
+                <div class="char-name-header">${character.post}</div>
+              </div>
+            </div>
+          </div>
+          
+          <div style="margin-bottom: 40px;">
+            <h2 class="section-header">Aspects</h2>
+            <div class="grid-3col">
+              <div class="flex-col-gap">
+                <h3 class="subsection-header">${character.bloodline}</h3>
+                ${bloodlineAspects.map(aspect => {
+                  const id = aspect.source + '-' + aspect.name;
+                  const escapedId = id.replace(/'/g, "\\'");
+                  const selectedAspect = character.selectedAspects.find(a => a.id === id);
+                  const isSelected = !!selectedAspect;
+                  
+                  let trackControls = '';
+                  if (isSelected) {
+                    trackControls = '<div style="display: flex; gap: 8px; align-items: center; padding-top: 4px; margin-bottom: 4px;">';
+                    trackControls += '<button onclick="event.stopPropagation(); expandAspectTrack(\'' + escapedId + '\', -1)" ';
+                    trackControls += (selectedAspect.trackSize <= aspect.track ? 'disabled ' : '');
+                    trackControls += 'style="flex-shrink: 0; padding: 2px 8px; font-size: 14px;" class="bg-black">−</button>';
+                    trackControls += '<div style="display: flex; gap: 8px; flex-shrink: 0;" onclick="event.stopPropagation()">';
+                    for (let i = 0; i < selectedAspect.trackSize; i++) {
+                      const isNew = i >= aspect.track;
+                      trackControls += '<div class="track-box' + (isNew ? ' new' : '') + '"></div>';
+                    }
+                    trackControls += '</div>';
+                    trackControls += '<button onclick="event.stopPropagation(); expandAspectTrack(\'' + escapedId + '\', 1)" ';
+                    trackControls += (selectedAspect.trackSize >= 5 ? 'disabled ' : '');
+                    trackControls += 'style="flex-shrink: 0; padding: 2px 8px; font-size: 14px;" class="bg-black">+</button>';
+                    trackControls += '</div>';
+                  }
+                  
+                  return `
+                    <div class="aspect-card ${isSelected ? 'selected' : ''}" 
+                         onclick="toggleAspect('${escapedId}')"
+                         style="position: relative;">
+                      ${trackControls}
+                      <div class="aspect-meta">${aspect.source} ${aspect.type}</div>
+                      <div class="aspect-name" style="margin-bottom: 4px;">${aspect.name}</div>
+                      <div class="aspect-description">${aspect.description}</div>
+                      ${!isSelected ? '<div style="margin-top: 8px;">Track: ' + aspect.track + '</div>' : ''}
+                    </div>
+                  `;
+                }).join('')}
+              </div>
+              
+              <div class="flex-col-gap">
+                <h3 class="subsection-header">${character.origin}</h3>
+                ${originAspects.map(aspect => {
+                  const id = aspect.source + '-' + aspect.name;
+                  const escapedId = id.replace(/'/g, "\\'");
+                  const selectedAspect = character.selectedAspects.find(a => a.id === id);
+                  const isSelected = !!selectedAspect;
+                  
+                  let trackControls = '';
+                  if (isSelected) {
+                    trackControls = '<div style="display: flex; gap: 8px; align-items: center; padding-top: 4px; margin-bottom: 4px;">';
+                    trackControls += '<button onclick="event.stopPropagation(); expandAspectTrack(\'' + escapedId + '\', -1)" ';
+                    trackControls += (selectedAspect.trackSize <= aspect.track ? 'disabled ' : '');
+                    trackControls += 'style="flex-shrink: 0; padding: 2px 8px; font-size: 14px;" class="bg-black">−</button>';
+                    trackControls += '<div style="display: flex; gap: 8px; flex-shrink: 0;" onclick="event.stopPropagation()">';
+                    for (let i = 0; i < selectedAspect.trackSize; i++) {
+                      const isNew = i >= aspect.track;
+                      trackControls += '<div class="track-box' + (isNew ? ' new' : '') + '"></div>';
+                    }
+                    trackControls += '</div>';
+                    trackControls += '<button onclick="event.stopPropagation(); expandAspectTrack(\'' + escapedId + '\', 1)" ';
+                    trackControls += (selectedAspect.trackSize >= 5 ? 'disabled ' : '');
+                    trackControls += 'style="flex-shrink: 0; padding: 2px 8px; font-size: 14px;" class="bg-black">+</button>';
+                    trackControls += '</div>';
+                  }
+                  
+                  return `
+                    <div class="aspect-card ${isSelected ? 'selected' : ''}" 
+                         onclick="toggleAspect('${escapedId}')"
+                         style="position: relative;">
+                      ${trackControls}
+                      <div class="aspect-meta">${aspect.source} ${aspect.type}</div>
+                      <div class="aspect-name" style="margin-bottom: 4px;">${aspect.name}</div>
+                      <div class="aspect-description">${aspect.description}</div>
+                      ${!isSelected ? '<div style="margin-top: 8px;">Track: ' + aspect.track + '</div>' : ''}
+                    </div>
+                  `;
+                }).join('')}
+              </div>
+              
+              <div class="flex-col-gap">
+                <h3 class="subsection-header">${character.post}</h3>
+                ${postAspects.map(aspect => {
+                  const id = aspect.source + '-' + aspect.name;
+                  const escapedId = id.replace(/'/g, "\\'");
+                  const selectedAspect = character.selectedAspects.find(a => a.id === id);
+                  const isSelected = !!selectedAspect;
+                  
+                  let trackControls = '';
+                  if (isSelected) {
+                    trackControls = '<div style="display: flex; gap: 8px; align-items: center; padding-top: 4px; margin-bottom: 4px;">';
+                    trackControls += '<button onclick="event.stopPropagation(); expandAspectTrack(\'' + escapedId + '\', -1)" ';
+                    trackControls += (selectedAspect.trackSize <= aspect.track ? 'disabled ' : '');
+                    trackControls += 'style="flex-shrink: 0; padding: 2px 8px; font-size: 14px;" class="bg-black">−</button>';
+                    trackControls += '<div style="display: flex; gap: 8px; flex-shrink: 0;" onclick="event.stopPropagation()">';
+                    for (let i = 0; i < selectedAspect.trackSize; i++) {
+                      const isNew = i >= aspect.track;
+                      trackControls += '<div class="track-box' + (isNew ? ' new' : '') + '"></div>';
+                    }
+                    trackControls += '</div>';
+                    trackControls += '<button onclick="event.stopPropagation(); expandAspectTrack(\'' + escapedId + '\', 1)" ';
+                    trackControls += (selectedAspect.trackSize >= 5 ? 'disabled ' : '');
+                    trackControls += 'style="flex-shrink: 0; padding: 2px 8px; font-size: 14px;" class="bg-black">+</button>';
+                    trackControls += '</div>';
+                  }
+                  
+                  return `
+                    <div class="aspect-card ${isSelected ? 'selected' : ''}" 
+                         onclick="toggleAspect('${escapedId}')"
+                         style="position: relative;">
+                      ${trackControls}
+                      <div class="aspect-meta">${aspect.source} ${aspect.type}</div>
+                      <div class="aspect-name" style="margin-bottom: 4px;">${aspect.name}</div>
+                      <div class="aspect-description">${aspect.description}</div>
+                      ${!isSelected ? '<div style="margin-top: 8px;">Track: ' + aspect.track + '</div>' : ''}
+                    </div>
+                  `;
+                }).join('')}
+              </div>
+            </div>
+          </div>
+		  <hr />
+          
+          ${renderEdgesSkillsLanguagesRow()}
+		  <hr />
+          
+          <div style="margin-bottom: 32px;">
+            ${renderMilestones()}
+          </div>
+        </div>
+        
+        <div class="sticky-action-bar">
+          <button onclick="setMode('play')" class="primary">Save Changes</button>
+          <button onclick="setMode('play')">Cancel</button>
+        </div>
+      `;
+    }
+    
+    render();
+  </script>
+</body>
+</html>

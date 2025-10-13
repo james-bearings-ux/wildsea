@@ -1,0 +1,97 @@
+Origin	Amberclad	Endless Golden Age [Trait]	5	You didn't age throughout your imprisonment, and you don't seem to be aging now you're free either. A blessing, but a curious one.
+Origin	Amberclad	All So Familiar [Trait]	2	Muscle memory takes over. Treat conflicts as triumphs when interacting with newly uncovered pre-Verdant artefacts.
+Origin	Amberclad	Unbroken Family Line [Trait]	3	You may have been asleep for hundreds of years, but some of your kin have been thriving. Burn to tie an individual or settlement to your family in some way.
+Origin	Amberclad	Ambervein [Trait]	4	You’re weak to Blunt damage, but immune to the harmful effects of crezzerin.
+Origin	Amberclad	Dream-Dredge [Trait]	3	There are impressions of a forest-less world, but grasping them is like holding onto a dream. Use a task to gain a sliver of Pre-V information.
+Origin	Amberclad	Resokinesis [Trait]	4	Mark to gain a measure of control over sap, resins, and amber.
+Origin	Amberclad	Just a Scratch [Trait]	3	Mark to produce a resource, Warm Amber Shards or Dripping Resin.
+Origin	Amberclad	Shattered Eye [Gear]	3	Something you usually use to see is broken, ambered and still lingering in sleep. You can see glimpses of a person's recent dreams clinging to them if you concentrate.
+Origin	Amberclad	Fragmented Limb [Gear]	3	Cracked and floating just free of your body. When you take this gear, decide whether it deals CQ Blunt, Keen, or Spike damage (you can change this damage type by using a task).
+Origin	Amberclad	Heart of Resin [Gear]	1	Burn to create a perfect copy of yourself in living amber and drift into a deep sleep. You control the copy until it dies or you choose to destroy it, upon which time you wake with its memories and experiences as dreams.
+Origin	Amberclad	Half-Clogged Firearm [Gear]	4	A double-barreled pre-verdant shotgun, one of the firing chambers hopelessly clogged. Deals LR Blast damage.
+Origin	Amberclad	Shard-Cloak [Gear]	5	You’re resistant to three damage types, chosen from the following list: Keen, Spike, Serrated, Hewing, Salt.
+Origin	Amberclad	Pre-V Pet [Companion]	4	A faithful friend from the old times that was trapped, and freed, alongside you. Not particularly suited to the wild world, but most likely revelling in it.
+Origin	Amberclad	Closer to the Past [Trait]	4	Choose a skill you have zero ranks in. When under the effects of Pressure, this skill has ranks equal to the current Pressure Level (maximum three).
+Origin	Anchored	By a Thread [Trait]	1	Your grip on the world is tentative, but that does come with certain benefits. You are weak to salt and volt damage, but immune to blunt, keen and spike.
+Origin	Anchored	Spectral Variance [Trait]	3	Mark to become insubstantial for a short time, allowing you to float and pass through solid objects.
+Origin	Anchored	Mortal Needs [Trait]	2	Though you can do so if you choose, you have no real need to eat, drink, sleep or breathe.
+Origin	Anchored	Ethereal Healing [Trait]	3	When being healed or having your gear repaired, resources used are not consumed as normal - instead they degrade, giving them a negative tag (if they already have a negative tag, they’re consumed as normal).
+Origin	Anchored	Touch of the Beyond [Trait]	2	Once per scene, when your crew gains a resource, you can choose to give it the Spectral tag.
+Origin	Anchored	Geist Hand [Trait]	3	You can manipulate nearby objects without touching them, though the heavier they are the harder it is.
+Origin	Anchored	Death Mask [Gear]	3	Some anchored prefer to hide their face, letting the memories of their time among the living fade. Treat conflicts as triumphs when attempting to unnerve or unsettle.
+Origin	Anchored	Matching Death Mask Set [Gear]	1	Some anchored prefer to hide their face, letting the memories of their time among the living fade. Treat conflicts as triumphs when attempting to unnerve or unsettle. Now with a matching sawnana blade tongue attachment weapon, dealing CQ Volt or Salt damage. Haunter and Salt Lick. 
+Origin	Anchored	Siphoning Fork [Gear]	3	Whenever your crew gains a piece of cargo, gain a whisper related to it (or its previous owners) for yourself.
+Origin	Anchored	Phantom Blade [Gear]	3	The ghost of a sword hovering at your hip. Deals CQ salt damage, and doesn't have to be held to be used.
+Origin	Anchored	Anchor Fragment [Gear]	3	A smaller piece hewed from a greater whole. Burn to immediately and completely heal any one of your injuries.
+Origin	Anchored	Resonant Tether [Gear]	2	Spirits and the spectral realm become more visible and tangible to your entire crew in your presence.
+Origin	Anchored	Battered Ajna [Gear]	4	A stringed instrument meant to be played in tandem by the living and the dead, but you can play both parts. Empowers nearby spirits when played.
+Origin	Anchored	Tempered Anchor [Gear]	5	Your anchor to the world is reinforced against damage and tampering, a wise move for a fleeting ghost.
+Origin	Anchored	Faithful Spirit [Companion]	4	Loyal to the grave, and beyond. Mark to ignore the effects of an active mire for the rest of the scene.
+Origin	Anchored	Reavolver [Gear]	3	A six-shooter with permanently empty chambers, smelling of darkness and wandering ghosts. Deals LR Salt damage, and any spirit struck by this weapon is dragged into complete corporeality for a short time.
+Origin	Ridgeback	Barrel-Chested [Trait]	5	You may not be built fancy, but you are built sturdy.
+Origin	Ridgeback	Stone Hearted [Trait]	4	Once per scene, increase impact on any successful action taken whilst on ancient ground.
+Origin	Ridgeback	Search for Omens [Trait]	3	Mark to ask a question and receive an omen to interpret in return (supplied by the Firefly).
+Origin	Ridgeback	Thick Skin [Trait]	4	You’re resistant to three damage types, chosen from the following list: Blunt, Toxin, Cold, Salt, Volt.
+Origin	Ridgeback	Crushing Blows [Trait]	3	Your fists and feet are the only weapons you need. They deal CQ blunt and salt damage.
+Origin	Ridgeback	Fragments Like Gods [Trait]	2	Whenever you gain a stone-based resource, give it the Sacred tag.
+Origin	Ridgeback	Archaeodermis [Trait]	3	Your skin (or whatever you have as an outer covering) mimics the mountain you were raised on. You're immune to keen damage, as well as bites and stings from small creatures.
+Origin	Ridgeback	Chipping Tools [Gear]	4	Treat conflicts as triumphs when altering or working with stone or bone
+Origin	Ridgeback	Leviathan Furs [Gear]	4	You never mark mire when confronted with an unknown or terrifying beast, no matter the size.
+Origin	Ridgeback	Ritual Mask [Gear]	3	You can clearly see spirits and the spectral realm.
+Origin	Ridgeback	Whispering Charm [Gear]	3	Consume a whisper to learn a secret about a nearby individual (supplied by the Firefly).
+Origin	Ridgeback	Hexed Tooth [Gear]	3	Mark to levitate and control exposed bone.
+Origin	Ridgeback	Great Beast Horns [Gear]	3	These might have deep ceremonial meaning, or just cut an impressive silhouette - either way these horns deal CQ spike damage, and you ignore cut when defending yourself against charging opponents.
+Origin	Ridgeback	Shamanic Idol [Gear]	4	Holds a sliver of power from a not-quite-god. Deals LR salt damage.
+Origin	Ridgeback	Swift Hawk [Companion]	2	A surly, vicious bird that can deal LR keen damage. Once per scene, hijack to temporarily blind or distract an attacking opponent.
+Origin	Ridgeback	Mountain Snouter [Companion]	3	An ill-tempered boar with cruel tusks. Deals CQ spike damage, and is large enough to ride.
+Origin	Ridgeback	Surface Stone [Gear]	2	Not somethign to be worshipped, but most definitely something to be remembered. Burn to reduce the Pressure Level by one.
+Origin	Rootless	Family Ties [Trait]	3	When you make a discovery during a journey, mark to tie it to your family in some way (such as a blood relative, fleetfamily member or family friend).
+Origin	Rootless	Hull Hearted [Trait]	3	Once per scene, increase impact on any successful action taken whilst aboard a ship you own or crew.
+Origin	Rootless	Wild Words [Trait]	3	Mark to remember a rumour or folktale pertinent to your situation (supplied by the Firefly).
+Origin	Rootless	Needs Must [Trait]	4	You never mark mire for consuming food or drink, no matter the source or condition.
+Origin	Rootless	Born to Sail [Trait]	4	You always know true North, and ignore cut on movement-related actions caused by adverse seas or damage to your ship.
+Origin	Rootless	Sundew Senses [Trait]	3	You can instantly identify the presence and potential dangers of nearby predatory plants, no matter how well they're camouflaged.
+Origin	Rootless	Fleetfamily Scarf [Gear]	3	A beautifully made sporescarf passed from traveller to seasoned traveller. You're immune to the effects of bad air and airborne spores.
+Origin	Rootless	Nomad's Phrasebook [Gear]	2	Whenever you take a montage you can study your phrasebook (in addition to your usual task), gaining a smattering of any one language until your next montage.
+Origin	Rootless	Mechanical Limb [Gear]	5	A rusting prosthetic that feels no pain.
+Origin	Rootless	Fishing Lure [Gear]	3	Add a positive tag to any living specimen you acquire while fishing.
+Origin	Rootless	Patterned Sash [Gear]	3	Treat conflicts as triumphs when using social skills to affect animals.
+Origin	Rootless	Shortspear [Gear]	4	Traditionally used for deckside defence. Deals CQ spike damage.
+Origin	Rootless	Slingshot [Gear]	3	A simple slingshot, loaded with anything from stones to scrap to seeds. Deals LR blunt or blast damage.
+Origin	Rootless	Tarscale Armour [Gear]	4	Resist the hazardous effects of crezzerin exposure (searing, hallucinations, mutation).
+Origin	Rootless	Springfox [Companion]	3	A nimble wildsea vulpine known to dance in the wake of larger ships. Once per journey you may treat the outcome of a watch roll as Peace, no matter the result.
+Origin	Rootless	Ring-Tailed Rabble-Rouser [Companion]	4	A pugnacious lemur companion with a natural curiosity when it comes to the running of a wildsea vessel.
+Origin	Rootless	Adaptive Ratter [Companion]	2	A long-whiskered cat with a taste for chitin. The interior of any ship you crew resists insect incursions while you're on board, as does the deck (even without a pressure shell).
+Origin	Shankling	Head for Heights [Trait]	4	You’re immune to vertigo, nausea and mire caused by heights and precarious positions.
+Origin	Shankling	Skybridge Step [Trait]	5	An elegant defensive dance that keeps you out of harm’s way.
+Origin	Shankling	High Ground [Trait]	3	Once per scene, increase impact on any successful action taken whilst you have the high ground.
+Origin	Shankling	Rising Meteor [Trait]	4	Mark to sprint up a surface that would usually require you to climb it, even if it’s unstable.
+Origin	Shankling	From Bough to Brain [Trait]	5	Use a task to study a tree (of any size) and learn its secrets, age and condition (supplied by the Firefly).
+Origin	Shankling	Hawksight [Trait]	4	You can see much further and in greater clarity than the typical wildsailor.
+Origin	Shankling	Grappling Hook [Trait]	2	When the hook is thrown and anchored it allows you to swing over chasms and climb sheer surfaces. Treat conflicts as triumphs when climbing or swinging.
+Origin	Shankling	Glider's Cloak [Gear]	3	You can land safely after any prepared fall.
+Origin	Shankling	Balancing Staff [Gear]	4	Both a weapon and an acrobatic aid. Deals CQ blunt damage.
+Origin	Shankling	Raptor's Claw [Gear]	3	A talon-like gauntlet inspired by the hunting patterns of wingless birds. Deals CQ hewing damage, and can be used to make controlled descents down vertical surfaces.
+Origin	Shankling	Broadwood Bow [Gear]	3	Exquisitely crafted. Deals LR spike or toxin damage.
+Origin	Shankling	Feathered Mantle [Gear]	3	You’re resistant to three damage types, chosen from the following list: Blunt, Serrated, Toxin, Frost, Salt.
+Origin	Shankling	Sentinel Skywing [Companion]	2	A watchful bird, often used for scouting remote areas. Mark to learn a secret of the surrounding waves.
+Origin	Shankling	Bark-Peeling Ferret [Companion]	4	Expert at routing hidden bugs, even from the mighty ironroots. Mark or use a task to gain an insect specimen from a nearby branch or tree trunk.
+Origin	Shankling	Feathered Raptor [Companion]	3	A beautifully-feathered lizard, the result of generations of careful breeding to engender a modicum of sociability (still not quite there yet). Deals CQ hewing damage, and is large enough to ride.
+Origin	Shankling	Flutter-Lamps [Gear]	4	A set of moth-lanterns on a string, carrying both light and cheer to fight the encroaching dark. Sheds a gentle glow, and nearby crew ignore any mire that would be marked due to darkness (living or otherwise).
+Origin	Spit-Born	Pit-Fight Survivor [Trait]	5	You learnt how to take a beating and stay standing.
+Origin	Spit-Born	Urban Exploration [Trait]	3	Mark to discover a friendly lead on services or information when in a port or city.
+Origin	Spit-Born	Cobble Hearted [Trait]	3	Once per scene, increase impact on any successful action taken whilst in a port or city.
+Origin	Spit-Born	Every Street Tells a Story [Trait]	3	Mark to learn a secret of a port or city you’re docked at.
+Origin	Spit-Born	Through the Throng [Trait]	3	Treat conflicts as successes when moving through crowds, herds and swarms.
+Origin	Spit-Born	Shrewd Marketeer [Trait]	3	Treat conflict as triumphs when haggling over an exchange of cargo or resources.
+Origin	Spit-Born	Spit & Polish [Trait]	3	Use a task to remove a negative tag (such as rusted or broken) from any piece of salvage.
+Origin	Spit-Born	Life of Scraps [Trait]	3	When gaining a benefit from a meal or alchemical concoction, ignore any associated negative effects.
+Origin	Spit-Born	Scrutineer Eyepiece [Gear]	4	You can tell a fake, forgery or counterfeit item at a glance.
+Origin	Spit-Born	Acrid Long-Stem [Gear]	4	A spice-filled pipe made to burn its contents with acid rather than flame. Injury tracks you become subject to are one box shorter than normal.
+Origin	Spit-Born	Docker Threads [Gear]	3	Resist the hazardous effects of crezzerin exposure (searing, hallucinations, mutation).
+Origin	Spit-Born	Brass Knucle [Gear]	4	A brute but reliable weapon for street fights. Deals CQ blunt damage.
+Origin	Spit-Born	Black-Market Pistol [Gear]	4	A firearm sourced from unsavoury types. Deals LR blast damage.
+Origin	Spit-Born	Trained Ratroach [Companion]	1	A gutter-scavenger by nature, now working on your behalf. Once per montage gain a small salvage or specimen resource with a negative tag (in addition to your usual task).
+Origin	Spit-Born	Calico Slink [Companion]	3	A semi-spectral cat winds its way around your legs. You have the ability to see clearly without light.
+Origin	Spit-Born	Pangopod [Companion]	4	Half pangolin, half squid. Surprisingly cute.
+Origin	Spit-Born	Pilferer [Trait]	4	Whenever your crew gains a piece of cargo, gain a resource related to it for yourself (either salvage or specimen, whichever is most appropriate).

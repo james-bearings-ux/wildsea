@@ -1,0 +1,1392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wildsea Character Sheet</title>
+  <link href="https://fonts.googleapis.com/css2?family=Faustina:wght@400;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #FFFFFF;
+      color: #111827;
+    }
+    
+    .font-faustina {
+      font-family: 'Faustina', serif;
+    }
+    
+    button, select, input {
+      font-family: inherit;
+      font-size: inherit;
+    }
+    
+    button {
+      border: 2px solid #6B7280;
+      background: white;
+      padding: 8px 12px;
+      border-radius: 2px;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: 14px;
+      font-weight: 600;
+    }
+    
+    button:hover:not(:disabled) {
+      background: #F3F4F6;
+    }
+    
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    
+    button.bg-black {
+      background: #000000;
+      color: white;
+      border-color: #000000;
+    }
+    
+    button.bg-black:hover:not(:disabled) {
+      background: #1F2937;
+    }
+    
+    button.primary {
+      background: #A91D3A;
+      color: white;
+      border-color: #A91D3A;
+    }
+    
+    button.primary:hover:not(:disabled) {
+      background: #8B1730;
+    }
+    
+    select {
+      border: 2px solid #6B7280;
+      background: white;
+      padding: 8px;
+      border-radius: 2px;
+      cursor: pointer;
+    }
+    
+    input {
+      border: none;
+      border-bottom: 2px solid #000000;
+      background: white;
+      padding: 8px 10px;
+      outline: none;
+    }
+    
+    input:disabled {
+      border-bottom-color: #E5E7EB;
+      color: #D1D5DB;
+    }
+    
+    input::placeholder {
+      color: #9CA3AF;
+    }
+    
+    .aspect-card {
+      border: 2px solid #6B7280;
+      border-radius: 2px;
+      padding: 12px 16px;
+      background: white;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .aspect-card.selected {
+      background: #000000;
+      border-color: #0F172A;
+      color: white;
+    }
+    
+    .aspect-card.selected .aspect-type {
+      color: #9CA3AF;
+    }
+    
+    .aspect-card.disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    
+    .track-box {
+      width: 26px;
+      height: 26px;
+      border: 2px solid #6B7280;
+      border-radius: 4px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .track-box.small {
+      width: 16px;
+      height: 16px;
+    }
+    
+    .track-box.marked {
+      background: #DC2626;
+      border-color: #B91C1C;
+      color: white;
+    }
+    
+    .track-box.active {
+      background: #000000;
+      border-color: #000000;
+      color: white;
+    }
+    
+    .track-box.burned {
+      background: #92400E;
+      border-color: #78350F;
+      color: white;
+    }
+    
+    .track-box.new {
+      background: #84CC16;
+      border-color: #4D7C0F;
+    }
+    
+    .edge-card {
+      border: 2px solid #6B7280;
+      border-radius: 2px;
+      padding: 12px 16px;
+      background: white;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .edge-card.selected {
+      background: #000000;
+      border-color: #0F172A;
+      color: white;
+    }
+    
+    .edge-card.selected .edge-tagline {
+      color: #9CA3AF;
+    }
+    
+    .edge-card.disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    
+    .sticky-action-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: white;
+      border-top: 1px solid #9CA3AF;
+      padding: 10px;
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+      z-index: 1000;
+    }
+    
+    .budget-indicator {
+      background: #000000;
+      color: white;
+      padding: 4px 8px;
+      border-radius: 2px;
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 40px;
+      font-size: 18px;
+      color: #6B7280;
+    }
+    
+    input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      border: 2px solid #6B7280;
+      border-radius: 2px;
+      cursor: pointer;
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    
+    input[type="checkbox"]:checked {
+      background: #000000;
+      border-color: #000000;
+    }
+    
+    input[type="checkbox"]:checked::after {
+      content: '✓';
+      color: white;
+      font-size: 14px;
+      font-weight: bold;
+    }
+    
+    input[type="checkbox"]:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    
+    /* Typography utilities */
+    .section-header {
+      font-family: 'Faustina', serif;
+      font-size: 22px;
+      font-weight: 600;
+      color: #6B7280;
+      margin: 0 0 12px 0;
+    }
+    
+    .subsection-header {
+      font-family: 'Faustina', serif;
+      font-size: 16px;
+      font-weight: 600;
+      color: #6B7280;
+      margin: 0;
+    }
+    
+    .char-name-header {
+      font-family: 'Faustina', serif;
+      font-size: 24px;
+      font-weight: 700;
+    }
+    
+    .char-label {
+      font-family: 'Faustina', serif;
+      font-size: 12px;
+      color: #6B7280;
+      margin-bottom: 4px;
+    }
+    
+    /* Layout utilities */
+    .grid-3col {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      align-items: start;
+    }
+    
+    .grid-milestone {
+      display: grid;
+      grid-template-columns: 60px 1fr 110px;
+      gap: 8px;
+      align-items: center;
+    }
+    
+    .flex-between {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .flex-col-gap {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    
+    /* Input utilities */
+    .text-input {
+      border: none;
+      border-bottom: 2px solid #000000;
+      background: white;
+      padding: 8px 10px;
+      outline: none;
+      width: 100%;
+      font-size: 14px;
+    }
+    
+    .text-input:disabled {
+      border-bottom-color: #E5E7EB;
+      color: #D1D5DB;
+    }
+    
+    .text-input::placeholder {
+      color: #9CA3AF;
+    }
+    
+    .select-input {
+      border: 2px solid #6B7280;
+      background: white;
+      padding: 8px;
+      border-radius: 2px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    
+    /* Content utilities */
+    .aspect-name {
+      font-weight: 600;
+      font-size: 16px;
+    }
+    
+    .aspect-meta {
+      font-size: 12px;
+      color: #6B7280;
+      margin-bottom: 4px;
+    }
+    
+    .aspect-description {
+      font-size: 12px;
+      color: #6B7280;
+    }
+    
+    .skill-name {
+      font-weight: 600;
+    }
+    
+    .skill-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 4px 0;
+      border-bottom: 1px solid #E5E7EB;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <div class="loading">Loading aspect data...</div>
+  </div>
+  
+  <script>    
+    // Core game data
+    const GAME_DATA = {
+      bloodlines: ['Ardent', 'Ektus', 'Gau', 'Ironbound', 'Ketra', 'Mothryn', 'Tzelicrae'],
+      origins: ['Amberclad', 'Anchored', 'Ridgeback', 'Rootless', 'Shankling', 'Spit-Born'],
+      posts: ['Alchemist', 'Char', 'Corsair', 'Crash', 'Dredger', 'Hacker', 'Horizoneer', 'Hunter', 'Mesmer', 'Navigator', 'Rattlehand', 'Screw', 'Slinger', 'Steep', 'Surgeon', 'Tempest', 'Wordbearer'],
+      edges: [
+        { name: 'Grace', tagline: 'An edge of elegance, precision, & agility' },
+        { name: 'Iron', tagline: 'An edge of strength, endurance, & fortitude' },
+        { name: 'Instinct', tagline: 'An edge of awareness, intuition, & reaction' },
+        { name: 'Teeth', tagline: 'An edge of combat, violence, & aggression' },
+        { name: 'Sharps', tagline: 'An edge of cunning, knowledge, & expertise' },
+        { name: 'Tides', tagline: 'An edge of luck, fortune, & supernatural' },
+        { name: 'Veils', tagline: 'An edge of stealth, deception, & subterfuge' }
+      ],
+      skills: [
+        'Break', 'Concoct', 'Cook', 'Delve', 'Flourish', 'Hack',
+        'Harvest', 'Hunt', 'Outwit', 'Rattle', 'Scavenge', 'Sense',
+        'Study', 'Sway', 'Tend', 'Vault', 'Wavewalk'
+      ],
+      languages: [
+        'Low Sour', 'Raka Spit', 'Chthonic', 'Lyre-Bite',
+        'Saprekk', 'Old Hand', 'Gaudimm', 'Signaling', 'Knock'
+      ],
+      aspects: {} // Will be populated below
+    };
+    
+    // Initialize character state
+    let character = {
+      mode: 'creation',
+      name: '',
+      bloodline: 'Tzelicrae',
+      origin: 'Ridgeback',
+      post: 'Mesmer',
+      selectedAspects: [],
+      selectedEdges: [],
+      skills: {},
+      languages: { 'Low Sour': 3 },
+      milestones: []
+    };
+    
+    // Budget tracking
+    const BUDGETS = {
+      aspects: 4,
+      edges: 3,
+      skillPoints: 8
+    };
+
+    // Load aspect data inline (parsed from bloodline.txt, origin.txt, post.txt)
+    async function loadAspectData() {
+      const bloodlineText = `Bloodline	Ardent	Tough as Nails [Trait]	4	You're a natural survivor. Rolls made to treat or heal an injury you're suffering from treat conflicts as triumphs.
+Bloodline	Ardent	Ghostsight [Trait]	3	You can clearly see spirits and the spectral realm.
+Bloodline	Ardent	Strong Stomach [Trait]	3	Reduce the impact of poisons, diseases and sickness.
+Bloodline	Tzelicrae	Iron Satchel [Gear]	4	A secure, wearable lockbox that can only be opened by a single specific spider within you.
+Bloodline	Tzelicrae	Blade of Husks [Gear]	3	A ritual weapon made from the chitin of lost colonymembers. Deals CQ keen or salt damage.
+Bloodline	Tzelicrae	Swarm-Scout [Companion]	3	A single spider you can send ahead as a scout, allowing you to see and hear at a distance.
+Bloodline	Tzelicrae	Rogue Doomsayer [Companion]	3	An unsettled fragment of personality. Mark to request a dark and unbidden (but likely pertinent) thought from the Firefly.
+Bloodline	Tzelicrae	Bidingweb [Trait]	2	Slim filaments surround you, almost impossible to see. When an event would take you by surprise, mark to hijack focus.`;
+
+      const originText = `Origin	Ridgeback	Barrel-Chested [Trait]	5	You may not be built fancy, but you are built sturdy.
+Origin	Ridgeback	Stone Hearted [Trait]	4	Once per scene, increase impact on any successful action taken whilst on ancient ground.
+Origin	Ridgeback	Search for Omens [Trait]	3	Mark to ask a question and receive an omen to interpret in return (supplied by the Firefly).
+Origin	Ridgeback	Thick Skin [Trait]	4	You're resistant to three damage types, chosen from the following list: Blunt, Toxin, Cold, Salt, Volt.
+Origin	Ridgeback	Mountain Snouter [Companion]	3	An ill-tempered boar with cruel tusks. Deals CQ spike damage, and is large enough to ride.
+Origin	Ridgeback	Surface Stone [Gear]	2	Not somethign to be worshipped, but most definitely something to be remembered. Burn to reduce the Pressure Level by one.`;
+
+      const postText = `Post	Mesmer	Autohypnosis [Trait]	5	You've learned to meditate rather than sleep, allowing you to stay far more aware while resting than most.
+Post	Mesmer	Meditative Healing [Trait]	4	Using a task to meditate in a peaceful environment allows you to heal each of your damaged traits or each of your injury tracks by one.
+Post	Mesmer	An Uncomfortable Understanding [Trait]	4	Burn to clear one of a crewmate's mire tracks entirely.
+Post	Mesmer	Empty the Mind [Trait]	4	Ignore cut from pain, hallucination and distractions while trying to act.
+Post	Mesmer	Knowing The Unknown [Trait]	3	Mark to identify a target's secret fear, or burn to accurately evaluate the truth of a statement.
+Post	Mesmer	Parasite Thought [Trait]	2	A living thought that's taken root in your mind, invisible but able to interact with the world. Allows you to hold and manipulate more objects than usual.
+Post	Mesmer	Intricate Tattoos [Trait]	3	You're immune to confusion and hallucinations that you don't invite or create yourself.
+Post	Mesmer	Staredown [Trait]	5	Locking eyes with an opponent allows you to assail their mind with unwanted sensation, manifesting as LR Salt damage. Only works on creatures with sight.
+Post	Mesmer	Chameleon Veil [Gear]	3	Use a task to hold still and blend in with your surroundings, becoming almost impossible to notice until you move again.
+Post	Mesmer	Shard of Dream-Soaked Amber [Gear]	3	Consume a specimen to experience a thought or memory from a nearby individual.
+Post	Mesmer	Seven-Eye Scrawl [Gear]	2	Eyes are daubed across your body, each of them able to perceive the world in a different way. Mark to gain a specialized form of sight for a brief time (such as the ability to see ghosts, heat, or magnetism).
+Post	Mesmer	Smoked-Glass Hookah [Gear]	3	Releases a steady stream of wispy smoke. Mark to control smoke or vapours.
+Post	Mesmer	Chromiguana [Companion]	4	Slow-moving and sleepy, usually found curled up around your shoulders or at the bottom of a bag. A surprisingly relaxing presence - treat conflicts as triumphs when trying to calm yourself or others.
+Post	Mesmer	Pinned Butterfly [Companion]	3	Mark to wake the butterfly for a brief time. While awake, the hypnotic patterns of the butterfly's wings induce drowsiness in those that catch sight of them.`;
+
+      function parseAspectData(text) {
+        const lines = text.split('\n').filter(line => line.trim());
+        const aspectsBySource = {};
+        
+        for (const line of lines) {
+          const parts = line.split('\t');
+          if (parts.length < 5) continue;
+          
+          const source = parts[1];
+          const nameWithType = parts[2];
+          const track = parseInt(parts[3]);
+          const description = parts[4];
+          
+          const typeMatch = nameWithType.match(/\[(.+?)\]/);
+          const type = typeMatch ? typeMatch[1] : 'Trait';
+          const name = nameWithType.replace(/\s*\[.+?\]\s*/, '').trim();
+          
+          if (!aspectsBySource[source]) {
+            aspectsBySource[source] = [];
+          }
+          
+          aspectsBySource[source].push({ name, type, track, description });
+        }
+        
+        return aspectsBySource;
+      }
+
+      const bloodlineAspects = parseAspectData(bloodlineText);
+      const originAspects = parseAspectData(originText);
+      const postAspects = parseAspectData(postText);
+
+      GAME_DATA.aspects = {
+        ...bloodlineAspects,
+        ...originAspects,
+        ...postAspects
+      };
+      
+      render();
+    }
+    
+    function getAvailableAspects() {
+      const available = [];
+      
+      // Bloodline aspects
+      const bloodlineAspects = GAME_DATA.aspects[character.bloodline] || [];
+      bloodlineAspects.forEach(aspect => {
+        available.push({
+          ...aspect,
+          source: character.bloodline,
+          category: 'Bloodline'
+        });
+      });
+      
+      // Origin aspects  
+      const originAspects = GAME_DATA.aspects[character.origin] || [];
+      originAspects.forEach(aspect => {
+        available.push({
+          ...aspect,
+          source: character.origin,
+          category: 'Origin'
+        });
+      });
+      
+      // Post aspects
+      const postAspects = GAME_DATA.aspects[character.post] || [];
+      postAspects.forEach(aspect => {
+        available.push({
+          ...aspect,
+          source: character.post,
+          category: 'Post'
+        });
+      });
+      
+      return available;
+    }
+    
+    function toggleAspect(aspectId) {
+      if (character.mode !== 'creation' && character.mode !== 'advancement') return;
+      
+      const index = character.selectedAspects.findIndex(a => a.id === aspectId);
+      
+      if (index >= 0) {
+        // Deselect
+        character.selectedAspects.splice(index, 1);
+      } else {
+        // Check budget in creation mode
+        if (character.mode === 'creation' && character.selectedAspects.length >= BUDGETS.aspects) {
+          return;
+        }
+        
+        // Select
+        const allAspects = getAvailableAspects();
+        const aspect = allAspects.find(a => {
+          const id = `${a.source}-${a.name}`;
+          return id === aspectId;
+        });
+        
+        if (aspect) {
+          character.selectedAspects.push({
+            id: aspectId,
+            ...aspect,
+            trackSize: aspect.track,
+            damageStates: Array(aspect.track).fill('default')
+          });
+        }
+      }
+      
+      render();
+    }
+    
+    function toggleEdge(edgeName) {
+      if (character.mode !== 'creation') return;
+      
+      const index = character.selectedEdges.indexOf(edgeName);
+      
+      if (index >= 0) {
+        character.selectedEdges.splice(index, 1);
+      } else {
+        if (character.selectedEdges.length >= BUDGETS.edges) {
+          return;
+        }
+        character.selectedEdges.push(edgeName);
+      }
+      
+      render();
+    }
+    
+    function adjustSkill(name, delta) {
+      const current = character.skills[name] || 0;
+      const newValue = Math.max(0, Math.min(character.mode === 'creation' ? 2 : 3, current + delta));
+      
+      if (character.mode === 'creation') {
+        const totalPoints = Object.values(character.skills).reduce((sum, v) => sum + v, 0);
+        const languagePoints = Object.entries(character.languages)
+          .filter(([name]) => name !== 'Low Sour')
+          .reduce((sum, [,v]) => sum + v, 0);
+        
+        if (delta > 0 && totalPoints + languagePoints >= BUDGETS.skillPoints) {
+          return;
+        }
+      }
+      
+      if (newValue === 0) {
+        delete character.skills[name];
+      } else {
+        character.skills[name] = newValue;
+      }
+      
+      render();
+    }
+    
+    function adjustLanguage(name, delta) {
+      if (name === 'Low Sour' && character.mode === 'creation') {
+        return; // Can't modify Low Sour in creation
+      }
+      
+      const current = character.languages[name] || 0;
+      const newValue = Math.max(0, Math.min(character.mode === 'creation' ? 2 : 3, current + delta));
+      
+      if (character.mode === 'creation') {
+        const skillPoints = Object.values(character.skills).reduce((sum, v) => sum + v, 0);
+        const totalPoints = Object.entries(character.languages)
+          .filter(([n]) => n !== 'Low Sour')
+          .reduce((sum, [,v]) => sum + v, 0);
+        
+        if (delta > 0 && skillPoints + totalPoints >= BUDGETS.skillPoints) {
+          return;
+        }
+      }
+      
+      if (newValue === 0 && name !== 'Low Sour') {
+        delete character.languages[name];
+      } else {
+        character.languages[name] = newValue;
+      }
+      
+      render();
+    }
+    
+    function cycleAspectDamage(aspectId, boxIndex) {
+      if (character.mode !== 'play') return;
+      
+      const aspect = character.selectedAspects.find(a => a.id === aspectId);
+      if (!aspect) return;
+      
+      const states = ['default', 'marked', 'burned'];
+      const currentState = aspect.damageStates[boxIndex];
+      const currentIndex = states.indexOf(currentState);
+      const nextIndex = (currentIndex + 1) % states.length;
+      
+      aspect.damageStates[boxIndex] = states[nextIndex];
+      render();
+    }
+    
+    function expandAspectTrack(aspectId, delta) {
+      if (character.mode !== 'advancement') return;
+      
+      const aspect = character.selectedAspects.find(a => a.id === aspectId);
+      if (!aspect) return;
+      
+      const newSize = aspect.trackSize + delta;
+      if (newSize < aspect.track || newSize > 5) return;
+      
+      if (delta > 0) {
+        aspect.damageStates.push('default');
+      } else {
+        aspect.damageStates.pop();
+      }
+      
+      aspect.trackSize = newSize;
+      render();
+    }
+    
+    function addMilestone() {
+      character.milestones.push({
+        id: Date.now().toString(),
+        used: false,
+        name: '',
+        scale: 'Minor'
+      });
+      render();
+    }
+    
+    function updateMilestoneName(id, name) {
+      const milestone = character.milestones.find(m => m.id === id);
+      if (milestone) {
+        milestone.name = name;
+      }
+    }
+    
+    function updateMilestoneScale(id, scale) {
+      const milestone = character.milestones.find(m => m.id === id);
+      if (milestone) {
+        milestone.scale = scale;
+        render();
+      }
+    }
+    
+    function toggleMilestoneUsed(id) {
+      const milestone = character.milestones.find(m => m.id === id);
+      if (milestone) {
+        milestone.used = !milestone.used;
+        render();
+      }
+    }
+    
+    function deleteMilestone(id) {
+      const index = character.milestones.findIndex(m => m.id === id);
+      if (index >= 0) {
+        character.milestones.splice(index, 1);
+        render();
+      }
+    }
+    
+    function renderMilestones() {
+      return `
+        <div style="margin-bottom: 32px;">
+          <h2 class="section-header">Milestones</h2>
+          
+          ${character.milestones.length > 0 ? `
+            <div class="grid-milestone" style="margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid #E5E7EB;">
+              <div class="subsection-header" style="text-align: center;">Used</div>
+              <div class="subsection-header">Name</div>
+              <div class="subsection-header">Scale</div>
+            </div>
+          ` : ''}
+          
+          ${character.milestones.map(milestone => `
+            <div class="grid-milestone" style="margin-bottom: 12px;">
+              <div style="display: flex; align-items: center; justify-content: center;">
+                <input type="checkbox" 
+                       ${milestone.used ? 'checked' : ''} 
+                       onchange="toggleMilestoneUsed('${milestone.id}')">
+              </div>
+              <input type="text" 
+                     class="text-input"
+                     value="${milestone.name}" 
+                     placeholder="Enter milestone name..."
+                     ${milestone.used ? 'disabled' : ''}
+                     onchange="updateMilestoneName('${milestone.id}', this.value)">
+              <select class="select-input"
+                      ${milestone.used ? 'disabled' : ''} 
+                      onchange="updateMilestoneScale('${milestone.id}', this.value)"
+                      style="width: 100%;">
+                <option value="Minor" ${milestone.scale === 'Minor' ? 'selected' : ''}>Minor</option>
+                <option value="Major" ${milestone.scale === 'Major' ? 'selected' : ''}>Major</option>
+              </select>
+            </div>
+          `).join('')}
+          
+          <button onclick="addMilestone()" style="width: 100%; margin-top: ${character.milestones.length > 0 ? '12' : '0'}px;">+ New Milestone</button>
+        </div>
+      `;
+    }
+    
+    function generateRandomCharacter() {
+      character.name = 'Random Character';
+      character.bloodline = GAME_DATA.bloodlines[Math.floor(Math.random() * GAME_DATA.bloodlines.length)];
+      character.origin = GAME_DATA.origins[Math.floor(Math.random() * GAME_DATA.origins.length)];
+      character.post = GAME_DATA.posts[Math.floor(Math.random() * GAME_DATA.posts.length)];
+      
+      // Reset selections
+      character.selectedAspects = [];
+      character.selectedEdges = [];
+      character.skills = {};
+      character.languages = { 'Low Sour': 3 };
+      character.milestones = [];
+      
+      // Random aspects
+      const allAspects = getAvailableAspects();
+      const shuffled = [...allAspects].sort(() => Math.random() - 0.5);
+      for (let i = 0; i < Math.min(4, shuffled.length); i++) {
+        const aspect = shuffled[i];
+        character.selectedAspects.push({
+          id: `${aspect.source}-${aspect.name}`,
+          ...aspect,
+          trackSize: aspect.track,
+          damageStates: Array(aspect.track).fill('default')
+        });
+      }
+      
+      // Random edges
+      const shuffledEdges = [...GAME_DATA.edges].sort(() => Math.random() - 0.5);
+      character.selectedEdges = shuffledEdges.slice(0, 3).map(e => e.name);
+      
+      // Random skills
+      let pointsLeft = BUDGETS.skillPoints;
+      while (pointsLeft > 0) {
+        const skill = GAME_DATA.skills[Math.floor(Math.random() * GAME_DATA.skills.length)];
+        const current = character.skills[skill] || 0;
+        if (current < 2) {
+          character.skills[skill] = current + 1;
+          pointsLeft--;
+        }
+      }
+      
+      // Sample milestones
+      character.milestones.push({
+        id: Date.now().toString(),
+        used: false,
+        name: 'Survived the drown',
+        scale: 'Major'
+      });
+      character.milestones.push({
+        id: (Date.now() + 1).toString(),
+        used: true,
+        name: 'Survived the fire',
+        scale: 'Major'
+      });
+      
+      render();
+    }
+    
+    function createCharacter() {
+      // Validate aspects
+      if (character.selectedAspects.length !== BUDGETS.aspects) {
+        alert(`Please select exactly ${BUDGETS.aspects} aspects`);
+        return;
+      }
+      
+      // Validate edges
+      if (character.selectedEdges.length !== BUDGETS.edges) {
+        alert(`Please select exactly ${BUDGETS.edges} edges`);
+        return;
+      }
+      
+      // Validate skills/languages points
+      const skillPoints = Object.values(character.skills).reduce((sum, v) => sum + v, 0);
+      const languagePoints = Object.entries(character.languages)
+        .filter(([name]) => name !== 'Low Sour')
+        .reduce((sum, [,v]) => sum + v, 0);
+      
+      if (skillPoints + languagePoints !== BUDGETS.skillPoints) {
+        alert(`Please allocate all ${BUDGETS.skillPoints} skill/language points (currently allocated: ${skillPoints + languagePoints})`);
+        return;
+      }
+      
+      character.mode = 'play';
+      render();
+    }
+    
+    function setMode(mode) {
+      character.mode = mode;
+      render();
+    }
+    
+    function render() {
+      const app = document.getElementById('app');
+      
+      if (character.mode === 'creation') {
+        renderCreationMode(app);
+      } else if (character.mode === 'play') {
+        renderPlayMode(app);
+      } else if (character.mode === 'advancement') {
+        renderAdvancementMode(app);
+      }
+    }
+    
+    function renderCreationMode(app) {
+      const allAspects = getAvailableAspects();
+      const bloodlineAspects = allAspects.filter(a => a.category === 'Bloodline');
+      const originAspects = allAspects.filter(a => a.category === 'Origin');
+      const postAspects = allAspects.filter(a => a.category === 'Post');
+      
+      const aspectsSelected = character.selectedAspects.length;
+      const edgesSelected = character.selectedEdges.length;
+      
+      const skillPoints = Object.values(character.skills).reduce((sum, v) => sum + v, 0);
+      const languagePoints = Object.entries(character.languages)
+        .filter(([name]) => name !== 'Low Sour')
+        .reduce((sum, [,v]) => sum + v, 0);
+      const totalPoints = skillPoints + languagePoints;
+      
+      const aspectsBudgetMet = aspectsSelected >= BUDGETS.aspects;
+      const edgesBudgetMet = edgesSelected >= BUDGETS.edges;
+      const pointsBudgetMet = totalPoints >= BUDGETS.skillPoints;
+      
+      app.innerHTML = `
+        <div style="padding: 20px; max-width: 1400px; margin: 0 auto; padding-bottom: 80px;">
+          <div style="margin-bottom: 20px;">
+            <label style="display: block; margin-bottom: 8px; font-weight: 600;">Character Name</label>
+            <input type="text" value="${character.name}" 
+                   onchange="character.name = this.value; render();"
+                   placeholder="Enter name..." 
+                   style="width: 300px; font-size: 16px; padding: 8px 10px; border: none; border-bottom: 2px solid #000000; outline: none;">
+          </div>
+          
+          <div style="margin-bottom: 40px;">
+            <h2 class="section-header">Core Elements</h2>
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px;">
+              <div>
+                <label style="display: block; margin-bottom: 8px; font-weight: 600;">Bloodline</label>
+                <select onchange="character.bloodline = this.value; character.selectedAspects = []; render();" 
+                        class="select-input" style="width: 100%; font-size: 16px;">
+                  ${GAME_DATA.bloodlines.map(b => `<option value="${b}" ${character.bloodline === b ? 'selected' : ''}>${b}</option>`).join('')}
+                </select>
+              </div>
+              <div>
+                <label style="display: block; margin-bottom: 8px; font-weight: 600;">Origin</label>
+                <select onchange="character.origin = this.value; character.selectedAspects = []; render();" 
+                        class="select-input" style="width: 100%; font-size: 16px;">
+                  ${GAME_DATA.origins.map(o => `<option value="${o}" ${character.origin === o ? 'selected' : ''}>${o}</option>`).join('')}
+                </select>
+              </div>
+              <div>
+                <label style="display: block; margin-bottom: 8px; font-weight: 600;">Post</label>
+                <select onchange="character.post = this.value; character.selectedAspects = []; render();" 
+                        class="select-input" style="width: 100%; font-size: 16px;">
+                  ${GAME_DATA.posts.map(p => `<option value="${p}" ${character.post === p ? 'selected' : ''}>${p}</option>`).join('')}
+                </select>
+              </div>
+            </div>
+          </div>
+          
+          <div style="margin-bottom: 40px;">
+            <div class="flex-between" style="margin-bottom: 16px;">
+              <h2 class="section-header" style="margin: 0;">Aspects</h2>
+              <div class="budget-indicator">${aspectsSelected}/${BUDGETS.aspects}</div>
+            </div>
+            <div class="grid-3col">
+              <div class="flex-col-gap">
+                <h3 class="subsection-header">${character.bloodline}</h3>
+                ${bloodlineAspects.map(aspect => {
+                const id = `${aspect.source}-${aspect.name}`;
+                const isSelected = character.selectedAspects.some(a => a.id === id);
+                const isDisabled = !isSelected && aspectsBudgetMet;
+                const escapedId = id.replace(/'/g, "\\'");
+                return `
+                  <div class="aspect-card ${isSelected ? 'selected' : ''} ${isDisabled ? 'disabled' : ''}" 
+                       onclick="${isDisabled ? '' : `toggleAspect('${escapedId}')`}">
+                    <div style="display: flex; gap: 4px; padding-top: 4px; margin-bottom: 4px;">
+                      ${Array(aspect.track).fill(0).map(() => `<div class="track-box small"></div>`).join('')}
+                    </div>
+                    <div class="flex-between" style="margin-bottom: 4px;">
+                      <div class="aspect-name">${aspect.name}</div>
+                      <div class="aspect-type" style="font-size: 12px; font-weight: 500; color: #6B7280;">${aspect.type}</div>
+                    </div>
+                    <div class="aspect-description" style="color: ${isSelected ? '#9CA3AF' : '#6B7280'};">${aspect.description}</div>
+                  </div>
+                `;
+              }).join('')}
+              </div>
+              
+              <div class="flex-col-gap">
+                <h3 class="subsection-header">${character.origin}</h3>
+                ${originAspects.map(aspect => {
+                const id = `${aspect.source}-${aspect.name}`;
+                const isSelected = character.selectedAspects.some(a => a.id === id);
+                const isDisabled = !isSelected && aspectsBudgetMet;
+                const escapedId = id.replace(/'/g, "\\'");
+                return `
+                  <div class="aspect-card ${isSelected ? 'selected' : ''} ${isDisabled ? 'disabled' : ''}" 
+                       onclick="${isDisabled ? '' : `toggleAspect('${escapedId}')`}">
+                    <div style="display: flex; gap: 4px; padding-top: 4px; margin-bottom: 4px;">
+                      ${Array(aspect.track).fill(0).map(() => `<div class="track-box small"></div>`).join('')}
+                    </div>
+                    <div class="flex-between" style="margin-bottom: 4px;">
+                      <div class="aspect-name">${aspect.name}</div>
+                      <div class="aspect-type" style="font-size: 12px; font-weight: 500; color: #6B7280;">${aspect.type}</div>
+                    </div>
+                    <div class="aspect-description" style="color: ${isSelected ? '#9CA3AF' : '#6B7280'};">${aspect.description}</div>
+                  </div>
+                `;
+              }).join('')}
+              </div>
+              
+              <div class="flex-col-gap">
+                <h3 class="subsection-header">${character.post}</h3>
+                ${postAspects.map(aspect => {
+                const id = `${aspect.source}-${aspect.name}`;
+                const isSelected = character.selectedAspects.some(a => a.id === id);
+                const isDisabled = !isSelected && aspectsBudgetMet;
+                const escapedId = id.replace(/'/g, "\\'");
+                return `
+                  <div class="aspect-card ${isSelected ? 'selected' : ''} ${isDisabled ? 'disabled' : ''}" 
+                       onclick="${isDisabled ? '' : `toggleAspect('${escapedId}')`}">
+                    <div style="display: flex; gap: 4px; padding-top: 4px; margin-bottom: 4px;">
+                      ${Array(aspect.track).fill(0).map(() => `<div class="track-box small"></div>`).join('')}
+                    </div>
+                    <div class="flex-between" style="margin-bottom: 4px;">
+                      <div class="aspect-name">${aspect.name}</div>
+                      <div class="aspect-type" style="font-size: 12px; font-weight: 500; color: #6B7280;">${aspect.type}</div>
+                    </div>
+                    <div class="aspect-description" style="color: ${isSelected ? '#9CA3AF' : '#6B7280'};">${aspect.description}</div>
+                  </div>
+                `;
+              }).join('')}
+              </div>
+            </div>
+          </div>
+          
+          <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 40px; margin-bottom: 40px;">
+            <div>
+              <div class="flex-between" style="margin-bottom: 16px;">
+                <h2 class="section-header" style="margin: 0;">Edges</h2>
+                <div class="budget-indicator">${edgesSelected}/${BUDGETS.edges}</div>
+              </div>
+              ${GAME_DATA.edges.map(edge => {
+                const isSelected = character.selectedEdges.includes(edge.name);
+                const isDisabled = !isSelected && edgesBudgetMet;
+                return `
+                  <div class="edge-card ${isSelected ? 'selected' : ''} ${isDisabled ? 'disabled' : ''}" 
+                       onclick="${isDisabled ? '' : `toggleEdge('${edge.name}')`}"
+                       style="margin-bottom: 4px;">
+                    <div class="aspect-name">${edge.name}</div>
+                    <div class="edge-tagline" style="font-size: 12px; font-weight: 500; color: #6B7280; margin-top: 4px;">${edge.tagline}</div>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+            
+			<div>
+              <div class="flex-between" style="margin-bottom: 16px;">
+                <h2 class="section-header" style="margin: 0;">Skills & Languages</h2>
+                <div class="budget-indicator">${totalPoints}/${BUDGETS.skillPoints}</div>
+              </div>
+			  
+			  <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 40px; align-items: start;">
+			  
+			  <div style="display: flex; flex-direction: column; gap: 4px; max-width: 275px;">              
+			  <h3 class="subsection-header" style="margin-bottom: 12px;">Skills</h3>
+			  ${GAME_DATA.skills.map(skill => {
+				  const rank = character.skills[skill] || 0;
+				  const canIncrease = rank < 2 && totalPoints < BUDGETS.skillPoints;
+				  const canDecrease = rank > 0;
+				  return `
+				  <div class="flex-between" style="margin-bottom: 8px;">
+				  <div class="skill-name">${skill}</div>
+				  <div style="display: flex; gap: 8px; align-items: center;">
+				  <button onclick="adjustSkill('${skill}', -1)" ${!canDecrease ? 'disabled' : ''}>-</button>
+				  ${[0, 1, 2].map(i => `<div class="track-box ${i < rank ? 'active' : ''}"></div>`).join('')}
+				  <button onclick="adjustSkill('${skill}', 1)" ${!canIncrease ? 'disabled' : ''}>+</button>
+				  </div>
+				  </div>
+				  `;
+			  }).join('')}
+			  </div>
+
+			  <div style="display: flex; flex-direction: column; gap: 4px; max-width: 275px;">             
+			  <h3 class="subsection-header" style="margin-bottom: 12px;">Languages</h3>
+			  ${GAME_DATA.languages.map(lang => {
+				  const rank = character.languages[lang] || 0;
+				  const isLowSour = lang === 'Low Sour';
+				  const canIncrease = !isLowSour && rank < 2 && totalPoints < BUDGETS.skillPoints;
+				  const canDecrease = !isLowSour && rank > 0;
+				  return `
+				  <div class="flex-between" style="margin-bottom: 8px;">
+				  <div class="skill-name">${lang}</div>
+				  <div style="display: flex; gap: 8px; align-items: center;">
+				  <button onclick="adjustLanguage('${lang}', -1)" ${!canDecrease ? 'disabled' : ''}>-</button>
+				  ${[0, 1, 2].map(i => `<div class="track-box ${i < rank ? 'active' : ''}"></div>`).join('')}
+				  <button onclick="adjustLanguage('${lang}', 1)" ${!canIncrease ? 'disabled' : ''}>+</button>
+				  </div>
+				  </div>
+				  `;
+			  }).join('')}
+			  </div>
+			  </div>
+			</div>
+			  
+          </div>
+        </div>
+        
+        <div class="sticky-action-bar">
+          <button onclick="generateRandomCharacter()">Generate Random Character</button>
+          <button onclick="createCharacter()" class="primary" 
+                  ${aspectsSelected === BUDGETS.aspects && edgesSelected === BUDGETS.edges && totalPoints === BUDGETS.skillPoints ? '' : 'disabled'}>
+            Create Character
+          </button>
+        </div>
+      `;
+    }
+    
+    function renderPlayMode(app) {
+      app.innerHTML = `
+        <div style="padding: 20px; max-width: 1400px; margin: 0 auto; padding-bottom: 80px;">
+          <div style="margin-bottom: 32px; padding-bottom: 24px; border-bottom: 2px solid #E5E7EB;">
+            <div style="display: flex; gap: 48px; align-items: baseline;">
+              <div>
+                <div class="char-label">Character Name</div>
+                <div class="char-name-header">${character.name}</div>
+              </div>
+              <div>
+                <div class="char-label">Bloodline</div>
+                <div class="char-name-header">${character.bloodline}</div>
+              </div>
+              <div>
+                <div class="char-label">Origin</div>
+                <div class="char-name-header">${character.origin}</div>
+              </div>
+              <div>
+                <div class="char-label">Post</div>
+                <div class="char-name-header">${character.post}</div>
+              </div>
+            </div>
+          </div>
+          
+          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 3fr; gap: 32px; margin-bottom: 32px;">
+            <div>
+              <h2 class="section-header">Edges</h2>
+              ${character.selectedEdges.map(edgeName => `
+                <div class="aspect-name" style="color: #111827; margin-bottom: 4px;">${edgeName}</div>
+              `).join('')}
+            </div>
+            
+              <div style="margin-bottom: 32px;">
+                <h2 class="section-header">Skills</h2>
+                ${GAME_DATA.skills.map(skill => {
+                  const rank = character.skills[skill] || 0;
+                  return `
+                    <div class="skill-row">
+                      <div class="skill-name">${skill}</div>
+                      <div style="display: flex; gap: 4px;">
+                        ${[0, 1, 2].map(i => `<div class="track-box small ${i < rank ? 'active' : ''}"></div>`).join('')}
+                      </div>
+                    </div>
+                  `;
+                }).join('')}
+              </div>
+              
+              <div>
+                <h2 class="section-header">Languages</h2>
+                ${GAME_DATA.languages.map(lang => {
+                  const rank = character.languages[lang] || 0;
+                  return `
+                    <div class="skill-row">
+                      <div class="skill-name">${lang}</div>
+                      <div style="display: flex; gap: 4px;">
+                        ${[0, 1, 2].map(i => `<div class="track-box small ${i < rank ? 'active' : ''}"></div>`).join('')}
+                      </div>
+                    </div>
+                  `;
+                }).join('')}
+              </div>
+            
+            <div>
+              <h2 class="section-header">Aspects</h2>
+              ${character.selectedAspects.map(aspect => `
+                <div style="margin-bottom: 8px; padding: 8px; border-radius: 2px;">
+                  <div style="display: flex; gap: 8px; align-items: flex-start;">
+                    <div style="display: flex; gap: 8px; padding-top: 4px; flex-shrink: 0; width: 165px;">
+                      ${Array(5).fill(0).map((_, i) => {
+                        if (i < aspect.trackSize) {
+                          const state = aspect.damageStates[i];
+                          return `
+                            <div class="track-box ${state}" 
+                                 onclick="cycleAspectDamage('${aspect.id}', ${i})"
+                                 style="cursor: pointer;">
+                              ${state === 'marked' ? '/' : state === 'burned' ? 'X' : ''}
+                            </div>
+                          `;
+                        } else {
+                          return `<div style="width: 26px; height: 26px;"></div>`;
+                        }
+                      }).join('')}
+                    </div>
+                    <div style="flex: 1; min-width: 0;">
+                      <div class="aspect-name" style="margin-bottom: 4px;">${aspect.name}</div>
+                      <div class="aspect-meta">${aspect.source} ${aspect.type}</div>
+                      <div class="aspect-description">${aspect.description}</div>
+                    </div>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+          
+          ${renderMilestones()}
+        </div>
+        
+        <div class="sticky-action-bar">
+          <button onclick="setMode('advancement')">Advancement</button>
+        </div>
+      `;
+    }
+    
+    function renderAdvancementMode(app) {
+      const allAspects = getAvailableAspects();
+      const bloodlineAspects = allAspects.filter(a => a.category === 'Bloodline');
+      const originAspects = allAspects.filter(a => a.category === 'Origin');
+      const postAspects = allAspects.filter(a => a.category === 'Post');
+      
+      app.innerHTML = `
+        <div style="padding: 20px; max-width: 1400px; margin: 0 auto; padding-bottom: 80px;">
+          <div style="margin-bottom: 32px; padding-bottom: 24px; border-bottom: 2px solid #E5E7EB;">
+            <div style="display: flex; gap: 48px; align-items: baseline;">
+              <div>
+                <label style="display: block; margin-bottom: 8px; font-weight: 600;">Character Name</label>
+                <input type="text" value="${character.name}" 
+                       onchange="character.name = this.value; render();"
+                       placeholder="Enter name..." 
+                       style="width: 300px; font-size: 16px;">
+              </div>
+              <div>
+                <div class="font-faustina" style="font-size: 12px; color: #6B7280; margin-bottom: 4px;">Bloodline</div>
+                <div class="font-faustina" style="font-size: 24px; font-weight: 700;">${character.bloodline}</div>
+              </div>
+              <div>
+                <div class="font-faustina" style="font-size: 12px; color: #6B7280; margin-bottom: 4px;">Origin</div>
+                <div class="font-faustina" style="font-size: 24px; font-weight: 700;">${character.origin}</div>
+              </div>
+              <div>
+                <div class="font-faustina" style="font-size: 12px; color: #6B7280; margin-bottom: 4px;">Post</div>
+                <div class="font-faustina" style="font-size: 24px; font-weight: 700;">${character.post}</div>
+              </div>
+            </div>
+          </div>
+          
+          <div style="margin-bottom: 40px;">
+            <h2 class="font-faustina" style="font-size: 22px; font-weight: 600; color: #6B7280; margin-bottom: 16px; margin-top: 0;">Aspects</h2>
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; align-items: start;">
+              <div style="display: flex; flex-direction: column; gap: 12px;">
+                <h3 class="font-faustina" style="font-size: 16px; font-weight: 600; color: #6B7280; margin: 0;">${character.bloodline}</h3>
+                ${bloodlineAspects.map(aspect => {
+                  const id = `${aspect.source}-${aspect.name}`;
+                  const escapedId = id.replace(/'/g, "\\'");
+                  const selectedAspect = character.selectedAspects.find(a => a.id === id);
+                  const isSelected = !!selectedAspect;
+                  
+                  return `
+                    <div class="aspect-card ${isSelected ? 'selected' : ''}" 
+                         onclick="toggleAspect('${escapedId}')"
+                         style="position: relative;">
+                      ${isSelected ? `
+                        <div style="display: flex; gap: 8px; align-items: center; padding-top: 4px; margin-bottom: 4px;">
+                          <button onclick="event.stopPropagation(); expandAspectTrack('${escapedId}', -1)" 
+                                  ${selectedAspect.trackSize <= aspect.track ? 'disabled' : ''}
+                                  style="flex-shrink: 0; padding: 4px 8px; font-size: 14px;">−</button>
+                          <div style="display: flex; gap: 8px; flex-shrink: 0;" onclick="event.stopPropagation()">
+                            ${Array(selectedAspect.trackSize).fill(0).map((_, i) => {
+                              const isNew = i >= aspect.track;
+                              return `<div class="track-box ${isNew ? 'new' : ''}"></div>`;
+                            }).join('')}
+                          </div>
+                          <button onclick="event.stopPropagation(); expandAspectTrack('${escapedId}', 1)" 
+                                  ${selectedAspect.trackSize >= 5 ? 'disabled' : ''}
+                                  style="flex-shrink: 0; padding: 4px 8px; font-size: 14px;">+</button>
+                        </div>
+                      ` : `
+                        <div style="display: flex; gap: 4px; padding-top: 4px; margin-bottom: 4px;">
+                          ${Array(aspect.track).fill(0).map(() => `<div class="track-box small"></div>`).join('')}
+                        </div>
+                      `}
+                      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                        <div style="font-weight: 600; font-size: 16px;">${aspect.name}</div>
+                        <div class="aspect-type" style="font-size: 12px; font-weight: 500; color: ${isSelected ? '#9CA3AF' : '#6B7280'};">${aspect.type}</div>
+                      </div>
+                      <div style="font-size: 12px; color: ${isSelected ? '#9CA3AF' : '#6B7280'};">
+                        ${aspect.description}
+                      </div>
+                    </div>
+                  `;
+                }).join('')}
+              </div>
+              
+              <div style="display: flex; flex-direction: column; gap: 12px;">
+                <h3 class="font-faustina" style="font-size: 16px; font-weight: 600; color: #6B7280; margin: 0;">${character.origin}</h3>
+                ${originAspects.map(aspect => {
+                  const id = `${aspect.source}-${aspect.name}`;
+                  const escapedId = id.replace(/'/g, "\\'");
+                  const selectedAspect = character.selectedAspects.find(a => a.id === id);
+                  const isSelected = !!selectedAspect;
+                  
+                  return `
+                    <div class="aspect-card ${isSelected ? 'selected' : ''}" 
+                         onclick="toggleAspect('${escapedId}')"
+                         style="position: relative;">
+                      ${isSelected ? `
+                        <div style="display: flex; gap: 8px; align-items: center; padding-top: 4px; margin-bottom: 4px;">
+                          <button onclick="event.stopPropagation(); expandAspectTrack('${escapedId}', -1)" 
+                                  ${selectedAspect.trackSize <= aspect.track ? 'disabled' : ''}
+                                  style="flex-shrink: 0; padding: 4px 8px; font-size: 14px;">−</button>
+                          <div style="display: flex; gap: 8px; flex-shrink: 0;" onclick="event.stopPropagation()">
+                            ${Array(selectedAspect.trackSize).fill(0).map((_, i) => {
+                              const isNew = i >= aspect.track;
+                              return `<div class="track-box ${isNew ? 'new' : ''}"></div>`;
+                            }).join('')}
+                          </div>
+                          <button onclick="event.stopPropagation(); expandAspectTrack('${escapedId}', 1)" 
+                                  ${selectedAspect.trackSize >= 5 ? 'disabled' : ''}
+                                  style="flex-shrink: 0; padding: 4px 8px; font-size: 14px;">+</button>
+                        </div>
+                      ` : `
+                        <div style="display: flex; gap: 4px; padding-top: 4px; margin-bottom: 4px;">
+                          ${Array(aspect.track).fill(0).map(() => `<div class="track-box small"></div>`).join('')}
+                        </div>
+                      `}
+                      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                        <div style="font-weight: 600; font-size: 16px;">${aspect.name}</div>
+                        <div class="aspect-type" style="font-size: 12px; font-weight: 500; color: ${isSelected ? '#9CA3AF' : '#6B7280'};">${aspect.type}</div>
+                      </div>
+                      <div style="font-size: 12px; color: ${isSelected ? '#9CA3AF' : '#6B7280'};">
+                        ${aspect.description}
+                      </div>
+                    </div>
+                  `;
+                }).join('')}
+              </div>
+              
+              <div style="display: flex; flex-direction: column; gap: 12px;">
+                <h3 class="font-faustina" style="font-size: 16px; font-weight: 600; color: #6B7280; margin: 0;">${character.post}</h3>
+                ${postAspects.map(aspect => {
+                  const id = `${aspect.source}-${aspect.name}`;
+                  const escapedId = id.replace(/'/g, "\\'");
+                  const selectedAspect = character.selectedAspects.find(a => a.id === id);
+                  const isSelected = !!selectedAspect;
+                  
+                  return `
+                    <div class="aspect-card ${isSelected ? 'selected' : ''}" 
+                         onclick="toggleAspect('${escapedId}')"
+                         style="position: relative;">
+                      ${isSelected ? `
+                        <div style="display: flex; gap: 8px; align-items: center; padding-top: 4px; margin-bottom: 4px;">
+                          <button onclick="event.stopPropagation(); expandAspectTrack('${escapedId}', -1)" 
+                                  ${selectedAspect.trackSize <= aspect.track ? 'disabled' : ''}
+                                  style="flex-shrink: 0; padding: 4px 8px; font-size: 14px;">−</button>
+                          <div style="display: flex; gap: 8px; flex-shrink: 0;" onclick="event.stopPropagation()">
+                            ${Array(selectedAspect.trackSize).fill(0).map((_, i) => {
+                              const isNew = i >= aspect.track;
+                              return `<div class="track-box ${isNew ? 'new' : ''}"></div>`;
+                            }).join('')}
+                          </div>
+                          <button onclick="event.stopPropagation(); expandAspectTrack('${escapedId}', 1)" 
+                                  ${selectedAspect.trackSize >= 5 ? 'disabled' : ''}
+                                  style="flex-shrink: 0; padding: 4px 8px; font-size: 14px;">+</button>
+                        </div>
+                      ` : `
+                        <div style="display: flex; gap: 4px; padding-top: 4px; margin-bottom: 4px;">
+                          ${Array(aspect.track).fill(0).map(() => `<div class="track-box small"></div>`).join('')}
+                        </div>
+                      `}
+                      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                        <div style="font-weight: 600; font-size: 16px;">${aspect.name}</div>
+                        <div class="aspect-type" style="font-size: 12px; font-weight: 500; color: ${isSelected ? '#9CA3AF' : '#6B7280'};">${aspect.type}</div>
+                      </div>
+                      <div style="font-size: 12px; color: ${isSelected ? '#9CA3AF' : '#6B7280'};">
+                        ${aspect.description}
+                      </div>
+                    </div>
+                  `;
+                }).join('')}
+              </div>
+            </div>
+          </div>
+          
+          <div style="display: grid; grid-template-columns: 325px 1fr; gap: 32px;">
+            <div>
+              <h2 class="font-faustina" style="font-size: 22px; font-weight: 600; color: #6B7280; margin-bottom: 12px; margin-top: 0;">Edges</h2>
+              ${character.selectedEdges.map(edgeName => `
+                <div style="font-weight: 600; font-size: 16px; color: #111827; margin-bottom: 4px;">${edgeName}</div>
+              `).join('')}
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px;">
+              <div>
+                <h2 class="font-faustina" style="font-size: 22px; font-weight: 600; color: #6B7280; margin-bottom: 16px; margin-top: 0;">Train Skills</h2>
+                ${GAME_DATA.skills.map(skill => {
+                  const rank = character.skills[skill] || 0;
+                  return `
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                      <div style="font-weight: 600;">${skill}</div>
+                      <div style="display: flex; gap: 8px; align-items: center;">
+                        <button onclick="adjustSkill('${skill}', -1)" ${rank === 0 ? 'disabled' : ''}>−</button>
+                        ${[0, 1, 2].map(i => `<div class="track-box ${i < rank ? 'active' : ''}"></div>`).join('')}
+                        <button onclick="adjustSkill('${skill}', 1)" ${rank >= 3 ? 'disabled' : ''}>+</button>
+                      </div>
+                    </div>
+                  `;
+                }).join('')}
+              </div>
+              
+              <div>
+                <h2 class="font-faustina" style="font-size: 22px; font-weight: 600; color: #6B7280; margin-bottom: 16px; margin-top: 0;">Train Languages</h2>
+                ${GAME_DATA.languages.map(lang => {
+                  const rank = character.languages[lang] || 0;
+                  return `
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                      <div style="font-weight: 600;">${lang}</div>
+                      <div style="display: flex; gap: 8px; align-items: center;">
+                        <button onclick="adjustLanguage('${lang}', -1)" ${rank === 0 || lang === 'Low Sour' ? 'disabled' : ''}>−</button>
+                        ${[0, 1, 2].map(i => `<div class="track-box ${i < rank ? 'active' : ''}"></div>`).join('')}
+                        <button onclick="adjustLanguage('${lang}', 1)" ${rank >= 3 ? 'disabled' : ''}>+</button>
+                      </div>
+                    </div>
+                  `;
+                }).join('')}
+              </div>
+            </div>
+          </div>
+          
+          ${renderMilestones()}
+        </div>
+        
+        <div class="sticky-action-bar">
+          <button onclick="setMode('play')" class="primary">Save Changes</button>
+          <button onclick="setMode('play')">Cancel</button>
+        </div>
+      `;
+    }
+    
+    // Initialize app
+    loadAspectData();
+  </script>
+</body>
+</html>

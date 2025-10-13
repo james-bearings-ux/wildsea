@@ -1,0 +1,189 @@
+Ardent
+Salvage: Stone Fragments, Highwood Planks
+Specimens: Caged Bird, Milkweed
+Whispers: Grove of Twisted Trees
+Charts: A Copper-Coloured Chart
+
+Ektus
+Salvage: Porous Stone, Bronze Locket
+Specimens: Scarab Shell, Iron-Hard Needles
+Whispers: A Desert Lost to Time
+Charts: A Dusty Chart
+
+Gau
+Salvage: Fluted Stone, Fossilized Fungus
+Specimens: Fat-Bodied Beetle, Sourvine Extract
+Whispers: Mycosanctum Rumblings
+Charts: A Chart of Many Colours
+
+Ironbound
+Salvage: Sawprow Teeth, Defused Shells
+Specimens: Crezzerin’d Leaves, Rooted Fungus
+Whispers: Woken to Thought
+Charts: An Old Tradeway
+
+Ketra
+Salvage: Ceremonial Dynamite, Old Driftwood
+Specimens: Luminescent Bone, Curled Centipede
+Whispers: The Comforting Dark, All Tunnels End
+Charts: A Faded Schematic
+
+Mothryn
+Salvage: Bolt of Fabric, Damaged Scrap-Flute
+Specimens: Berry Pigment, Raw Silk
+Whispers: Rationing Ended, Vibrant Riot
+Charts: A Tapestry Map, A Painted Wing-Scale
+
+Tzelicrae
+Salvage: Frayed Ropes, Patterned Canvas
+Specimens: Spider Husks, Venom Extract
+Whispers: A Prison of Skin
+Charts: A Port Manifest in Knock
+
+
+
+
+Amberclad
+Salvage: Amber Chips, Tarnished Memento
+Specimens: Strong Coffee, Gold-Winged Bee
+Whispers: The Longest Sleep, Clear Coffin
+Charts: A Book-Block, A Crisp Sketch-Page
+
+Anchored
+Salvage: Old Memento, Broken Locket
+Specimens: Glowing Plasm, Spectral Flower
+Whispers: Back from Beyond, Drowned and Not
+Charts: A Sketch of Shadowed Paths
+
+Ridgeback
+Salvage: Knucklebone Dice, Sharpened Stones
+Specimens: Giant Wolf Jaw, Gorse Root
+Whispers: Caves Beneath
+Charts: A Faded Almanac
+
+Rootless
+Salvage: Rusted Cogs, Sailcloth
+Specimens: Wormapple, Firefly Bulbs
+Whispers: A Welcoming Fleet
+Charts: A Many-Folded Chart
+
+Shankling
+Salvage: Ancient Stone, Length of Chain
+Specimens: Broadwood Branch, Crowning Leaf
+Whispers: Sunset Through Branches
+Charts: An Etched Branch-Map
+
+Spit-Born
+Salvage: Engine Piping, Ancient Glass
+Specimens: Hog Bones, Chicken Feathers
+Whispers: A Newly-Risen Spit
+Charts: A Cryptic Map
+
+
+
+
+
+Alchemist
+Salvage: Pouch of Vials, Rust Extract
+Specimens: Dried Locusts, Draketongue Root, Beast
+Blood, Poison Glands
+Whispers: A Stained Snapograph
+Charts: A Tale of Choking Mists
+
+Char
+Salvage: Boiling Casks, Heating Element
+Specimens: Medicinal Herbs, Distant Sea-Spices
+Whispers: That Delicate Taste, Forbidden Food
+Charts: An Annotated Cookbook, A
+Spice-Stained Map
+
+Corsair
+Salvage: Armour Shards, Blackpowder Pouch
+Specimens: Suspicious Finger, Beast Bones
+Whispers: A Sobbing Mawship
+Charts: A Stolen Starchart
+
+Crash
+Salvage: Fine Red Powder, Slab of Masonry
+Specimens: Flare Beetle Horn, Vermillion Herbs
+Whispers: A Creeping Seam
+Charts: A Weathered Chart
+
+Dredger
+Salvage: Copper Rings, Ancient Engine
+Specimens: Soporific Sap, Leviathan Claw
+Whispers: A Risen Wreck
+Charts: An Ancient Shipping Manifest
+
+Hacker
+Salvage: Wreck-Iron Plating, Abandoned Scrap
+Specimens: Wild Apricots, Scorpions in a Jar
+Whispers: An Ironroot Fallen
+Charts: An Arboreal Diagram
+
+Horizoneer
+Salvage: Drinking Horn
+Specimens: Bark Wine
+Whispers: New Horizons, Over the Ridge
+Charts: A Hasty Sketch
+
+Hunter
+Salvage: Leather Cord, Rusted Mantrap
+Specimens: Scorpion Carapace, Bait Worms
+Whispers: Leviathan Breeding Grounds
+Charts: A Chart of Old Hollows
+
+Mesmer
+Salvage: Broken Pocketwatch
+Specimens: Hallucinogenic Leaf, Soporific Draught
+Whispers: Beneath the Surface
+Charts: A Dream-Drawn Sketch
+
+Navigator
+Salvage: Torn Canvas, Ship’s Timber
+Specimens: Glowing Mushrooms, Ancient Amber
+Whispers: A Spit On the Rise, Dawn Over New Waves
+Charts: A Leather-Bound Journal, A Detailed Chart
+
+Rattlehand
+Salvage: Ancient Wiring, Ceramic Battery
+Specimens: Crushed Beetle, Giant Insect Mandible
+Whispers: Locomotive Power
+Charts: An Indecipherable Blueprint
+
+Screw
+Salvage: Bundle of Rivets, Iron Ore
+Specimens: Rust-Beetle Chitin
+Whispers: Unknown Forces, The Floating Fortress
+Charts: An Iron Scroll, A Curious Compass
+
+Slinger
+Salvage: Shell Casings, Blackpowder Pouch
+Specimens: Wormapple Cores
+Whispers: Distant Thunder
+Charts: An Old Drunkard’s Log
+
+Steep
+Salvage: Ancestral China, Blackened Brew-Pot
+Specimens: Hightower Tea-Leaves, Drip-Crystal
+Whispers: Circle of Friends, Truth in Steam
+Charts: A Tea-Stained Map
+
+Surgeon
+Salvage: Pristine Bandages, Iron Leg-Brace
+Specimens: Medicinal herbs, Rubbing Alcohol
+Whispers: How Bones Mend, A Scar That Never Fades
+Charts: Directions To a Surgery
+
+Tempest
+Salvage: Ceramic Battery
+Specimens: Phosphorescent Beetle
+Whispers: The Calm Before, In the Blood
+Charts: A Sketched Lightning-Strike
+
+Wordbearer
+Salvage: Packaging Twine, Dented Birdcage, Old Wax
+Specimens: Inscribed Centipede, Slug-Gum Sealant
+Whispers: My Heart to Yours, Safe and Secure
+Charts: A Junction Network Book, A Scrawled
+Envelope, A Tattered Schedule

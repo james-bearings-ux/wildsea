@@ -1,0 +1,182 @@
+{
+  "Ardent": {
+    "salvage": ["Stone Fragments", "Highwood Planks"],
+    "specimens": ["Caged Bird", "Milkweed"],
+    "whispers": ["Grove of Twisted Trees"],
+    "charts": ["A Copper-Coloured Chart"]
+  },
+  "Ektus": {
+    "salvage": ["Porous Stone", "Bronze Locket"],
+    "specimens": ["Scarab Shell", "Iron-Hard Needles"],
+    "whispers": ["A Desert Lost to Time"],
+    "charts": ["A Dusty Chart"]
+  },
+  "Gau": {
+    "salvage": ["Fluted Stone", "Fossilized Fungus"],
+    "specimens": ["Fat-Bodied Beetle", "Sourvine Extract"],
+    "whispers": ["Mycosanctum Rumblings"],
+    "charts": ["A Chart of Many Colours"]
+  },
+  "Ironbound": {
+    "salvage": ["Sawprow Teeth", "Defused Shells"],
+    "specimens": ["Crezzerin'd Leaves", "Rooted Fungus"],
+    "whispers": ["Woken to Thought"],
+    "charts": ["An Old Tradeway"]
+  },
+  "Ketra": {
+    "salvage": ["Ceremonial Dynamite", "Old Driftwood"],
+    "specimens": ["Luminescent Bone", "Curled Centipede"],
+    "whispers": ["The Comforting Dark", "All Tunnels End"],
+    "charts": ["A Faded Schematic"]
+  },
+  "Mothryn": {
+    "salvage": ["Bolt of Fabric", "Damaged Scrap-Flute"],
+    "specimens": ["Berry Pigment", "Raw Silk"],
+    "whispers": ["Rationing Ended", "Vibrant Riot"],
+    "charts": ["A Tapestry Map", "A Painted Wing-Scale"]
+  },
+  "Tzelicrae": {
+    "salvage": ["Frayed Ropes", "Patterned Canvas"],
+    "specimens": ["Spider Husks", "Venom Extract"],
+    "whispers": ["A Prison of Skin"],
+    "charts": ["A Port Manifest in Knock"]
+  },
+  "Amberclad": {
+    "salvage": ["Amber Chips", "Tarnished Memento"],
+    "specimens": ["Strong Coffee", "Gold-Winged Bee"],
+    "whispers": ["The Longest Sleep", "Clear Coffin"],
+    "charts": ["A Book-Block", "A Crisp Sketch-Page"]
+  },
+  "Anchored": {
+    "salvage": ["Old Memento", "Broken Locket"],
+    "specimens": ["Glowing Plasm", "Spectral Flower"],
+    "whispers": ["Back from Beyond", "Drowned and Not"],
+    "charts": ["A Sketch of Shadowed Paths"]
+  },
+  "Ridgeback": {
+    "salvage": ["Knucklebone Dice", "Sharpened Stones"],
+    "specimens": ["Giant Wolf Jaw", "Gorse Root"],
+    "whispers": ["Caves Beneath"],
+    "charts": ["A Faded Almanac"]
+  },
+  "Rootless": {
+    "salvage": ["Rusted Cogs", "Sailcloth"],
+    "specimens": ["Wormapple", "Firefly Bulbs"],
+    "whispers": ["A Welcoming Fleet"],
+    "charts": ["A Many-Folded Chart"]
+  },
+  "Shankling": {
+    "salvage": ["Ancient Stone", "Length of Chain"],
+    "specimens": ["Broadwood Branch", "Crowning Leaf"],
+    "whispers": ["Sunset Through Branches"],
+    "charts": ["An Etched Branch-Map"]
+  },
+  "Spit-Born": {
+    "salvage": ["Engine Piping", "Ancient Glass"],
+    "specimens": ["Hog Bones", "Chicken Feathers"],
+    "whispers": ["A Newly-Risen Spit"],
+    "charts": ["A Cryptic Map"]
+  },
+  "Alchemist": {
+    "salvage": ["Pouch of Vials", "Rust Extract"],
+    "specimens": ["Dried Locusts", "Draketongue Root", "Beast Blood", "Poison Glands"],
+    "whispers": ["A Stained Snapograph"],
+    "charts": ["A Tale of Choking Mists"]
+  },
+  "Char": {
+    "salvage": ["Boiling Casks", "Heating Element"],
+    "specimens": ["Medicinal Herbs", "Distant Sea-Spices"],
+    "whispers": ["That Delicate Taste", "Forbidden Food"],
+    "charts": ["An Annotated Cookbook", "A Spice-Stained Map"]
+  },
+  "Corsair": {
+    "salvage": ["Armour Shards", "Blackpowder Pouch"],
+    "specimens": ["Suspicious Finger", "Beast Bones"],
+    "whispers": ["A Sobbing Mawship"],
+    "charts": ["A Stolen Starchart"]
+  },
+  "Crash": {
+    "salvage": ["Fine Red Powder", "Slab of Masonry"],
+    "specimens": ["Flare Beetle Horn", "Vermillion Herbs"],
+    "whispers": ["A Creeping Seam"],
+    "charts": ["A Weathered Chart"]
+  },
+  "Dredger": {
+    "salvage": ["Copper Rings", "Ancient Engine"],
+    "specimens": ["Soporific Sap", "Leviathan Claw"],
+    "whispers": ["A Risen Wreck"],
+    "charts": ["An Ancient Shipping Manifest"]
+  },
+  "Hacker": {
+    "salvage": ["Wreck-Iron Plating", "Abandoned Scrap"],
+    "specimens": ["Wild Apricots", "Scorpions in a Jar"],
+    "whispers": ["An Ironroot Fallen"],
+    "charts": ["An Arboreal Diagram"]
+  },
+  "Horizoneer": {
+    "salvage": ["Drinking Horn"],
+    "specimens": ["Bark Wine"],
+    "whispers": ["New Horizons", "Over the Ridge"],
+    "charts": ["A Hasty Sketch"]
+  },
+  "Hunter": {
+    "salvage": ["Leather Cord", "Rusted Mantrap"],
+    "specimens": ["Scorpion Carapace", "Bait Worms"],
+    "whispers": ["Leviathan Breeding Grounds"],
+    "charts": ["A Chart of Old Hollows"]
+  },
+  "Mesmer": {
+    "salvage": ["Broken Pocketwatch"],
+    "specimens": ["Hallucinogenic Leaf", "Soporific Draught"],
+    "whispers": ["Beneath the Surface"],
+    "charts": ["A Dream-Drawn Sketch"]
+  },
+  "Navigator": {
+    "salvage": ["Torn Canvas", "Ship's Timber"],
+    "specimens": ["Glowing Mushrooms", "Ancient Amber"],
+    "whispers": ["A Spit On the Rise", "Dawn Over New Waves"],
+    "charts": ["A Leather-Bound Journal", "A Detailed Chart"]
+  },
+  "Rattlehand": {
+    "salvage": ["Ancient Wiring", "Ceramic Battery"],
+    "specimens": ["Crushed Beetle", "Giant Insect Mandible"],
+    "whispers": ["Locomotive Power"],
+    "charts": ["An Indecipherable Blueprint"]
+  },
+  "Screw": {
+    "salvage": ["Bundle of Rivets", "Iron Ore"],
+    "specimens": ["Rust-Beetle Chitin"],
+    "whispers": ["Unknown Forces", "The Floating Fortress"],
+    "charts": ["An Iron Scroll", "A Curious Compass"]
+  },
+  "Slinger": {
+    "salvage": ["Shell Casings", "Blackpowder Pouch"],
+    "specimens": ["Wormapple Cores"],
+    "whispers": ["Distant Thunder"],
+    "charts": ["An Old Drunkard's Log"]
+  },
+  "Steep": {
+    "salvage": ["Ancestral China", "Blackened Brew-Pot"],
+    "specimens": ["Hightower Tea-Leaves", "Drip-Crystal"],
+    "whispers": ["Circle of Friends", "Truth in Steam"],
+    "charts": ["A Tea-Stained Map"]
+  },
+  "Surgeon": {
+    "salvage": ["Pristine Bandages", "Iron Leg-Brace"],
+    "specimens": ["Medicinal Herbs", "Rubbing Alcohol"],
+    "whispers": ["How Bones Mend", "A Scar That Never Fades"],
+    "charts": ["Directions To a Surgery"]
+  },
+  "Tempest": {
+    "salvage": ["Ceramic Battery"],
+    "specimens": ["Phosphorescent Beetle"],
+    "whispers": ["The Calm Before", "In the Blood"],
+    "charts": ["A Sketched Lightning-Strike"]
+  },
+  "Wordbearer": {
+    "salvage": ["Packaging Twine", "Dented Birdcage", "Old Wax"],
+    "specimens": ["Inscribed Centipede", "Slug-Gum Sealant"],
+    "whispers": ["My Heart to Yours", "Safe and Secure"],
+    "charts": ["A Junction Network Book", "A Scrawled Envelope", "A Tattered Schedule"]
+  }
+}

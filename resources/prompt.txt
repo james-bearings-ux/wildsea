@@ -1,0 +1,34 @@
+Continue work on the Wildsea Character Sheet application. 
+
+**Context:**
+- Stable baseline artifact: "wildsea_baseline_v28.html" (in project files)
+- Three modes: Creation, Play, Advancement
+- Budget system: 4 aspects, 3 edges, 8 skill/language points
+- For reference only: Aspect data: "wildsea_aspects.json" (30 sources, 504 aspects). 
+
+**Working approach:**
+- At the start of this chat before doing anything else, create a fresh interactive prototype and inject baseline HTML file's code into it. 
+- Use UPDATE for small changes (< 20 lines, < 5 locations)
+- Use REWRITE only for structural changes (ask first)
+- Test incrementally with small chunks
+- Reference baseline file to avoid regression
+- IMPORTANT: Use aspect data from the baseline artifact without any changes. 
+
+**Goal for this chat:** Alternate presentation of aspect tracks in Advancement mode. Currently, each aspect card has two track display variants: selected/unselected(default). We use those tracks often, they have a fair amount of logic in them, and they are difficult to escape. Let's make them both into functions, and call them from a single if/then statement for selected/unselected aspects. Consider how this impacts the other two modes. My suggestion is to have the small boxes track indicator to be a function shared by creation and advancement modes. Then the iteractive track can be unique to advancement mode. The current layout, styling, and interaction for each scenario is already correct, so preserve that (selected has large boxes and interactivity, unselected has small boxes and no interactivity). Do not change anything else about the presentation or data in the aspect card. Definitely do not touch play mode's aspect track, which is completely different and working well. 
+
+
+
+
+
+Continue work on the Wildsea Character Sheet application. 
+
+**Context:**
+- Stable baseline artifact: "wildsea_baseline_v28.html" (in project files)
+- Three modes: Creation, Play, Advancement
+- Budget system: 4 aspects, 3 edges, 8 skill/language points
+- For reference only: Aspect data: "wildsea_aspects.json" (30 sources, 504 aspects). 
+
+**Goal for this chat:** Optimize a new content source that will supplement the character creation mode's starting data. In this step, we're just working on the data. See "data - starting resources.txt" in project files. I'd like to convert it to a structured JSON file. Each cluster of lines starting with an aspect name is the recommended starting resources for that aspect, organized by resource type. Per line: salvage, specimens, whispers, and charts. The individual resources are comma-delimited after the "{type name}:" at the start of the line. Sometimes, there is only one resource. 
+
+Background: During character creation, players can choose from these starting resources, selecting just 4 items from about 20 recommended items. I haven't designed the interface to do that down-selecting yet. For now, let's assume the app will add every relevant resource to the character sheet when the player clicks a new "Generate resources" button. 
+
