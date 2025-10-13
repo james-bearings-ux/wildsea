@@ -562,11 +562,19 @@ function renderResources() {
     { key: 'whispers', label: 'Whispers', placeholder: 'Name your Whisper...', singular: 'Whisper' }
     ];
 
+    const isCreationMode = character.mode === 'creation';
+
     let html = '<div style="margin-bottom: 32px;">';
-    html += '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">';
-    html += '<h2 class="section-header" style="margin: 0;">Resources</h2>';
-    html += '<button onclick="populateDefaultResources()">Load Default Resources</button>';
-    html += '</div>';
+
+    if (isCreationMode) {
+        html += '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">';
+        html += '<h2 class="section-header" style="margin: 0;">Resources</h2>';
+        html += '<button onclick="populateDefaultResources()">Load Default Resources</button>';
+        html += '</div>';
+    } else {
+        html += '<h2 class="section-header">Resources</h2>';
+    }
+
     html += '<div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px;">';
     
     for (let i = 0; i < resourceTypes.length; i++) {
