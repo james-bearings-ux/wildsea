@@ -7,7 +7,7 @@ import { getCharacter } from '../state/character.js';
 export function renderDrives() {
   const character = getCharacter();
   let html = '<div><h2 class="section-header">Drives</h2>';
-  html += '<div style="display: flex; flex-direction: column; gap: 2px;">';
+  html += '<div style="display: flex; flex-direction: column; gap: 8px;">';
 
   for (let i = 0; i < character.drives.length; i++) {
     html += '<input type="text" ';
@@ -15,7 +15,7 @@ export function renderDrives() {
     html += 'placeholder="Enter a drive..." ';
     html += 'data-action="updateDrive" ';
     html += 'data-params=\'{"index":' + i + '}\' ';
-    html += 'style="width: 100%; padding: 8px 10px 8px 10px;">';
+    html += 'style="width: 100%;">';
   }
 
   html += '</div></div>';
@@ -27,7 +27,7 @@ export function renderMires() {
   const showCheckboxes = character.mode === 'play';
 
   let html = '<div><h2 class="section-header">Mires</h2>';
-  html += '<div style="display: flex; flex-direction: column; gap: 2px;">';
+  html += '<div style="display: flex; flex-direction: column; gap: 8px;">';
 
   for (let i = 0; i < character.mires.length; i++) {
     const mire = character.mires[i];
@@ -48,7 +48,7 @@ export function renderMires() {
       html += 'placeholder="Enter a mire..." ';
       html += 'data-action="updateMire" ';
       html += 'data-params=\'{"index":' + i + '}\' ';
-      html += 'style="width: 100%; padding: 8px 10px 8px 10px;">';
+      html += 'style="width: 100%;">';
       html += '</div>';
     } else {
       html += '<input type="text" ';
@@ -56,7 +56,7 @@ export function renderMires() {
       html += 'placeholder="Enter a mire..." ';
       html += 'data-action="updateMire" ';
       html += 'data-params=\'{"index":' + i + '}\' ';
-      html += 'style="width: 100%; padding: 8px 10px 8px 10px;">';
+      html += 'style="width: 100%;">';
     }
   }
 

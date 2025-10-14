@@ -44,14 +44,14 @@ export function renderResources() {
       html += 'placeholder="' + type.placeholder + '" ';
       html += 'data-action="updateResourceName" ';
       html += 'data-params=\'{"type":"' + type.key + '","id":"' + item.id + '"}\' ';
-      html += 'style="width: 100%; padding: 8px 10px;">';
+      html += 'style="width: 100%;">';
       html += '<button data-action="removeResource" ';
       html += 'data-params=\'{"type":"' + type.key + '","id":"' + item.id + '"}\' ';
-      html += 'style="padding: 8px; flex-shrink: 0; border: 0;">✕</button>';
+      html += 'style="flex-shrink: 0; border: 0;">✕</button>';
       html += '</div>';
     }
 
-    const marginTop = items.length > 0 ? '12' : '0';
+    const marginTop = items.length > 0 ? '0' : '0';
     html += '<button class="ghost" data-action="addResource" data-params=\'{"type":"' + type.key + '"}\' style="width: 100%; margin-top: ' + marginTop + 'px;">+ New ' + type.singular + '</button>';
     html += '</div>';
     html += '</div>';
