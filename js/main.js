@@ -3,9 +3,11 @@
  * Initializes the app, sets up event delegation, and manages rendering
  */
 
-import { loadGameData } from './data/loader.js';
+import { loadGameData, getGameData } from './data/loader.js';
 import {
-  getCharacter,
+  createCharacter,
+  loadCharacter,
+  saveCharacter,
   onCharacterNameChange,
   onBloodlineChange,
   onOriginChange,
@@ -31,6 +33,13 @@ import {
   setMode,
   generateRandomCharacter
 } from './state/character.js';
+import {
+  createSession,
+  loadSession,
+  saveSession,
+  addCharacterToSession,
+  setActiveCharacter
+} from './state/session.js';
 import { validateCharacterCreation } from './utils/validation.js';
 import { exportCharacter, importCharacter } from './utils/file-handlers.js';
 import { renderCreationMode } from './rendering/creation-mode.js';
@@ -39,34 +48,56 @@ import { renderAdvancementMode } from './rendering/advancement-mode.js';
 import { renderSkills, renderLanguages } from './components/skills.js';
 import { renderEdgesSkillsLanguagesRow } from './components/edges.js';
 
+// Global state
+let session = null;
+
 /**
  * Main render function - delegates to mode-specific renderers
  */
 function render() {
   const app = document.getElementById('app');
-  const character = getCharacter();
+
+  if (!session || !session.activeCharacterId) {
+    app.innerHTML = '<div style="padding: 20px;">No active character. Please create or load a character.</div>';
+    return;
+  }
+
+  const character = loadCharacter(session.activeCharacterId);
+  if (!character) {
+    app.innerHTML = '<div style="padding: 20px; color: red;">Error: Could not load active character.</div>';
+    return;
+  }
+
+  const gameData = getGameData();
 
   if (character.mode === 'creation') {
-    renderCreationMode(app);
+    renderCreationMode(app, character, gameData);
   } else if (character.mode === 'play') {
-    renderPlayMode(app);
+    renderPlayMode(app, character, gameData);
   } else if (character.mode === 'advancement') {
-    renderAdvancementMode(app);
+    renderAdvancementMode(app, character, gameData);
   }
 }
 
 /**
  * Handle character creation validation and mode transition
  */
-function createCharacter() {
-  const validation = validateCharacterCreation();
+function handleCreateCharacter() {
+  if (!session || !session.activeCharacterId) return;
+
+  const character = loadCharacter(session.activeCharacterId);
+  if (!character) return;
+
+  const validation = validateCharacterCreation(character);
 
   if (!validation.valid) {
     alert(validation.errors[0]);
     return;
   }
 
-  setMode('play', render);
+  character.mode = 'play';
+  saveCharacter(character);
+  render();
 }
 
 /**
@@ -95,63 +126,128 @@ function setupEventDelegation() {
         const params = target.getAttribute('data-params');
         const parsedParams = params ? JSON.parse(params) : {};
 
+        // Get active character for mutations
+        const character = session && session.activeCharacterId ? loadCharacter(session.activeCharacterId) : null;
+
         // Route to appropriate function
         switch (action) {
           case 'toggleAspect':
-            toggleAspect(parsedParams.id, render);
+            if (character) {
+              toggleAspect(parsedParams.id, render, character);
+              saveCharacter(character);
+              render();
+            }
             break;
           case 'toggleEdge':
-            toggleEdge(parsedParams.name, render);
+            if (character) {
+              toggleEdge(parsedParams.name, render, character);
+              saveCharacter(character);
+              render();
+            }
             break;
           case 'adjustSkill':
-            adjustSkill(parsedParams.name, parsedParams.delta, render);
+            if (character) {
+              adjustSkill(parsedParams.name, parsedParams.delta, render, character);
+              saveCharacter(character);
+              render();
+            }
             break;
           case 'adjustLanguage':
-            adjustLanguage(parsedParams.name, parsedParams.delta, render);
+            if (character) {
+              adjustLanguage(parsedParams.name, parsedParams.delta, render, character);
+              saveCharacter(character);
+              render();
+            }
             break;
           case 'cycleAspectDamage':
             e.stopPropagation();
-            cycleAspectDamage(parsedParams.id, parsedParams.index, render);
+            if (character) {
+              cycleAspectDamage(parsedParams.id, parsedParams.index, render, character);
+              saveCharacter(character);
+              render();
+            }
             break;
           case 'expandAspectTrack':
             e.stopPropagation();
-            expandAspectTrack(parsedParams.id, parsedParams.delta, render);
+            if (character) {
+              expandAspectTrack(parsedParams.id, parsedParams.delta, render, character);
+              saveCharacter(character);
+              render();
+            }
             break;
           case 'addMilestone':
-            addMilestone(render);
+            if (character) {
+              addMilestone(render, character);
+              saveCharacter(character);
+              render();
+            }
             break;
           case 'toggleMilestoneUsed':
-            toggleMilestoneUsed(parsedParams.id, render);
+            if (character) {
+              toggleMilestoneUsed(parsedParams.id, render, character);
+              saveCharacter(character);
+              render();
+            }
             break;
           case 'deleteMilestone':
-            deleteMilestone(parsedParams.id, render);
+            if (character) {
+              deleteMilestone(parsedParams.id, render, character);
+              saveCharacter(character);
+              render();
+            }
             break;
           case 'addResource':
-            addResource(parsedParams.type, render);
+            if (character) {
+              addResource(parsedParams.type, render, character);
+              saveCharacter(character);
+              render();
+            }
             break;
           case 'removeResource':
-            removeResource(parsedParams.type, parsedParams.id, render);
+            if (character) {
+              removeResource(parsedParams.type, parsedParams.id, render, character);
+              saveCharacter(character);
+              render();
+            }
             break;
           case 'populateDefaultResources':
-            populateDefaultResources(render);
+            if (character) {
+              populateDefaultResources(render, character);
+              saveCharacter(character);
+              render();
+            }
             break;
           case 'generateRandomCharacter':
-            generateRandomCharacter(render);
+            if (character) {
+              generateRandomCharacter(render, character);
+              saveCharacter(character);
+              render();
+            }
             break;
           case 'createCharacter':
-            createCharacter();
+            handleCreateCharacter();
             break;
           case 'setMode':
-            setMode(parsedParams.mode, render);
+            if (character) {
+              setMode(parsedParams.mode, render, character);
+              saveCharacter(character);
+              render();
+            }
             break;
           case 'exportCharacter':
-            exportCharacter();
+            if (character) {
+              exportCharacter(character);
+            }
             break;
           case 'importCharacter':
-            importCharacter(render);
+            importCharacter(session, render);
             break;
           case 'toggleMireCheckbox':
-            toggleMireCheckbox(parsedParams.index, parsedParams.num, render);
+            if (character) {
+              toggleMireCheckbox(parsedParams.index, parsedParams.num, render, character);
+              saveCharacter(character);
+              render();
+            }
             break;
         }
         return; // Stop after handling the action
@@ -170,33 +266,49 @@ function setupEventDelegation() {
     const params = target.getAttribute('data-params');
     const parsedParams = params ? JSON.parse(params) : {};
 
+    const character = session && session.activeCharacterId ? loadCharacter(session.activeCharacterId) : null;
+    if (!character) return;
+
     switch (action) {
       case 'onCharacterNameChange':
-        onCharacterNameChange(target.value);
+        onCharacterNameChange(target.value, character);
+        saveCharacter(character);
         break;
       case 'onBloodlineChange':
-        onBloodlineChange(target.value, render);
+        onBloodlineChange(target.value, render, character);
+        saveCharacter(character);
+        render();
         break;
       case 'onOriginChange':
-        onOriginChange(target.value, render);
+        onOriginChange(target.value, render, character);
+        saveCharacter(character);
+        render();
         break;
       case 'onPostChange':
-        onPostChange(target.value, render);
+        onPostChange(target.value, render, character);
+        saveCharacter(character);
+        render();
         break;
       case 'updateDrive':
-        updateDrive(parsedParams.index, target.value);
+        updateDrive(parsedParams.index, target.value, character);
+        saveCharacter(character);
         break;
       case 'updateMire':
-        updateMire(parsedParams.index, target.value);
+        updateMire(parsedParams.index, target.value, character);
+        saveCharacter(character);
         break;
       case 'updateMilestoneName':
-        updateMilestoneName(parsedParams.id, target.value);
+        updateMilestoneName(parsedParams.id, target.value, character);
+        saveCharacter(character);
         break;
       case 'updateMilestoneScale':
-        updateMilestoneScale(parsedParams.id, target.value, render);
+        updateMilestoneScale(parsedParams.id, target.value, render, character);
+        saveCharacter(character);
+        render();
         break;
       case 'updateResourceName':
-        updateResourceName(parsedParams.type, parsedParams.id, target.value);
+        updateResourceName(parsedParams.type, parsedParams.id, target.value, character);
+        saveCharacter(character);
         break;
     }
   });
@@ -208,12 +320,26 @@ function setupEventDelegation() {
 async function init() {
   const success = await loadGameData();
 
-  if (success) {
-    setupEventDelegation();
-    render();
-  } else {
+  if (!success) {
     document.getElementById('app').innerHTML = '<div style="padding: 20px; color: red;">Failed to load game data. Check console for errors.</div>';
+    return;
   }
+
+  // Load or create session
+  session = loadSession();
+  if (!session) {
+    // New user - create default session with one character
+    session = createSession('My Crew');
+
+    const character = createCharacter();
+    saveCharacter(character);
+    addCharacterToSession(session, character.id);
+
+    saveSession(session);
+  }
+
+  setupEventDelegation();
+  render();
 }
 
 // Start the app

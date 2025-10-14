@@ -13,8 +13,91 @@ export const BUDGETS = {
   maxAspectsAdvancement: 7
 };
 
-// Initial character state
+/**
+ * Generate a unique ID
+ */
+function generateId() {
+  return Date.now().toString(36) + Math.random().toString(36).substr(2);
+}
+
+/**
+ * Create a new character with default values
+ */
+export function createCharacter(name = 'Character Name', bloodline = 'Tzelicrae', origin = 'Ridgeback', post = 'Mesmer') {
+  return {
+    id: generateId(),
+    mode: 'creation',
+    name,
+    bloodline,
+    origin,
+    post,
+    selectedAspects: [],
+    selectedEdges: [],
+    skills: {},
+    languages: { 'Low Sour': 3 },
+    milestones: [],
+    drives: ['', '', ''],
+    mires: [
+      { text: '', checkbox1: false, checkbox2: false },
+      { text: '', checkbox1: false, checkbox2: false },
+      { text: '', checkbox1: false, checkbox2: false }
+    ],
+    resources: {
+      charts: [],
+      salvage: [],
+      specimens: [],
+      whispers: []
+    }
+  };
+}
+
+/**
+ * Load a character from localStorage
+ */
+export function loadCharacter(characterId) {
+  const stored = localStorage.getItem(`wildsea-character-${characterId}`);
+  if (stored) {
+    try {
+      return JSON.parse(stored);
+    } catch (e) {
+      console.error(`Failed to load character ${characterId}:`, e);
+    }
+  }
+  return null;
+}
+
+/**
+ * Save a character to localStorage
+ */
+export function saveCharacter(character) {
+  localStorage.setItem(`wildsea-character-${character.id}`, JSON.stringify(character));
+}
+
+/**
+ * Delete a character from localStorage
+ */
+export function deleteCharacter(characterId) {
+  localStorage.removeItem(`wildsea-character-${characterId}`);
+}
+
+/**
+ * Get all characters from localStorage
+ */
+export function getAllCharacters() {
+  const characters = [];
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    if (key.startsWith('wildsea-character-')) {
+      const character = loadCharacter(key.replace('wildsea-character-', ''));
+      if (character) characters.push(character);
+    }
+  }
+  return characters;
+}
+
+// Initial character state (global for backward compatibility)
 export let character = {
+  id: generateId(),
   mode: 'creation',
   name: 'Character Name',
   bloodline: 'Tzelicrae',
@@ -51,35 +134,37 @@ export let character = {
 };
 
 /**
- * Get all available aspects based on current character selections
+ * Get all available aspects based on character selections
+ * @param {Object} char - Character object (optional, defaults to global character)
  */
-export function getAvailableAspects() {
+export function getAvailableAspects(char = null) {
   const GAME_DATA = getGameData();
+  const targetChar = char || character;
   const available = [];
 
-  const bloodlineAspects = GAME_DATA.aspects[character.bloodline] || [];
+  const bloodlineAspects = GAME_DATA.aspects[targetChar.bloodline] || [];
   bloodlineAspects.forEach(aspect => {
     available.push({
       ...aspect,
-      source: character.bloodline,
+      source: targetChar.bloodline,
       category: 'Bloodline'
     });
   });
 
-  const originAspects = GAME_DATA.aspects[character.origin] || [];
+  const originAspects = GAME_DATA.aspects[targetChar.origin] || [];
   originAspects.forEach(aspect => {
     available.push({
       ...aspect,
-      source: character.origin,
+      source: targetChar.origin,
       category: 'Origin'
     });
   });
 
-  const postAspects = GAME_DATA.aspects[character.post] || [];
+  const postAspects = GAME_DATA.aspects[targetChar.post] || [];
   postAspects.forEach(aspect => {
     available.push({
       ...aspect,
-      source: character.post,
+      source: targetChar.post,
       category: 'Post'
     });
   });
@@ -90,54 +175,59 @@ export function getAvailableAspects() {
 /**
  * Character property mutations
  */
-export function onCharacterNameChange(value) {
-  character.name = value;
+export function onCharacterNameChange(value, char = null) {
+  const targetChar = char || character;
+  targetChar.name = value;
 }
 
-export function onBloodlineChange(value, renderCallback) {
-  character.bloodline = value;
-  character.selectedAspects = [];
+export function onBloodlineChange(value, renderCallback, char = null) {
+  const targetChar = char || character;
+  targetChar.bloodline = value;
+  targetChar.selectedAspects = [];
   renderCallback();
 }
 
-export function onOriginChange(value, renderCallback) {
-  character.origin = value;
-  character.selectedAspects = [];
+export function onOriginChange(value, renderCallback, char = null) {
+  const targetChar = char || character;
+  targetChar.origin = value;
+  targetChar.selectedAspects = [];
   renderCallback();
 }
 
-export function onPostChange(value, renderCallback) {
-  character.post = value;
-  character.selectedAspects = [];
+export function onPostChange(value, renderCallback, char = null) {
+  const targetChar = char || character;
+  targetChar.post = value;
+  targetChar.selectedAspects = [];
   renderCallback();
 }
 
 /**
  * Aspect mutations
  */
-export function toggleAspect(aspectId, renderCallback) {
-  if (character.mode !== 'creation' && character.mode !== 'advancement') return;
+export function toggleAspect(aspectId, renderCallback, char = null) {
+  const targetChar = char || character;
+  if (targetChar.mode !== 'creation' && targetChar.mode !== 'advancement') return;
 
-  const index = character.selectedAspects.findIndex(a => a.id === aspectId);
+  const index = targetChar.selectedAspects.findIndex(a => a.id === aspectId);
 
   if (index >= 0) {
-    character.selectedAspects.splice(index, 1);
+    targetChar.selectedAspects.splice(index, 1);
   } else {
-    if (character.mode === 'creation' && character.selectedAspects.length >= BUDGETS.aspects) {
+    if (targetChar.mode === 'creation' && targetChar.selectedAspects.length >= BUDGETS.aspects) {
       return;
     }
-    if (character.mode === 'advancement' && character.selectedAspects.length >= BUDGETS.maxAspectsAdvancement) {
+    if (targetChar.mode === 'advancement' && targetChar.selectedAspects.length >= BUDGETS.maxAspectsAdvancement) {
       return;
     }
 
-    const allAspects = getAvailableAspects();
+    const allAspects = getAvailableAspects(targetChar);
     const aspect = allAspects.find(a => {
       const id = a.source + '-' + a.name;
       return id === aspectId;
     });
 
     if (aspect) {
-      character.selectedAspects.push({
+      targetChar.selectedAspects.push({
         id: aspectId,
         ...aspect,
         trackSize: aspect.track,
@@ -149,10 +239,11 @@ export function toggleAspect(aspectId, renderCallback) {
   renderCallback();
 }
 
-export function cycleAspectDamage(aspectId, boxIndex, renderCallback) {
-  if (character.mode !== 'play') return;
+export function cycleAspectDamage(aspectId, boxIndex, renderCallback, char = null) {
+  const targetChar = char || character;
+  if (targetChar.mode !== 'play') return;
 
-  const aspect = character.selectedAspects.find(a => a.id === aspectId);
+  const aspect = targetChar.selectedAspects.find(a => a.id === aspectId);
   if (!aspect) return;
 
   const states = ['default', 'marked', 'burned'];
@@ -164,10 +255,11 @@ export function cycleAspectDamage(aspectId, boxIndex, renderCallback) {
   renderCallback();
 }
 
-export function expandAspectTrack(aspectId, delta, renderCallback) {
-  if (character.mode !== 'advancement') return;
+export function expandAspectTrack(aspectId, delta, renderCallback, char = null) {
+  const targetChar = char || character;
+  if (targetChar.mode !== 'advancement') return;
 
-  const aspect = character.selectedAspects.find(a => a.id === aspectId);
+  const aspect = targetChar.selectedAspects.find(a => a.id === aspectId);
   if (!aspect) return;
 
   const newSize = aspect.trackSize + delta;
@@ -186,18 +278,19 @@ export function expandAspectTrack(aspectId, delta, renderCallback) {
 /**
  * Edge mutations
  */
-export function toggleEdge(edgeName, renderCallback) {
-  if (character.mode !== 'creation') return;
+export function toggleEdge(edgeName, renderCallback, char = null) {
+  const targetChar = char || character;
+  if (targetChar.mode !== 'creation') return;
 
-  const index = character.selectedEdges.indexOf(edgeName);
+  const index = targetChar.selectedEdges.indexOf(edgeName);
 
   if (index >= 0) {
-    character.selectedEdges.splice(index, 1);
+    targetChar.selectedEdges.splice(index, 1);
   } else {
-    if (character.selectedEdges.length >= BUDGETS.edges) {
+    if (targetChar.selectedEdges.length >= BUDGETS.edges) {
       return;
     }
-    character.selectedEdges.push(edgeName);
+    targetChar.selectedEdges.push(edgeName);
   }
 
   renderCallback();
@@ -206,13 +299,14 @@ export function toggleEdge(edgeName, renderCallback) {
 /**
  * Skill mutations
  */
-export function adjustSkill(name, delta, renderCallback) {
-  const current = character.skills[name] || 0;
-  const newValue = Math.max(0, Math.min(character.mode === 'creation' ? 2 : 3, current + delta));
+export function adjustSkill(name, delta, renderCallback, char = null) {
+  const targetChar = char || character;
+  const current = targetChar.skills[name] || 0;
+  const newValue = Math.max(0, Math.min(targetChar.mode === 'creation' ? 2 : 3, current + delta));
 
-  if (character.mode === 'creation') {
-    const totalPoints = Object.values(character.skills).reduce((sum, v) => sum + v, 0);
-    const languagePoints = Object.entries(character.languages)
+  if (targetChar.mode === 'creation') {
+    const totalPoints = Object.values(targetChar.skills).reduce((sum, v) => sum + v, 0);
+    const languagePoints = Object.entries(targetChar.languages)
       .filter(function (entry) { return entry[0] !== 'Low Sour'; })
       .reduce((sum, entry) => sum + entry[1], 0);
 
@@ -222,9 +316,9 @@ export function adjustSkill(name, delta, renderCallback) {
   }
 
   if (newValue === 0) {
-    delete character.skills[name];
+    delete targetChar.skills[name];
   } else {
-    character.skills[name] = newValue;
+    targetChar.skills[name] = newValue;
   }
 
   renderCallback();
@@ -233,17 +327,18 @@ export function adjustSkill(name, delta, renderCallback) {
 /**
  * Language mutations
  */
-export function adjustLanguage(name, delta, renderCallback) {
-  if (name === 'Low Sour' && character.mode === 'creation') {
+export function adjustLanguage(name, delta, renderCallback, char = null) {
+  const targetChar = char || character;
+  if (name === 'Low Sour' && targetChar.mode === 'creation') {
     return;
   }
 
-  const current = character.languages[name] || 0;
-  const newValue = Math.max(0, Math.min(character.mode === 'creation' ? 2 : 3, current + delta));
+  const current = targetChar.languages[name] || 0;
+  const newValue = Math.max(0, Math.min(targetChar.mode === 'creation' ? 2 : 3, current + delta));
 
-  if (character.mode === 'creation') {
-    const skillPoints = Object.values(character.skills).reduce((sum, v) => sum + v, 0);
-    const totalPoints = Object.entries(character.languages)
+  if (targetChar.mode === 'creation') {
+    const skillPoints = Object.values(targetChar.skills).reduce((sum, v) => sum + v, 0);
+    const totalPoints = Object.entries(targetChar.languages)
       .filter(function (entry) { return entry[0] !== 'Low Sour'; })
       .reduce((sum, entry) => sum + entry[1], 0);
 
@@ -253,9 +348,9 @@ export function adjustLanguage(name, delta, renderCallback) {
   }
 
   if (newValue === 0 && name !== 'Low Sour') {
-    delete character.languages[name];
+    delete targetChar.languages[name];
   } else {
-    character.languages[name] = newValue;
+    targetChar.languages[name] = newValue;
   }
 
   renderCallback();
@@ -264,22 +359,25 @@ export function adjustLanguage(name, delta, renderCallback) {
 /**
  * Drive mutations
  */
-export function updateDrive(index, value) {
-  character.drives[index] = value;
+export function updateDrive(index, value, char = null) {
+  const targetChar = char || character;
+  targetChar.drives[index] = value;
 }
 
 /**
  * Mire mutations
  */
-export function updateMire(index, value) {
-  character.mires[index].text = value;
+export function updateMire(index, value, char = null) {
+  const targetChar = char || character;
+  targetChar.mires[index].text = value;
 }
 
-export function toggleMireCheckbox(index, checkboxNum, renderCallback) {
+export function toggleMireCheckbox(index, checkboxNum, renderCallback, char = null) {
+  const targetChar = char || character;
   if (checkboxNum === 1) {
-    character.mires[index].checkbox1 = !character.mires[index].checkbox1;
+    targetChar.mires[index].checkbox1 = !targetChar.mires[index].checkbox1;
   } else {
-    character.mires[index].checkbox2 = !character.mires[index].checkbox2;
+    targetChar.mires[index].checkbox2 = !targetChar.mires[index].checkbox2;
   }
   renderCallback();
 }
@@ -287,8 +385,9 @@ export function toggleMireCheckbox(index, checkboxNum, renderCallback) {
 /**
  * Milestone mutations
  */
-export function addMilestone(renderCallback) {
-  character.milestones.push({
+export function addMilestone(renderCallback, char = null) {
+  const targetChar = char || character;
+  targetChar.milestones.push({
     id: Date.now().toString(),
     used: false,
     name: '',
@@ -297,33 +396,37 @@ export function addMilestone(renderCallback) {
   renderCallback();
 }
 
-export function updateMilestoneName(id, name) {
-  const milestone = character.milestones.find(m => m.id === id);
+export function updateMilestoneName(id, name, char = null) {
+  const targetChar = char || character;
+  const milestone = targetChar.milestones.find(m => m.id === id);
   if (milestone) {
     milestone.name = name;
   }
 }
 
-export function updateMilestoneScale(id, scale, renderCallback) {
-  const milestone = character.milestones.find(m => m.id === id);
+export function updateMilestoneScale(id, scale, renderCallback, char = null) {
+  const targetChar = char || character;
+  const milestone = targetChar.milestones.find(m => m.id === id);
   if (milestone) {
     milestone.scale = scale;
     renderCallback();
   }
 }
 
-export function toggleMilestoneUsed(id, renderCallback) {
-  const milestone = character.milestones.find(m => m.id === id);
+export function toggleMilestoneUsed(id, renderCallback, char = null) {
+  const targetChar = char || character;
+  const milestone = targetChar.milestones.find(m => m.id === id);
   if (milestone) {
     milestone.used = !milestone.used;
     renderCallback();
   }
 }
 
-export function deleteMilestone(id, renderCallback) {
-  const index = character.milestones.findIndex(m => m.id === id);
+export function deleteMilestone(id, renderCallback, char = null) {
+  const targetChar = char || character;
+  const index = targetChar.milestones.findIndex(m => m.id === id);
   if (index >= 0) {
-    character.milestones.splice(index, 1);
+    targetChar.milestones.splice(index, 1);
     renderCallback();
   }
 }
@@ -331,34 +434,38 @@ export function deleteMilestone(id, renderCallback) {
 /**
  * Resource mutations
  */
-export function addResource(type, renderCallback) {
-  character.resources[type].push({
+export function addResource(type, renderCallback, char = null) {
+  const targetChar = char || character;
+  targetChar.resources[type].push({
     id: Date.now().toString(),
     name: ''
   });
   renderCallback();
 }
 
-export function updateResourceName(type, id, name) {
-  const resource = character.resources[type].find(r => r.id === id);
+export function updateResourceName(type, id, name, char = null) {
+  const targetChar = char || character;
+  const resource = targetChar.resources[type].find(r => r.id === id);
   if (resource) {
     resource.name = name;
   }
 }
 
-export function removeResource(type, id, renderCallback) {
-  const index = character.resources[type].findIndex(r => r.id === id);
+export function removeResource(type, id, renderCallback, char = null) {
+  const targetChar = char || character;
+  const index = targetChar.resources[type].findIndex(r => r.id === id);
   if (index >= 0) {
-    character.resources[type].splice(index, 1);
+    targetChar.resources[type].splice(index, 1);
     renderCallback();
   }
 }
 
-export function populateDefaultResources(renderCallback) {
+export function populateDefaultResources(renderCallback, char = null) {
+  const targetChar = char || character;
   const GAME_DATA = getGameData();
 
   // Clear existing resources
-  character.resources = {
+  targetChar.resources = {
     charts: [],
     salvage: [],
     specimens: [],
@@ -366,7 +473,7 @@ export function populateDefaultResources(renderCallback) {
   };
 
   // Collect resources from bloodline, origin, and post
-  const sources = [character.bloodline, character.origin, character.post];
+  const sources = [targetChar.bloodline, targetChar.origin, targetChar.post];
   const seenResources = {
     charts: new Set(),
     salvage: new Set(),
@@ -392,7 +499,7 @@ export function populateDefaultResources(renderCallback) {
             // Only add if not already seen (avoid duplicates)
             if (!seenResources[type].has(itemName)) {
               seenResources[type].add(itemName);
-              character.resources[type].push({
+              targetChar.resources[type].push({
                 id: Date.now().toString() + '-' + type + '-' + k + '-' + i,
                 name: itemName
               });
@@ -409,45 +516,47 @@ export function populateDefaultResources(renderCallback) {
 /**
  * Mode mutations
  */
-export function setMode(mode, renderCallback) {
-  character.mode = mode;
+export function setMode(mode, renderCallback, char = null) {
+  const targetChar = char || character;
+  targetChar.mode = mode;
   renderCallback();
 }
 
 /**
  * Character generation
  */
-export function generateRandomCharacter(renderCallback) {
+export function generateRandomCharacter(renderCallback, char = null) {
+  const targetChar = char || character;
   const GAME_DATA = getGameData();
 
-  character.name = 'Random Character';
-  character.bloodline = GAME_DATA.bloodlines[Math.floor(Math.random() * GAME_DATA.bloodlines.length)];
-  character.origin = GAME_DATA.origins[Math.floor(Math.random() * GAME_DATA.origins.length)];
-  character.post = GAME_DATA.posts[Math.floor(Math.random() * GAME_DATA.posts.length)];
+  targetChar.name = 'Random Character';
+  targetChar.bloodline = GAME_DATA.bloodlines[Math.floor(Math.random() * GAME_DATA.bloodlines.length)];
+  targetChar.origin = GAME_DATA.origins[Math.floor(Math.random() * GAME_DATA.origins.length)];
+  targetChar.post = GAME_DATA.posts[Math.floor(Math.random() * GAME_DATA.posts.length)];
 
-  character.selectedAspects = [];
-  character.selectedEdges = [];
-  character.skills = {};
-  character.languages = { 'Low Sour': 3 };
-  character.milestones = [];
-  character.drives = ['', '', ''];
-  character.mires = [
+  targetChar.selectedAspects = [];
+  targetChar.selectedEdges = [];
+  targetChar.skills = {};
+  targetChar.languages = { 'Low Sour': 3 };
+  targetChar.milestones = [];
+  targetChar.drives = ['', '', ''];
+  targetChar.mires = [
     { text: '', checkbox1: false, checkbox2: false },
     { text: '', checkbox1: false, checkbox2: false },
     { text: '', checkbox1: false, checkbox2: false }
   ];
-  character.resources = {
+  targetChar.resources = {
     charts: [],
     salvage: [],
     specimens: [],
     whispers: []
   };
 
-  const allAspects = getAvailableAspects();
+  const allAspects = getAvailableAspects(targetChar);
   const shuffled = allAspects.slice().sort(() => Math.random() - 0.5);
   for (let i = 0; i < Math.min(4, shuffled.length); i++) {
     const aspect = shuffled[i];
-    character.selectedAspects.push({
+    targetChar.selectedAspects.push({
       id: aspect.source + '-' + aspect.name,
       ...aspect,
       trackSize: aspect.track,
@@ -456,14 +565,14 @@ export function generateRandomCharacter(renderCallback) {
   }
 
   const shuffledEdges = GAME_DATA.edges.slice().sort(() => Math.random() - 0.5);
-  character.selectedEdges = shuffledEdges.slice(0, 3).map(e => e.name);
+  targetChar.selectedEdges = shuffledEdges.slice(0, 3).map(e => e.name);
 
   let pointsLeft = BUDGETS.skillPoints;
   while (pointsLeft > 0) {
     const skill = GAME_DATA.skills[Math.floor(Math.random() * GAME_DATA.skills.length)];
-    const current = character.skills[skill] || 0;
+    const current = targetChar.skills[skill] || 0;
     if (current < 2) {
-      character.skills[skill] = current + 1;
+      targetChar.skills[skill] = current + 1;
       pointsLeft--;
     }
   }

@@ -5,18 +5,18 @@
 import { getGameData } from '../data/loader.js';
 import { getCharacter, BUDGETS } from '../state/character.js';
 
-export function renderSkills() {
-  const GAME_DATA = getGameData();
-  const character = getCharacter();
-  const isCreationMode = character.mode === 'creation';
-  const isPlayMode = character.mode === 'play';
+export function renderSkills(character = null, gameData = null) {
+  const GAME_DATA = gameData || getGameData();
+  const char = character || getCharacter();
+  const isCreationMode = char.mode === 'creation';
+  const isPlayMode = char.mode === 'play';
 
   if (isPlayMode) {
     let html = '<div><h2 class="section-header">Skills</h2>';
 
     for (let i = 0; i < GAME_DATA.skills.length; i++) {
       const skill = GAME_DATA.skills[i];
-      const rank = character.skills[skill] || 0;
+      const rank = char.skills[skill] || 0;
 
       html += '<div class="skill-row">';
       html += '<div class="skill-name">' + skill + '</div>';
@@ -37,15 +37,15 @@ export function renderSkills() {
     let html = '<div style="display: flex; flex-direction: column; gap: 4px;">';
     html += '<h3 class="subsection-header" style="margin-bottom: 12px;">Skills</h3>';
 
-    const skillPoints = Object.values(character.skills).reduce(function (sum, v) { return sum + v; }, 0);
-    const languagePoints = Object.entries(character.languages)
+    const skillPoints = Object.values(char.skills).reduce(function (sum, v) { return sum + v; }, 0);
+    const languagePoints = Object.entries(char.languages)
       .filter(function (entry) { return entry[0] !== 'Low Sour'; })
       .reduce(function (sum, entry) { return sum + entry[1]; }, 0);
     const totalPoints = skillPoints + languagePoints;
 
     for (let i = 0; i < GAME_DATA.skills.length; i++) {
       const skill = GAME_DATA.skills[i];
-      const rank = character.skills[skill] || 0;
+      const rank = char.skills[skill] || 0;
       const canIncrease = rank < 2 && totalPoints < BUDGETS.skillPoints;
 
       html += '<div class="flex-between" style="margin-bottom: 8px;">';
@@ -74,7 +74,7 @@ export function renderSkills() {
 
     for (let i = 0; i < GAME_DATA.skills.length; i++) {
       const skill = GAME_DATA.skills[i];
-      const rank = character.skills[skill] || 0;
+      const rank = char.skills[skill] || 0;
 
       html += '<div class="flex-between" style="margin-bottom: 8px;">';
       html += '<div class="skill-name">' + skill + '</div>';
@@ -100,18 +100,18 @@ export function renderSkills() {
   }
 }
 
-export function renderLanguages() {
-  const GAME_DATA = getGameData();
-  const character = getCharacter();
-  const isCreationMode = character.mode === 'creation';
-  const isPlayMode = character.mode === 'play';
+export function renderLanguages(character = null, gameData = null) {
+  const GAME_DATA = gameData || getGameData();
+  const char = character || getCharacter();
+  const isCreationMode = char.mode === 'creation';
+  const isPlayMode = char.mode === 'play';
 
   if (isPlayMode) {
     let html = '<div><h2 class="section-header">Languages</h2>';
 
     for (let i = 0; i < GAME_DATA.languages.length; i++) {
       const lang = GAME_DATA.languages[i];
-      const rank = character.languages[lang] || 0;
+      const rank = char.languages[lang] || 0;
 
       html += '<div class="skill-row">';
       html += '<div class="skill-name">' + lang + '</div>';
@@ -132,15 +132,15 @@ export function renderLanguages() {
     let html = '<div style="display: flex; flex-direction: column; gap: 4px;">';
     html += '<h3 class="subsection-header" style="margin-bottom: 12px;">Languages</h3>';
 
-    const skillPoints = Object.values(character.skills).reduce(function (sum, v) { return sum + v; }, 0);
-    const languagePoints = Object.entries(character.languages)
+    const skillPoints = Object.values(char.skills).reduce(function (sum, v) { return sum + v; }, 0);
+    const languagePoints = Object.entries(char.languages)
       .filter(function (entry) { return entry[0] !== 'Low Sour'; })
       .reduce(function (sum, entry) { return sum + entry[1]; }, 0);
     const totalPoints = skillPoints + languagePoints;
 
     for (let i = 0; i < GAME_DATA.languages.length; i++) {
       const lang = GAME_DATA.languages[i];
-      const rank = character.languages[lang] || 0;
+      const rank = char.languages[lang] || 0;
       const isLowSour = lang === 'Low Sour';
       const canIncrease = !isLowSour && rank < 2 && totalPoints < BUDGETS.skillPoints;
       const canDecrease = !isLowSour && rank > 0;
@@ -171,7 +171,7 @@ export function renderLanguages() {
 
     for (let i = 0; i < GAME_DATA.languages.length; i++) {
       const lang = GAME_DATA.languages[i];
-      const rank = character.languages[lang] || 0;
+      const rank = char.languages[lang] || 0;
 
       html += '<div class="flex-between" style="margin-bottom: 8px;">';
       html += '<div class="skill-name">' + lang + '</div>';

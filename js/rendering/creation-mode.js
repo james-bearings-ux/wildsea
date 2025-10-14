@@ -2,18 +2,15 @@
  * Creation mode rendering
  */
 
-import { getGameData } from '../data/loader.js';
-import { getCharacter, getAvailableAspects, BUDGETS } from '../state/character.js';
+import { getAvailableAspects, BUDGETS } from '../state/character.js';
 import { renderSmallTrack } from '../components/aspects.js';
 import { renderEdgesSkillsLanguagesRow } from '../components/edges.js';
 import { renderSkills, renderLanguages } from '../components/skills.js';
 import { renderResources } from '../components/resources.js';
 import { renderDrives, renderMires } from '../components/drives-mires.js';
 
-export function renderCreationMode(app) {
-  const GAME_DATA = getGameData();
-  const character = getCharacter();
-  const allAspects = getAvailableAspects();
+export function renderCreationMode(app, character, gameData) {
+  const allAspects = getAvailableAspects(character);
   const bloodlineAspects = allAspects.filter(a => a.category === 'Bloodline');
   const originAspects = allAspects.filter(a => a.category === 'Origin');
   const postAspects = allAspects.filter(a => a.category === 'Post');
@@ -37,21 +34,21 @@ export function renderCreationMode(app) {
             <label style="display: block; margin-bottom: 8px; font-weight: 600;">Bloodline</label>
             <select data-action="onBloodlineChange"
                     style="width: 100%; font-size: 16px;">
-                ${GAME_DATA.bloodlines.map(b => '<option value="' + b + '"' + (character.bloodline === b ? ' selected' : '') + '>' + b + '</option>').join('')}
+                ${gameData.bloodlines.map(b => '<option value="' + b + '"' + (character.bloodline === b ? ' selected' : '') + '>' + b + '</option>').join('')}
             </select>
             </div>
             <div>
             <label style="display: block; margin-bottom: 8px; font-weight: 600;">Origin</label>
             <select data-action="onOriginChange"
                     style="width: 100%; font-size: 16px;">
-                ${GAME_DATA.origins.map(o => '<option value="' + o + '"' + (character.origin === o ? ' selected' : '') + '>' + o + '</option>').join('')}
+                ${gameData.origins.map(o => '<option value="' + o + '"' + (character.origin === o ? ' selected' : '') + '>' + o + '</option>').join('')}
             </select>
             </div>
             <div>
             <label style="display: block; margin-bottom: 8px; font-weight: 600;">Post</label>
             <select data-action="onPostChange"
                     style="width: 100%; font-size: 16px;">
-                ${GAME_DATA.posts.map(p => '<option value="' + p + '"' + (character.post === p ? ' selected' : '') + '>' + p + '</option>').join('')}
+                ${gameData.posts.map(p => '<option value="' + p + '"' + (character.post === p ? ' selected' : '') + '>' + p + '</option>').join('')}
             </select>
             </div>
         </div>
@@ -129,16 +126,16 @@ export function renderCreationMode(app) {
         </div>
         <hr />
 
-        ${renderEdgesSkillsLanguagesRow(renderSkills, renderLanguages)}
+        ${renderEdgesSkillsLanguagesRow(renderSkills, renderLanguages, character, gameData)}
         <hr />
 
-        ${renderResources()}
+        ${renderResources(character)}
         <hr />
 
         <div style="margin-bottom: 32px;">
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 32px;">
-            ${renderDrives()}
-            ${renderMires()}
+            ${renderDrives(character)}
+            ${renderMires(character)}
         </div>
         </div>
     </div>

@@ -6,10 +6,11 @@ import { BUDGETS, getCharacter } from '../state/character.js';
 
 /**
  * Validate character is ready to transition from creation to play mode
+ * @param {Object} char - Character object (optional, defaults to global character)
  * @returns {Object} { valid: boolean, errors: string[] }
  */
-export function validateCharacterCreation() {
-  const character = getCharacter();
+export function validateCharacterCreation(char = null) {
+  const character = char || getCharacter();
   const errors = [];
 
   // Validate aspects

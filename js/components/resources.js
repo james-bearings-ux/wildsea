@@ -4,8 +4,8 @@
 
 import { getCharacter } from '../state/character.js';
 
-export function renderResources() {
-  const character = getCharacter();
+export function renderResources(character = null) {
+  const char = character || getCharacter();
   const resourceTypes = [
     { key: 'charts', label: 'Charts', placeholder: 'Name your Chart...', singular: 'Chart' },
     { key: 'salvage', label: 'Salvage', placeholder: 'Name your Salvage...', singular: 'Salvage' },
@@ -13,7 +13,7 @@ export function renderResources() {
     { key: 'whispers', label: 'Whispers', placeholder: 'Name your Whisper...', singular: 'Whisper' }
   ];
 
-  const isCreationMode = character.mode === 'creation';
+  const isCreationMode = char.mode === 'creation';
 
   let html = '<div style="margin-bottom: 32px;">';
 
@@ -30,7 +30,7 @@ export function renderResources() {
 
   for (let i = 0; i < resourceTypes.length; i++) {
     const type = resourceTypes[i];
-    const items = character.resources[type.key];
+    const items = char.resources[type.key];
 
     html += '<div>';
     html += '<h3 class="subsection-header" style="margin-bottom: 12px;">' + type.label + '</h3>';

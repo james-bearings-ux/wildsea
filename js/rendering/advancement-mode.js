@@ -2,15 +2,14 @@
  * Advancement mode rendering
  */
 
-import { getCharacter, getAvailableAspects, BUDGETS } from '../state/character.js';
+import { getAvailableAspects, BUDGETS } from '../state/character.js';
 import { renderSmallTrack, renderInteractiveTrack } from '../components/aspects.js';
 import { renderEdgesSkillsLanguagesRow } from '../components/edges.js';
 import { renderSkills, renderLanguages } from '../components/skills.js';
 import { renderMilestones } from '../components/milestones.js';
 
-export function renderAdvancementMode(app) {
-  const character = getCharacter();
-  const allAspects = getAvailableAspects();
+export function renderAdvancementMode(app, character, gameData) {
+  const allAspects = getAvailableAspects(character);
   const bloodlineAspects = allAspects.filter(a => a.category === 'Bloodline');
   const originAspects = allAspects.filter(a => a.category === 'Origin');
   const postAspects = allAspects.filter(a => a.category === 'Post');
@@ -121,11 +120,11 @@ export function renderAdvancementMode(app) {
         </div>
         <hr />
 
-        ${renderEdgesSkillsLanguagesRow(renderSkills, renderLanguages)}
+        ${renderEdgesSkillsLanguagesRow(renderSkills, renderLanguages, character, gameData)}
         <hr />
 
         <div style="margin-bottom: 32px;">
-        ${renderMilestones()}
+        ${renderMilestones(character)}
         </div>
     </div>
 

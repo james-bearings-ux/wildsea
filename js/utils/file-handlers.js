@@ -2,13 +2,14 @@
  * File import/export handlers
  */
 
-import { getCharacter, replaceCharacter } from '../state/character.js';
+import { saveCharacter } from '../state/character.js';
+import { addCharacterToSession, setActiveCharacter } from '../state/session.js';
 
 /**
  * Export character as JSON file
+ * @param {Object} character - Character object to export
  */
-export function exportCharacter() {
-  const character = getCharacter();
+export function exportCharacter(character) {
   const exportData = {
     version: '1.0',
     character: character
@@ -29,9 +30,10 @@ export function exportCharacter() {
 
 /**
  * Import character from JSON file
+ * @param {Object} session - Current session object
  * @param {Function} renderCallback - Callback to trigger re-render
  */
-export function importCharacter(renderCallback) {
+export function importCharacter(session, renderCallback) {
   const input = document.createElement('input');
   input.type = 'file';
   input.accept = '.json';
@@ -50,7 +52,14 @@ export function importCharacter(renderCallback) {
           return;
         }
 
-        replaceCharacter(importData.character);
+        const character = importData.character;
+        // Regenerate ID to avoid conflicts
+        character.id = Date.now().toString(36) + Math.random().toString(36).substr(2);
+
+        saveCharacter(character);
+        addCharacterToSession(session, character.id);
+        setActiveCharacter(session, character.id);
+
         renderCallback();
         alert('Character imported successfully!');
       } catch (error) {

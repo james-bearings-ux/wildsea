@@ -4,14 +4,14 @@
 
 import { getCharacter } from '../state/character.js';
 
-export function renderDrives() {
-  const character = getCharacter();
+export function renderDrives(character = null) {
+  const char = character || getCharacter();
   let html = '<div><h2 class="section-header">Drives</h2>';
   html += '<div style="display: flex; flex-direction: column; gap: 8px;">';
 
-  for (let i = 0; i < character.drives.length; i++) {
+  for (let i = 0; i < char.drives.length; i++) {
     html += '<input type="text" ';
-    html += 'value="' + character.drives[i] + '" ';
+    html += 'value="' + char.drives[i] + '" ';
     html += 'placeholder="Enter a drive..." ';
     html += 'data-action="updateDrive" ';
     html += 'data-params=\'{"index":' + i + '}\' ';
@@ -22,15 +22,15 @@ export function renderDrives() {
   return html;
 }
 
-export function renderMires() {
-  const character = getCharacter();
-  const showCheckboxes = character.mode === 'play';
+export function renderMires(character = null) {
+  const char = character || getCharacter();
+  const showCheckboxes = char.mode === 'play';
 
   let html = '<div><h2 class="section-header">Mires</h2>';
   html += '<div style="display: flex; flex-direction: column; gap: 8px;">';
 
-  for (let i = 0; i < character.mires.length; i++) {
-    const mire = character.mires[i];
+  for (let i = 0; i < char.mires.length; i++) {
+    const mire = char.mires[i];
 
     if (showCheckboxes) {
       html += '<div style="display: flex; gap: 10px; align-items: center;">';

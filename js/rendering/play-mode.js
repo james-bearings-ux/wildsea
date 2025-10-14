@@ -2,15 +2,13 @@
  * Play mode rendering
  */
 
-import { getCharacter } from '../state/character.js';
 import { renderEdges } from '../components/edges.js';
 import { renderSkills, renderLanguages } from '../components/skills.js';
 import { renderResources } from '../components/resources.js';
 import { renderDrives, renderMires } from '../components/drives-mires.js';
 import { renderMilestones } from '../components/milestones.js';
 
-export function renderPlayMode(app) {
-  const character = getCharacter();
+export function renderPlayMode(app, character, gameData) {
 
   app.innerHTML = `
     <div style="padding: 20px; max-width: 1400px; margin: 0 auto; padding-bottom: 80px;">
@@ -36,9 +34,9 @@ export function renderPlayMode(app) {
         </div>
 
         <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 3fr; gap: 32px; margin-bottom: 32px;">
-        ${renderEdges()}
-        ${renderSkills()}
-        ${renderLanguages()}
+        ${renderEdges(character, gameData)}
+        ${renderSkills(character, gameData)}
+        ${renderLanguages(character, gameData)}
 
         <div>
             <h2 class="section-header">Aspects</h2>
@@ -73,13 +71,13 @@ export function renderPlayMode(app) {
         </div>
         </div>
         <hr />
-        ${renderResources()}
+        ${renderResources(character)}
         <hr />
         <div style="margin-bottom: 32px;">
         <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 32px;">
-            ${renderDrives()}
-            ${renderMires()}
-            ${renderMilestones()}
+            ${renderDrives(character)}
+            ${renderMires(character)}
+            ${renderMilestones(character)}
         </div>
         </div>
     </div>
