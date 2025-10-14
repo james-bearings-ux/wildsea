@@ -25,8 +25,7 @@ async function loadGameData() {
 // Initialize app after data loads
 loadGameData().then(success => {
   if (success) {
-    // Make render globally accessible too
-    window.render = render;
+    setupEventDelegation();
     render();
   } else {
     document.getElementById('app').innerHTML = '<div style="padding: 20px; color: red;">Failed to load game data. Check console for errors.</div>';
@@ -69,38 +68,143 @@ let character = {
     }
 };
 
-// Make functions globally accessible for inline event handlers
-window.toggleAspect = toggleAspect;
-window.toggleEdge = toggleEdge;
-window.adjustSkill = adjustSkill;
-window.adjustLanguage = adjustLanguage;
-window.cycleAspectDamage = cycleAspectDamage;
-window.expandAspectTrack = expandAspectTrack;
-window.addMilestone = addMilestone;
-window.updateMilestoneName = updateMilestoneName;
-window.updateMilestoneScale = updateMilestoneScale;
-window.toggleMilestoneUsed = toggleMilestoneUsed;
-window.deleteMilestone = deleteMilestone;
-window.updateDrive = updateDrive;
-window.updateMire = updateMire;
-window.toggleMireCheckbox = toggleMireCheckbox;
-window.addResource = addResource;
-window.updateResourceName = updateResourceName;
-window.removeResource = removeResource;
-window.generateRandomCharacter = generateRandomCharacter;
-window.createCharacter = createCharacter;
-window.setMode = setMode;
-window.exportCharacter = exportCharacter;
-window.importCharacter = importCharacter;
-window.onBloodlineChange = onBloodlineChange;
-window.onOriginChange = onOriginChange;
-window.onPostChange = onPostChange;
-window.onCharacterNameChange = onCharacterNameChange;
+// Event delegation handler
+function setupEventDelegation() {
+    const app = document.getElementById('app');
+
+    // Click event delegation
+    app.addEventListener('click', function(e) {
+        // Check if the clicked element or any parent has data-no-propagate
+        let checkTarget = e.target;
+        while (checkTarget && checkTarget !== app) {
+            if (checkTarget.getAttribute('data-no-propagate') === 'true') {
+                return; // Stop event handling entirely
+            }
+            checkTarget = checkTarget.parentElement;
+        }
+
+        // Find the closest element with data-action (bubble up the DOM)
+        let target = e.target;
+        while (target && target !== app) {
+            const action = target.getAttribute('data-action');
+
+            if (action) {
+                const params = target.getAttribute('data-params');
+                const parsedParams = params ? JSON.parse(params) : {};
+
+        // Route to appropriate function
+        switch (action) {
+            case 'toggleAspect':
+                toggleAspect(parsedParams.id);
+                break;
+            case 'toggleEdge':
+                toggleEdge(parsedParams.name);
+                break;
+            case 'adjustSkill':
+                adjustSkill(parsedParams.name, parsedParams.delta);
+                break;
+            case 'adjustLanguage':
+                adjustLanguage(parsedParams.name, parsedParams.delta);
+                break;
+            case 'cycleAspectDamage':
+                e.stopPropagation();
+                cycleAspectDamage(parsedParams.id, parsedParams.index);
+                break;
+            case 'expandAspectTrack':
+                e.stopPropagation();
+                expandAspectTrack(parsedParams.id, parsedParams.delta);
+                break;
+            case 'addMilestone':
+                addMilestone();
+                break;
+            case 'toggleMilestoneUsed':
+                toggleMilestoneUsed(parsedParams.id);
+                break;
+            case 'deleteMilestone':
+                deleteMilestone(parsedParams.id);
+                break;
+            case 'addResource':
+                addResource(parsedParams.type);
+                break;
+            case 'removeResource':
+                removeResource(parsedParams.type, parsedParams.id);
+                break;
+            case 'populateDefaultResources':
+                populateDefaultResources();
+                break;
+            case 'generateRandomCharacter':
+                generateRandomCharacter();
+                break;
+            case 'createCharacter':
+                createCharacter();
+                break;
+            case 'setMode':
+                setMode(parsedParams.mode);
+                break;
+            case 'exportCharacter':
+                exportCharacter();
+                break;
+            case 'importCharacter':
+                importCharacter();
+                break;
+            case 'toggleMireCheckbox':
+                toggleMireCheckbox(parsedParams.index, parsedParams.num);
+                break;
+        }
+                return; // Stop after handling the action
+            }
+            target = target.parentElement; // Move up the DOM tree
+        }
+    });
+
+    // Change event delegation
+    app.addEventListener('change', function(e) {
+        const target = e.target;
+        const action = target.getAttribute('data-action');
+
+        if (!action) return;
+
+        const params = target.getAttribute('data-params');
+        const parsedParams = params ? JSON.parse(params) : {};
+
+        switch (action) {
+            case 'onCharacterNameChange':
+                onCharacterNameChange(target.value);
+                break;
+            case 'onBloodlineChange':
+                onBloodlineChange(target.value);
+                break;
+            case 'onOriginChange':
+                onOriginChange(target.value);
+                break;
+            case 'onPostChange':
+                onPostChange(target.value);
+                break;
+            case 'updateDrive':
+                updateDrive(parsedParams.index, target.value);
+                break;
+            case 'updateMire':
+                updateMire(parsedParams.index, target.value);
+                break;
+            case 'updateMilestoneName':
+                updateMilestoneName(parsedParams.id, target.value);
+                break;
+            case 'updateMilestoneScale':
+                updateMilestoneScale(parsedParams.id, target.value);
+                break;
+            case 'updateResourceName':
+                updateResourceName(parsedParams.type, parsedParams.id, target.value);
+                break;
+        }
+    });
+}
 
 const BUDGETS = {
     aspects: 4,
     edges: 3,
-    skillPoints: 8
+    skillPoints: 8,
+    resources: 6,
+    maxAspectsAdvancement: 7
 };
 
 function getAvailableAspects() {
@@ -160,22 +264,25 @@ function onCharacterNameChange(value) {
 
 function toggleAspect(aspectId) {
     if (character.mode !== 'creation' && character.mode !== 'advancement') return;
-    
+
     const index = character.selectedAspects.findIndex(a => a.id === aspectId);
-    
+
     if (index >= 0) {
     character.selectedAspects.splice(index, 1);
     } else {
     if (character.mode === 'creation' && character.selectedAspects.length >= BUDGETS.aspects) {
         return;
     }
-    
+    if (character.mode === 'advancement' && character.selectedAspects.length >= BUDGETS.maxAspectsAdvancement) {
+        return;
+    }
+
     const allAspects = getAvailableAspects();
     const aspect = allAspects.find(a => {
         const id = a.source + '-' + a.name;
         return id === aspectId;
     });
-    
+
     if (aspect) {
         character.selectedAspects.push({
         id: aspectId,
@@ -185,7 +292,7 @@ function toggleAspect(aspectId) {
         });
     }
     }
-    
+
     render();
 }
 
@@ -373,6 +480,56 @@ function removeResource(type, id) {
     }
 }
 
+function populateDefaultResources() {
+    // Clear existing resources
+    character.resources = {
+        charts: [],
+        salvage: [],
+        specimens: [],
+        whispers: []
+    };
+
+    // Collect resources from bloodline, origin, and post
+    const sources = [character.bloodline, character.origin, character.post];
+    const seenResources = {
+        charts: new Set(),
+        salvage: new Set(),
+        specimens: new Set(),
+        whispers: new Set()
+    };
+
+    for (let i = 0; i < sources.length; i++) {
+        const source = sources[i];
+        const resourceData = GAME_DATA.startingResources[source];
+
+        if (resourceData) {
+            const resourceTypes = ['charts', 'salvage', 'specimens', 'whispers'];
+
+            for (let j = 0; j < resourceTypes.length; j++) {
+                const type = resourceTypes[j];
+                const items = resourceData[type];
+
+                if (items) {
+                    for (let k = 0; k < items.length; k++) {
+                        const itemName = items[k];
+
+                        // Only add if not already seen (avoid duplicates)
+                        if (!seenResources[type].has(itemName)) {
+                            seenResources[type].add(itemName);
+                            character.resources[type].push({
+                                id: Date.now().toString() + '-' + type + '-' + k + '-' + i,
+                                name: itemName
+                            });
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    render();
+}
+
 // Helper function to render small track boxes (used in Creation and Advancement for unselected)
 function renderSmallTrack(trackSize) {
     let html = '<div style="display: flex; gap: 4px; padding-top: 4px; margin-bottom: 4px;">';
@@ -386,16 +543,16 @@ function renderSmallTrack(trackSize) {
 // Helper function to render interactive track (used in Advancement for selected)
 function renderInteractiveTrack(aspect, escapedId) {
     let html = '<div style="display: flex; gap: 8px; align-items: center; padding-top: 4px; margin-bottom: 4px;">';
-    html += '<button onclick="event.stopPropagation(); expandAspectTrack(\'' + escapedId + '\', -1)" ';
+    html += '<button data-action="expandAspectTrack" data-params=\'{"id":"' + escapedId + '","delta":-1}\' ';
     html += (aspect.trackSize <= aspect.track ? 'disabled ' : '');
     html += 'style="flex-shrink: 0; padding: 2px 8px; font-size: 14px;" class="bg-black">−</button>';
-    
+
     for (let i = 0; i < aspect.trackSize; i++) {
     const isNew = i >= aspect.track;
-    html += '<div class="track-box' + (isNew ? ' new' : '') + '" onclick="event.stopPropagation()"></div>';
+    html += '<div class="track-box' + (isNew ? ' new' : '') + '" data-no-propagate="true"></div>';
     }
-    
-    html += '<button onclick="event.stopPropagation(); expandAspectTrack(\'' + escapedId + '\', 1)" ';
+
+    html += '<button data-action="expandAspectTrack" data-params=\'{"id":"' + escapedId + '","delta":1}\' ';
     html += (aspect.trackSize >= 5 ? 'disabled ' : '');
     html += 'style="flex-shrink: 0; padding: 2px 8px; font-size: 14px;" class="bg-black">+</button>';
     html += '</div>';
@@ -405,59 +562,64 @@ function renderInteractiveTrack(aspect, escapedId) {
 function renderDrives() {
     let html = '<div><h2 class="section-header">Drives</h2>';
     html += '<div style="display: flex; flex-direction: column; gap: 2px;">';
-    
+
     for (let i = 0; i < character.drives.length; i++) {
     html += '<input type="text" ';
     html += 'value="' + character.drives[i] + '" ';
     html += 'placeholder="Enter a drive..." ';
-    html += 'onchange="updateDrive(' + i + ', this.value)" ';
+    html += 'data-action="updateDrive" ';
+    html += 'data-params=\'{"index":' + i + '}\' ';
     html += 'style="width: 100%; padding: 8px 10px 8px 10px;">';
     }
-    
+
     html += '</div></div>';
     return html;
 }
 
 function renderMires() {
     const showCheckboxes = character.mode === 'play';
-    
+
     let html = '<div><h2 class="section-header">Mires</h2>';
     html += '<div style="display: flex; flex-direction: column; gap: 2px;">';
-    
+
     for (let i = 0; i < character.mires.length; i++) {
     const mire = character.mires[i];
-    
+
     if (showCheckboxes) {
         html += '<div style="display: flex; gap: 10px; align-items: center;">';
         html += '<div style="width: 8px;"></div>';
         html += '<input type="checkbox" ';
         if (mire.checkbox1) html += 'checked ';
-        html += 'onchange="toggleMireCheckbox(' + i + ', 1)">';
+        html += 'data-action="toggleMireCheckbox" ';
+        html += 'data-params=\'{"index":' + i + ',"num":1}\'>';
         html += '<input type="checkbox" ';
         if (mire.checkbox2) html += 'checked ';
-        html += 'onchange="toggleMireCheckbox(' + i + ', 2)">';
+        html += 'data-action="toggleMireCheckbox" ';
+        html += 'data-params=\'{"index":' + i + ',"num":2}\'>';
         html += '<input type="text" ';
         html += 'value="' + mire.text + '" ';
         html += 'placeholder="Enter a mire..." ';
-        html += 'onchange="updateMire(' + i + ', this.value)" ';
+        html += 'data-action="updateMire" ';
+        html += 'data-params=\'{"index":' + i + '}\' ';
         html += 'style="width: 100%; padding: 8px 10px 8px 10px;">';
         html += '</div>';
     } else {
         html += '<input type="text" ';
         html += 'value="' + mire.text + '" ';
         html += 'placeholder="Enter a mire..." ';
-        html += 'onchange="updateMire(' + i + ', this.value)" ';
+        html += 'data-action="updateMire" ';
+        html += 'data-params=\'{"index":' + i + '}\' ';
         html += 'style="width: 100%; padding: 8px 10px 8px 10px;">';
     }
     }
-    
+
     html += '</div></div>';
     return html;
 }
 
 function renderMilestones() {
     let html = '<div><h2 class="section-header">Milestones</h2>';
-    
+
     if (character.milestones.length > 0) {
     html += '<div class="grid-milestone" style="margin-bottom: 8px;">';
     html += '<h3 class="subsection-header">Used</h3>';
@@ -465,26 +627,29 @@ function renderMilestones() {
     html += '<h3 class="subsection-header">Scale</h3>';
     html += '</div>';
     }
-    
+
     for (let i = 0; i < character.milestones.length; i++) {
     const milestone = character.milestones[i];
-    
+
     html += '<div class="grid-milestone" style="margin-bottom: 8px;">';
     html += '<div style="display: flex; align-items: center; gap: 10px;">';
     html += '<div style="width: 34px;"></div>';
     html += '<input type="checkbox" ';
     if (milestone.used) html += 'checked ';
-    html += 'onchange="toggleMilestoneUsed(\'' + milestone.id + '\')">';
+    html += 'data-action="toggleMilestoneUsed" ';
+    html += 'data-params=\'{"id":"' + milestone.id + '"}\'>';
     html += '</div>';
     html += '<input type="text" ';
     html += 'value="' + milestone.name + '" ';
     html += 'placeholder="Enter milestone name..." ';
     if (milestone.used) html += 'disabled ';
-    html += 'onchange="updateMilestoneName(\'' + milestone.id + '\', this.value)" ';
+    html += 'data-action="updateMilestoneName" ';
+    html += 'data-params=\'{"id":"' + milestone.id + '"}\' ';
     html += 'style="width: 100%;">';
     html += '<select ';
     if (milestone.used) html += 'disabled ';
-    html += 'onchange="updateMilestoneScale(\'' + milestone.id + '\', this.value)" ';
+    html += 'data-action="updateMilestoneScale" ';
+    html += 'data-params=\'{"id":"' + milestone.id + '"}\' ';
     html += 'style="width: 100%;">';
     html += '<option value="Minor"';
     if (milestone.scale === 'Minor') html += ' selected';
@@ -495,11 +660,11 @@ function renderMilestones() {
     html += '</select>';
     html += '</div>';
     }
-    
+
     const marginTop = character.milestones.length > 0 ? '12' : '0';
-    html += '<button class="ghost" onclick="addMilestone()" style="width: 100%; margin-top: ' + marginTop + 'px;">+ New Milestone</button>';
+    html += '<button class="ghost" data-action="addMilestone" style="width: 100%; margin-top: ' + marginTop + 'px;">+ New Milestone</button>';
     html += '</div>';
-    
+
     return html;
 }
 
@@ -510,48 +675,61 @@ function renderResources() {
     { key: 'specimens', label: 'Specimens', placeholder: 'Name your Specimen...', singular: 'Specimen' },
     { key: 'whispers', label: 'Whispers', placeholder: 'Name your Whisper...', singular: 'Whisper' }
     ];
-    
+
+    const isCreationMode = character.mode === 'creation';
+
     let html = '<div style="margin-bottom: 32px;">';
-    html += '<h2 class="section-header">Resources</h2>';
+
+    if (isCreationMode) {
+        html += '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">';
+        html += '<h2 class="section-header" style="margin: 0;">Resources</h2>';
+        html += '<p>A new character may have up to 6 starting resources.</p> <button data-action="populateDefaultResources">Load Suggested Resources</button>';
+        html += '</div>';
+    } else {
+        html += '<h2 class="section-header">Resources</h2>';
+    }
+
     html += '<div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px;">';
-    
+
     for (let i = 0; i < resourceTypes.length; i++) {
     const type = resourceTypes[i];
     const items = character.resources[type.key];
-    
+
     html += '<div>';
     html += '<h3 class="subsection-header" style="margin-bottom: 12px;">' + type.label + '</h3>';
     html += '<div style="display: flex; flex-direction: column; gap: 12px;">';
-    
+
     for (let j = 0; j < items.length; j++) {
         const item = items[j];
         html += '<div style="display: flex; gap: 8px; align-items: center;">';
         html += '<input type="text" ';
         html += 'value="' + item.name + '" ';
         html += 'placeholder="' + type.placeholder + '" ';
-        html += 'onchange="updateResourceName(\'' + type.key + '\', \'' + item.id + '\', this.value)" ';
+        html += 'data-action="updateResourceName" ';
+        html += 'data-params=\'{"type":"' + type.key + '","id":"' + item.id + '"}\' ';
         html += 'style="width: 100%; padding: 8px 10px;">';
-        html += '<button onclick="removeResource(\'' + type.key + '\', \'' + item.id + '\')" ';
+        html += '<button data-action="removeResource" ';
+        html += 'data-params=\'{"type":"' + type.key + '","id":"' + item.id + '"}\' ';
         html += 'style="padding: 8px; flex-shrink: 0; border: 0;">✕</button>';
         html += '</div>';
     }
-    
+
     const marginTop = items.length > 0 ? '12' : '0';
-    html += '<button class="ghost" onclick="addResource(\'' + type.key + '\')" style="width: 100%; margin-top: ' + marginTop + 'px;">+ New ' + type.singular + '</button>';
+    html += '<button class="ghost" data-action="addResource" data-params=\'{"type":"' + type.key + '"}\' style="width: 100%; margin-top: ' + marginTop + 'px;">+ New ' + type.singular + '</button>';
     html += '</div>';
     html += '</div>';
     }
-    
+
     html += '</div>';
     html += '</div>';
-    
+
     return html;
 }
 
 function renderEdges() {
     const isCreationMode = character.mode === 'creation';
     const edgesSelected = character.selectedEdges.length;
-    
+
     if (isCreationMode) {
     let html = '<div>';
     html += '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">';
@@ -559,34 +737,34 @@ function renderEdges() {
     html += '<div class="budget-indicator">' + edgesSelected + '/' + BUDGETS.edges + '</div>';
     html += '</div>';
     html += '<div style="display: flex; flex-direction: column; gap: 12px;">';
-    
+
     for (let i = 0; i < GAME_DATA.edges.length; i++) {
         const edge = GAME_DATA.edges[i];
         const isSelected = character.selectedEdges.includes(edge.name);
         const isDisabled = !isSelected && edgesSelected >= BUDGETS.edges;
-        
+
         html += '<div class="edge-card';
         if (isSelected) html += ' selected';
         if (isDisabled) html += ' disabled';
-        html += '" onclick="toggleEdge(\'' + edge.name + '\')">';
+        html += '" data-action="toggleEdge" data-params=\'{"name":"' + edge.name + '"}\'>';
         html += '<div class="aspect-name" style="margin-bottom: 4px;">' + edge.name + '</div>';
         html += '<div class="edge-tagline" style="font-size: 12px; color: ';
         html += isSelected ? '#9CA3AF' : '#6B7280';
         html += ';">' + edge.tagline + '</div>';
         html += '</div>';
     }
-    
+
     html += '</div></div>';
     return html;
     } else {
     let html = '<div><h2 class="section-header">Edges</h2>';
-    
+
     for (let i = 0; i < character.selectedEdges.length; i++) {
         html += '<div class="aspect-name" style="color: #111827; margin-bottom: 4px;">';
         html += character.selectedEdges[i];
         html += '</div>';
     }
-    
+
     html += '</div>';
     return html;
     }
@@ -636,17 +814,17 @@ function renderSkills() {
         html += '<div class="flex-between" style="margin-bottom: 8px;">';
         html += '<div class="skill-name">' + skill + '</div>';
         html += '<div style="display: flex; gap: 8px; align-items: center;">';
-        html += '<button onclick="adjustSkill(\'' + skill + '\', -1)"';
+        html += '<button data-action="adjustSkill" data-params=\'{"name":"' + skill + '","delta":-1}\'';
         if (rank === 0) html += ' disabled';
         html += '>−</button>';
-        
+
         for (let j = 0; j < 3; j++) {
         html += '<div class="track-box';
         if (j < rank) html += ' active';
         html += '"></div>';
         }
-        
-        html += '<button onclick="adjustSkill(\'' + skill + '\', 1)"';
+
+        html += '<button data-action="adjustSkill" data-params=\'{"name":"' + skill + '","delta":1}\'';
         if (!canIncrease) html += ' disabled';
         html += '>+</button>';
         html += '</div></div>';
@@ -664,17 +842,17 @@ function renderSkills() {
         html += '<div class="flex-between" style="margin-bottom: 8px;">';
         html += '<div class="skill-name">' + skill + '</div>';
         html += '<div style="display: flex; gap: 8px; align-items: center;">';
-        html += '<button onclick="adjustSkill(\'' + skill + '\', -1)"';
+        html += '<button data-action="adjustSkill" data-params=\'{"name":"' + skill + '","delta":-1}\'';
         if (rank === 0) html += ' disabled';
         html += '>−</button>';
-        
+
         for (let j = 0; j < 3; j++) {
         html += '<div class="track-box';
         if (j < rank) html += ' active';
         html += '"></div>';
         }
-        
-        html += '<button onclick="adjustSkill(\'' + skill + '\', 1)"';
+
+        html += '<button data-action="adjustSkill" data-params=\'{"name":"' + skill + '","delta":1}\'';
         if (rank >= 3) html += ' disabled';
         html += '>+</button>';
         html += '</div></div>';
@@ -731,17 +909,17 @@ function renderLanguages() {
         html += '<div class="flex-between" style="margin-bottom: 8px;">';
         html += '<div class="skill-name">' + lang + '</div>';
         html += '<div style="display: flex; gap: 8px; align-items: center;">';
-        html += '<button onclick="adjustLanguage(\'' + lang + '\', -1)"';
+        html += '<button data-action="adjustLanguage" data-params=\'{"name":"' + lang + '","delta":-1}\'';
         if (!canDecrease) html += ' disabled';
         html += '>−</button>';
-        
+
         for (let j = 0; j < 3; j++) {
         html += '<div class="track-box';
         if (j < rank) html += ' active';
         html += '"></div>';
         }
-        
-        html += '<button onclick="adjustLanguage(\'' + lang + '\', 1)"';
+
+        html += '<button data-action="adjustLanguage" data-params=\'{"name":"' + lang + '","delta":1}\'';
         if (!canIncrease) html += ' disabled';
         html += '>+</button>';
         html += '</div></div>';
@@ -759,17 +937,17 @@ function renderLanguages() {
         html += '<div class="flex-between" style="margin-bottom: 8px;">';
         html += '<div class="skill-name">' + lang + '</div>';
         html += '<div style="display: flex; gap: 8px; align-items: center;">';
-        html += '<button onclick="adjustLanguage(\'' + lang + '\', -1)"';
+        html += '<button data-action="adjustLanguage" data-params=\'{"name":"' + lang + '","delta":-1}\'';
         if (rank === 0 || lang === 'Low Sour') html += ' disabled';
         html += '>−</button>';
-        
+
         for (let j = 0; j < 3; j++) {
         html += '<div class="track-box';
         if (j < rank) html += ' active';
         html += '"></div>';
         }
-        
-        html += '<button onclick="adjustLanguage(\'' + lang + '\', 1)"';
+
+        html += '<button data-action="adjustLanguage" data-params=\'{"name":"' + lang + '","delta":1}\'';
         if (rank >= 3) html += ' disabled';
         html += '>+</button>';
         html += '</div></div>';
@@ -871,22 +1049,32 @@ function createCharacter() {
     alert('Please select exactly ' + BUDGETS.aspects + ' aspects');
     return;
     }
-    
+
     if (character.selectedEdges.length !== BUDGETS.edges) {
     alert('Please select exactly ' + BUDGETS.edges + ' edges');
     return;
     }
-    
+
     const skillPoints = Object.values(character.skills).reduce((sum, v) => sum + v, 0);
     const languagePoints = Object.entries(character.languages)
     .filter(function(entry) { return entry[0] !== 'Low Sour'; })
     .reduce((sum, entry) => sum + entry[1], 0);
-    
+
     if (skillPoints + languagePoints !== BUDGETS.skillPoints) {
     alert('Please allocate all ' + BUDGETS.skillPoints + ' skill/language points (currently allocated: ' + (skillPoints + languagePoints) + ')');
     return;
     }
-    
+
+    const totalResources = character.resources.charts.length +
+                          character.resources.salvage.length +
+                          character.resources.specimens.length +
+                          character.resources.whispers.length;
+
+    if (totalResources > BUDGETS.resources) {
+    alert('A new character can have up to 6 starting resources');
+    return;
+    }
+
     character.mode = 'play';
     render();
 }
@@ -971,32 +1159,32 @@ function renderCreationMode(app) {
     <div style="padding: 20px; max-width: 1400px; margin: 0 auto; padding-bottom: 80px;">
         <div style="margin-bottom: 20px;">
         <label style="display: block; margin-bottom: 8px; font-weight: 600;">Character Name</label>
-        <input type="text" value="${character.name}" 
-            onchange="onCharacterNameChange(this.value)"
-                placeholder="Enter name..." 
+        <input type="text" value="${character.name}"
+            data-action="onCharacterNameChange"
+                placeholder="Enter name..."
                 style="width: 300px; font-size: 16px;">
         </div>
-        
+
         <div style="margin-bottom: 40px;">
         <h2 class="section-header">Core Elements</h2>
         <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px;">
             <div>
             <label style="display: block; margin-bottom: 8px; font-weight: 600;">Bloodline</label>
-            <select onchange="onBloodlineChange(this.value)"
+            <select data-action="onBloodlineChange"
                     style="width: 100%; font-size: 16px;">
                 ${GAME_DATA.bloodlines.map(b => '<option value="' + b + '"' + (character.bloodline === b ? ' selected' : '') + '>' + b + '</option>').join('')}
             </select>
             </div>
             <div>
             <label style="display: block; margin-bottom: 8px; font-weight: 600;">Origin</label>
-            <select onchange="onOriginChange(this.value)"
+            <select data-action="onOriginChange"
                     style="width: 100%; font-size: 16px;">
                 ${GAME_DATA.origins.map(o => '<option value="' + o + '"' + (character.origin === o ? ' selected' : '') + '>' + o + '</option>').join('')}
             </select>
             </div>
             <div>
             <label style="display: block; margin-bottom: 8px; font-weight: 600;">Post</label>
-            <select onchange="onPostChange(this.value)"
+            <select data-action="onPostChange"
                     style="width: 100%; font-size: 16px;">
                 ${GAME_DATA.posts.map(p => '<option value="' + p + '"' + (character.post === p ? ' selected' : '') + '>' + p + '</option>').join('')}
             </select>
@@ -1018,8 +1206,8 @@ function renderCreationMode(app) {
                 const isSelected = character.selectedAspects.some(a => a.id === id);
                 const isDisabled = !isSelected && aspectsSelected >= BUDGETS.aspects;
                 return `
-                <div class="aspect-card ${isSelected ? 'selected' : ''} ${isDisabled ? 'disabled' : ''}" 
-                        onclick="toggleAspect('${escapedId}')">
+                <div class="aspect-card ${isSelected ? 'selected' : ''} ${isDisabled ? 'disabled' : ''}"
+                        data-action="toggleAspect" data-params='{"id":"${escapedId}"}'>
                     ${renderSmallTrack(aspect.track)}
                     <div class="split">
                     <div class="aspect-name" style="margin-bottom: 4px;">${aspect.name}</div>
@@ -1039,8 +1227,8 @@ function renderCreationMode(app) {
                 const isSelected = character.selectedAspects.some(a => a.id === id);
                 const isDisabled = !isSelected && aspectsSelected >= BUDGETS.aspects;
                 return `
-                <div class="aspect-card ${isSelected ? 'selected' : ''} ${isDisabled ? 'disabled' : ''}" 
-                        onclick="toggleAspect('${escapedId}')">
+                <div class="aspect-card ${isSelected ? 'selected' : ''} ${isDisabled ? 'disabled' : ''}"
+                        data-action="toggleAspect" data-params='{"id":"${escapedId}"}'>
                     ${renderSmallTrack(aspect.track)}
                     <div class="split">
                     <div class="aspect-name" style="margin-bottom: 4px;">${aspect.name}</div>
@@ -1060,8 +1248,8 @@ function renderCreationMode(app) {
                 const isSelected = character.selectedAspects.some(a => a.id === id);
                 const isDisabled = !isSelected && aspectsSelected >= BUDGETS.aspects;
                 return `
-                <div class="aspect-card ${isSelected ? 'selected' : ''} ${isDisabled ? 'disabled' : ''}" 
-                        onclick="toggleAspect('${escapedId}')">
+                <div class="aspect-card ${isSelected ? 'selected' : ''} ${isDisabled ? 'disabled' : ''}"
+                        data-action="toggleAspect" data-params='{"id":"${escapedId}"}'>
                     ${renderSmallTrack(aspect.track)}
                     <div class="split">
                     <div class="aspect-name" style="margin-bottom: 4px;">${aspect.name}</div>
@@ -1078,7 +1266,10 @@ function renderCreationMode(app) {
         
         ${renderEdgesSkillsLanguagesRow()}
         <hr />
-        
+
+        ${renderResources()}
+        <hr />
+
         <div style="margin-bottom: 32px;">
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 32px;">
             ${renderDrives()}
@@ -1088,10 +1279,10 @@ function renderCreationMode(app) {
     </div>
     
     <div class="sticky-action-bar split">
-        <button onclick="importCharacter()">Import</button>
+        <button data-action="importCharacter">Import</button>
         <div>
-        <button onclick="generateRandomCharacter()">Generate Random Character</button>
-        <button onclick="createCharacter()" class="primary">Create Character</button>
+        <button data-action="generateRandomCharacter">Generate Random Character</button>
+        <button data-action="createCharacter" class="primary">Create Character</button>
         </div>
     </div>
     `;
@@ -1134,7 +1325,7 @@ function renderPlayMode(app) {
                 if (i < aspect.trackSize) {
                 const state = aspect.damageStates[i];
                 const stateChar = state === 'marked' ? '/' : state === 'burned' ? 'X' : '';
-                trackHTML += '<div class="track-box ' + state + '" onclick="cycleAspectDamage(\'' + aspect.id + '\', ' + i + ')" style="cursor: pointer;">' + stateChar + '</div>';
+                trackHTML += '<div class="track-box ' + state + '" data-action="cycleAspectDamage" data-params=\'{"id":"' + aspect.id + '","index":' + i + '}\' style="cursor: pointer;">' + stateChar + '</div>';
                 } else {
                 trackHTML += '<div style="width: 26px; height: 26px;"></div>';
                 }
@@ -1169,10 +1360,10 @@ function renderPlayMode(app) {
         </div>
         </div>
     </div>
-    
+
     <div class="sticky-action-bar split">
-        <button onclick="exportCharacter()">Export</button>
-        <button onclick="setMode('advancement')">Advancement</button>
+        <button data-action="exportCharacter">Export</button>
+        <button data-action="setMode" data-params='{"mode":"advancement"}'>Advancement</button>
     </div>
     `;
 }
@@ -1182,16 +1373,18 @@ function renderAdvancementMode(app) {
     const bloodlineAspects = allAspects.filter(a => a.category === 'Bloodline');
     const originAspects = allAspects.filter(a => a.category === 'Origin');
     const postAspects = allAspects.filter(a => a.category === 'Post');
-    
+
+    const aspectsSelected = character.selectedAspects.length;
+
     app.innerHTML = `
     <div style="padding: 20px; max-width: 1400px; margin: 0 auto; padding-bottom: 80px;">
         <div style="margin-bottom: 32px; padding-bottom: 24px; border-bottom: 2px solid #E5E7EB;">
         <div style="display: flex; gap: 48px; align-items: baseline;">
             <div>
             <label style="display: block; margin-bottom: 8px; font-weight: 600;">Character Name</label>
-            <input type="text" value="${character.name}" 
-                    onchange="onCharacterNameChange(this.value)"
-                    placeholder="Enter name..." 
+            <input type="text" value="${character.name}"
+                    data-action="onCharacterNameChange"
+                    placeholder="Enter name..."
                     style="width: 300px; font-size: 16px;">
             </div>
             <div>
@@ -1208,7 +1401,7 @@ function renderAdvancementMode(app) {
             </div>
         </div>
         </div>
-        
+
         <div style="margin-bottom: 40px;">
         <h2 class="section-header">Aspects</h2>
         <div class="grid-3col">
@@ -1219,10 +1412,11 @@ function renderAdvancementMode(app) {
                 const escapedId = id.replace(/'/g, "\\'");
                 const selectedAspect = character.selectedAspects.find(a => a.id === id);
                 const isSelected = !!selectedAspect;
-                
+                const isDisabled = !isSelected && aspectsSelected >= BUDGETS.maxAspectsAdvancement;
+
                 return `
-                <div class="aspect-card ${isSelected ? 'selected' : ''}" 
-                        onclick="toggleAspect('${escapedId}')"
+                <div class="aspect-card ${isSelected ? 'selected' : ''} ${isDisabled ? 'disabled' : ''}"
+                        data-action="toggleAspect" data-params='{"id":"${escapedId}"}'
                         style="position: relative;">
                     ${isSelected ? renderInteractiveTrack(selectedAspect, escapedId) : renderSmallTrack(aspect.track)}
                     <div class="split">
@@ -1234,7 +1428,7 @@ function renderAdvancementMode(app) {
                 `;
             }).join('')}
             </div>
-            
+
             <div class="flex-col-gap">
             <h3 class="subsection-header">${character.origin}</h3>
             ${originAspects.map(aspect => {
@@ -1242,10 +1436,11 @@ function renderAdvancementMode(app) {
                 const escapedId = id.replace(/'/g, "\\'");
                 const selectedAspect = character.selectedAspects.find(a => a.id === id);
                 const isSelected = !!selectedAspect;
-                
+                const isDisabled = !isSelected && aspectsSelected >= BUDGETS.maxAspectsAdvancement;
+
                 return `
-                <div class="aspect-card ${isSelected ? 'selected' : ''}" 
-                        onclick="toggleAspect('${escapedId}')"
+                <div class="aspect-card ${isSelected ? 'selected' : ''} ${isDisabled ? 'disabled' : ''}"
+                        data-action="toggleAspect" data-params='{"id":"${escapedId}"}'
                         style="position: relative;">
                     ${isSelected ? renderInteractiveTrack(selectedAspect, escapedId) : renderSmallTrack(aspect.track)}
                     <div class="split">
@@ -1257,7 +1452,7 @@ function renderAdvancementMode(app) {
                 `;
             }).join('')}
             </div>
-            
+
             <div class="flex-col-gap">
             <h3 class="subsection-header">${character.post}</h3>
             ${postAspects.map(aspect => {
@@ -1265,10 +1460,11 @@ function renderAdvancementMode(app) {
                 const escapedId = id.replace(/'/g, "\\'");
                 const selectedAspect = character.selectedAspects.find(a => a.id === id);
                 const isSelected = !!selectedAspect;
-                
+                const isDisabled = !isSelected && aspectsSelected >= BUDGETS.maxAspectsAdvancement;
+
                 return `
-                <div class="aspect-card ${isSelected ? 'selected' : ''}" 
-                        onclick="toggleAspect('${escapedId}')"
+                <div class="aspect-card ${isSelected ? 'selected' : ''} ${isDisabled ? 'disabled' : ''}"
+                        data-action="toggleAspect" data-params='{"id":"${escapedId}"}'
                         style="position: relative;">
                     ${isSelected ? renderInteractiveTrack(selectedAspect, escapedId) : renderSmallTrack(aspect.track)}
                     <div class="split">
@@ -1283,18 +1479,18 @@ function renderAdvancementMode(app) {
         </div>
         </div>
         <hr />
-        
+
         ${renderEdgesSkillsLanguagesRow()}
         <hr />
-        
+
         <div style="margin-bottom: 32px;">
         ${renderMilestones()}
         </div>
     </div>
-    
+
     <div class="sticky-action-bar" style="display: flex; justify-content: flex-end;">
-        <button onclick="setMode('play')" class="primary">Save Changes</button>
-        <button onclick="setMode('play')">Cancel</button>
+        <button data-action="setMode" data-params='{"mode":"play"}' class="primary">Save Changes</button>
+        <button data-action="setMode" data-params='{"mode":"play"}'>Cancel</button>
     </div>
     `;
 }
