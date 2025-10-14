@@ -8,13 +8,25 @@ This is a character sheet application for the Wildsea TTRPG (tabletop role-playi
 
 ## Development Commands
 
-**Start development server:**
+**Start development server (Vite - recommended):**
 ```bash
 npm run dev
 ```
-Opens the app at http://localhost:8080 with auto-reload disabled and CORS enabled.
+Opens the app at http://localhost:5173 with hot module replacement.
 
-**Start server without opening browser:**
+**Build for production:**
+```bash
+npm run build
+```
+Builds the app to the `dist/` directory with optimization and minification.
+
+**Preview production build:**
+```bash
+npm run preview
+```
+Serves the production build locally for testing.
+
+**Legacy server (http-server):**
 ```bash
 npm start
 ```
@@ -22,29 +34,53 @@ Runs http-server on port 8080 with caching disabled and CORS enabled.
 
 ## Application Architecture
 
+### Build System
+
+The application uses **Vite** as its build tool and development server:
+- ES6 modules with import/export
+- Hot module replacement during development
+- Automatic bundling and optimization for production
+- No configuration required - zero-config setup
+
 ### Core Structure
 
-The application consists of three main layers:
+The application is organized into modular ES6 modules:
 
-1. **Data Layer** (`data/` directory)
-   - `game-constants.json` - Core game data (bloodlines, origins, posts, edges, skills, languages)
-   - `aspects.json` - Large file (3091 lines) containing all aspects organized by bloodline/origin/post
-   - `resources.json` - Starting resources mapped to character types
-   - Data is loaded asynchronously on app initialization via `loadGameData()`
+1. **Data Layer** (`js/data/`)
+   - `loader.js` - Asynchronous loading of game data from JSON files
+   - Data files: `game-constants.json`, `aspects.json`, `resources.json`
+   - Exports `loadGameData()` and `getGameData()` functions
 
-2. **State Management** (`js/character-sheet.js`)
-   - Single global `character` object holds all character state
+2. **State Management** (`js/state/`)
+   - `character.js` - Character state and all mutation functions
+   - Exports `character` object, `BUDGETS` constant, and mutation functions
    - Character modes: `'creation'`, `'play'`, `'advancement'`
-   - State modifications trigger `render()` to update the entire UI
-   - No framework used - pure vanilla JS with string-based HTML generation
+   - All mutations accept a `renderCallback` parameter to trigger UI updates
 
-3. **Rendering System**
-   - Three mode-specific render functions:
-     - `renderCreationMode()` - Character creation with aspect/edge/skill selection budgets
-     - `renderPlayMode()` - Active play view with aspect damage tracking
-     - `renderAdvancementMode()` - Character advancement with track expansion
-   - Helper rendering functions for reusable components (edges, skills, languages, drives, mires, resources, milestones)
-   - All rendering generates HTML strings that are inserted via `innerHTML`
+3. **Rendering System** (`js/rendering/`)
+   - `creation-mode.js` - Character creation with aspect/edge/skill selection budgets
+   - `play-mode.js` - Active play view with aspect damage tracking
+   - `advancement-mode.js` - Character advancement with track expansion
+   - Each mode imports necessary components and composes the final UI
+
+4. **Component Layer** (`js/components/`)
+   - `aspects.js` - Aspect track rendering helpers
+   - `edges.js` - Edge selection and display
+   - `skills.js` - Skills and languages rendering (mode-aware)
+   - `resources.js` - Resource management
+   - `milestones.js` - Milestone tracking
+   - `drives-mires.js` - Drives and mires rendering
+   - All components generate HTML strings via template literals
+
+5. **Utilities** (`js/utils/`)
+   - `validation.js` - Character creation validation rules
+   - `file-handlers.js` - Import/export functionality
+
+6. **Entry Point** (`js/main.js`)
+   - Application initialization
+   - Event delegation setup (click and change events)
+   - Main render function that delegates to mode-specific renderers
+   - Connects all modules together
 
 ### Character Data Structure
 
@@ -80,11 +116,13 @@ The `character` object contains:
 
 ### UI Interaction Pattern
 
-All interactive UI elements use inline event handlers calling globally-exposed functions:
-- Functions are attached to `window` object (lines 73-98)
-- HTML is generated with onclick/onchange attributes as strings
+The application uses **event delegation** for all user interactions:
+- Single click listener on the `#app` element handles all clicks
+- Single change listener on the `#app` element handles all input changes
+- UI elements use `data-action` attributes to specify the action
+- Parameters passed via `data-params` attributes as JSON strings
 - Special ID escaping for apostrophes: `id.replace(/'/g, "\\'")`
-- No event delegation or modern event listeners used
+- Event handlers in `main.js` route actions to appropriate state mutation functions
 
 ### Import/Export System
 
@@ -96,16 +134,36 @@ All interactive UI elements use inline event handlers calling globally-exposed f
 
 ```
 /
-├── index.html           # Entry point, loads Tailwind CSS, character-sheet.js
+├── index.html                    # Entry point, loads Tailwind CSS and main.js
 ├── js/
-│   └── character-sheet.js   # Main application (1302 lines)
+│   ├── main.js                   # Application entry point and event delegation
+│   ├── data/
+│   │   └── loader.js             # Game data loading utilities
+│   ├── state/
+│   │   └── character.js          # Character state and mutations
+│   ├── rendering/
+│   │   ├── creation-mode.js      # Creation mode UI
+│   │   ├── play-mode.js          # Play mode UI
+│   │   └── advancement-mode.js   # Advancement mode UI
+│   ├── components/
+│   │   ├── aspects.js            # Aspect rendering helpers
+│   │   ├── edges.js              # Edge components
+│   │   ├── skills.js             # Skills and languages
+│   │   ├── resources.js          # Resources management
+│   │   ├── milestones.js         # Milestone tracking
+│   │   └── drives-mires.js       # Drives and mires
+│   ├── utils/
+│   │   ├── validation.js         # Validation logic
+│   │   └── file-handlers.js      # Import/export
+│   └── character-sheet.js        # LEGACY - kept for reference
 ├── css/
-│   └── styles.css           # Custom styles (366 lines)
+│   └── styles.css                # Custom styles
 ├── data/
-│   ├── game-constants.json  # Core game data
-│   ├── aspects.json         # All aspects (3091 lines, very large)
-│   └── resources.json       # Starting resources by type
-└── package.json
+│   ├── game-constants.json       # Core game data
+│   ├── aspects.json              # All aspects (3091 lines)
+│   └── resources.json            # Starting resources
+├── package.json                  # Dependencies and scripts
+└── CLAUDE.md                     # This file
 ```
 
 ## Working with Aspects
@@ -128,17 +186,26 @@ The aspects.json file is very large (3091 lines). When working with aspects:
 ## Common Development Patterns
 
 **Adding new character properties:**
-1. Add to initial `character` object (line 36-70)
-2. Update relevant render functions
-3. Add mutator function and expose on `window`
-4. Consider import/export compatibility
+1. Add to initial `character` object in `js/state/character.js`
+2. Create mutation functions in `js/state/character.js` (they accept a `renderCallback` parameter)
+3. Update relevant component rendering functions in `js/components/`
+4. Add event handler routing in `js/main.js` event delegation
+5. Consider import/export compatibility in `js/utils/file-handlers.js`
 
 **Modifying render logic:**
-- Each major section has its own render function (renderEdges, renderSkills, etc.)
-- Mode-specific behavior is handled via conditionals checking `character.mode`
+- Component functions are in `js/components/` (renderEdges, renderSkills, etc.)
+- Mode-specific behavior is in `js/rendering/` (creation, play, advancement)
+- Components check `character.mode` for conditional rendering
 - Remember to escape single quotes in dynamic IDs for onclick handlers
 
 **Working with game data:**
-- Access via global `GAME_DATA` object after initialization
-- Game data is immutable after load - modifications go to `character` state
-- Failed data load shows error message instead of rendering app
+- Import `getGameData()` from `js/data/loader.js` where needed
+- Game data is immutable after load - modifications go to character state
+- Failed data load shows error message in `main.js` init function
+
+**Module structure best practices:**
+- Each module should have a clear, single responsibility
+- Use named exports for better code search and refactoring
+- Import only what you need from each module
+- Avoid circular dependencies (pass functions as parameters if needed)
+- Components return HTML strings, state modules mutate data
