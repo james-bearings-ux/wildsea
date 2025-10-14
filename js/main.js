@@ -8,6 +8,7 @@ import {
   createCharacter,
   loadCharacter,
   saveCharacter,
+  deleteCharacter,
   onCharacterNameChange,
   onBloodlineChange,
   onOriginChange,
@@ -38,6 +39,7 @@ import {
   loadSession,
   saveSession,
   addCharacterToSession,
+  removeCharacterFromSession,
   setActiveCharacter
 } from './state/session.js';
 import { validateCharacterCreation } from './utils/validation.js';
@@ -47,6 +49,7 @@ import { renderPlayMode } from './rendering/play-mode.js';
 import { renderAdvancementMode } from './rendering/advancement-mode.js';
 import { renderSkills, renderLanguages } from './components/skills.js';
 import { renderEdgesSkillsLanguagesRow } from './components/edges.js';
+import { renderNavigation } from './components/navigation.js';
 
 // Global state
 let session = null;
@@ -57,26 +60,42 @@ let session = null;
 function render() {
   const app = document.getElementById('app');
 
-  if (!session || !session.activeCharacterId) {
-    app.innerHTML = '<div style="padding: 20px;">No active character. Please create or load a character.</div>';
+  if (!session) {
+    app.innerHTML = '<div style="padding: 20px;">No session found. Reloading...</div>';
+    return;
+  }
+
+  // Render navigation
+  let html = renderNavigation(session);
+
+  // Check if we have an active character
+  if (!session.activeCharacterId) {
+    html += '<div style="padding: 20px;">No active character. Please create or import a character.</div>';
+    app.innerHTML = html;
     return;
   }
 
   const character = loadCharacter(session.activeCharacterId);
   if (!character) {
-    app.innerHTML = '<div style="padding: 20px; color: red;">Error: Could not load active character.</div>';
+    html += '<div style="padding: 20px; color: red;">Error: Could not load active character.</div>';
+    app.innerHTML = html;
     return;
   }
 
+  // Create a temporary container for character content
+  const tempDiv = document.createElement('div');
   const gameData = getGameData();
 
   if (character.mode === 'creation') {
-    renderCreationMode(app, character, gameData);
+    renderCreationMode(tempDiv, character, gameData);
   } else if (character.mode === 'play') {
-    renderPlayMode(app, character, gameData);
+    renderPlayMode(tempDiv, character, gameData);
   } else if (character.mode === 'advancement') {
-    renderAdvancementMode(app, character, gameData);
+    renderAdvancementMode(tempDiv, character, gameData);
   }
+
+  // Combine navigation and content
+  app.innerHTML = html + tempDiv.innerHTML;
 }
 
 /**
@@ -246,6 +265,30 @@ function setupEventDelegation() {
             if (character) {
               toggleMireCheckbox(parsedParams.index, parsedParams.num, render, character);
               saveCharacter(character);
+              render();
+            }
+            break;
+          case 'switchCharacter':
+            if (session && parsedParams.characterId) {
+              setActiveCharacter(session, parsedParams.characterId);
+              render();
+            }
+            break;
+          case 'removeCharacter':
+            if (session && parsedParams.characterId) {
+              if (confirm('Remove this character from the crew? The character data will be deleted.')) {
+                removeCharacterFromSession(session, parsedParams.characterId);
+                deleteCharacter(parsedParams.characterId);
+                render();
+              }
+            }
+            break;
+          case 'createNewCharacter':
+            if (session) {
+              const newCharacter = createCharacter();
+              saveCharacter(newCharacter);
+              addCharacterToSession(session, newCharacter.id);
+              setActiveCharacter(session, newCharacter.id);
               render();
             }
             break;
