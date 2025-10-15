@@ -17,14 +17,9 @@ export function renderShipUpgradeMode(container, ship, gameData) {
   html += '</div>';
 
   // Bottom action bar
-  html += '<div style="margin-top: auto; padding: 16px 20px; background: #F3F4F6; border-top: 2px solid #D1D5DB; display: flex; justify-content: flex-end; align-items: center;">';
-
-  // Right side: Save Changes and Cancel
-  html += '<div style="display: flex; gap: 8px;">';
-  html += '<button data-action="saveShipUpgrade" style="background: #10B981; color: white; padding: 8px 16px; border-radius: 4px; border: none; cursor: pointer; font-weight: 600;">Save Changes</button>';
-  html += '<button data-action="setShipMode" data-params=\'{"mode":"play"}\' style="background: #6B7280; color: white; padding: 8px 16px; border-radius: 4px; border: none; cursor: pointer; font-weight: 600;">Cancel</button>';
-  html += '</div>';
-
+  html += '<div class="sticky-action-bar" style="display: flex; justify-content: flex-end;">';
+  html += '<button data-action="saveShipUpgrade" class="primary">Save Changes</button>';
+  html += '<button data-action="setShipMode" data-params=\'{"mode":"play"}\'>Cancel</button>';
   html += '</div>';
 
   html += '</div>';

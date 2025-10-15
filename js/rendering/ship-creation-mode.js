@@ -78,18 +78,9 @@ export function renderShipCreationMode(container, ship, gameData, activeTab = 's
   html += '</div>';
 
   // Bottom action bar
-  html += '<div style="padding: 16px 20px; background: #F3F4F6; border-top: 2px solid #D1D5DB; display: flex; justify-content: space-between; align-items: center;">';
-
-  // Left side: Import
-  html += '<div style="display: flex; gap: 8px;">';
-  html += '<button data-action="importShip" style="background: #6366F1; color: white; padding: 8px 16px; border-radius: 4px; border: none; cursor: pointer; font-weight: 600;">Import Ship</button>';
-  html += '</div>';
-
-  // Right side: Create Ship
-  html += '<div style="display: flex; gap: 8px;">';
-  html += '<button data-action="createShip" style="background: #10B981; color: white; padding: 8px 16px; border-radius: 4px; border: none; cursor: pointer; font-weight: 600;">Create Ship</button>';
-  html += '</div>';
-
+  html += '<div class="sticky-action-bar split">';
+  html += '<button data-action="importShip">Import Ship</button>';
+  html += '<button data-action="createShip" class="primary">Create Ship</button>';
   html += '</div>';
 
   html += '</div>';
