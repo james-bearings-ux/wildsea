@@ -20,6 +20,9 @@ export function createShip(name = 'New Ship') {
     // Anticipated crew size affects stakes budget
     anticipatedCrewSize: 3,
 
+    // Additional stakes earned during play (adds to budget)
+    additionalStakes: 0,
+
     // Ship ratings - all start at 1
     ratings: {
       Armour: 1,
@@ -121,10 +124,24 @@ export function setShipMode(mode, renderCallback, ship) {
 }
 
 /**
+ * Update ship name
+ */
+export function updateShipName(name, ship) {
+  ship.name = name;
+}
+
+/**
  * Update anticipated crew size
  */
 export function updateAnticipatedCrewSize(size, renderCallback, ship) {
   ship.anticipatedCrewSize = Math.max(1, parseInt(size) || 1);
+}
+
+/**
+ * Update additional stakes
+ */
+export function updateAdditionalStakes(stakes, renderCallback, ship) {
+  ship.additionalStakes = Math.max(0, parseInt(stakes) || 0);
 }
 
 /**
@@ -265,10 +282,12 @@ export function calculateStakesSpent(ship) {
 }
 
 /**
- * Calculate total stakes budget (6 base + 3 per crew member)
+ * Calculate total stakes budget (6 base + 3 per crew member + additional stakes)
  */
 export function calculateStakesBudget(ship) {
-  return 6 + (ship.anticipatedCrewSize * 3);
+  const baselineBudget = 6 + (ship.anticipatedCrewSize * 3);
+  const additionalStakes = ship.additionalStakes || 0;
+  return baselineBudget + additionalStakes;
 }
 
 /**

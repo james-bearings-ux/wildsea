@@ -55,7 +55,9 @@ import {
   loadShip,
   saveShip,
   setShipMode,
+  updateShipName,
   updateAnticipatedCrewSize,
+  updateAdditionalStakes,
   selectShipPart,
   selectShipFitting,
   selectShipUndercrew,
@@ -524,11 +526,34 @@ function setupEventDelegation() {
     const parsedParams = params ? JSON.parse(params) : {};
 
     // Handle ship-related change events
+    if (action === 'updateShipName') {
+      if (session && session.activeShipId) {
+        const ship = loadShip(session.activeShipId);
+        if (ship) {
+          updateShipName(target.value, ship);
+          saveShip(ship);
+        }
+      }
+      return;
+    }
+
     if (action === 'updateAnticipatedCrewSize') {
       if (session && session.activeShipId) {
         const ship = loadShip(session.activeShipId);
         if (ship) {
           updateAnticipatedCrewSize(target.value, render, ship);
+          saveShip(ship);
+          render();
+        }
+      }
+      return;
+    }
+
+    if (action === 'updateAdditionalStakes') {
+      if (session && session.activeShipId) {
+        const ship = loadShip(session.activeShipId);
+        if (ship) {
+          updateAdditionalStakes(target.value, render, ship);
           saveShip(ship);
           render();
         }

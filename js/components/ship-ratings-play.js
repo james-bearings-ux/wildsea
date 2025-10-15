@@ -2,7 +2,7 @@
  * Ship ratings rendering for play mode
  */
 
-import { calculateShipRatings } from '../state/ship.js';
+import { calculateShipRatings, calculateStakesSpent, calculateStakesBudget } from '../state/ship.js';
 
 /**
  * Render ship ratings with damage blocks for play mode
@@ -37,6 +37,25 @@ export function renderShipRatingsPlay(ship) {
 
     html += '</div>';
   });
+
+  // Stakes accounting section
+  const stakesSpent = calculateStakesSpent(ship);
+  const totalBudget = calculateStakesBudget(ship);
+  const originalBudget = 6 + (ship.anticipatedCrewSize * 3);
+  const additionalStakes = ship.additionalStakes || 0;
+  const availableStakes = totalBudget - stakesSpent;
+
+  html += '<div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid #D1D5DB;">';
+  html += '<div style="font-size: 11px; font-weight: 700; color: #6B7280; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">STAKES</div>';
+
+  html += '<div style="display: flex; flex-direction: column; gap: 4px;">';
+  html += `<div style="display: flex; justify-content: space-between; font-size: 12px;"><span style="color: #6B7280;">Original:</span><span style="font-weight: 600; color: #374151;">${originalBudget}</span></div>`;
+  html += `<div style="display: flex; justify-content: space-between; font-size: 12px;"><span style="color: #6B7280;">Additional:</span><span style="font-weight: 600; color: #374151;">${additionalStakes}</span></div>`;
+  html += `<div style="display: flex; justify-content: space-between; font-size: 12px;"><span style="color: #6B7280;">Spent:</span><span style="font-weight: 600; color: #374151;">${stakesSpent}</span></div>`;
+  html += `<div style="display: flex; justify-content: space-between; font-size: 12px; padding-top: 4px; border-top: 1px solid #D1D5DB;"><span style="color: #6B7280; font-weight: 600;">Available:</span><span style="font-weight: 700; color: #000000;">${availableStakes}</span></div>`;
+  html += '</div>';
+
+  html += '</div>';
 
   html += '</div>';
   return html;

@@ -12,7 +12,7 @@ import { renderShipPassengers } from './ship-passengers.js';
  * @returns {string} HTML string
  */
 function renderPartCard(part) {
-  let html = `<div class="aspect-card" style="border: 2px solid #E5E7EB; padding: 16px; border-radius: 8px; background: white; margin-bottom: 12px;">`;
+  let html = `<div class="aspect-card" style="border: 2px solid #E5E7EB; padding: 16px; border-radius: 8px; background: white;">`;
 
   // Name and Stakes on the same row
   html += `<div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px;">`;
@@ -59,6 +59,7 @@ export function renderShipInventoryPlay(ship) {
   // Column 1: Design Elements
   html += '<div>';
   html += '<h2 class="section-header">Design Elements</h2>';
+  html += '<div style="display: flex; flex-direction: column; gap: 12px;">';
 
   if (ship.size) {
     html += renderPartCard(ship.size);
@@ -82,6 +83,7 @@ export function renderShipInventoryPlay(ship) {
     });
   }
 
+  html += '</div>';
   html += '</div>';
 
   // Column 2: Fittings (2xN grid)
@@ -132,11 +134,13 @@ export function renderShipInventoryPlay(ship) {
   }
 
   // Render undercrew cards
+  html += '<div style="display: flex; flex-direction: column; gap: 12px;">';
   if (allUndercrew.length > 0) {
     allUndercrew.forEach(undercrew => {
       html += renderPartCard(undercrew);
     });
   }
+  html += '</div>';
 
   html += '</div>';
 

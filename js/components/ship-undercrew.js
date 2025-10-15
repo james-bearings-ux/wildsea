@@ -23,13 +23,13 @@ export function renderShipUndercrewTabs(ship, gameData, activeTab = 'officers') 
   tabs.forEach(tab => {
     const isActive = tab.id === activeTab;
     const activeStyle = isActive
-      ? 'background: #A91D3A; color: white; border-bottom: 2px solid #A91D3A;'
+      ? 'background: #000000; color: white; border-bottom: 2px solid #000000;'
       : 'background: #F3F4F6; color: #6B7280; border-bottom: 2px solid transparent;';
 
     html += `<button
       data-action="switchShipTab"
       data-params='{"tab":"${tab.id}"}'
-      style="${activeStyle} padding: 8px 16px; border: none; border-radius: 4px 4px 0 0; cursor: pointer; font-weight: 600; font-size: 14px; transition: all 0.2s;"
+      style="${activeStyle} padding: 8px 16px; border: none; border-radius: 4px 4px 0 0; cursor: pointer; font-family: 'Faustina', serif; font-weight: 600; font-size: 18px; transition: all 0.2s;"
     >${tab.label}</button>`;
   });
   html += '</div>';
@@ -87,7 +87,7 @@ function renderUndercrewCard(undercrew, undercrewType, isSelected) {
     undercrew: undercrew
   }).replace(/"/g, '&quot;');
 
-  let html = `<div class="aspect-card" style="${selectedStyle} cursor: pointer; padding: 16px; border-radius: 8px; background: white; margin-bottom: 12px;"
+  let html = `<div class="aspect-card" style="${selectedStyle} cursor: pointer; padding: 16px; border-radius: 8px; background: white;"
     data-action="selectShipUndercrew"
     data-params="${paramsJson}"
   >`;

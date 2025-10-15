@@ -22,11 +22,8 @@ export function renderShipPlayMode(container, ship, gameData) {
 
   // Bottom action bar
   html += '<div class="sticky-action-bar split">';
-  html += '<div>';
-  html += '<button data-action="setShipMode" data-params=\'{"mode":"creation"}\'>Return to Creation</button>';
   html += '<button data-action="exportShip">Export Ship</button>';
-  html += '</div>';
-  html += '<button data-action="setShipMode" data-params=\'{"mode":"upgrade"}\'>Upgrade</button>';
+  html += '<button data-action="setShipMode" data-params=\'{"mode":"creation"}\'>Ship Drydock</button>';
   html += '</div>';
 
   html += '</div>';
