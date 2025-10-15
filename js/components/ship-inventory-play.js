@@ -9,10 +9,28 @@ import { renderShipPassengers } from './ship-passengers.js';
 /**
  * Render a ship part card (non-interactive version for play mode)
  * @param {Object} part - Ship part data
+ * @param {boolean} isUndercrew - Whether this is an undercrew card (needs damage track)
+ * @param {Object} ship - Ship object (needed for undercrew damage data)
  * @returns {string} HTML string
  */
-function renderPartCard(part) {
+function renderPartCard(part, isUndercrew = false, ship = null) {
   let html = `<div class="ship-card">`;
+
+  // Damage track for undercrew (above name/stakes)
+  if (isUndercrew && ship) {
+    const trackSize = part.track || 0;
+    const damageArray = ship.undercrewDamage?.[part.name] || [];
+
+    html += '<div class="ship-rating-track" style="margin-bottom: 12px;">';
+    for (let i = 0; i < trackSize; i++) {
+      const state = damageArray[i] === 'burned' ? 'burned' : 'default';
+      const stateChar = state === 'burned' ? 'X' : '';
+      // Escape the name for JSON
+      const escapedName = part.name.replace(/"/g, '&quot;');
+      html += `<div class="track-box ${state}" data-action="cycleUndercrewDamage" data-params='{"undercrewName":"${escapedName}","index":${i}}' style="cursor: pointer;">${stateChar}</div>`;
+    }
+    html += '</div>';
+  }
 
   // Name and Stakes on the same row
   html += `<div class="ship-card-header">`;
@@ -137,7 +155,7 @@ export function renderShipInventoryPlay(ship) {
   html += '<div class="ship-card-list">';
   if (allUndercrew.length > 0) {
     allUndercrew.forEach(undercrew => {
-      html += renderPartCard(undercrew);
+      html += renderPartCard(undercrew, true, ship);  // Pass true for isUndercrew and ship object
     });
   }
   html += '</div>';

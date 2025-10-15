@@ -9,6 +9,18 @@ function generateId() {
 }
 
 /**
+ * Parse track size from undercrew name
+ * Format: " [#-Track]" where # is the track size
+ * Example: "Navigator [3-Track]" returns 3
+ * @param {string} name - Undercrew name
+ * @returns {number} Track size, defaults to 0 if not found
+ */
+function parseUndercrewTrack(name) {
+  const match = name.match(/\[(\d+)-Track\]/);
+  return match ? parseInt(match[1], 10) : 0;
+}
+
+/**
  * Create a new ship with default values
  */
 export function createShip(name = 'New Ship') {
@@ -63,6 +75,10 @@ export function createShip(name = 'New Ship') {
       gangs: [],             // [{ name, stakes, specials }, ...]
       packs: []              // [{ name, stakes, specials }, ...]
     },
+
+    // Undercrew damage tracking (keyed by undercrew name)
+    // Each undercrew has a track based on its stakes value
+    undercrewDamage: {},     // { "undercrewName": ['default', 'burned', ...], ... }
 
     // Cargo (arbitrary list of named items, similar to character salvage)
     cargo: [],               // [{ id, name }, ...]
@@ -222,8 +238,13 @@ export function selectShipUndercrew(undercrewType, undercrewData, renderCallback
     // Undercrew already selected, remove it (deselect)
     ship.undercrew[undercrewType].splice(existingIndex, 1);
   } else {
-    // Undercrew not selected, add it
-    ship.undercrew[undercrewType].push(undercrewData);
+    // Undercrew not selected, parse track size and add it
+    const trackSize = parseUndercrewTrack(undercrewData.name);
+    const undercrewWithTrack = {
+      ...undercrewData,
+      track: trackSize
+    };
+    ship.undercrew[undercrewType].push(undercrewWithTrack);
   }
 }
 
@@ -341,6 +362,34 @@ export function cycleRatingDamage(rating, index, renderCallback, ship) {
   }
 
   const damageArray = ship.ratingDamage[rating];
+
+  // Get current state (default if undefined)
+  const currentState = damageArray[index] || 'default';
+
+  // Cycle: default -> burned -> default
+  if (currentState === 'default') {
+    damageArray[index] = 'burned';
+  } else {
+    damageArray[index] = 'default';
+  }
+}
+
+/**
+ * Cycle undercrew damage state (default -> burned -> default)
+ * Similar to rating damage tracking
+ */
+export function cycleUndercrewDamage(undercrewName, index, renderCallback, ship) {
+  // Ensure the undercrewDamage object exists
+  if (!ship.undercrewDamage) {
+    ship.undercrewDamage = {};
+  }
+
+  // Ensure the damage array for this undercrew exists
+  if (!ship.undercrewDamage[undercrewName]) {
+    ship.undercrewDamage[undercrewName] = [];
+  }
+
+  const damageArray = ship.undercrewDamage[undercrewName];
 
   // Get current state (default if undefined)
   const currentState = damageArray[index] || 'default';

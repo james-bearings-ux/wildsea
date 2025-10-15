@@ -62,6 +62,7 @@ import {
   selectShipFitting,
   selectShipUndercrew,
   cycleRatingDamage,
+  cycleUndercrewDamage,
   addCargo,
   updateCargoName,
   removeCargo,
@@ -463,6 +464,17 @@ function setupEventDelegation() {
               const ship = loadShip(session.activeShipId);
               if (ship) {
                 cycleRatingDamage(parsedParams.rating, parsedParams.index, render, ship);
+                saveShip(ship);
+                render();
+              }
+            }
+            break;
+          case 'cycleUndercrewDamage':
+            e.stopPropagation();
+            if (session && session.activeShipId) {
+              const ship = loadShip(session.activeShipId);
+              if (ship) {
+                cycleUndercrewDamage(parsedParams.undercrewName, parsedParams.index, render, ship);
                 saveShip(ship);
                 render();
               }
