@@ -43,7 +43,7 @@ import {
   setActiveCharacter
 } from './state/session.js';
 import { validateCharacterCreation } from './utils/validation.js';
-import { exportCharacter, importCharacter } from './utils/file-handlers.js';
+import { exportCharacter, importCharacter, exportShip, importShip } from './utils/file-handlers.js';
 import { renderCreationMode } from './rendering/creation-mode.js';
 import { renderPlayMode } from './rendering/play-mode.js';
 import { renderAdvancementMode } from './rendering/advancement-mode.js';
@@ -386,6 +386,50 @@ function setupEventDelegation() {
               const ship = loadShip(session.activeShipId);
               if (ship) {
                 selectShipFitting(parsedParams.fittingType, parsedParams.fitting, render, ship);
+                saveShip(ship);
+                render();
+              }
+            }
+            break;
+          case 'importShip':
+            if (session) {
+              importShip(session, render);
+            }
+            break;
+          case 'exportShip':
+            if (session && session.activeShipId) {
+              const ship = loadShip(session.activeShipId);
+              if (ship) {
+                exportShip(ship);
+              }
+            }
+            break;
+          case 'createShip':
+            if (session && session.activeShipId) {
+              const ship = loadShip(session.activeShipId);
+              if (ship) {
+                // Validate required elements
+                const hasAllRequired = ship.size && ship.frame &&
+                  Array.isArray(ship.hull) && ship.hull.length > 0 &&
+                  Array.isArray(ship.bite) && ship.bite.length > 0 &&
+                  Array.isArray(ship.engine) && ship.engine.length > 0;
+
+                if (!hasAllRequired) {
+                  alert('Please select all required ship design elements (Size, Frame, Hull, Bite, and Engine)');
+                  return;
+                }
+
+                ship.mode = 'play';
+                saveShip(ship);
+                render();
+              }
+            }
+            break;
+          case 'saveShipUpgrade':
+            if (session && session.activeShipId) {
+              const ship = loadShip(session.activeShipId);
+              if (ship) {
+                ship.mode = 'play';
                 saveShip(ship);
                 render();
               }

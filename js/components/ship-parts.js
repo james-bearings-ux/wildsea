@@ -23,11 +23,11 @@ function renderPartCard(part, partType, isSelected) {
     data-params="${paramsJson}"
   >`;
 
-  // Name
-  html += `<div style="font-weight: 700; font-size: 16px; color: #1F2937; margin-bottom: 4px;">${part.name}</div>`;
-
-  // Stakes
-  html += `<div style="font-size: 11px; color: #6B7280; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;">${part.stakes} ${part.stakes === 1 ? 'Stake' : 'Stakes'}</div>`;
+  // Name and Stakes on the same row
+  html += `<div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px;">`;
+  html += `<div style="font-weight: 700; font-size: 16px; color: #1F2937;">${part.name}</div>`;
+  html += `<div style="font-size: 11px; color: #6B7280; text-transform: uppercase; letter-spacing: 0.5px;">${part.stakes} ${part.stakes === 1 ? 'Stake' : 'Stakes'}</div>`;
+  html += `</div>`;
 
   // Description
   html += `<div style="font-size: 14px; color: #4B5563; margin-bottom: 12px; line-height: 1.5;">${part.description}</div>`;

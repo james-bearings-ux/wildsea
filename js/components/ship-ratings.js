@@ -14,6 +14,9 @@ export function renderShipRatings(ship) {
 
   let html = '<div style="display: flex; flex-direction: column; gap: 8px; padding: 16px; background: #F3F4F6; border-right: 2px solid #D1D5DB; min-width: 120px;">';
 
+  // Ratings heading
+  html += '<div style="font-size: 11px; font-weight: 700; color: #6B7280; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; padding-bottom: 4px; border-bottom: 1px solid #D1D5DB;">RATINGS</div>';
+
   const ratingNames = ['Armour', 'Seals', 'Speed', 'Saws', 'Stealth', 'Tilt'];
 
   ratingNames.forEach(ratingName => {

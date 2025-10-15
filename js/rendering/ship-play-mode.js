@@ -19,11 +19,15 @@ export function renderShipPlayMode(container, ship, gameData) {
   // Bottom action bar
   html += '<div style="margin-top: auto; padding: 16px 20px; background: #F3F4F6; border-top: 2px solid #D1D5DB; display: flex; justify-content: space-between; align-items: center;">';
 
-  // Mode switchers
+  // Left side: Return to Creation and Export
   html += '<div style="display: flex; gap: 8px;">';
-  html += '<button data-action="setShipMode" data-params=\'{"mode":"creation"}\' style="background: #6B7280; color: white; padding: 8px 16px; border-radius: 4px; border: none; cursor: pointer; font-weight: 600;">Creation</button>';
-  html += '<button data-action="setShipMode" data-params=\'{"mode":"play"}\' style="background: #A91D3A; color: white; padding: 8px 16px; border-radius: 4px; border: none; cursor: pointer; font-weight: 600;">Play</button>';
-  html += '<button data-action="setShipMode" data-params=\'{"mode":"upgrade"}\' style="background: #6B7280; color: white; padding: 8px 16px; border-radius: 4px; border: none; cursor: pointer; font-weight: 600;">Upgrade</button>';
+  html += '<button data-action="setShipMode" data-params=\'{"mode":"creation"}\' style="background: #6B7280; color: white; padding: 8px 16px; border-radius: 4px; border: none; cursor: pointer; font-weight: 600;">Return to Creation</button>';
+  html += '<button data-action="exportShip" style="background: #6366F1; color: white; padding: 8px 16px; border-radius: 4px; border: none; cursor: pointer; font-weight: 600;">Export Ship</button>';
+  html += '</div>';
+
+  // Right side: Upgrade
+  html += '<div style="display: flex; gap: 8px;">';
+  html += '<button data-action="setShipMode" data-params=\'{"mode":"upgrade"}\' style="background: #10B981; color: white; padding: 8px 16px; border-radius: 4px; border: none; cursor: pointer; font-weight: 600;">Upgrade</button>';
   html += '</div>';
 
   html += '</div>';

@@ -5,6 +5,7 @@
 import { renderShipRatings } from '../components/ship-ratings.js';
 import { renderShipPartsTabs } from '../components/ship-parts.js';
 import { renderShipFittingsTabs } from '../components/ship-fittings.js';
+import { renderShipInventory } from '../components/ship-inventory.js';
 import { calculateStakesSpent, calculateStakesBudget } from '../state/ship.js';
 
 /**
@@ -21,11 +22,20 @@ export function renderShipCreationMode(container, ship, gameData, activeTab = 's
 
   let html = '<div style="display: flex; flex-direction: column; height: calc(100vh - 60px);">';
 
-  // Top bar: wizard stages, crew size, and stakes budget
-  html += '<div style="display: flex; gap: 24px; align-items: center; padding: 16px 20px; background: #1F2937; color: white; border-bottom: 2px solid #374151;">';
+  // Top bar: crew size (left), wizard stages (center)
+  html += '<div style="display: flex; align-items: center; padding: 16px 20px; background: #1F2937; color: white; border-bottom: 2px solid #374151; gap: 24px;">';
 
-  // Wizard stage buttons
-  html += '<div style="display: flex; gap: 4px;">';
+  // Left: Crew size control
+  html += '<div style="display: flex; align-items: center; gap: 8px;">';
+  html += '<label style="font-size: 14px; font-weight: 600;">Anticipated Crew Size:</label>';
+  html += `<input type="number" min="1" max="20" value="${ship.anticipatedCrewSize}"
+    data-action="updateAnticipatedCrewSize"
+    style="width: 60px; padding: 4px 8px; border-radius: 4px; border: 1px solid #4B5563; background: white; color: #1F2937; text-align: center;"
+  />`;
+  html += '</div>';
+
+  // Center: Wizard stage buttons
+  html += '<div style="display: flex; gap: 4px; margin-left: auto; margin-right: auto;">';
   const stages = [
     { id: 'design', label: 'Ship Design' },
     { id: 'fittings', label: 'Fittings' },
@@ -42,24 +52,6 @@ export function renderShipCreationMode(container, ship, gameData, activeTab = 's
   });
   html += '</div>';
 
-  html += '<div style="width: 1px; height: 24px; background: #4B5563;"></div>';
-
-  // Crew size control
-  html += '<div style="display: flex; align-items: center; gap: 8px;">';
-  html += '<label style="font-size: 14px; font-weight: 600;">Anticipated Crew Size:</label>';
-  html += `<input type="number" min="1" max="20" value="${ship.anticipatedCrewSize}"
-    data-action="updateAnticipatedCrewSize"
-    style="width: 60px; padding: 4px 8px; border-radius: 4px; border: 1px solid #4B5563; background: white; color: #1F2937; text-align: center;"
-  />`;
-  html += '</div>';
-
-  // Stakes budget indicator
-  const budgetColor = stakesSpent > stakesBudget ? '#EF4444' : stakesSpent === stakesBudget ? '#10B981' : '#3B82F6';
-  html += '<div style="display: flex; align-items: center; gap: 8px;">';
-  html += '<span style="font-size: 14px; font-weight: 600;">Stakes:</span>';
-  html += `<span style="font-size: 18px; font-weight: 700; color: ${budgetColor};">${stakesSpent} / ${stakesBudget}</span>`;
-  html += '</div>';
-
   html += '</div>';
 
   // Main content area
@@ -68,7 +60,10 @@ export function renderShipCreationMode(container, ship, gameData, activeTab = 's
   // Left column: ratings
   html += renderShipRatings(ship);
 
-  // Middle: content based on wizard stage
+  // Middle-left column: inventory
+  html += renderShipInventory(ship);
+
+  // Right: content based on wizard stage
   if (wizardStage === 'design') {
     html += renderShipPartsTabs(ship, gameData, activeTab);
   } else if (wizardStage === 'fittings') {
@@ -85,11 +80,14 @@ export function renderShipCreationMode(container, ship, gameData, activeTab = 's
   // Bottom action bar
   html += '<div style="padding: 16px 20px; background: #F3F4F6; border-top: 2px solid #D1D5DB; display: flex; justify-content: space-between; align-items: center;">';
 
-  // Left side: mode switchers
+  // Left side: Import
   html += '<div style="display: flex; gap: 8px;">';
-  html += '<button data-action="setShipMode" data-params=\'{"mode":"creation"}\' style="background: #A91D3A; color: white; padding: 8px 16px; border-radius: 4px; border: none; cursor: pointer; font-weight: 600;">Creation</button>';
-  html += '<button data-action="setShipMode" data-params=\'{"mode":"play"}\' style="background: #6B7280; color: white; padding: 8px 16px; border-radius: 4px; border: none; cursor: pointer; font-weight: 600;">Play</button>';
-  html += '<button data-action="setShipMode" data-params=\'{"mode":"upgrade"}\' style="background: #6B7280; color: white; padding: 8px 16px; border-radius: 4px; border: none; cursor: pointer; font-weight: 600;">Upgrade</button>';
+  html += '<button data-action="importShip" style="background: #6366F1; color: white; padding: 8px 16px; border-radius: 4px; border: none; cursor: pointer; font-weight: 600;">Import Ship</button>';
+  html += '</div>';
+
+  // Right side: Create Ship
+  html += '<div style="display: flex; gap: 8px;">';
+  html += '<button data-action="createShip" style="background: #10B981; color: white; padding: 8px 16px; border-radius: 4px; border: none; cursor: pointer; font-weight: 600;">Create Ship</button>';
   html += '</div>';
 
   html += '</div>';
