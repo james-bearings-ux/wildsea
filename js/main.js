@@ -58,6 +58,7 @@ import {
   updateAnticipatedCrewSize,
   selectShipPart,
   selectShipFitting,
+  selectShipUndercrew,
   cycleRatingDamage
 } from './state/ship.js';
 import { renderShipCreationMode } from './rendering/ship-creation-mode.js';
@@ -369,6 +370,8 @@ function setupEventDelegation() {
               activeShipTab = 'size';
             } else if (activeWizardStage === 'fittings') {
               activeShipTab = 'motifs';
+            } else if (activeWizardStage === 'undercrew') {
+              activeShipTab = 'officers';
             }
             render();
             break;
@@ -387,6 +390,16 @@ function setupEventDelegation() {
               const ship = loadShip(session.activeShipId);
               if (ship) {
                 selectShipFitting(parsedParams.fittingType, parsedParams.fitting, render, ship);
+                saveShip(ship);
+                render();
+              }
+            }
+            break;
+          case 'selectShipUndercrew':
+            if (session && session.activeShipId) {
+              const ship = loadShip(session.activeShipId);
+              if (ship) {
+                selectShipUndercrew(parsedParams.undercrewType, parsedParams.undercrew, render, ship);
                 saveShip(ship);
                 render();
               }

@@ -5,6 +5,7 @@
 import { renderShipRatings } from '../components/ship-ratings.js';
 import { renderShipPartsTabs } from '../components/ship-parts.js';
 import { renderShipFittingsTabs } from '../components/ship-fittings.js';
+import { renderShipUndercrewTabs } from '../components/ship-undercrew.js';
 import { renderShipInventory } from '../components/ship-inventory.js';
 import { calculateStakesSpent, calculateStakesBudget } from '../state/ship.js';
 
@@ -69,10 +70,7 @@ export function renderShipCreationMode(container, ship, gameData, activeTab = 's
   } else if (wizardStage === 'fittings') {
     html += renderShipFittingsTabs(ship, gameData, activeTab);
   } else if (wizardStage === 'undercrew') {
-    // Placeholder for undercrew stage
-    html += '<div style="flex: 1; display: flex; align-items: center; justify-content: center; padding: 40px; text-align: center; color: #6B7280;">';
-    html += '<p>Undercrew stage coming soon...</p>';
-    html += '</div>';
+    html += renderShipUndercrewTabs(ship, gameData, activeTab);
   }
 
   html += '</div>';

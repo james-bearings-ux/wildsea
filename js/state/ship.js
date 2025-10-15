@@ -49,10 +49,17 @@ export function createShip(name = 'New Ship') {
 
     // Ship fittings (all multi-select/optional)
     motifs: [],              // [{ name, stakes, specials }, ...]
-    generalAdditions: [],    // Placeholder for future
-    bounteousAdditions: [],  // Placeholder for future
-    rooms: [],               // Placeholder for future
-    armaments: []            // Placeholder for future
+    generalAdditions: [],    // [{ name, stakes, specials }, ...]
+    bounteousAdditions: [],  // [{ name, stakes, specials }, ...]
+    rooms: [],               // [{ name, stakes, specials }, ...]
+    armaments: [],           // [{ name, stakes, specials }, ...]
+
+    // Undercrew (all multi-select/optional)
+    undercrew: {
+      officers: [],          // [{ name, stakes, specials }, ...]
+      gangs: [],             // [{ name, stakes, specials }, ...]
+      packs: []              // [{ name, stakes, specials }, ...]
+    }
   };
 }
 
@@ -167,6 +174,37 @@ export function selectShipFitting(fittingType, fittingData, renderCallback, ship
 }
 
 /**
+ * Select or toggle undercrew
+ * All undercrew are multi-select (toggle on/off)
+ */
+export function selectShipUndercrew(undercrewType, undercrewData, renderCallback, ship) {
+  // Ensure the undercrew object exists
+  if (!ship.undercrew) {
+    ship.undercrew = {
+      officers: [],
+      gangs: [],
+      packs: []
+    };
+  }
+
+  // Ensure the specific undercrew type is an array
+  if (!Array.isArray(ship.undercrew[undercrewType])) {
+    ship.undercrew[undercrewType] = [];
+  }
+
+  // Multi-select: toggle the undercrew on/off
+  const existingIndex = ship.undercrew[undercrewType].findIndex(u => u.name === undercrewData.name);
+
+  if (existingIndex >= 0) {
+    // Undercrew already selected, remove it (deselect)
+    ship.undercrew[undercrewType].splice(existingIndex, 1);
+  } else {
+    // Undercrew not selected, add it
+    ship.undercrew[undercrewType].push(undercrewData);
+  }
+}
+
+/**
  * Calculate total stakes spent
  */
 export function calculateStakesSpent(ship) {
@@ -202,6 +240,19 @@ export function calculateStakesSpent(ship) {
   }
   if (ship.armaments && Array.isArray(ship.armaments)) {
     ship.armaments.forEach(fitting => total += fitting.stakes);
+  }
+
+  // Multi-selections: undercrew (nested arrays)
+  if (ship.undercrew) {
+    if (ship.undercrew.officers && Array.isArray(ship.undercrew.officers)) {
+      ship.undercrew.officers.forEach(officer => total += officer.stakes);
+    }
+    if (ship.undercrew.gangs && Array.isArray(ship.undercrew.gangs)) {
+      ship.undercrew.gangs.forEach(gang => total += gang.stakes);
+    }
+    if (ship.undercrew.packs && Array.isArray(ship.undercrew.packs)) {
+      ship.undercrew.packs.forEach(pack => total += pack.stakes);
+    }
   }
 
   return total;

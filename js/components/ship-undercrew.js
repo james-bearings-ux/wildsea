@@ -1,21 +1,19 @@
 /**
- * Ship fittings selection component (for wizard stage 2)
+ * Ship undercrew selection component (for wizard stage 3)
  */
 
 /**
- * Render tabbed interface for ship fittings selection
+ * Render tabbed interface for ship undercrew selection
  * @param {Object} ship - Ship object
  * @param {Object} gameData - Game data containing shipParts
  * @param {string} activeTab - Currently active tab
  * @returns {string} HTML string
  */
-export function renderShipFittingsTabs(ship, gameData, activeTab = 'motifs') {
+export function renderShipUndercrewTabs(ship, gameData, activeTab = 'officers') {
   const tabs = [
-    { id: 'motifs', label: 'Motifs' },
-    { id: 'general', label: 'General Additions' },
-    { id: 'bounteous', label: 'Bounteous Additions' },
-    { id: 'rooms', label: 'Rooms' },
-    { id: 'armaments', label: 'Armaments' }
+    { id: 'officers', label: 'Officers' },
+    { id: 'gangs', label: 'Gangs' },
+    { id: 'packs', label: 'Packs' }
   ];
 
   let html = '<div style="flex: 1; display: flex; flex-direction: column;">';
@@ -39,21 +37,12 @@ export function renderShipFittingsTabs(ship, gameData, activeTab = 'motifs') {
   // Tab content
   html += '<div style="flex: 1; overflow-y: auto;">';
 
-  // Map tab IDs to JSON keys and ship properties
-  const tabMapping = {
-    'motifs': { key: 'motifs', shipProp: 'motifs' },
-    'general': { key: 'generalAdditions', shipProp: 'generalAdditions' },
-    'bounteous': { key: 'bounteousAdditions', shipProp: 'bounteousAdditions' },
-    'rooms': { key: 'rooms', shipProp: 'rooms' },
-    'armaments': { key: 'armaments', shipProp: 'armaments' }
-  };
+  // Get undercrew data from nested structure
+  const undercrewData = gameData.shipParts.undercrew || {};
+  const undercrew = undercrewData[activeTab] || [];
+  const selectedUndercrew = ship.undercrew?.[activeTab] || [];
 
-  const mapping = tabMapping[activeTab];
-  if (mapping) {
-    const fittings = gameData.shipParts[mapping.key] || [];
-    const selectedFittings = ship[mapping.shipProp] || [];
-    html += renderFittingsList(fittings, mapping.shipProp, selectedFittings);
-  }
+  html += renderUndercrewList(undercrew, activeTab, selectedUndercrew);
 
   html += '</div>';
   html += '</div>';
@@ -62,19 +51,19 @@ export function renderShipFittingsTabs(ship, gameData, activeTab = 'motifs') {
 }
 
 /**
- * Render a list of fittings
- * @param {Array} fittings - Array of fitting objects
- * @param {string} fittingType - Type of fitting
- * @param {Array} selectedFittings - Currently selected fittings (array)
+ * Render a list of undercrew
+ * @param {Array} undercrewItems - Array of undercrew objects
+ * @param {string} undercrewType - Type of undercrew (officers, gangs, packs)
+ * @param {Array} selectedUndercrew - Currently selected undercrew (array)
  * @returns {string} HTML string
  */
-function renderFittingsList(fittings, fittingType, selectedFittings) {
+function renderUndercrewList(undercrewItems, undercrewType, selectedUndercrew) {
   let html = '<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; padding: 16px;">';
 
-  fittings.forEach(fitting => {
-    // Check if this fitting is in the selected array
-    const isSelected = Array.isArray(selectedFittings) && selectedFittings.some(f => f.name === fitting.name);
-    html += renderFittingCard(fitting, fittingType, isSelected);
+  undercrewItems.forEach(undercrew => {
+    // Check if this undercrew is in the selected array
+    const isSelected = Array.isArray(selectedUndercrew) && selectedUndercrew.some(u => u.name === undercrew.name);
+    html += renderUndercrewCard(undercrew, undercrewType, isSelected);
   });
 
   html += '</div>';
@@ -83,48 +72,48 @@ function renderFittingsList(fittings, fittingType, selectedFittings) {
 }
 
 /**
- * Render a fitting card
- * @param {Object} fitting - Fitting data
- * @param {string} fittingType - Type of fitting
- * @param {boolean} isSelected - Whether this fitting is currently selected
+ * Render an undercrew card
+ * @param {Object} undercrew - Undercrew data
+ * @param {string} undercrewType - Type of undercrew
+ * @param {boolean} isSelected - Whether this undercrew is currently selected
  * @returns {string} HTML string
  */
-function renderFittingCard(fitting, fittingType, isSelected) {
+function renderUndercrewCard(undercrew, undercrewType, isSelected) {
   const selectedStyle = isSelected ? 'border: 3px solid #A91D3A; background: #FEF2F2;' : 'border: 2px solid #E5E7EB;';
 
   // Properly escape the JSON for HTML attribute
   const paramsJson = JSON.stringify({
-    fittingType: fittingType,
-    fitting: fitting
+    undercrewType: undercrewType,
+    undercrew: undercrew
   }).replace(/"/g, '&quot;');
 
   let html = `<div class="aspect-card" style="${selectedStyle} cursor: pointer; padding: 16px; border-radius: 8px; background: white; margin-bottom: 12px;"
-    data-action="selectShipFitting"
+    data-action="selectShipUndercrew"
     data-params="${paramsJson}"
   >`;
 
   // Name and Stakes on the same row
   html += `<div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px;">`;
-  html += `<div style="font-weight: 700; font-size: 16px; color: #1F2937;">${fitting.name}</div>`;
-  html += `<div style="font-size: 11px; color: #6B7280; text-transform: uppercase; letter-spacing: 0.5px;">${fitting.stakes} ${fitting.stakes === 1 ? 'Stake' : 'Stakes'}</div>`;
+  html += `<div style="font-weight: 700; font-size: 16px; color: #1F2937;">${undercrew.name}</div>`;
+  html += `<div style="font-size: 11px; color: #6B7280; text-transform: uppercase; letter-spacing: 0.5px;">${undercrew.stakes} ${undercrew.stakes === 1 ? 'Stake' : 'Stakes'}</div>`;
   html += `</div>`;
 
   // Description
-  html += `<div style="font-size: 14px; color: #4B5563; margin-bottom: 12px; line-height: 1.5;">${fitting.description}</div>`;
+  html += `<div style="font-size: 14px; color: #4B5563; margin-bottom: 12px; line-height: 1.5;">${undercrew.description}</div>`;
 
   // Bonuses as pills (if present)
-  if (fitting.bonuses && fitting.bonuses.length > 0) {
+  if (undercrew.bonuses && undercrew.bonuses.length > 0) {
     html += `<div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px;">`;
-    fitting.bonuses.forEach(bonus => {
+    undercrew.bonuses.forEach(bonus => {
       html += `<span style="background: #DBEAFE; color: #1E40AF; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 600;">+${bonus.value} ${bonus.rating}</span>`;
     });
     html += `</div>`;
   }
 
   // Specials in green italic text
-  if (fitting.specials && fitting.specials.length > 0) {
+  if (undercrew.specials && undercrew.specials.length > 0) {
     html += `<div style="margin-top: 8px;">`;
-    fitting.specials.forEach(special => {
+    undercrew.specials.forEach(special => {
       html += `<div style="font-size: 13px; color: #059669; font-style: italic; margin-bottom: 4px;">• ${special}</div>`;
     });
     html += `</div>`;

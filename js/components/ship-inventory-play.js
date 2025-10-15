@@ -109,7 +109,28 @@ export function renderShipInventoryPlay(ship) {
   // Column 3: Undercrew
   html += '<div>';
   html += '<h2 class="section-header">Undercrew</h2>';
-  html += '<div style="padding: 20px; text-align: center; color: #6B7280;">Undercrew coming soon...</div>';
+
+  // Collect all undercrew into a single array
+  const allUndercrew = [];
+  if (ship.undercrew) {
+    if (ship.undercrew.officers && Array.isArray(ship.undercrew.officers)) {
+      allUndercrew.push(...ship.undercrew.officers);
+    }
+    if (ship.undercrew.gangs && Array.isArray(ship.undercrew.gangs)) {
+      allUndercrew.push(...ship.undercrew.gangs);
+    }
+    if (ship.undercrew.packs && Array.isArray(ship.undercrew.packs)) {
+      allUndercrew.push(...ship.undercrew.packs);
+    }
+  }
+
+  // Render undercrew cards
+  if (allUndercrew.length > 0) {
+    allUndercrew.forEach(undercrew => {
+      html += renderPartCard(undercrew);
+    });
+  }
+
   html += '</div>';
 
   html += '</div>';
