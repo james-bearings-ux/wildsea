@@ -32,24 +32,22 @@ function renderPartCard(part, partType, isSelected) {
   // Description
   html += `<div style="font-size: 14px; color: #4B5563; margin-bottom: 12px; line-height: 1.5;">${part.description}</div>`;
 
-  // Bonuses as bullets
+  // Bonuses as pills
   if (part.bonuses && part.bonuses.length > 0) {
-    html += '<ul style="margin: 0 0 8px 0; padding-left: 20px; font-size: 13px; color: #374151;">';
+    html += `<div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px;">`;
     part.bonuses.forEach(bonus => {
-      const sign = bonus.value > 0 ? '+' : '';
-      html += `<li>${bonus.rating} ${sign}${bonus.value}</li>`;
+      html += `<span style="background: #DBEAFE; color: #1E40AF; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 600;">+${bonus.value} ${bonus.rating}</span>`;
     });
-    html += '</ul>';
+    html += `</div>`;
   }
 
-  // Specials in small text
+  // Specials in green italic text
   if (part.specials && part.specials.length > 0) {
-    html += '<div style="font-size: 12px; color: #6B7280; font-style: italic; margin-top: 8px; padding-top: 8px; border-top: 1px solid #E5E7EB;">';
-    part.specials.forEach((special, idx) => {
-      if (idx > 0) html += '<br>';
-      html += special;
+    html += `<div style="margin-top: 8px;">`;
+    part.specials.forEach(special => {
+      html += `<div style="font-size: 13px; color: #059669; font-style: italic; margin-bottom: 4px;">• ${special}</div>`;
     });
-    html += '</div>';
+    html += `</div>`;
   }
 
   html += '</div>';

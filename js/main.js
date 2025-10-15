@@ -57,7 +57,8 @@ import {
   setShipMode,
   updateAnticipatedCrewSize,
   selectShipPart,
-  selectShipFitting
+  selectShipFitting,
+  cycleRatingDamage
 } from './state/ship.js';
 import { renderShipCreationMode } from './rendering/ship-creation-mode.js';
 import { renderShipPlayMode } from './rendering/ship-play-mode.js';
@@ -430,6 +431,17 @@ function setupEventDelegation() {
               const ship = loadShip(session.activeShipId);
               if (ship) {
                 ship.mode = 'play';
+                saveShip(ship);
+                render();
+              }
+            }
+            break;
+          case 'cycleRatingDamage':
+            e.stopPropagation();
+            if (session && session.activeShipId) {
+              const ship = loadShip(session.activeShipId);
+              if (ship) {
+                cycleRatingDamage(parsedParams.rating, parsedParams.index, render, ship);
                 saveShip(ship);
                 render();
               }

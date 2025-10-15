@@ -253,3 +253,26 @@ export function calculateShipRatings(ship) {
 
   return ratings;
 }
+
+/**
+ * Cycle rating damage state (default -> burned -> default)
+ * Similar to aspect damage but simpler (only two states)
+ */
+export function cycleRatingDamage(rating, index, renderCallback, ship) {
+  // Ensure the damage array exists
+  if (!ship.ratingDamage[rating]) {
+    ship.ratingDamage[rating] = [];
+  }
+
+  const damageArray = ship.ratingDamage[rating];
+
+  // Get current state (default if undefined)
+  const currentState = damageArray[index] || 'default';
+
+  // Cycle: default -> burned -> default
+  if (currentState === 'default') {
+    damageArray[index] = 'burned';
+  } else {
+    damageArray[index] = 'default';
+  }
+}

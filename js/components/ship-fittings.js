@@ -107,13 +107,22 @@ function renderFittingCard(fitting, fittingType, isSelected) {
   // Description
   html += `<div style="font-size: 14px; color: #4B5563; margin-bottom: 12px; line-height: 1.5;">${fitting.description}</div>`;
 
-  // Specials as bullets
-  if (fitting.specials && fitting.specials.length > 0) {
-    html += '<ul style="margin: 0 0 8px 0; padding-left: 20px; font-size: 13px; color: #374151;">';
-    fitting.specials.forEach(special => {
-      html += `<li>${special}</li>`;
+  // Bonuses as pills (if present)
+  if (fitting.bonuses && fitting.bonuses.length > 0) {
+    html += `<div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px;">`;
+    fitting.bonuses.forEach(bonus => {
+      html += `<span style="background: #DBEAFE; color: #1E40AF; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 600;">+${bonus.value} ${bonus.rating}</span>`;
     });
-    html += '</ul>';
+    html += `</div>`;
+  }
+
+  // Specials in green italic text
+  if (fitting.specials && fitting.specials.length > 0) {
+    html += `<div style="margin-top: 8px;">`;
+    fitting.specials.forEach(special => {
+      html += `<div style="font-size: 13px; color: #059669; font-style: italic; margin-bottom: 4px;">• ${special}</div>`;
+    });
+    html += `</div>`;
   }
 
   html += '</div>';
