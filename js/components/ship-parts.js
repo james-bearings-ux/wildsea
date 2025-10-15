@@ -36,7 +36,8 @@ function renderPartCard(part, partType, isSelected) {
   if (part.bonuses && part.bonuses.length > 0) {
     html += `<div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px;">`;
     part.bonuses.forEach(bonus => {
-      html += `<span style="background: #DBEAFE; color: #1E40AF; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 600;">+${bonus.value} ${bonus.rating}</span>`;
+      const sign = bonus.value >= 0 ? '+' : '';
+      html += `<span style="background: #DBEAFE; color: #1E40AF; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 600;">${sign}${bonus.value} ${bonus.rating}</span>`;
     });
     html += `</div>`;
   }

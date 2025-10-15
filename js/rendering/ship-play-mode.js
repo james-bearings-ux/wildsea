@@ -14,7 +14,7 @@ import { renderShipInventoryPlay } from '../components/ship-inventory-play.js';
 export function renderShipPlayMode(container, ship, gameData) {
   let html = '<div style="display: flex; flex-direction: column; height: calc(100vh - 60px);">';
 
-  // Main content area with ratings and inventory
+  // Main content area with ratings and inventory (inventory includes cargo)
   html += '<div style="display: flex; flex: 1; overflow: hidden;">';
   html += renderShipRatingsPlay(ship);
   html += renderShipInventoryPlay(ship);

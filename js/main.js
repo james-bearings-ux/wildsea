@@ -59,7 +59,13 @@ import {
   selectShipPart,
   selectShipFitting,
   selectShipUndercrew,
-  cycleRatingDamage
+  cycleRatingDamage,
+  addCargo,
+  updateCargoName,
+  removeCargo,
+  addPassenger,
+  updatePassengerName,
+  removePassenger
 } from './state/ship.js';
 import { renderShipCreationMode } from './rendering/ship-creation-mode.js';
 import { renderShipPlayMode } from './rendering/ship-play-mode.js';
@@ -460,6 +466,46 @@ function setupEventDelegation() {
               }
             }
             break;
+          case 'addCargo':
+            if (session && session.activeShipId) {
+              const ship = loadShip(session.activeShipId);
+              if (ship) {
+                addCargo(render, ship);
+                saveShip(ship);
+                render();
+              }
+            }
+            break;
+          case 'removeCargo':
+            if (session && session.activeShipId) {
+              const ship = loadShip(session.activeShipId);
+              if (ship) {
+                removeCargo(parsedParams.id, render, ship);
+                saveShip(ship);
+                render();
+              }
+            }
+            break;
+          case 'addPassenger':
+            if (session && session.activeShipId) {
+              const ship = loadShip(session.activeShipId);
+              if (ship) {
+                addPassenger(render, ship);
+                saveShip(ship);
+                render();
+              }
+            }
+            break;
+          case 'removePassenger':
+            if (session && session.activeShipId) {
+              const ship = loadShip(session.activeShipId);
+              if (ship) {
+                removePassenger(parsedParams.id, render, ship);
+                saveShip(ship);
+                render();
+              }
+            }
+            break;
         }
         return; // Stop after handling the action
       }
@@ -485,6 +531,28 @@ function setupEventDelegation() {
           updateAnticipatedCrewSize(target.value, render, ship);
           saveShip(ship);
           render();
+        }
+      }
+      return;
+    }
+
+    if (action === 'updateCargoName') {
+      if (session && session.activeShipId) {
+        const ship = loadShip(session.activeShipId);
+        if (ship) {
+          updateCargoName(parsedParams.id, target.value, ship);
+          saveShip(ship);
+        }
+      }
+      return;
+    }
+
+    if (action === 'updatePassengerName') {
+      if (session && session.activeShipId) {
+        const ship = loadShip(session.activeShipId);
+        if (ship) {
+          updatePassengerName(parsedParams.id, target.value, ship);
+          saveShip(ship);
         }
       }
       return;

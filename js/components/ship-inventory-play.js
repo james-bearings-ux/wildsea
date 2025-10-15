@@ -3,6 +3,9 @@
  * Shows full ship part cards in a three-column layout
  */
 
+import { renderShipCargo } from './ship-cargo.js';
+import { renderShipPassengers } from './ship-passengers.js';
+
 /**
  * Render a ship part card (non-interactive version for play mode)
  * @param {Object} part - Ship part data
@@ -23,7 +26,8 @@ function renderPartCard(part) {
   if (part.bonuses && part.bonuses.length > 0) {
     html += `<div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px;">`;
     part.bonuses.forEach(bonus => {
-      html += `<span style="background: #DBEAFE; color: #1E40AF; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 600;">+${bonus.value} ${bonus.rating}</span>`;
+      const sign = bonus.value >= 0 ? '+' : '';
+      html += `<span style="background: #DBEAFE; color: #1E40AF; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 600;">${sign}${bonus.value} ${bonus.rating}</span>`;
     });
     html += `</div>`;
   }
@@ -47,7 +51,10 @@ function renderPartCard(part) {
  * @returns {string} HTML string
  */
 export function renderShipInventoryPlay(ship) {
-  let html = '<div style="flex: 1; display: grid; grid-template-columns: 1fr 2fr 1fr; gap: 24px; padding: 20px; overflow-y: auto;">';
+  let html = '<div style="flex: 1; display: flex; flex-direction: column; padding: 20px; padding-bottom: 100px; overflow-y: auto;">';
+
+  // Three-column grid for main content
+  html += '<div style="display: grid; grid-template-columns: 1fr 2fr 1fr; gap: 24px; margin-bottom: 32px;">';
 
   // Column 1: Design Elements
   html += '<div>';
@@ -133,6 +140,17 @@ export function renderShipInventoryPlay(ship) {
 
   html += '</div>';
 
+  html += '</div>'; // End three-column grid
+
+  // Separator
+  html += '<hr style="border: none; border-top: 1px solid #000000; margin: 32px 0;" />';
+
+  // Cargo and Passengers - two column layout at the bottom
+  html += '<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">';
+  html += renderShipCargo(ship);
+  html += renderShipPassengers(ship);
   html += '</div>';
+
+  html += '</div>'; // End container
   return html;
 }

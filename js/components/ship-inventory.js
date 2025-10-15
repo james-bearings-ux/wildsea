@@ -30,15 +30,27 @@ export function renderShipInventory(ship) {
     { label: 'Armaments', items: ship.armaments || [] }
   ]);
 
-  // Undercrew section (placeholder)
-  html += renderInventorySection('UNDERCREW', []);
+  // Undercrew section
+  const undercrewCategories = [];
+  if (ship.undercrew) {
+    if (ship.undercrew.officers && ship.undercrew.officers.length > 0) {
+      undercrewCategories.push({ label: 'Officers', items: ship.undercrew.officers });
+    }
+    if (ship.undercrew.gangs && ship.undercrew.gangs.length > 0) {
+      undercrewCategories.push({ label: 'Gangs', items: ship.undercrew.gangs });
+    }
+    if (ship.undercrew.packs && ship.undercrew.packs.length > 0) {
+      undercrewCategories.push({ label: 'Packs', items: ship.undercrew.packs });
+    }
+  }
+  html += renderInventorySection('UNDERCREW', undercrewCategories);
 
-  // Stakes indicator at the bottom
+  // Stakes indicator inline under the list
   const stakesSpent = calculateStakesSpent(ship);
   const stakesBudget = calculateStakesBudget(ship);
   const budgetColor = stakesSpent > stakesBudget ? '#EF4444' : stakesSpent === stakesBudget ? '#10B981' : '#1F2937';
 
-  html += '<div style="margin-top: auto; padding-top: 16px; border-top: 2px solid #D1D5DB;">';
+  html += '<div style="padding-top: 16px; border-top: 2px solid #D1D5DB;">';
   html += '<div style="display: flex; justify-content: space-between; align-items: baseline;">';
   html += '<span style="font-size: 12px; font-weight: 600; color: #374151;">STAKES</span>';
   html += `<span style="font-size: 14px; font-weight: 700; color: ${budgetColor};">${stakesSpent} / ${stakesBudget}</span>`;

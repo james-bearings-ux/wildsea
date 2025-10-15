@@ -59,7 +59,13 @@ export function createShip(name = 'New Ship') {
       officers: [],          // [{ name, stakes, specials }, ...]
       gangs: [],             // [{ name, stakes, specials }, ...]
       packs: []              // [{ name, stakes, specials }, ...]
-    }
+    },
+
+    // Cargo (arbitrary list of named items, similar to character salvage)
+    cargo: [],               // [{ id, name }, ...]
+
+    // Passengers (arbitrary list of named items, parallel to cargo)
+    passengers: []           // [{ id, name }, ...]
   };
 }
 
@@ -325,5 +331,95 @@ export function cycleRatingDamage(rating, index, renderCallback, ship) {
     damageArray[index] = 'burned';
   } else {
     damageArray[index] = 'default';
+  }
+}
+
+/**
+ * Cargo mutations (similar to character resource management)
+ */
+
+/**
+ * Add a new cargo item
+ */
+export function addCargo(renderCallback, ship) {
+  if (!ship.cargo) {
+    ship.cargo = [];
+  }
+  ship.cargo.push({
+    id: Date.now().toString(),
+    name: ''
+  });
+  renderCallback();
+}
+
+/**
+ * Update cargo item name
+ */
+export function updateCargoName(id, name, ship) {
+  if (!ship.cargo) {
+    ship.cargo = [];
+  }
+  const cargoItem = ship.cargo.find(c => c.id === id);
+  if (cargoItem) {
+    cargoItem.name = name;
+  }
+}
+
+/**
+ * Remove a cargo item
+ */
+export function removeCargo(id, renderCallback, ship) {
+  if (!ship.cargo) {
+    ship.cargo = [];
+  }
+  const index = ship.cargo.findIndex(c => c.id === id);
+  if (index >= 0) {
+    ship.cargo.splice(index, 1);
+    renderCallback();
+  }
+}
+
+/**
+ * Passengers mutations (parallel to cargo management)
+ */
+
+/**
+ * Add a new passenger item
+ */
+export function addPassenger(renderCallback, ship) {
+  if (!ship.passengers) {
+    ship.passengers = [];
+  }
+  ship.passengers.push({
+    id: Date.now().toString(),
+    name: ''
+  });
+  renderCallback();
+}
+
+/**
+ * Update passenger item name
+ */
+export function updatePassengerName(id, name, ship) {
+  if (!ship.passengers) {
+    ship.passengers = [];
+  }
+  const passenger = ship.passengers.find(p => p.id === id);
+  if (passenger) {
+    passenger.name = name;
+  }
+}
+
+/**
+ * Remove a passenger item
+ */
+export function removePassenger(id, renderCallback, ship) {
+  if (!ship.passengers) {
+    ship.passengers = [];
+  }
+  const index = ship.passengers.findIndex(p => p.id === id);
+  if (index >= 0) {
+    ship.passengers.splice(index, 1);
+    renderCallback();
   }
 }
