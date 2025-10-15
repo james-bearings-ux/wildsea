@@ -44,12 +44,12 @@ export function renderNavigation(session) {
         const activeClass = isActive ? 'nav-button-active' : 'nav-button-inactive';
         html += '<div class="nav-character-wrapper ' + activeClass + '">';
         html += '<button data-action="switchCharacter" data-params=\'{"characterId":"' + charId + '"}\' ';
-        html += 'style="background: transparent; color: inherit; padding: 0; border: none; cursor: pointer; font-size: 14px; font-weight: inherit;">';
+        html += 'class="nav-character-label">';
         html += character.name || 'Unnamed Character';
         html += '</button>';
         html += '<button data-action="removeCharacter" data-params=\'{"characterId":"' + charId + '"}\' ';
         html += 'class="ship-cargo-remove" title="Remove from crew">';
-        html += '×';
+        html += '✕';
         html += '</button>';
         html += '</div>';
       }
@@ -57,12 +57,12 @@ export function renderNavigation(session) {
   }
 
   // Create character button
-  html += '<button data-action="createNewCharacter" class="nav-button nav-button-inactive">';
+  html += '<button data-action="createNewCharacter" class="nav-button nav-button-minor">';
   html += '+ New Character';
   html += '</button>';
 
   // Import character button
-  html += '<button data-action="importCharacter" class="nav-button nav-button-inactive">';
+  html += '<button data-action="importCharacter" class="nav-button nav-button-minor">';
   html += '↓ Import Character';
   html += '</button>';
 
