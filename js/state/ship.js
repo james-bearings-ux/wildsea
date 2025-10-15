@@ -10,35 +10,48 @@ function generateId() {
 
 /**
  * Create a new ship with default values
- * 
- * NOTE: This is a placeholder structure. The actual ship data model
- * will be provided and should replace this entire structure.
- * 
- * Expected: ~30 data points including:
- * - Attributes that aggregate points from aspects (speed, armor, etc.)
- * - Aspects that add points to attributes
- * - Cargo tracking
- * - Other ship-specific features
  */
 export function createShip(name = 'New Ship') {
   return {
     id: generateId(),
     mode: 'creation', // 'creation' | 'play' | 'upgrade'
     name,
-    
-    // PLACEHOLDER: These will be replaced with actual ship attributes
-    attributes: {
-      // Example: speed might aggregate points from various aspects
-      // { current: number, max: number } for damage tracking?
-      // Or { value: number } for point aggregation?
+
+    // Anticipated crew size affects stakes budget
+    anticipatedCrewSize: 3,
+
+    // Ship ratings - all start at 1
+    ratings: {
+      Armour: 1,
+      Seals: 1,
+      Speed: 1,
+      Saws: 1,
+      Stealth: 1,
+      Tilt: 1
     },
-    
-    // Ship aspects - similar to character aspects but affect ship attributes
-    selectedAspects: [],
-    
-    // PLACEHOLDER: Other ship data points
-    cargo: [],
-    // ... approximately 25 more fields to be defined
+
+    // Damage states for each rating (array of boxes, empty = undamaged)
+    ratingDamage: {
+      Armour: [],
+      Seals: [],
+      Speed: [],
+      Saws: [],
+      Stealth: [],
+      Tilt: []
+    },
+
+    // Ship design elements (selected parts)
+    size: null,        // { name, stakes, bonuses }
+    frame: null,       // { name, stakes, bonuses }
+    hull: null,        // { name, stakes, bonuses, specials }
+    bite: null,        // { name, stakes, bonuses, specials }
+    engine: null,      // { name, stakes, bonuses, specials }
+
+    // Ship fittings
+    motif: null,       // { name, stakes, specials }
+
+    // Additional fittings will be added later
+    // crew-quarters, rooms, etc.
   };
 }
 
@@ -89,7 +102,67 @@ export function getAllShips() {
 /**
  * Set ship mode
  */
-export function setShipMode(ship, mode) {
+export function setShipMode(mode, renderCallback, ship) {
   ship.mode = mode;
-  saveShip(ship);
+}
+
+/**
+ * Update anticipated crew size
+ */
+export function updateAnticipatedCrewSize(size, renderCallback, ship) {
+  ship.anticipatedCrewSize = Math.max(1, parseInt(size) || 1);
+}
+
+/**
+ * Select a ship part (size, frame, hull, bite, engine)
+ */
+export function selectShipPart(partType, partData, renderCallback, ship) {
+  ship[partType] = partData;
+}
+
+/**
+ * Calculate total stakes spent
+ */
+export function calculateStakesSpent(ship) {
+  let total = 0;
+  if (ship.size) total += ship.size.stakes;
+  if (ship.frame) total += ship.frame.stakes;
+  if (ship.hull) total += ship.hull.stakes;
+  if (ship.bite) total += ship.bite.stakes;
+  if (ship.engine) total += ship.engine.stakes;
+  if (ship.motif) total += ship.motif.stakes;
+  return total;
+}
+
+/**
+ * Calculate total stakes budget (6 base + 3 per crew member)
+ */
+export function calculateStakesBudget(ship) {
+  return 6 + (ship.anticipatedCrewSize * 3);
+}
+
+/**
+ * Calculate ship ratings based on selected parts
+ */
+export function calculateShipRatings(ship) {
+  const ratings = {
+    Armour: 1,
+    Seals: 1,
+    Speed: 1,
+    Saws: 1,
+    Stealth: 1,
+    Tilt: 1
+  };
+
+  // Apply bonuses from all selected parts
+  const parts = [ship.size, ship.frame, ship.hull, ship.bite, ship.engine];
+  parts.forEach(part => {
+    if (part && part.bonuses) {
+      part.bonuses.forEach(bonus => {
+        ratings[bonus.rating] = (ratings[bonus.rating] || 1) + bonus.value;
+      });
+    }
+  });
+
+  return ratings;
 }

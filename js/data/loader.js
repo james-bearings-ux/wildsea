@@ -11,16 +11,18 @@ let GAME_DATA = {};
  */
 export async function loadGameData() {
   try {
-    const [constants, aspects, resources] = await Promise.all([
+    const [constants, aspects, resources, shipParts] = await Promise.all([
       fetch('data/game-constants.json').then(r => r.json()),
       fetch('data/aspects.json').then(r => r.json()),
-      fetch('data/resources.json').then(r => r.json())
+      fetch('data/resources.json').then(r => r.json()),
+      fetch('data/ship-parts.json').then(r => r.json())
     ]);
 
     GAME_DATA = {
       ...constants,
       aspects: aspects,
-      startingResources: resources
+      startingResources: resources,
+      shipParts: shipParts
     };
 
     return true;

@@ -3,6 +3,7 @@
  */
 
 import { loadCharacter } from '../state/character.js';
+import { loadShip } from '../state/ship.js';
 
 /**
  * Render the navigation bar
@@ -12,10 +13,16 @@ import { loadCharacter } from '../state/character.js';
 export function renderNavigation(session) {
   let html = '<div style="background: #1F2937; color: white; padding: 12px 20px; display: flex; gap: 16px; align-items: center; border-bottom: 2px solid #374151;">';
 
-  // Ship placeholder
-  html += '<button style="background: #374151; color: #9CA3AF; padding: 8px 16px; border-radius: 4px; cursor: not-allowed;" disabled>';
-  html += 'Ship (Coming Soon)';
-  html += '</button>';
+  // Ship button
+  if (session.activeShipId) {
+    const ship = loadShip(session.activeShipId);
+    const isActive = session.activeView === 'ship';
+    html += '<button data-action="switchToShip" style="background: ' + (isActive ? '#3B82F6' : '#374151') + '; color: white; padding: 8px 16px; border-radius: 4px; border: none; cursor: pointer; font-size: 14px;">';
+    html += ship ? (ship.name || 'Ship') : 'Ship';
+    html += '</button>';
+  } else {
+    html += '<button data-action="createNewShip" style="background: #10B981; color: white; padding: 8px 16px; border-radius: 4px; border: none; cursor: pointer; font-size: 14px;">+ New Ship</button>';
+  }
 
   html += '<div style="width: 1px; height: 24px; background: #4B5563;"></div>';
 

@@ -50,9 +50,22 @@ import { renderAdvancementMode } from './rendering/advancement-mode.js';
 import { renderSkills, renderLanguages } from './components/skills.js';
 import { renderEdgesSkillsLanguagesRow } from './components/edges.js';
 import { renderNavigation } from './components/navigation.js';
+import {
+  createShip,
+  loadShip,
+  saveShip,
+  setShipMode,
+  updateAnticipatedCrewSize,
+  selectShipPart
+} from './state/ship.js';
+import { renderShipCreationMode } from './rendering/ship-creation-mode.js';
+import { renderShipPlayMode } from './rendering/ship-play-mode.js';
+import { renderShipUpgradeMode } from './rendering/ship-upgrade-mode.js';
+import { switchToShip, setActiveShip } from './state/session.js';
 
 // Global state
 let session = null;
+let activeShipTab = 'size'; // Track active tab for ship creation mode
 
 /**
  * Main render function - delegates to mode-specific renderers
@@ -66,19 +79,42 @@ function render() {
   }
 
   // Render navigation
-  let html = renderNavigation(session);
+  const navHtml = renderNavigation(session);
 
-  // Check if we have an active character
+  // Check if we're viewing the ship
+  if (session.activeView === 'ship' && session.activeShipId) {
+    const ship = loadShip(session.activeShipId);
+    if (!ship) {
+      app.innerHTML = navHtml + '<div style="padding: 20px; color: red;">Error: Could not load ship.</div>';
+      return;
+    }
+
+    // Create a temporary container for ship content
+    const tempDiv = document.createElement('div');
+    const gameData = getGameData();
+
+    if (ship.mode === 'creation') {
+      renderShipCreationMode(tempDiv, ship, gameData, activeShipTab);
+    } else if (ship.mode === 'play') {
+      renderShipPlayMode(tempDiv, ship, gameData);
+    } else if (ship.mode === 'upgrade') {
+      renderShipUpgradeMode(tempDiv, ship, gameData);
+    }
+
+    // Combine navigation and content
+    app.innerHTML = navHtml + tempDiv.innerHTML;
+    return;
+  }
+
+  // Otherwise render character view
   if (!session.activeCharacterId) {
-    html += '<div style="padding: 20px;">No active character. Please create or import a character.</div>';
-    app.innerHTML = html;
+    app.innerHTML = navHtml + '<div style="padding: 20px;">No active character. Please create or import a character.</div>';
     return;
   }
 
   const character = loadCharacter(session.activeCharacterId);
   if (!character) {
-    html += '<div style="padding: 20px; color: red;">Error: Could not load active character.</div>';
-    app.innerHTML = html;
+    app.innerHTML = navHtml + '<div style="padding: 20px; color: red;">Error: Could not load active character.</div>';
     return;
   }
 
@@ -95,7 +131,7 @@ function render() {
   }
 
   // Combine navigation and content
-  app.innerHTML = html + tempDiv.innerHTML;
+  app.innerHTML = navHtml + tempDiv.innerHTML;
 }
 
 /**
@@ -292,6 +328,45 @@ function setupEventDelegation() {
               render();
             }
             break;
+          case 'createNewShip':
+            if (session) {
+              const newShip = createShip();
+              saveShip(newShip);
+              setActiveShip(session, newShip.id);
+              switchToShip(session);
+              render();
+            }
+            break;
+          case 'switchToShip':
+            if (session) {
+              switchToShip(session);
+              render();
+            }
+            break;
+          case 'setShipMode':
+            if (session && session.activeShipId) {
+              const ship = loadShip(session.activeShipId);
+              if (ship) {
+                setShipMode(parsedParams.mode, render, ship);
+                saveShip(ship);
+                render();
+              }
+            }
+            break;
+          case 'switchShipTab':
+            activeShipTab = parsedParams.tab;
+            render();
+            break;
+          case 'selectShipPart':
+            if (session && session.activeShipId) {
+              const ship = loadShip(session.activeShipId);
+              if (ship) {
+                selectShipPart(parsedParams.partType, parsedParams.part, render, ship);
+                saveShip(ship);
+                render();
+              }
+            }
+            break;
         }
         return; // Stop after handling the action
       }
@@ -309,6 +384,20 @@ function setupEventDelegation() {
     const params = target.getAttribute('data-params');
     const parsedParams = params ? JSON.parse(params) : {};
 
+    // Handle ship-related change events
+    if (action === 'updateAnticipatedCrewSize') {
+      if (session && session.activeShipId) {
+        const ship = loadShip(session.activeShipId);
+        if (ship) {
+          updateAnticipatedCrewSize(target.value, render, ship);
+          saveShip(ship);
+          render();
+        }
+      }
+      return;
+    }
+
+    // Handle character-related change events
     const character = session && session.activeCharacterId ? loadCharacter(session.activeCharacterId) : null;
     if (!character) return;
 

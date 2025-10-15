@@ -100,6 +100,16 @@ export function setActiveView(session, view) {
 }
 
 /**
+ * Set the active ship for the session and switch to ship view
+ */
+export function switchToShip(session) {
+  if (session.activeShipId) {
+    session.activeView = 'ship';
+    saveSession(session);
+  }
+}
+
+/**
  * Set the active character
  */
 export function setActiveCharacter(session, characterId) {
