@@ -4,6 +4,7 @@
 
 import { renderShipRatings } from '../components/ship-ratings.js';
 import { renderShipPartsTabs } from '../components/ship-parts.js';
+import { renderShipFittingsTabs } from '../components/ship-fittings.js';
 import { calculateStakesSpent, calculateStakesBudget } from '../state/ship.js';
 
 /**
@@ -12,15 +13,36 @@ import { calculateStakesSpent, calculateStakesBudget } from '../state/ship.js';
  * @param {Object} ship - Ship object
  * @param {Object} gameData - Game data
  * @param {string} activeTab - Currently active parts tab
+ * @param {string} wizardStage - Current wizard stage ('design' | 'fittings' | 'undercrew')
  */
-export function renderShipCreationMode(container, ship, gameData, activeTab = 'size') {
+export function renderShipCreationMode(container, ship, gameData, activeTab = 'size', wizardStage = 'design') {
   const stakesSpent = calculateStakesSpent(ship);
   const stakesBudget = calculateStakesBudget(ship);
 
   let html = '<div style="display: flex; flex-direction: column; height: calc(100vh - 60px);">';
 
-  // Top bar: crew size and stakes budget
+  // Top bar: wizard stages, crew size, and stakes budget
   html += '<div style="display: flex; gap: 24px; align-items: center; padding: 16px 20px; background: #1F2937; color: white; border-bottom: 2px solid #374151;">';
+
+  // Wizard stage buttons
+  html += '<div style="display: flex; gap: 4px;">';
+  const stages = [
+    { id: 'design', label: 'Ship Design' },
+    { id: 'fittings', label: 'Fittings' },
+    { id: 'undercrew', label: 'Undercrew' }
+  ];
+  stages.forEach(stage => {
+    const isActive = stage.id === wizardStage;
+    const stageStyle = isActive
+      ? 'background: #A91D3A; color: white;'
+      : 'background: #374151; color: #9CA3AF;';
+    html += `<button data-action="switchWizardStage" data-params='{"stage":"${stage.id}"}'
+      style="${stageStyle} padding: 6px 12px; border-radius: 4px; border: none; cursor: pointer; font-weight: 600; font-size: 13px;"
+    >${stage.label}</button>`;
+  });
+  html += '</div>';
+
+  html += '<div style="width: 1px; height: 24px; background: #4B5563;"></div>';
 
   // Crew size control
   html += '<div style="display: flex; align-items: center; gap: 8px;">';
@@ -46,8 +68,17 @@ export function renderShipCreationMode(container, ship, gameData, activeTab = 's
   // Left column: ratings
   html += renderShipRatings(ship);
 
-  // Middle: tabbed ship parts selection
-  html += renderShipPartsTabs(ship, gameData, activeTab);
+  // Middle: content based on wizard stage
+  if (wizardStage === 'design') {
+    html += renderShipPartsTabs(ship, gameData, activeTab);
+  } else if (wizardStage === 'fittings') {
+    html += renderShipFittingsTabs(ship, gameData, activeTab);
+  } else if (wizardStage === 'undercrew') {
+    // Placeholder for undercrew stage
+    html += '<div style="flex: 1; display: flex; align-items: center; justify-content: center; padding: 40px; text-align: center; color: #6B7280;">';
+    html += '<p>Undercrew stage coming soon...</p>';
+    html += '</div>';
+  }
 
   html += '</div>';
 

@@ -12,9 +12,15 @@
 function renderPartCard(part, partType, isSelected) {
   const selectedStyle = isSelected ? 'border: 3px solid #A91D3A; background: #FEF2F2;' : 'border: 2px solid #E5E7EB;';
 
+  // Properly escape the JSON for HTML attribute
+  const paramsJson = JSON.stringify({
+    partType: partType,
+    part: part
+  }).replace(/"/g, '&quot;');
+
   let html = `<div class="aspect-card" style="${selectedStyle} cursor: pointer; padding: 16px; border-radius: 8px; background: white; margin-bottom: 12px;"
     data-action="selectShipPart"
-    data-params='{"partType":"${partType}","part":${JSON.stringify(part).replace(/'/g, "\\'")}}'
+    data-params="${paramsJson}"
   >`;
 
   // Name
@@ -55,14 +61,26 @@ function renderPartCard(part, partType, isSelected) {
  * Render a list of parts for a specific category
  * @param {Array} parts - Array of part objects
  * @param {string} partType - Type of part (size, frame, hull, bite, engine)
- * @param {Object|null} selectedPart - Currently selected part
+ * @param {Object|Array|null} selectedPart - Currently selected part(s)
  * @returns {string} HTML string
  */
 export function renderPartsList(parts, partType, selectedPart) {
+  const multiSelectParts = ['hull', 'bite', 'engine'];
+  const isMultiSelect = multiSelectParts.includes(partType);
+
   let html = '<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; padding: 16px;">';
 
   parts.forEach(part => {
-    const isSelected = selectedPart && selectedPart.name === part.name;
+    let isSelected = false;
+
+    if (isMultiSelect && Array.isArray(selectedPart)) {
+      // Multi-select: check if part is in the array
+      isSelected = selectedPart.some(p => p.name === part.name);
+    } else if (!isMultiSelect && selectedPart) {
+      // Single-select: direct comparison
+      isSelected = selectedPart.name === part.name;
+    }
+
     html += renderPartCard(part, partType, isSelected);
   });
 
@@ -108,7 +126,16 @@ export function renderShipPartsTabs(ship, gameData, activeTab = 'size') {
   // Tab content
   html += '<div style="flex: 1; overflow-y: auto;">';
 
-  const parts = gameData.shipParts[activeTab + 's'] || []; // sizes, frames, hulls, etc.
+  // Map tab IDs to JSON keys (bite is singular in the JSON)
+  const partKeys = {
+    'size': 'sizes',
+    'frame': 'frames',
+    'hull': 'hulls',
+    'bite': 'bite',
+    'engine': 'engines'
+  };
+
+  const parts = gameData.shipParts[partKeys[activeTab]] || [];
   const selectedPart = ship[activeTab];
 
   html += renderPartsList(parts, activeTab, selectedPart);

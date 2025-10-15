@@ -41,17 +41,18 @@ export function createShip(name = 'New Ship') {
     },
 
     // Ship design elements (selected parts)
-    size: null,        // { name, stakes, bonuses }
-    frame: null,       // { name, stakes, bonuses }
-    hull: null,        // { name, stakes, bonuses, specials }
-    bite: null,        // { name, stakes, bonuses, specials }
-    engine: null,      // { name, stakes, bonuses, specials }
+    size: null,        // Single selection: { name, stakes, bonuses }
+    frame: null,       // Single selection: { name, stakes, bonuses }
+    hull: [],          // Multiple selections: [{ name, stakes, bonuses, specials }, ...]
+    bite: [],          // Multiple selections: [{ name, stakes, bonuses, specials }, ...]
+    engine: [],        // Multiple selections: [{ name, stakes, bonuses, specials }, ...]
 
-    // Ship fittings
-    motif: null,       // { name, stakes, specials }
-
-    // Additional fittings will be added later
-    // crew-quarters, rooms, etc.
+    // Ship fittings (all multi-select/optional)
+    motifs: [],              // [{ name, stakes, specials }, ...]
+    generalAdditions: [],    // Placeholder for future
+    bounteousAdditions: [],  // Placeholder for future
+    rooms: [],               // Placeholder for future
+    armaments: []            // Placeholder for future
   };
 }
 
@@ -114,10 +115,55 @@ export function updateAnticipatedCrewSize(size, renderCallback, ship) {
 }
 
 /**
- * Select a ship part (size, frame, hull, bite, engine)
+ * Select or toggle a ship part
+ * Size and frame are single-select (replaces existing)
+ * Hull, bite, and engine are multi-select (toggle on/off)
  */
 export function selectShipPart(partType, partData, renderCallback, ship) {
-  ship[partType] = partData;
+  const multiSelectParts = ['hull', 'bite', 'engine'];
+
+  if (multiSelectParts.includes(partType)) {
+    // Ensure the field is an array (migration from old format)
+    if (!Array.isArray(ship[partType])) {
+      ship[partType] = ship[partType] ? [ship[partType]] : [];
+    }
+
+    // Multi-select: toggle the part on/off
+    const existingIndex = ship[partType].findIndex(p => p.name === partData.name);
+
+    if (existingIndex >= 0) {
+      // Part already selected, remove it (deselect)
+      ship[partType].splice(existingIndex, 1);
+    } else {
+      // Part not selected, add it
+      ship[partType].push(partData);
+    }
+  } else {
+    // Single-select: replace existing selection
+    ship[partType] = partData;
+  }
+}
+
+/**
+ * Select or toggle a ship fitting
+ * All fittings are multi-select (toggle on/off)
+ */
+export function selectShipFitting(fittingType, fittingData, renderCallback, ship) {
+  // Ensure the field is an array (migration from old format)
+  if (!Array.isArray(ship[fittingType])) {
+    ship[fittingType] = ship[fittingType] ? [ship[fittingType]] : [];
+  }
+
+  // Multi-select: toggle the fitting on/off
+  const existingIndex = ship[fittingType].findIndex(f => f.name === fittingData.name);
+
+  if (existingIndex >= 0) {
+    // Fitting already selected, remove it (deselect)
+    ship[fittingType].splice(existingIndex, 1);
+  } else {
+    // Fitting not selected, add it
+    ship[fittingType].push(fittingData);
+  }
 }
 
 /**
@@ -125,12 +171,39 @@ export function selectShipPart(partType, partData, renderCallback, ship) {
  */
 export function calculateStakesSpent(ship) {
   let total = 0;
+
+  // Single selections (ship design parts)
   if (ship.size) total += ship.size.stakes;
   if (ship.frame) total += ship.frame.stakes;
-  if (ship.hull) total += ship.hull.stakes;
-  if (ship.bite) total += ship.bite.stakes;
-  if (ship.engine) total += ship.engine.stakes;
-  if (ship.motif) total += ship.motif.stakes;
+
+  // Multi-selections: ship design parts (arrays)
+  if (ship.hull && Array.isArray(ship.hull)) {
+    ship.hull.forEach(part => total += part.stakes);
+  }
+  if (ship.bite && Array.isArray(ship.bite)) {
+    ship.bite.forEach(part => total += part.stakes);
+  }
+  if (ship.engine && Array.isArray(ship.engine)) {
+    ship.engine.forEach(part => total += part.stakes);
+  }
+
+  // Multi-selections: fittings (arrays)
+  if (ship.motifs && Array.isArray(ship.motifs)) {
+    ship.motifs.forEach(fitting => total += fitting.stakes);
+  }
+  if (ship.generalAdditions && Array.isArray(ship.generalAdditions)) {
+    ship.generalAdditions.forEach(fitting => total += fitting.stakes);
+  }
+  if (ship.bounteousAdditions && Array.isArray(ship.bounteousAdditions)) {
+    ship.bounteousAdditions.forEach(fitting => total += fitting.stakes);
+  }
+  if (ship.rooms && Array.isArray(ship.rooms)) {
+    ship.rooms.forEach(fitting => total += fitting.stakes);
+  }
+  if (ship.armaments && Array.isArray(ship.armaments)) {
+    ship.armaments.forEach(fitting => total += fitting.stakes);
+  }
+
   return total;
 }
 
@@ -154,15 +227,29 @@ export function calculateShipRatings(ship) {
     Tilt: 1
   };
 
-  // Apply bonuses from all selected parts
-  const parts = [ship.size, ship.frame, ship.hull, ship.bite, ship.engine];
-  parts.forEach(part => {
+  // Helper function to apply bonuses from a part
+  const applyBonuses = (part) => {
     if (part && part.bonuses) {
       part.bonuses.forEach(bonus => {
         ratings[bonus.rating] = (ratings[bonus.rating] || 1) + bonus.value;
       });
     }
-  });
+  };
+
+  // Apply bonuses from single-selection parts
+  applyBonuses(ship.size);
+  applyBonuses(ship.frame);
+
+  // Apply bonuses from multi-selection parts (arrays)
+  if (ship.hull && Array.isArray(ship.hull)) {
+    ship.hull.forEach(applyBonuses);
+  }
+  if (ship.bite && Array.isArray(ship.bite)) {
+    ship.bite.forEach(applyBonuses);
+  }
+  if (ship.engine && Array.isArray(ship.engine)) {
+    ship.engine.forEach(applyBonuses);
+  }
 
   return ratings;
 }

@@ -56,7 +56,8 @@ import {
   saveShip,
   setShipMode,
   updateAnticipatedCrewSize,
-  selectShipPart
+  selectShipPart,
+  selectShipFitting
 } from './state/ship.js';
 import { renderShipCreationMode } from './rendering/ship-creation-mode.js';
 import { renderShipPlayMode } from './rendering/ship-play-mode.js';
@@ -66,6 +67,7 @@ import { switchToShip, setActiveShip } from './state/session.js';
 // Global state
 let session = null;
 let activeShipTab = 'size'; // Track active tab for ship creation mode
+let activeWizardStage = 'design'; // Track wizard stage: 'design' | 'fittings' | 'undercrew'
 
 /**
  * Main render function - delegates to mode-specific renderers
@@ -94,7 +96,7 @@ function render() {
     const gameData = getGameData();
 
     if (ship.mode === 'creation') {
-      renderShipCreationMode(tempDiv, ship, gameData, activeShipTab);
+      renderShipCreationMode(tempDiv, ship, gameData, activeShipTab, activeWizardStage);
     } else if (ship.mode === 'play') {
       renderShipPlayMode(tempDiv, ship, gameData);
     } else if (ship.mode === 'upgrade') {
@@ -179,7 +181,9 @@ function setupEventDelegation() {
 
       if (action) {
         const params = target.getAttribute('data-params');
-        const parsedParams = params ? JSON.parse(params) : {};
+        // Decode HTML entities before parsing JSON
+        const decodedParams = params ? params.replace(/&quot;/g, '"') : '{}';
+        const parsedParams = decodedParams ? JSON.parse(decodedParams) : {};
 
         // Get active character for mutations
         const character = session && session.activeCharacterId ? loadCharacter(session.activeCharacterId) : null;
@@ -357,11 +361,31 @@ function setupEventDelegation() {
             activeShipTab = parsedParams.tab;
             render();
             break;
+          case 'switchWizardStage':
+            activeWizardStage = parsedParams.stage;
+            // Reset to default tab when switching stages
+            if (activeWizardStage === 'design') {
+              activeShipTab = 'size';
+            } else if (activeWizardStage === 'fittings') {
+              activeShipTab = 'motifs';
+            }
+            render();
+            break;
           case 'selectShipPart':
             if (session && session.activeShipId) {
               const ship = loadShip(session.activeShipId);
               if (ship) {
                 selectShipPart(parsedParams.partType, parsedParams.part, render, ship);
+                saveShip(ship);
+                render();
+              }
+            }
+            break;
+          case 'selectShipFitting':
+            if (session && session.activeShipId) {
+              const ship = loadShip(session.activeShipId);
+              if (ship) {
+                selectShipFitting(parsedParams.fittingType, parsedParams.fitting, render, ship);
                 saveShip(ship);
                 render();
               }
