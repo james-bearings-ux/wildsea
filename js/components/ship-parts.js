@@ -10,7 +10,7 @@
  * @returns {string} HTML string
  */
 function renderPartCard(part, partType, isSelected) {
-  const selectedStyle = isSelected ? 'border: 3px solid #A91D3A; background: #FEF2F2;' : 'border: 2px solid #E5E7EB;';
+  const selectedClass = isSelected ? 'ship-card-selected' : '';
 
   // Properly escape the JSON for HTML attribute
   const paramsJson = JSON.stringify({
@@ -18,35 +18,35 @@ function renderPartCard(part, partType, isSelected) {
     part: part
   }).replace(/"/g, '&quot;');
 
-  let html = `<div class="aspect-card" style="${selectedStyle} cursor: pointer; padding: 16px; border-radius: 8px; background: white;"
+  let html = `<div class="ship-card ${selectedClass}"
     data-action="selectShipPart"
     data-params="${paramsJson}"
   >`;
 
   // Name and Stakes on the same row
-  html += `<div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px;">`;
-  html += `<div style="font-weight: 700; font-size: 16px; color: #1F2937;">${part.name}</div>`;
-  html += `<div style="font-size: 11px; color: #6B7280; text-transform: uppercase; letter-spacing: 0.5px;">${part.stakes} ${part.stakes === 1 ? 'Stake' : 'Stakes'}</div>`;
+  html += `<div class="ship-card-header">`;
+  html += `<div class="ship-card-name">${part.name}</div>`;
+  html += `<div class="ship-card-stakes">${part.stakes} ${part.stakes === 1 ? 'Stake' : 'Stakes'}</div>`;
   html += `</div>`;
 
   // Description
-  html += `<div style="font-size: 14px; color: #4B5563; margin-bottom: 12px; line-height: 1.5;">${part.description}</div>`;
+  html += `<div class="ship-card-description">${part.description}</div>`;
 
   // Bonuses as pills
   if (part.bonuses && part.bonuses.length > 0) {
-    html += `<div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px;">`;
+    html += `<div class="ship-bonuses">`;
     part.bonuses.forEach(bonus => {
       const sign = bonus.value >= 0 ? '+' : '';
-      html += `<span style="background: #DBEAFE; color: #1E40AF; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 600;">${sign}${bonus.value} ${bonus.rating}</span>`;
+      html += `<span class="ship-bonus-pill">${sign}${bonus.value} ${bonus.rating}</span>`;
     });
     html += `</div>`;
   }
 
   // Specials in green italic text
   if (part.specials && part.specials.length > 0) {
-    html += `<div style="margin-top: 8px;">`;
+    html += `<div class="ship-specials">`;
     part.specials.forEach(special => {
-      html += `<div style="font-size: 13px; color: #059669; font-style: italic; margin-bottom: 4px;">• ${special}</div>`;
+      html += `<div class="ship-special-item">• ${special}</div>`;
     });
     html += `</div>`;
   }
@@ -67,7 +67,7 @@ export function renderPartsList(parts, partType, selectedPart) {
   const multiSelectParts = ['hull', 'bite', 'engine'];
   const isMultiSelect = multiSelectParts.includes(partType);
 
-  let html = '<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; padding: 16px;">';
+  let html = '<div class="ship-parts-grid">';
 
   parts.forEach(part => {
     let isSelected = false;
@@ -104,26 +104,24 @@ export function renderShipPartsTabs(ship, gameData, activeTab = 'size') {
     { id: 'engine', label: 'Engine' }
   ];
 
-  let html = '<div style="flex: 1; display: flex; flex-direction: column;">';
+  let html = '<div class="ship-content-column">';
 
   // Tab buttons
-  html += '<div style="display: flex; gap: 4px; padding: 16px 16px 0 16px; border-bottom: 2px solid #E5E7EB;">';
+  html += '<div class="ship-tabs-container">';
   tabs.forEach(tab => {
     const isActive = tab.id === activeTab;
-    const activeStyle = isActive
-      ? 'background: #000000; color: white; border-bottom: 2px solid #000000;'
-      : 'background: #F3F4F6; color: #6B7280; border-bottom: 2px solid transparent;';
+    const activeClass = isActive ? 'ship-tab-active' : 'ship-tab-inactive';
 
     html += `<button
       data-action="switchShipTab"
       data-params='{"tab":"${tab.id}"}'
-      style="${activeStyle} padding: 8px 16px; border: none; border-radius: 4px 4px 0 0; cursor: pointer; font-family: 'Faustina', serif; font-weight: 600; font-size: 18px; transition: all 0.2s;"
+      class="ship-tab ${activeClass}"
     >${tab.label}</button>`;
   });
   html += '</div>';
 
   // Tab content
-  html += '<div style="flex: 1; overflow-y: auto;">';
+  html += '<div class="ship-content-scrollable">';
 
   // Map tab IDs to JSON keys (bite is singular in the JSON)
   const partKeys = {

@@ -12,10 +12,10 @@ import { renderShipInventoryPlay } from '../components/ship-inventory-play.js';
  * @param {Object} gameData - Game data
  */
 export function renderShipPlayMode(container, ship, gameData) {
-  let html = '<div style="display: flex; flex-direction: column; height: calc(100vh - 60px);">';
+  let html = '<div class="ship-main-container" style="height: calc(100vh - 60px);">';
 
   // Main content area with ratings and inventory (inventory includes cargo)
-  html += '<div style="display: flex; flex: 1; overflow: hidden;">';
+  html += '<div class="ship-content-row">';
   html += renderShipRatingsPlay(ship);
   html += renderShipInventoryPlay(ship);
   html += '</div>';

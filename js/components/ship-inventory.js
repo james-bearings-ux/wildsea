@@ -10,7 +10,7 @@ import { calculateStakesSpent, calculateStakesBudget } from '../state/ship.js';
  * @returns {string} HTML string
  */
 export function renderShipInventory(ship) {
-  let html = '<div style="display: flex; flex-direction: column; padding: 16px; background: #F9FAFB; border-right: 2px solid #D1D5DB; min-width: 250px; max-width: 250px; overflow-y: auto;">';
+  let html = '<div class="ship-inventory-column" style="min-width: 250px; max-width: 250px;">';
 
   // Design Elements section
   html += renderInventorySection('DESIGN ELEMENTS', [
@@ -72,7 +72,7 @@ function renderInventorySection(sectionTitle, categories) {
   let html = '<div style="margin-bottom: 24px;">';
 
   // Section title
-  html += `<div style="font-size: 11px; font-weight: 700; color: #6B7280; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; padding-bottom: 4px; border-bottom: 1px solid #D1D5DB;">${sectionTitle}</div>`;
+  html += `<div class="ship-ratings-heading">${sectionTitle}</div>`;
 
   // Categories
   categories.forEach(category => {

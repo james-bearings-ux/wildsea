@@ -12,31 +12,31 @@ import { renderShipPassengers } from './ship-passengers.js';
  * @returns {string} HTML string
  */
 function renderPartCard(part) {
-  let html = `<div class="aspect-card" style="border: 2px solid #E5E7EB; padding: 16px; border-radius: 8px; background: white;">`;
+  let html = `<div class="ship-card">`;
 
   // Name and Stakes on the same row
-  html += `<div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px;">`;
-  html += `<div style="font-weight: 700; font-size: 16px; color: #1F2937;">${part.name}</div>`;
-  html += `<div style="font-size: 11px; color: #6B7280; text-transform: uppercase; letter-spacing: 0.5px;">${part.stakes} ${part.stakes === 1 ? 'Stake' : 'Stakes'}</div>`;
+  html += `<div class="ship-card-header">`;
+  html += `<div class="ship-card-name">${part.name}</div>`;
+  html += `<div class="ship-card-stakes">${part.stakes} ${part.stakes === 1 ? 'Stake' : 'Stakes'}</div>`;
   html += `</div>`;
 
-  html += `<div style="font-size: 14px; color: #4B5563; margin-bottom: 12px; line-height: 1.5;">${part.description}</div>`;
+  html += `<div class="ship-card-description">${part.description}</div>`;
 
   // Bonuses
   if (part.bonuses && part.bonuses.length > 0) {
-    html += `<div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px;">`;
+    html += `<div class="ship-bonuses">`;
     part.bonuses.forEach(bonus => {
       const sign = bonus.value >= 0 ? '+' : '';
-      html += `<span style="background: #DBEAFE; color: #1E40AF; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 600;">${sign}${bonus.value} ${bonus.rating}</span>`;
+      html += `<span class="ship-bonus-pill">${sign}${bonus.value} ${bonus.rating}</span>`;
     });
     html += `</div>`;
   }
 
   // Specials
   if (part.specials && part.specials.length > 0) {
-    html += `<div style="margin-top: 8px;">`;
+    html += `<div class="ship-specials">`;
     part.specials.forEach(special => {
-      html += `<div style="font-size: 13px; color: #059669; font-style: italic; margin-bottom: 4px;">• ${special}</div>`;
+      html += `<div class="ship-special-item">• ${special}</div>`;
     });
     html += `</div>`;
   }
@@ -51,15 +51,15 @@ function renderPartCard(part) {
  * @returns {string} HTML string
  */
 export function renderShipInventoryPlay(ship) {
-  let html = '<div style="flex: 1; display: flex; flex-direction: column; padding: 20px; padding-bottom: 100px; overflow-y: auto;">';
+  let html = '<div class="ship-play-container">';
 
   // Three-column grid for main content
-  html += '<div style="display: grid; grid-template-columns: 1fr 2fr 1fr; gap: 24px; margin-bottom: 32px;">';
+  html += '<div class="ship-three-col-grid">';
 
   // Column 1: Design Elements
   html += '<div>';
   html += '<h2 class="section-header">Design Elements</h2>';
-  html += '<div style="display: flex; flex-direction: column; gap: 12px;">';
+  html += '<div class="ship-card-list">';
 
   if (ship.size) {
     html += renderPartCard(ship.size);
@@ -107,7 +107,7 @@ export function renderShipInventoryPlay(ship) {
   });
 
   // Render in 2-column grid
-  html += '<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">';
+  html += '<div class="ship-fittings-grid">';
   allFittings.forEach(fitting => {
     html += renderPartCard(fitting);
   });
@@ -134,7 +134,7 @@ export function renderShipInventoryPlay(ship) {
   }
 
   // Render undercrew cards
-  html += '<div style="display: flex; flex-direction: column; gap: 12px;">';
+  html += '<div class="ship-card-list">';
   if (allUndercrew.length > 0) {
     allUndercrew.forEach(undercrew => {
       html += renderPartCard(undercrew);
@@ -147,10 +147,10 @@ export function renderShipInventoryPlay(ship) {
   html += '</div>'; // End three-column grid
 
   // Separator
-  html += '<hr style="border: none; border-top: 1px solid #000000; margin: 32px 0;" />';
+  html += '<hr class="ship-separator" />';
 
   // Cargo and Passengers - two column layout at the bottom
-  html += '<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">';
+  html += '<div class="ship-two-col-grid">';
   html += renderShipCargo(ship);
   html += renderShipPassengers(ship);
   html += '</div>';

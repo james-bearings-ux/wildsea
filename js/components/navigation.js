@@ -11,7 +11,7 @@ import { loadShip } from '../state/ship.js';
  * @returns {string} HTML string for navigation bar
  */
 export function renderNavigation(session) {
-  let html = '<div class="split" style="background: #000000; color: white; padding: 12px 20px; border-bottom: 2px solid #374151;">';
+  let html = '<div class="nav-bar split">';
 
   // Left side: Ship button
   html += '<div style="display: flex; gap: 16px; align-items: center;">';
@@ -19,13 +19,12 @@ export function renderNavigation(session) {
   if (session.activeShipId) {
     const ship = loadShip(session.activeShipId);
     const isActive = session.activeView === 'ship';
-    const bgColor = isActive ? '#FFFFFF' : '#374151';
-    const textColor = isActive ? '#000000' : '#FFFFFF';
-    html += '<button data-action="switchToShip" style="background: ' + bgColor + '; color: ' + textColor + '; padding: 8px 16px; border-radius: 4px; border: none; cursor: pointer; font-size: 14px; font-weight: ' + (isActive ? '600' : '400') + ';">';
+    const activeClass = isActive ? 'nav-button-active' : 'nav-button-inactive';
+    html += '<button data-action="switchToShip" class="nav-button ' + activeClass + '">';
     html += ship ? (ship.name || 'Ship') : 'Ship';
     html += '</button>';
   } else {
-    html += '<button data-action="createNewShip" style="background: #374151; color: #FFFFFF; padding: 8px 16px; border-radius: 4px; border: none; cursor: pointer; font-size: 14px;">+ New Ship</button>';
+    html += '<button data-action="createNewShip" class="nav-button nav-button-inactive">+ New Ship</button>';
   }
 
   html += '</div>';
@@ -42,16 +41,14 @@ export function renderNavigation(session) {
       const isActive = session.activeView === 'character' && charId === session.activeCharacterId;
 
       if (character) {
-        const bgColor = isActive ? '#FFFFFF' : '#374151';
-        const textColor = isActive ? '#000000' : '#FFFFFF';
-        html += '<div style="display: flex; gap: 8px; align-items: center; background: ' + bgColor + '; padding: 8px 12px; border-radius: 4px;">';
+        const activeClass = isActive ? 'nav-button-active' : 'nav-button-inactive';
+        html += '<div class="nav-character-wrapper ' + activeClass + '">';
         html += '<button data-action="switchCharacter" data-params=\'{"characterId":"' + charId + '"}\' ';
-        html += 'style="background: transparent; color: ' + textColor + '; padding: 0; border: none; cursor: pointer; font-size: 14px; font-weight: ' + (isActive ? '600' : '400') + ';">';
+        html += 'style="background: transparent; color: inherit; padding: 0; border: none; cursor: pointer; font-size: 14px; font-weight: inherit;">';
         html += character.name || 'Unnamed Character';
         html += '</button>';
         html += '<button data-action="removeCharacter" data-params=\'{"characterId":"' + charId + '"}\' ';
-        html += 'style="background: transparent; color: #EF4444; padding: 0 4px; border: none; cursor: pointer; font-size: 16px; line-height: 1;" ';
-        html += 'title="Remove from crew">';
+        html += 'class="ship-cargo-remove" title="Remove from crew">';
         html += '×';
         html += '</button>';
         html += '</div>';
@@ -60,12 +57,12 @@ export function renderNavigation(session) {
   }
 
   // Create character button
-  html += '<button data-action="createNewCharacter" style="background: #374151; color: #FFFFFF; padding: 8px 16px; border-radius: 4px; border: none; cursor: pointer; font-size: 14px;">';
+  html += '<button data-action="createNewCharacter" class="nav-button nav-button-inactive">';
   html += '+ New Character';
   html += '</button>';
 
   // Import character button
-  html += '<button data-action="importCharacter" style="background: #374151; color: #FFFFFF; padding: 8px 16px; border-radius: 4px; border: none; cursor: pointer; font-size: 14px;">';
+  html += '<button data-action="importCharacter" class="nav-button nav-button-inactive">';
   html += '↓ Import Character';
   html += '</button>';
 

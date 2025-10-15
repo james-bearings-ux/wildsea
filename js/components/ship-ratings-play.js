@@ -12,10 +12,10 @@ import { calculateShipRatings, calculateStakesSpent, calculateStakesBudget } fro
 export function renderShipRatingsPlay(ship) {
   const ratings = calculateShipRatings(ship);
 
-  let html = '<div style="display: flex; flex-direction: column; gap: 12px; padding: 16px; background: #F3F4F6; border-right: 2px solid #D1D5DB; min-width: 180px;">';
+  let html = '<div class="ship-ratings-column">';
 
   // Ratings heading
-  html += '<div style="font-size: 11px; font-weight: 700; color: #6B7280; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; padding-bottom: 4px; border-bottom: 1px solid #D1D5DB;">RATINGS</div>';
+  html += '<div class="ship-ratings-heading">RATINGS</div>';
 
   const ratingNames = ['Armour', 'Seals', 'Speed', 'Saws', 'Stealth', 'Tilt'];
 
@@ -23,11 +23,11 @@ export function renderShipRatingsPlay(ship) {
     const value = ratings[ratingName];
     const damageArray = ship.ratingDamage[ratingName] || [];
 
-    html += '<div style="margin-bottom: 4px;">';
-    html += `<div style="font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 6px;">${ratingName}</div>`;
+    html += '<div class="ship-rating-item">';
+    html += `<div class="ship-rating-name">${ratingName}</div>`;
 
     // Damage track boxes
-    html += '<div style="display: flex; gap: 4px; flex-wrap: wrap;">';
+    html += '<div class="ship-rating-track">';
     for (let i = 0; i < value; i++) {
       const state = damageArray[i] === 'burned' ? 'burned' : 'default';
       const stateChar = state === 'burned' ? 'X' : '';
@@ -45,14 +45,14 @@ export function renderShipRatingsPlay(ship) {
   const additionalStakes = ship.additionalStakes || 0;
   const availableStakes = totalBudget - stakesSpent;
 
-  html += '<div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid #D1D5DB;">';
-  html += '<div style="font-size: 11px; font-weight: 700; color: #6B7280; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">STAKES</div>';
+  html += '<div class="ship-stakes-section">';
+  html += '<div class="ship-ratings-heading">STAKES</div>';
 
-  html += '<div style="display: flex; flex-direction: column; gap: 4px;">';
-  html += `<div style="display: flex; justify-content: space-between; font-size: 12px;"><span style="color: #6B7280;">Original:</span><span style="font-weight: 600; color: #374151;">${originalBudget}</span></div>`;
-  html += `<div style="display: flex; justify-content: space-between; font-size: 12px;"><span style="color: #6B7280;">Additional:</span><span style="font-weight: 600; color: #374151;">${additionalStakes}</span></div>`;
-  html += `<div style="display: flex; justify-content: space-between; font-size: 12px;"><span style="color: #6B7280;">Spent:</span><span style="font-weight: 600; color: #374151;">${stakesSpent}</span></div>`;
-  html += `<div style="display: flex; justify-content: space-between; font-size: 12px; padding-top: 4px; border-top: 1px solid #D1D5DB;"><span style="color: #6B7280; font-weight: 600;">Available:</span><span style="font-weight: 700; color: #000000;">${availableStakes}</span></div>`;
+  html += '<div class="ship-stakes-list">';
+  html += `<div class="ship-stakes-row"><span class="ship-stakes-label">Original:</span><span class="ship-stakes-value">${originalBudget}</span></div>`;
+  html += `<div class="ship-stakes-row"><span class="ship-stakes-label">Additional:</span><span class="ship-stakes-value">${additionalStakes}</span></div>`;
+  html += `<div class="ship-stakes-row"><span class="ship-stakes-label">Spent:</span><span class="ship-stakes-value">${stakesSpent}</span></div>`;
+  html += `<div class="ship-stakes-row-total"><span class="ship-stakes-label-bold">Available:</span><span class="ship-stakes-value-bold">${availableStakes}</span></div>`;
   html += '</div>';
 
   html += '</div>';
