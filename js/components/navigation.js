@@ -8,16 +8,16 @@ import { loadShip } from '../state/ship.js';
 /**
  * Render the navigation bar
  * @param {Object} session - Current session object
- * @returns {string} HTML string for navigation bar
+ * @returns {Promise<string>} HTML string for navigation bar
  */
-export function renderNavigation(session) {
+export async function renderNavigation(session) {
   let html = '<div class="nav-bar split">';
 
   // Left side: Ship button
   html += '<div style="display: flex; gap: 16px; align-items: center;">';
 
   if (session.activeShipId) {
-    const ship = loadShip(session.activeShipId);
+    const ship = await loadShip(session.activeShipId);
     const isActive = session.activeView === 'ship';
     const activeClass = isActive ? 'nav-button-active' : 'nav-button-inactive';
     html += '<button data-action="switchToShip" class="nav-button ' + activeClass + '">';
@@ -36,7 +36,7 @@ export function renderNavigation(session) {
   if (session.activeCharacterIds.length > 0) {
     for (let i = 0; i < session.activeCharacterIds.length; i++) {
       const charId = session.activeCharacterIds[i];
-      const character = loadCharacter(charId);
+      const character = await loadCharacter(charId);
       // Character is only active if we're in character view AND it's the active character
       const isActive = session.activeView === 'character' && charId === session.activeCharacterId;
 

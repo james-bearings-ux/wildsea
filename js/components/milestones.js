@@ -2,10 +2,8 @@
  * Milestones rendering component
  */
 
-import { getCharacter } from '../state/character.js';
-
-export function renderMilestones(character = null) {
-  const char = character || getCharacter();
+export function renderMilestones(character) {
+  const char = character;
   let html = '<div><h2 class="section-header">Milestones</h2>';
 
   if (char.milestones.length > 0) {

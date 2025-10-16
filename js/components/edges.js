@@ -3,11 +3,11 @@
  */
 
 import { getGameData } from '../data/loader.js';
-import { getCharacter, BUDGETS } from '../state/character.js';
+import { BUDGETS } from '../state/character.js';
 
-export function renderEdges(character = null, gameData = null) {
+export function renderEdges(character, gameData = null) {
   const GAME_DATA = gameData || getGameData();
-  const char = character || getCharacter();
+  const char = character;
   const isCreationMode = char.mode === 'creation';
   const edgesSelected = char.selectedEdges.length;
 
@@ -23,11 +23,12 @@ export function renderEdges(character = null, gameData = null) {
       const edge = GAME_DATA.edges[i];
       const isSelected = char.selectedEdges.includes(edge.name);
       const isDisabled = !isSelected && edgesSelected >= BUDGETS.edges;
+      const escapedName = edge.name.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
 
       html += '<div class="edge-card';
       if (isSelected) html += ' selected';
       if (isDisabled) html += ' disabled';
-      html += '" data-action="toggleEdge" data-params=\'{"name":"' + edge.name + '"}\'>';
+      html += '" data-action="toggleEdge" data-params="{&quot;name&quot;:&quot;' + escapedName + '&quot;}">';
       html += '<div class="aspect-name" style="margin-bottom: 4px;">' + edge.name + '</div>';
       html += '<div class="edge-tagline" style="font-size: 12px; color: ';
       html += isSelected ? '#9CA3AF' : '#6B7280';
@@ -51,8 +52,8 @@ export function renderEdges(character = null, gameData = null) {
   }
 }
 
-export function renderEdgesSkillsLanguagesRow(renderSkills, renderLanguages, character = null, gameData = null) {
-  const char = character || getCharacter();
+export function renderEdgesSkillsLanguagesRow(renderSkills, renderLanguages, character, gameData = null) {
+  const char = character;
   const GAME_DATA = gameData || getGameData();
   const isCreationMode = char.mode === 'creation';
 

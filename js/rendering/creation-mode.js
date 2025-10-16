@@ -64,12 +64,12 @@ export function renderCreationMode(app, character, gameData) {
             <h3 class="subsection-header">${character.bloodline}</h3>
             ${bloodlineAspects.map(aspect => {
                 const id = aspect.source + '-' + aspect.name;
-                const escapedId = id.replace(/'/g, "\\'");
+                const escapedId = id.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
                 const isSelected = character.selectedAspects.some(a => a.id === id);
                 const isDisabled = !isSelected && aspectsSelected >= BUDGETS.aspects;
                 return `
                 <div class="aspect-card ${isSelected ? 'selected' : ''} ${isDisabled ? 'disabled' : ''}"
-                        data-action="toggleAspect" data-params='{"id":"${escapedId}"}'>
+                        data-action="toggleAspect" data-params="{&quot;id&quot;:&quot;${escapedId}&quot;}">
                     ${renderSmallTrack(aspect.track)}
                     <div class="split">
                     <div class="aspect-name" style="margin-bottom: 4px;">${aspect.name}</div>
@@ -85,12 +85,12 @@ export function renderCreationMode(app, character, gameData) {
             <h3 class="subsection-header">${character.origin}</h3>
             ${originAspects.map(aspect => {
                 const id = aspect.source + '-' + aspect.name;
-                const escapedId = id.replace(/'/g, "\\'");
+                const escapedId = id.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
                 const isSelected = character.selectedAspects.some(a => a.id === id);
                 const isDisabled = !isSelected && aspectsSelected >= BUDGETS.aspects;
                 return `
                 <div class="aspect-card ${isSelected ? 'selected' : ''} ${isDisabled ? 'disabled' : ''}"
-                        data-action="toggleAspect" data-params='{"id":"${escapedId}"}'>
+                        data-action="toggleAspect" data-params="{&quot;id&quot;:&quot;${escapedId}&quot;}">
                     ${renderSmallTrack(aspect.track)}
                     <div class="split">
                     <div class="aspect-name" style="margin-bottom: 4px;">${aspect.name}</div>
@@ -106,12 +106,12 @@ export function renderCreationMode(app, character, gameData) {
             <h3 class="subsection-header">${character.post}</h3>
             ${postAspects.map(aspect => {
                 const id = aspect.source + '-' + aspect.name;
-                const escapedId = id.replace(/'/g, "\\'");
+                const escapedId = id.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
                 const isSelected = character.selectedAspects.some(a => a.id === id);
                 const isDisabled = !isSelected && aspectsSelected >= BUDGETS.aspects;
                 return `
                 <div class="aspect-card ${isSelected ? 'selected' : ''} ${isDisabled ? 'disabled' : ''}"
-                        data-action="toggleAspect" data-params='{"id":"${escapedId}"}'>
+                        data-action="toggleAspect" data-params="{&quot;id&quot;:&quot;${escapedId}&quot;}">
                     ${renderSmallTrack(aspect.track)}
                     <div class="split">
                     <div class="aspect-name" style="margin-bottom: 4px;">${aspect.name}</div>

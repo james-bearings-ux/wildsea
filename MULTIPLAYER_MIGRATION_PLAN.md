@@ -112,21 +112,24 @@ undercrew_damage → undercrewDamage
 
 ---
 
-## Phase 4: Main Application Updates
+## Phase 4: Main Application Updates ✅
 
-### Files to Update
+### Files Updated
 
 #### 1. `js/main.js`
-**Status:** Not started - CRITICAL FILE
+**Status:** ✅ COMPLETE
 
-**Current Issue:** All state operations are synchronous, but Supabase operations are async.
-
-**Tasks:**
-- [ ] Make `init()` function handle async session/character loading
-- [ ] Make `render()` function async
-- [ ] Update all event handlers to use async/await
-- [ ] Add loading states for async operations
-- [ ] Add error handling for failed database operations
+**Completed Tasks:**
+- ✅ Made `init()` function handle async session/character loading with loading state
+- ✅ Made `render()` function async
+- ✅ Updated all click event handlers to use async/await (wrapped in async IIFE)
+- ✅ Updated all change event handlers to use async/await (wrapped in async IIFE)
+- ✅ Added error handling for failed database operations
+- ✅ All `saveCharacter()`, `saveShip()`, `saveSession()` calls now await
+- ✅ All `loadCharacter()`, `loadShip()`, `loadSession()` calls now await
+- ✅ All `render()` calls now await
+- ✅ Session management actions (create, switch, remove character) now async
+- ✅ Ship management actions (create, select parts, damage tracking) now async
 
 **Key Changes Needed:**
 

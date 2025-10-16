@@ -2,10 +2,8 @@
  * Drives and Mires rendering components
  */
 
-import { getCharacter } from '../state/character.js';
-
-export function renderDrives(character = null) {
-  const char = character || getCharacter();
+export function renderDrives(character) {
+  const char = character;
   let html = '<div><h2 class="section-header">Drives</h2>';
   html += '<div style="display: flex; flex-direction: column; gap: 8px;">';
 
@@ -22,8 +20,8 @@ export function renderDrives(character = null) {
   return html;
 }
 
-export function renderMires(character = null) {
-  const char = character || getCharacter();
+export function renderMires(character) {
+  const char = character;
   const showCheckboxes = char.mode === 'play';
 
   let html = '<div><h2 class="section-header">Mires</h2>';
