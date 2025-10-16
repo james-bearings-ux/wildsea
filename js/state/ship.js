@@ -1,12 +1,8 @@
 // js/state/ship.js
 // Ship data model and state management
+// Now using Supabase for real-time multiplayer support
 
-/**
- * Generate a unique ID
- */
-function generateId() {
-  return Date.now().toString(36) + Math.random().toString(36).substr(2);
-}
+import { supabase } from '../supabaseClient.js';
 
 /**
  * Parse track size from undercrew name
@@ -21,32 +17,152 @@ function parseUndercrewTrack(name) {
 }
 
 /**
- * Create a new ship with default values
+ * Create a new ship with default values and save to Supabase
  */
-export function createShip(name = 'New Ship') {
+export async function createShip(sessionId, name = 'New Ship') {
+  const { data, error } = await supabase
+    .from('ships')
+    .insert([{
+      session_id: sessionId,
+      name,
+      mode: 'creation',
+      anticipated_crew_size: 3,
+      additional_stakes: 0,
+      rating_damage: {
+        Armour: [],
+        Seals: [],
+        Speed: [],
+        Saws: [],
+        Stealth: [],
+        Tilt: []
+      },
+      size: null,
+      frame: null,
+      hull: [],
+      bite: [],
+      engine: [],
+      motifs: [],
+      general_additions: [],
+      bounteous_additions: [],
+      rooms: [],
+      armaments: [],
+      undercrew: {
+        officers: [],
+        gangs: [],
+        packs: []
+      },
+      undercrew_damage: {},
+      cargo: [],
+      passengers: []
+    }])
+    .select()
+    .single();
+
+  if (error) {
+    console.error('Failed to create ship:', error);
+    throw error;
+  }
+
+  return convertFromDB(data);
+}
+
+/**
+ * Load a ship from Supabase
+ */
+export async function loadShip(shipId) {
+  const { data, error } = await supabase
+    .from('ships')
+    .select('*')
+    .eq('id', shipId)
+    .single();
+
+  if (error) {
+    console.error(`Failed to load ship ${shipId}:`, error);
+    return null;
+  }
+
+  return convertFromDB(data);
+}
+
+/**
+ * Save a ship to Supabase
+ */
+export async function saveShip(ship) {
+  const { error } = await supabase
+    .from('ships')
+    .update({
+      name: ship.name,
+      mode: ship.mode,
+      anticipated_crew_size: ship.anticipatedCrewSize,
+      additional_stakes: ship.additionalStakes,
+      rating_damage: ship.ratingDamage,
+      size: ship.size,
+      frame: ship.frame,
+      hull: ship.hull,
+      bite: ship.bite,
+      engine: ship.engine,
+      motifs: ship.motifs,
+      general_additions: ship.generalAdditions,
+      bounteous_additions: ship.bounteousAdditions,
+      rooms: ship.rooms,
+      armaments: ship.armaments,
+      undercrew: ship.undercrew,
+      undercrew_damage: ship.undercrewDamage,
+      cargo: ship.cargo,
+      passengers: ship.passengers,
+      updated_at: new Date().toISOString()
+    })
+    .eq('id', ship.id);
+
+  if (error) {
+    console.error(`Failed to save ship ${ship.id}:`, error);
+    throw error;
+  }
+}
+
+/**
+ * Delete a ship from Supabase
+ */
+export async function deleteShip(shipId) {
+  const { error } = await supabase
+    .from('ships')
+    .delete()
+    .eq('id', shipId);
+
+  if (error) {
+    console.error(`Failed to delete ship ${shipId}:`, error);
+    throw error;
+  }
+}
+
+/**
+ * Get all ships from Supabase for a session
+ */
+export async function getAllShips(sessionId) {
+  const { data, error } = await supabase
+    .from('ships')
+    .select('*')
+    .eq('session_id', sessionId);
+
+  if (error) {
+    console.error('Failed to load ships:', error);
+    return [];
+  }
+
+  return data.map(convertFromDB);
+}
+
+/**
+ * Convert database column names to app property names
+ */
+function convertFromDB(dbShip) {
   return {
-    id: generateId(),
-    mode: 'creation', // 'creation' | 'play' | 'upgrade'
-    name,
-
-    // Anticipated crew size affects stakes budget
-    anticipatedCrewSize: 3,
-
-    // Additional stakes earned during play (adds to budget)
-    additionalStakes: 0,
-
-    // Ship ratings - all start at 1
-    ratings: {
-      Armour: 1,
-      Seals: 1,
-      Speed: 1,
-      Saws: 1,
-      Stealth: 1,
-      Tilt: 1
-    },
-
-    // Damage states for each rating (array of boxes, empty = undamaged)
-    ratingDamage: {
+    id: dbShip.id,
+    mode: dbShip.mode,
+    name: dbShip.name,
+    anticipatedCrewSize: dbShip.anticipated_crew_size || 3,
+    additionalStakes: dbShip.additional_stakes || 0,
+    ratingDamage: dbShip.rating_damage || {
       Armour: [],
       Seals: [],
       Speed: [],
@@ -54,82 +170,25 @@ export function createShip(name = 'New Ship') {
       Stealth: [],
       Tilt: []
     },
-
-    // Ship design elements (selected parts)
-    size: null,        // Single selection: { name, stakes, bonuses }
-    frame: null,       // Single selection: { name, stakes, bonuses }
-    hull: [],          // Multiple selections: [{ name, stakes, bonuses, specials }, ...]
-    bite: [],          // Multiple selections: [{ name, stakes, bonuses, specials }, ...]
-    engine: [],        // Multiple selections: [{ name, stakes, bonuses, specials }, ...]
-
-    // Ship fittings (all multi-select/optional)
-    motifs: [],              // [{ name, stakes, specials }, ...]
-    generalAdditions: [],    // [{ name, stakes, specials }, ...]
-    bounteousAdditions: [],  // [{ name, stakes, specials }, ...]
-    rooms: [],               // [{ name, stakes, specials }, ...]
-    armaments: [],           // [{ name, stakes, specials }, ...]
-
-    // Undercrew (all multi-select/optional)
-    undercrew: {
-      officers: [],          // [{ name, stakes, specials }, ...]
-      gangs: [],             // [{ name, stakes, specials }, ...]
-      packs: []              // [{ name, stakes, specials }, ...]
+    size: dbShip.size,
+    frame: dbShip.frame,
+    hull: dbShip.hull || [],
+    bite: dbShip.bite || [],
+    engine: dbShip.engine || [],
+    motifs: dbShip.motifs || [],
+    generalAdditions: dbShip.general_additions || [],
+    bounteousAdditions: dbShip.bounteous_additions || [],
+    rooms: dbShip.rooms || [],
+    armaments: dbShip.armaments || [],
+    undercrew: dbShip.undercrew || {
+      officers: [],
+      gangs: [],
+      packs: []
     },
-
-    // Undercrew damage tracking (keyed by undercrew name)
-    // Each undercrew has a track based on its stakes value
-    undercrewDamage: {},     // { "undercrewName": ['default', 'burned', ...], ... }
-
-    // Cargo (arbitrary list of named items, similar to character salvage)
-    cargo: [],               // [{ id, name }, ...]
-
-    // Passengers (arbitrary list of named items, parallel to cargo)
-    passengers: []           // [{ id, name }, ...]
+    undercrewDamage: dbShip.undercrew_damage || {},
+    cargo: dbShip.cargo || [],
+    passengers: dbShip.passengers || []
   };
-}
-
-/**
- * Load a ship from localStorage
- */
-export function loadShip(shipId) {
-  const stored = localStorage.getItem(`wildsea-ship-${shipId}`);
-  if (stored) {
-    try {
-      return JSON.parse(stored);
-    } catch (e) {
-      console.error(`Failed to load ship ${shipId}:`, e);
-    }
-  }
-  return null;
-}
-
-/**
- * Save a ship to localStorage
- */
-export function saveShip(ship) {
-  localStorage.setItem(`wildsea-ship-${ship.id}`, JSON.stringify(ship));
-}
-
-/**
- * Delete a ship from localStorage
- */
-export function deleteShip(shipId) {
-  localStorage.removeItem(`wildsea-ship-${shipId}`);
-}
-
-/**
- * Get all ships from localStorage
- */
-export function getAllShips() {
-  const ships = [];
-  for (let i = 0; i < localStorage.length; i++) {
-    const key = localStorage.key(i);
-    if (key.startsWith('wildsea-ship-')) {
-      const ship = loadShip(key.replace('wildsea-ship-', ''));
-      if (ship) ships.push(ship);
-    }
-  }
-  return ships;
 }
 
 /**

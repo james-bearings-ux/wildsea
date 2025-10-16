@@ -1,9 +1,11 @@
 /**
  * Character state management module
  * Handles character data and all mutation functions
+ * Now using Supabase for real-time multiplayer support
  */
 
 import { getGameData } from '../data/loader.js';
+import { supabase } from '../supabaseClient.js';
 
 export const BUDGETS = {
   aspects: 4,
@@ -14,35 +16,151 @@ export const BUDGETS = {
 };
 
 /**
- * Generate a unique ID
+ * Create a new character with default values and save to Supabase
  */
-function generateId() {
-  return Date.now().toString(36) + Math.random().toString(36).substr(2);
+export async function createCharacter(sessionId, name = 'Unnamed Character', bloodline = 'Tzelicrae', origin = 'Ridgeback', post = 'Mesmer') {
+  const { data, error } = await supabase
+    .from('characters')
+    .insert([{
+      session_id: sessionId,
+      name,
+      mode: 'creation',
+      bloodline,
+      origin,
+      post,
+      selected_aspects: [],
+      selected_edges: [],
+      skills: {},
+      languages: { 'Low Sour': 3 },
+      drives: ['', '', ''],
+      mires: [
+        { text: '', checkbox1: false, checkbox2: false },
+        { text: '', checkbox1: false, checkbox2: false },
+        { text: '', checkbox1: false, checkbox2: false }
+      ],
+      milestones: [],
+      resources: {
+        charts: [],
+        salvage: [],
+        specimens: [],
+        whispers: []
+      }
+    }])
+    .select()
+    .single();
+
+  if (error) {
+    console.error('Failed to create character:', error);
+    throw error;
+  }
+
+  // Convert database format to app format
+  return convertFromDB(data);
 }
 
 /**
- * Create a new character with default values
+ * Load a character from Supabase
  */
-export function createCharacter(name = 'Character Name', bloodline = 'Tzelicrae', origin = 'Ridgeback', post = 'Mesmer') {
+export async function loadCharacter(characterId) {
+  const { data, error } = await supabase
+    .from('characters')
+    .select('*')
+    .eq('id', characterId)
+    .single();
+
+  if (error) {
+    console.error(`Failed to load character ${characterId}:`, error);
+    return null;
+  }
+
+  return convertFromDB(data);
+}
+
+/**
+ * Save a character to Supabase
+ */
+export async function saveCharacter(character) {
+  const { error } = await supabase
+    .from('characters')
+    .update({
+      name: character.name,
+      mode: character.mode,
+      bloodline: character.bloodline,
+      origin: character.origin,
+      post: character.post,
+      selected_aspects: character.selectedAspects,
+      selected_edges: character.selectedEdges,
+      skills: character.skills,
+      languages: character.languages,
+      drives: character.drives,
+      mires: character.mires,
+      milestones: character.milestones,
+      resources: character.resources,
+      updated_at: new Date().toISOString()
+    })
+    .eq('id', character.id);
+
+  if (error) {
+    console.error(`Failed to save character ${character.id}:`, error);
+    throw error;
+  }
+}
+
+/**
+ * Delete a character from Supabase
+ */
+export async function deleteCharacter(characterId) {
+  const { error } = await supabase
+    .from('characters')
+    .delete()
+    .eq('id', characterId);
+
+  if (error) {
+    console.error(`Failed to delete character ${characterId}:`, error);
+    throw error;
+  }
+}
+
+/**
+ * Get all characters from Supabase for a session
+ */
+export async function getAllCharacters(sessionId) {
+  const { data, error } = await supabase
+    .from('characters')
+    .select('*')
+    .eq('session_id', sessionId);
+
+  if (error) {
+    console.error('Failed to load characters:', error);
+    return [];
+  }
+
+  return data.map(convertFromDB);
+}
+
+/**
+ * Convert database column names to app property names
+ */
+function convertFromDB(dbChar) {
   return {
-    id: generateId(),
-    mode: 'creation',
-    name,
-    bloodline,
-    origin,
-    post,
-    selectedAspects: [],
-    selectedEdges: [],
-    skills: {},
-    languages: { 'Low Sour': 3 },
-    milestones: [],
-    drives: ['', '', ''],
-    mires: [
+    id: dbChar.id,
+    mode: dbChar.mode,
+    name: dbChar.name,
+    bloodline: dbChar.bloodline,
+    origin: dbChar.origin,
+    post: dbChar.post,
+    selectedAspects: dbChar.selected_aspects || [],
+    selectedEdges: dbChar.selected_edges || [],
+    skills: dbChar.skills || {},
+    languages: dbChar.languages || { 'Low Sour': 3 },
+    drives: dbChar.drives || ['', '', ''],
+    mires: dbChar.mires || [
       { text: '', checkbox1: false, checkbox2: false },
       { text: '', checkbox1: false, checkbox2: false },
       { text: '', checkbox1: false, checkbox2: false }
     ],
-    resources: {
+    milestones: dbChar.milestones || [],
+    resources: dbChar.resources || {
       charts: [],
       salvage: [],
       specimens: [],
@@ -52,119 +170,36 @@ export function createCharacter(name = 'Character Name', bloodline = 'Tzelicrae'
 }
 
 /**
- * Load a character from localStorage
- */
-export function loadCharacter(characterId) {
-  const stored = localStorage.getItem(`wildsea-character-${characterId}`);
-  if (stored) {
-    try {
-      return JSON.parse(stored);
-    } catch (e) {
-      console.error(`Failed to load character ${characterId}:`, e);
-    }
-  }
-  return null;
-}
-
-/**
- * Save a character to localStorage
- */
-export function saveCharacter(character) {
-  localStorage.setItem(`wildsea-character-${character.id}`, JSON.stringify(character));
-}
-
-/**
- * Delete a character from localStorage
- */
-export function deleteCharacter(characterId) {
-  localStorage.removeItem(`wildsea-character-${characterId}`);
-}
-
-/**
- * Get all characters from localStorage
- */
-export function getAllCharacters() {
-  const characters = [];
-  for (let i = 0; i < localStorage.length; i++) {
-    const key = localStorage.key(i);
-    if (key.startsWith('wildsea-character-')) {
-      const character = loadCharacter(key.replace('wildsea-character-', ''));
-      if (character) characters.push(character);
-    }
-  }
-  return characters;
-}
-
-// Initial character state (global for backward compatibility)
-export let character = {
-  id: generateId(),
-  mode: 'creation',
-  name: 'Character Name',
-  bloodline: 'Tzelicrae',
-  origin: 'Ridgeback',
-  post: 'Mesmer',
-  selectedAspects: [],
-  selectedEdges: ['Sharps', 'Instinct', 'Teeth'],
-  skills: { 'Break': 2, 'Concoct': 2, 'Scavenge': 2, 'Wavewalk': 2 },
-  languages: { 'Low Sour': 3 },
-  milestones: [],
-  drives: ['Send other spirits to a peaceful rest', 'Reconnect with your friends and family', 'Help those suffering from great distraction'],
-  mires: [
-    { text: 'Your material control wavers erratically', checkbox1: false, checkbox2: false },
-    { text: 'Visions of your past death are difficult to banish', checkbox1: false, checkbox2: false },
-    { text: 'Your own thoughts are cloudy, mercurial', checkbox1: false, checkbox2: false }
-  ],
-  resources: {
-    charts: [
-      { id: '001', name: 'A Sketch of Shadowed Paths' }
-    ],
-    salvage: [
-      { id: '004', name: 'Old Memento' },
-      { id: '005', name: 'Broken Locket' }
-    ],
-    specimens: [
-      { id: '007', name: 'Glowing Plasm' },
-      { id: '008', name: 'Spectral Flower' }
-    ],
-    whispers: [
-      { id: '010', name: 'Back from Beyond' },
-      { id: '011', name: 'Drowned and Not' }
-    ]
-  }
-};
-
-/**
  * Get all available aspects based on character selections
- * @param {Object} char - Character object (optional, defaults to global character)
+ * @param {Object} char - Character object
  */
-export function getAvailableAspects(char = null) {
+export function getAvailableAspects(char) {
   const GAME_DATA = getGameData();
-  const targetChar = char || character;
   const available = [];
 
-  const bloodlineAspects = GAME_DATA.aspects[targetChar.bloodline] || [];
+  const bloodlineAspects = GAME_DATA.aspects[char.bloodline] || [];
   bloodlineAspects.forEach(aspect => {
     available.push({
       ...aspect,
-      source: targetChar.bloodline,
+      source: char.bloodline,
       category: 'Bloodline'
     });
   });
 
-  const originAspects = GAME_DATA.aspects[targetChar.origin] || [];
+  const originAspects = GAME_DATA.aspects[char.origin] || [];
   originAspects.forEach(aspect => {
     available.push({
       ...aspect,
-      source: targetChar.origin,
+      source: char.origin,
       category: 'Origin'
     });
   });
 
-  const postAspects = GAME_DATA.aspects[targetChar.post] || [];
+  const postAspects = GAME_DATA.aspects[char.post] || [];
   postAspects.forEach(aspect => {
     available.push({
       ...aspect,
-      source: targetChar.post,
+      source: char.post,
       category: 'Post'
     });
   });
@@ -175,59 +210,54 @@ export function getAvailableAspects(char = null) {
 /**
  * Character property mutations
  */
-export function onCharacterNameChange(value, char = null) {
-  const targetChar = char || character;
-  targetChar.name = value;
+export function onCharacterNameChange(value, char) {
+  char.name = value;
 }
 
-export function onBloodlineChange(value, renderCallback, char = null) {
-  const targetChar = char || character;
-  targetChar.bloodline = value;
-  targetChar.selectedAspects = [];
+export function onBloodlineChange(value, renderCallback, char) {
+  char.bloodline = value;
+  char.selectedAspects = [];
   renderCallback();
 }
 
-export function onOriginChange(value, renderCallback, char = null) {
-  const targetChar = char || character;
-  targetChar.origin = value;
-  targetChar.selectedAspects = [];
+export function onOriginChange(value, renderCallback, char) {
+  char.origin = value;
+  char.selectedAspects = [];
   renderCallback();
 }
 
-export function onPostChange(value, renderCallback, char = null) {
-  const targetChar = char || character;
-  targetChar.post = value;
-  targetChar.selectedAspects = [];
+export function onPostChange(value, renderCallback, char) {
+  char.post = value;
+  char.selectedAspects = [];
   renderCallback();
 }
 
 /**
  * Aspect mutations
  */
-export function toggleAspect(aspectId, renderCallback, char = null) {
-  const targetChar = char || character;
-  if (targetChar.mode !== 'creation' && targetChar.mode !== 'advancement') return;
+export function toggleAspect(aspectId, renderCallback, char) {
+  if (char.mode !== 'creation' && char.mode !== 'advancement') return;
 
-  const index = targetChar.selectedAspects.findIndex(a => a.id === aspectId);
+  const index = char.selectedAspects.findIndex(a => a.id === aspectId);
 
   if (index >= 0) {
-    targetChar.selectedAspects.splice(index, 1);
+    char.selectedAspects.splice(index, 1);
   } else {
-    if (targetChar.mode === 'creation' && targetChar.selectedAspects.length >= BUDGETS.aspects) {
+    if (char.mode === 'creation' && char.selectedAspects.length >= BUDGETS.aspects) {
       return;
     }
-    if (targetChar.mode === 'advancement' && targetChar.selectedAspects.length >= BUDGETS.maxAspectsAdvancement) {
+    if (char.mode === 'advancement' && char.selectedAspects.length >= BUDGETS.maxAspectsAdvancement) {
       return;
     }
 
-    const allAspects = getAvailableAspects(targetChar);
+    const allAspects = getAvailableAspects(char);
     const aspect = allAspects.find(a => {
       const id = a.source + '-' + a.name;
       return id === aspectId;
     });
 
     if (aspect) {
-      targetChar.selectedAspects.push({
+      char.selectedAspects.push({
         id: aspectId,
         ...aspect,
         trackSize: aspect.track,
@@ -239,11 +269,10 @@ export function toggleAspect(aspectId, renderCallback, char = null) {
   renderCallback();
 }
 
-export function cycleAspectDamage(aspectId, boxIndex, renderCallback, char = null) {
-  const targetChar = char || character;
-  if (targetChar.mode !== 'play') return;
+export function cycleAspectDamage(aspectId, boxIndex, renderCallback, char) {
+  if (char.mode !== 'play') return;
 
-  const aspect = targetChar.selectedAspects.find(a => a.id === aspectId);
+  const aspect = char.selectedAspects.find(a => a.id === aspectId);
   if (!aspect) return;
 
   const states = ['default', 'marked', 'burned'];
@@ -255,11 +284,10 @@ export function cycleAspectDamage(aspectId, boxIndex, renderCallback, char = nul
   renderCallback();
 }
 
-export function expandAspectTrack(aspectId, delta, renderCallback, char = null) {
-  const targetChar = char || character;
-  if (targetChar.mode !== 'advancement') return;
+export function expandAspectTrack(aspectId, delta, renderCallback, char) {
+  if (char.mode !== 'advancement') return;
 
-  const aspect = targetChar.selectedAspects.find(a => a.id === aspectId);
+  const aspect = char.selectedAspects.find(a => a.id === aspectId);
   if (!aspect) return;
 
   const newSize = aspect.trackSize + delta;
@@ -278,9 +306,8 @@ export function expandAspectTrack(aspectId, delta, renderCallback, char = null) 
 /**
  * Customize aspect name and description
  */
-export function customizeAspect(aspectId, name, description, char = null) {
-  const targetChar = char || character;
-  const aspect = targetChar.selectedAspects.find(a => a.id === aspectId);
+export function customizeAspect(aspectId, name, description, char) {
+  const aspect = char.selectedAspects.find(a => a.id === aspectId);
   if (!aspect) return;
 
   aspect.name = name;
@@ -291,13 +318,12 @@ export function customizeAspect(aspectId, name, description, char = null) {
 /**
  * Reset aspect to original game data
  */
-export function resetAspectCustomization(aspectId, char = null) {
-  const targetChar = char || character;
-  const aspect = targetChar.selectedAspects.find(a => a.id === aspectId);
+export function resetAspectCustomization(aspectId, char) {
+  const aspect = char.selectedAspects.find(a => a.id === aspectId);
   if (!aspect) return;
 
   // Find original aspect data
-  const allAspects = getAvailableAspects(targetChar);
+  const allAspects = getAvailableAspects(char);
   const originalAspect = allAspects.find(a => {
     const id = a.source + '-' + a.name;
     return id === aspectId;
@@ -319,19 +345,18 @@ export function resetAspectCustomization(aspectId, char = null) {
 /**
  * Edge mutations
  */
-export function toggleEdge(edgeName, renderCallback, char = null) {
-  const targetChar = char || character;
-  if (targetChar.mode !== 'creation') return;
+export function toggleEdge(edgeName, renderCallback, char) {
+  if (char.mode !== 'creation') return;
 
-  const index = targetChar.selectedEdges.indexOf(edgeName);
+  const index = char.selectedEdges.indexOf(edgeName);
 
   if (index >= 0) {
-    targetChar.selectedEdges.splice(index, 1);
+    char.selectedEdges.splice(index, 1);
   } else {
-    if (targetChar.selectedEdges.length >= BUDGETS.edges) {
+    if (char.selectedEdges.length >= BUDGETS.edges) {
       return;
     }
-    targetChar.selectedEdges.push(edgeName);
+    char.selectedEdges.push(edgeName);
   }
 
   renderCallback();
@@ -340,14 +365,13 @@ export function toggleEdge(edgeName, renderCallback, char = null) {
 /**
  * Skill mutations
  */
-export function adjustSkill(name, delta, renderCallback, char = null) {
-  const targetChar = char || character;
-  const current = targetChar.skills[name] || 0;
-  const newValue = Math.max(0, Math.min(targetChar.mode === 'creation' ? 2 : 3, current + delta));
+export function adjustSkill(name, delta, renderCallback, char) {
+  const current = char.skills[name] || 0;
+  const newValue = Math.max(0, Math.min(char.mode === 'creation' ? 2 : 3, current + delta));
 
-  if (targetChar.mode === 'creation') {
-    const totalPoints = Object.values(targetChar.skills).reduce((sum, v) => sum + v, 0);
-    const languagePoints = Object.entries(targetChar.languages)
+  if (char.mode === 'creation') {
+    const totalPoints = Object.values(char.skills).reduce((sum, v) => sum + v, 0);
+    const languagePoints = Object.entries(char.languages)
       .filter(function (entry) { return entry[0] !== 'Low Sour'; })
       .reduce((sum, entry) => sum + entry[1], 0);
 
@@ -357,9 +381,9 @@ export function adjustSkill(name, delta, renderCallback, char = null) {
   }
 
   if (newValue === 0) {
-    delete targetChar.skills[name];
+    delete char.skills[name];
   } else {
-    targetChar.skills[name] = newValue;
+    char.skills[name] = newValue;
   }
 
   renderCallback();
@@ -368,18 +392,17 @@ export function adjustSkill(name, delta, renderCallback, char = null) {
 /**
  * Language mutations
  */
-export function adjustLanguage(name, delta, renderCallback, char = null) {
-  const targetChar = char || character;
-  if (name === 'Low Sour' && targetChar.mode === 'creation') {
+export function adjustLanguage(name, delta, renderCallback, char) {
+  if (name === 'Low Sour' && char.mode === 'creation') {
     return;
   }
 
-  const current = targetChar.languages[name] || 0;
-  const newValue = Math.max(0, Math.min(targetChar.mode === 'creation' ? 2 : 3, current + delta));
+  const current = char.languages[name] || 0;
+  const newValue = Math.max(0, Math.min(char.mode === 'creation' ? 2 : 3, current + delta));
 
-  if (targetChar.mode === 'creation') {
-    const skillPoints = Object.values(targetChar.skills).reduce((sum, v) => sum + v, 0);
-    const totalPoints = Object.entries(targetChar.languages)
+  if (char.mode === 'creation') {
+    const skillPoints = Object.values(char.skills).reduce((sum, v) => sum + v, 0);
+    const totalPoints = Object.entries(char.languages)
       .filter(function (entry) { return entry[0] !== 'Low Sour'; })
       .reduce((sum, entry) => sum + entry[1], 0);
 
@@ -389,9 +412,9 @@ export function adjustLanguage(name, delta, renderCallback, char = null) {
   }
 
   if (newValue === 0 && name !== 'Low Sour') {
-    delete targetChar.languages[name];
+    delete char.languages[name];
   } else {
-    targetChar.languages[name] = newValue;
+    char.languages[name] = newValue;
   }
 
   renderCallback();
@@ -400,25 +423,22 @@ export function adjustLanguage(name, delta, renderCallback, char = null) {
 /**
  * Drive mutations
  */
-export function updateDrive(index, value, char = null) {
-  const targetChar = char || character;
-  targetChar.drives[index] = value;
+export function updateDrive(index, value, char) {
+  char.drives[index] = value;
 }
 
 /**
  * Mire mutations
  */
-export function updateMire(index, value, char = null) {
-  const targetChar = char || character;
-  targetChar.mires[index].text = value;
+export function updateMire(index, value, char) {
+  char.mires[index].text = value;
 }
 
-export function toggleMireCheckbox(index, checkboxNum, renderCallback, char = null) {
-  const targetChar = char || character;
+export function toggleMireCheckbox(index, checkboxNum, renderCallback, char) {
   if (checkboxNum === 1) {
-    targetChar.mires[index].checkbox1 = !targetChar.mires[index].checkbox1;
+    char.mires[index].checkbox1 = !char.mires[index].checkbox1;
   } else {
-    targetChar.mires[index].checkbox2 = !targetChar.mires[index].checkbox2;
+    char.mires[index].checkbox2 = !char.mires[index].checkbox2;
   }
   renderCallback();
 }
@@ -426,9 +446,8 @@ export function toggleMireCheckbox(index, checkboxNum, renderCallback, char = nu
 /**
  * Milestone mutations
  */
-export function addMilestone(renderCallback, char = null) {
-  const targetChar = char || character;
-  targetChar.milestones.push({
+export function addMilestone(renderCallback, char) {
+  char.milestones.push({
     id: Date.now().toString(),
     used: false,
     name: '',
@@ -437,37 +456,33 @@ export function addMilestone(renderCallback, char = null) {
   renderCallback();
 }
 
-export function updateMilestoneName(id, name, char = null) {
-  const targetChar = char || character;
-  const milestone = targetChar.milestones.find(m => m.id === id);
+export function updateMilestoneName(id, name, char) {
+  const milestone = char.milestones.find(m => m.id === id);
   if (milestone) {
     milestone.name = name;
   }
 }
 
-export function updateMilestoneScale(id, scale, renderCallback, char = null) {
-  const targetChar = char || character;
-  const milestone = targetChar.milestones.find(m => m.id === id);
+export function updateMilestoneScale(id, scale, renderCallback, char) {
+  const milestone = char.milestones.find(m => m.id === id);
   if (milestone) {
     milestone.scale = scale;
     renderCallback();
   }
 }
 
-export function toggleMilestoneUsed(id, renderCallback, char = null) {
-  const targetChar = char || character;
-  const milestone = targetChar.milestones.find(m => m.id === id);
+export function toggleMilestoneUsed(id, renderCallback, char) {
+  const milestone = char.milestones.find(m => m.id === id);
   if (milestone) {
     milestone.used = !milestone.used;
     renderCallback();
   }
 }
 
-export function deleteMilestone(id, renderCallback, char = null) {
-  const targetChar = char || character;
-  const index = targetChar.milestones.findIndex(m => m.id === id);
+export function deleteMilestone(id, renderCallback, char) {
+  const index = char.milestones.findIndex(m => m.id === id);
   if (index >= 0) {
-    targetChar.milestones.splice(index, 1);
+    char.milestones.splice(index, 1);
     renderCallback();
   }
 }
@@ -475,38 +490,34 @@ export function deleteMilestone(id, renderCallback, char = null) {
 /**
  * Resource mutations
  */
-export function addResource(type, renderCallback, char = null) {
-  const targetChar = char || character;
-  targetChar.resources[type].push({
+export function addResource(type, renderCallback, char) {
+  char.resources[type].push({
     id: Date.now().toString(),
     name: ''
   });
   renderCallback();
 }
 
-export function updateResourceName(type, id, name, char = null) {
-  const targetChar = char || character;
-  const resource = targetChar.resources[type].find(r => r.id === id);
+export function updateResourceName(type, id, name, char) {
+  const resource = char.resources[type].find(r => r.id === id);
   if (resource) {
     resource.name = name;
   }
 }
 
-export function removeResource(type, id, renderCallback, char = null) {
-  const targetChar = char || character;
-  const index = targetChar.resources[type].findIndex(r => r.id === id);
+export function removeResource(type, id, renderCallback, char) {
+  const index = char.resources[type].findIndex(r => r.id === id);
   if (index >= 0) {
-    targetChar.resources[type].splice(index, 1);
+    char.resources[type].splice(index, 1);
     renderCallback();
   }
 }
 
-export function populateDefaultResources(renderCallback, char = null) {
-  const targetChar = char || character;
+export function populateDefaultResources(renderCallback, char) {
   const GAME_DATA = getGameData();
 
   // Clear existing resources
-  targetChar.resources = {
+  char.resources = {
     charts: [],
     salvage: [],
     specimens: [],
@@ -514,7 +525,7 @@ export function populateDefaultResources(renderCallback, char = null) {
   };
 
   // Collect resources from bloodline, origin, and post
-  const sources = [targetChar.bloodline, targetChar.origin, targetChar.post];
+  const sources = [char.bloodline, char.origin, char.post];
   const seenResources = {
     charts: new Set(),
     salvage: new Set(),
@@ -540,7 +551,7 @@ export function populateDefaultResources(renderCallback, char = null) {
             // Only add if not already seen (avoid duplicates)
             if (!seenResources[type].has(itemName)) {
               seenResources[type].add(itemName);
-              targetChar.resources[type].push({
+              char.resources[type].push({
                 id: Date.now().toString() + '-' + type + '-' + k + '-' + i,
                 name: itemName
               });
@@ -557,47 +568,45 @@ export function populateDefaultResources(renderCallback, char = null) {
 /**
  * Mode mutations
  */
-export function setMode(mode, renderCallback, char = null) {
-  const targetChar = char || character;
-  targetChar.mode = mode;
+export function setMode(mode, renderCallback, char) {
+  char.mode = mode;
   renderCallback();
 }
 
 /**
  * Character generation
  */
-export function generateRandomCharacter(renderCallback, char = null) {
-  const targetChar = char || character;
+export function generateRandomCharacter(renderCallback, char) {
   const GAME_DATA = getGameData();
 
-  targetChar.name = 'Random Character';
-  targetChar.bloodline = GAME_DATA.bloodlines[Math.floor(Math.random() * GAME_DATA.bloodlines.length)];
-  targetChar.origin = GAME_DATA.origins[Math.floor(Math.random() * GAME_DATA.origins.length)];
-  targetChar.post = GAME_DATA.posts[Math.floor(Math.random() * GAME_DATA.posts.length)];
+  char.name = 'Random Character';
+  char.bloodline = GAME_DATA.bloodlines[Math.floor(Math.random() * GAME_DATA.bloodlines.length)];
+  char.origin = GAME_DATA.origins[Math.floor(Math.random() * GAME_DATA.origins.length)];
+  char.post = GAME_DATA.posts[Math.floor(Math.random() * GAME_DATA.posts.length)];
 
-  targetChar.selectedAspects = [];
-  targetChar.selectedEdges = [];
-  targetChar.skills = {};
-  targetChar.languages = { 'Low Sour': 3 };
-  targetChar.milestones = [];
-  targetChar.drives = ['', '', ''];
-  targetChar.mires = [
+  char.selectedAspects = [];
+  char.selectedEdges = [];
+  char.skills = {};
+  char.languages = { 'Low Sour': 3 };
+  char.milestones = [];
+  char.drives = ['', '', ''];
+  char.mires = [
     { text: '', checkbox1: false, checkbox2: false },
     { text: '', checkbox1: false, checkbox2: false },
     { text: '', checkbox1: false, checkbox2: false }
   ];
-  targetChar.resources = {
+  char.resources = {
     charts: [],
     salvage: [],
     specimens: [],
     whispers: []
   };
 
-  const allAspects = getAvailableAspects(targetChar);
+  const allAspects = getAvailableAspects(char);
   const shuffled = allAspects.slice().sort(() => Math.random() - 0.5);
   for (let i = 0; i < Math.min(4, shuffled.length); i++) {
     const aspect = shuffled[i];
-    targetChar.selectedAspects.push({
+    char.selectedAspects.push({
       id: aspect.source + '-' + aspect.name,
       ...aspect,
       trackSize: aspect.track,
@@ -606,31 +615,17 @@ export function generateRandomCharacter(renderCallback, char = null) {
   }
 
   const shuffledEdges = GAME_DATA.edges.slice().sort(() => Math.random() - 0.5);
-  targetChar.selectedEdges = shuffledEdges.slice(0, 3).map(e => e.name);
+  char.selectedEdges = shuffledEdges.slice(0, 3).map(e => e.name);
 
   let pointsLeft = BUDGETS.skillPoints;
   while (pointsLeft > 0) {
     const skill = GAME_DATA.skills[Math.floor(Math.random() * GAME_DATA.skills.length)];
-    const current = targetChar.skills[skill] || 0;
+    const current = char.skills[skill] || 0;
     if (current < 2) {
-      targetChar.skills[skill] = current + 1;
+      char.skills[skill] = current + 1;
       pointsLeft--;
     }
   }
 
   renderCallback();
-}
-
-/**
- * Replace entire character state (used for import)
- */
-export function replaceCharacter(newCharacter) {
-  character = newCharacter;
-}
-
-/**
- * Get current character state
- */
-export function getCharacter() {
-  return character;
 }
