@@ -152,8 +152,8 @@
     }
     
     .aspect-card {
-      border: 2px solid #6B7280;
-      border-radius: 2px;
+      border: 2px solid #E5E7EB;
+      border-radius: 8px;
       padding: 12px 16px;
       background: white;
       cursor: pointer;
@@ -161,9 +161,7 @@
     }
     
     .aspect-card.selected {
-      background: #000000;
-      border-color: #0F172A;
-      color: white;
+      border-color: #000;
     }
     
     .aspect-card.selected .aspect-meta {
@@ -466,7 +464,6 @@
   padding: 0 20px;
   background: #FFFFFF;
   color: #000000;
-  border-bottom: 2px solid #000;
   gap: 24px;
   height: 80px;
 }
@@ -541,6 +538,7 @@
   align-items: center;
   border-bottom-width: 6px;
   border-color: transparent;
+  background: transparent;
 }
 
 .ship-wizard-button-active {
@@ -557,8 +555,8 @@
   justify-content: center;
   gap: 4px;
   padding: 8px 16px 0px 16px;
-  background: #414141;
-  border-bottom: 2px solid #000;
+  border-bottom: 2px solid #e5e7eb;
+  border-top: 2px solid #000;
 }
 
 .ship-tab {
@@ -576,22 +574,23 @@
 .ship-tab-active {
   background: white;
   color: #000;
-  border: 2px solid #000;
+  border: 2px solid #e5e7eb;
   border-bottom: 2px solid transparent;
+  background: #F3F4F6;
+  
+  &:hover:not(:disabled) {
+    background: #F3F4F6;
+  }
 }
 
 .ship-tab-inactive {
   background: transparent;
-  color: #d6d6d6;
+  color: #868686;
   border: none;
-  border-bottom: 2px solid #000000;
+  border-bottom: 2px solid #e5e7eb;
   
-  &:hover {
-    color: white;
-  }
-
   &:hover:not(:disabled) {
-    background: #000;
+    background: #F3F4F6;
   }
 }
 
@@ -605,8 +604,7 @@
 }
 
 .ship-card-selected {
-  border: 3px solid #A91D3A;
-  background: #FEF2F2;
+  border: 3px solid #000;
 }
 
 .ship-card-header {
@@ -682,7 +680,6 @@
   gap: 12px;
   padding: 16px;
   margin: 56px 0 24px;
-  border-radius: 0 8px 8px 0;
   border-width: 2px 2px 2px 0;
   border-color: #000;
   border-style: solid;
@@ -694,7 +691,7 @@
 .ship-ratings-heading {
   font-family: 'Faustina', serif;
   font-weight: 600;
-  font-size: 16px;
+  font-size: 20px;
   font-weight: 700;
   color: #000000;
   letter-spacing: 0.5px;
@@ -767,7 +764,7 @@
   display: flex;
   flex-direction: column;
   padding: 16px;
-  border-right: 2px solid #E5E7EB;
+  border-right: 2px solid #000;
   min-width: 220px;
   max-width: 280px;
   overflow-y: auto;
@@ -782,6 +779,7 @@
 .ship-content-scrollable {
   flex: 1;
   overflow-y: auto;
+  background: #F3F4F6;
 }
 
 .ship-parts-grid {
