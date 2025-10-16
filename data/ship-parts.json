@@ -1113,6 +1113,17 @@
       "specials": [
         "When leaving or defending the ship, crewmembers can take a temporary piece of gear with the LR or CQ tag and a single damage type (either Hewing, Serrated or Blast). This temporary weapon comes with a two-track and can't be repaired."
       ]
+    },
+    {
+      "name": "Son of Teeth",
+      "stakes": 2,
+      "description": "A microwave cannon. Acts as an energy shield when not shooting. Each shot reduces available shield by 1, recharging 1/day.",
+      "bonuses": [
+        {"rating": "Armour", "value": 3}
+      ],
+      "specials": [
+        "Deals massive LR Salt damage"
+      ]
     }
   ],
   "undercrew": {

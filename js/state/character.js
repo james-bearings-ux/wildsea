@@ -263,7 +263,7 @@ export function expandAspectTrack(aspectId, delta, renderCallback, char = null) 
   if (!aspect) return;
 
   const newSize = aspect.trackSize + delta;
-  if (newSize < aspect.track || newSize > 5) return;
+  if (newSize < 1 || newSize > 5) return;
 
   if (delta > 0) {
     aspect.damageStates.push('default');
@@ -273,6 +273,47 @@ export function expandAspectTrack(aspectId, delta, renderCallback, char = null) 
 
   aspect.trackSize = newSize;
   renderCallback();
+}
+
+/**
+ * Customize aspect name and description
+ */
+export function customizeAspect(aspectId, name, description, char = null) {
+  const targetChar = char || character;
+  const aspect = targetChar.selectedAspects.find(a => a.id === aspectId);
+  if (!aspect) return;
+
+  aspect.name = name;
+  aspect.description = description;
+  aspect.customized = true;
+}
+
+/**
+ * Reset aspect to original game data
+ */
+export function resetAspectCustomization(aspectId, char = null) {
+  const targetChar = char || character;
+  const aspect = targetChar.selectedAspects.find(a => a.id === aspectId);
+  if (!aspect) return;
+
+  // Find original aspect data
+  const allAspects = getAvailableAspects(targetChar);
+  const originalAspect = allAspects.find(a => {
+    const id = a.source + '-' + a.name;
+    return id === aspectId;
+  });
+
+  // If we can't find the original, try matching by source
+  // (in case the name was customized)
+  const originalBySource = !originalAspect
+    ? allAspects.find(a => a.source === aspect.source)
+    : originalAspect;
+
+  if (originalBySource) {
+    aspect.name = originalBySource.name;
+    aspect.description = originalBySource.description;
+    aspect.customized = false;
+  }
 }
 
 /**

@@ -32,7 +32,9 @@ import {
   removeResource,
   populateDefaultResources,
   setMode,
-  generateRandomCharacter
+  generateRandomCharacter,
+  customizeAspect,
+  resetAspectCustomization
 } from './state/character.js';
 import {
   createSession,
@@ -79,6 +81,8 @@ import { switchToShip, setActiveShip } from './state/session.js';
 let session = null;
 let activeShipTab = 'size'; // Track active tab for ship creation mode
 let activeWizardStage = 'design'; // Track wizard stage: 'design' | 'fittings' | 'undercrew'
+let showCustomizeModal = false; // Track if customization modal is open
+let selectedModalAspectId = null; // Track which aspect is selected in modal
 
 /**
  * Main render function - delegates to mode-specific renderers
@@ -140,7 +144,7 @@ function render() {
   } else if (character.mode === 'play') {
     renderPlayMode(tempDiv, character, gameData);
   } else if (character.mode === 'advancement') {
-    renderAdvancementMode(tempDiv, character, gameData);
+    renderAdvancementMode(tempDiv, character, gameData, showCustomizeModal, selectedModalAspectId);
   }
 
   // Combine navigation and content
@@ -176,15 +180,6 @@ function setupEventDelegation() {
 
   // Click event delegation
   app.addEventListener('click', function (e) {
-    // Check if the clicked element or any parent has data-no-propagate
-    let checkTarget = e.target;
-    while (checkTarget && checkTarget !== app) {
-      if (checkTarget.getAttribute('data-no-propagate') === 'true') {
-        return; // Stop event handling entirely
-      }
-      checkTarget = checkTarget.parentElement;
-    }
-
     // Find the closest element with data-action (bubble up the DOM)
     let target = e.target;
     while (target && target !== app) {
@@ -520,6 +515,66 @@ function setupEventDelegation() {
               }
             }
             break;
+          case 'openCustomizeModal':
+            showCustomizeModal = true;
+            selectedModalAspectId = null; // Default to first aspect
+            render();
+            break;
+          case 'closeCustomizeModal':
+            // Only close if clicked directly on overlay, not on modal content
+            if (e.target.classList && e.target.classList.contains('modal-overlay')) {
+              showCustomizeModal = false;
+              selectedModalAspectId = null;
+              render();
+            }
+            break;
+          case 'selectAspectInModal':
+            // This is handled by change event
+            break;
+          case 'saveAspectCustomization':
+            if (character) {
+              const nameInput = document.getElementById('modal-aspect-name');
+              const descInput = document.getElementById('modal-aspect-description');
+
+              if (!nameInput || !descInput) break;
+
+              const name = nameInput.value.trim();
+              const description = descInput.value.trim();
+
+              // Validation
+              if (!name || name.length === 0) {
+                alert('Aspect name is required');
+                break;
+              }
+              if (name.length > 250) {
+                alert('Aspect name must be 250 characters or less');
+                break;
+              }
+              if (!description || description.length === 0) {
+                alert('Aspect description is required');
+                break;
+              }
+              if (description.length > 800) {
+                alert('Aspect description must be 800 characters or less');
+                break;
+              }
+
+              customizeAspect(parsedParams.id, name, description, character);
+              saveCharacter(character);
+              showCustomizeModal = false;
+              selectedModalAspectId = null;
+              render();
+            }
+            break;
+          case 'resetAspectCustomization':
+            if (character && parsedParams.id) {
+              if (confirm('Reset this aspect to its original name and description?')) {
+                resetAspectCustomization(parsedParams.id, character);
+                saveCharacter(character);
+                render();
+              }
+            }
+            break;
         }
         return; // Stop after handling the action
       }
@@ -640,6 +695,43 @@ function setupEventDelegation() {
         updateResourceName(parsedParams.type, parsedParams.id, target.value, character);
         saveCharacter(character);
         break;
+      case 'selectAspectInModal':
+        selectedModalAspectId = target.value;
+        render();
+        break;
+    }
+  });
+
+  // Input event delegation for live character count updates
+  app.addEventListener('input', function (e) {
+    const target = e.target;
+
+    // Update character count for name input
+    if (target.id === 'modal-aspect-name') {
+      const charCount = document.getElementById('name-char-count');
+      if (charCount) {
+        charCount.textContent = target.value.length;
+        const countContainer = charCount.parentElement;
+        if (target.value.length > 250) {
+          countContainer.classList.add('over-limit');
+        } else {
+          countContainer.classList.remove('over-limit');
+        }
+      }
+    }
+
+    // Update character count for description textarea
+    if (target.id === 'modal-aspect-description') {
+      const charCount = document.getElementById('description-char-count');
+      if (charCount) {
+        charCount.textContent = target.value.length;
+        const countContainer = charCount.parentElement;
+        if (target.value.length > 800) {
+          countContainer.classList.add('over-limit');
+        } else {
+          countContainer.classList.remove('over-limit');
+        }
+      }
     }
   });
 }

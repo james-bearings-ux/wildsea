@@ -7,8 +7,9 @@ import { renderSmallTrack, renderInteractiveTrack } from '../components/aspects.
 import { renderEdgesSkillsLanguagesRow } from '../components/edges.js';
 import { renderSkills, renderLanguages } from '../components/skills.js';
 import { renderMilestones } from '../components/milestones.js';
+import { renderAspectCustomizationModal } from '../components/aspect-customization-modal.js';
 
-export function renderAdvancementMode(app, character, gameData) {
+export function renderAdvancementMode(app, character, gameData, showCustomizeModal = false, selectedModalAspectId = null) {
   const allAspects = getAvailableAspects(character);
   const bloodlineAspects = allAspects.filter(a => a.category === 'Bloodline');
   const originAspects = allAspects.filter(a => a.category === 'Origin');
@@ -43,7 +44,10 @@ export function renderAdvancementMode(app, character, gameData) {
         </div>
 
         <div style="margin-bottom: 40px;">
-        <h2 class="section-header">Aspects</h2>
+        <div class="flex-between" style="margin-bottom: 12px;">
+            <h2 class="section-header" style="margin: 0;">Aspects</h2>
+            <button data-action="openCustomizeModal" class="bg-black">Customize an Aspect</button>
+        </div>
         <div class="grid-3col">
             <div class="flex-col-gap">
             <h3 class="subsection-header">${character.bloodline}</h3>
@@ -54,16 +58,20 @@ export function renderAdvancementMode(app, character, gameData) {
                 const isSelected = !!selectedAspect;
                 const isDisabled = !isSelected && aspectsSelected >= BUDGETS.maxAspectsAdvancement;
 
+                // Use customized name/description if aspect is selected
+                const displayName = isSelected && selectedAspect ? selectedAspect.name : aspect.name;
+                const displayDescription = isSelected && selectedAspect ? selectedAspect.description : aspect.description;
+
                 return `
                 <div class="aspect-card ${isSelected ? 'selected' : ''} ${isDisabled ? 'disabled' : ''}"
                         data-action="toggleAspect" data-params='{"id":"${escapedId}"}'
                         style="position: relative;">
                     ${isSelected ? renderInteractiveTrack(selectedAspect, escapedId) : renderSmallTrack(aspect.track)}
                     <div class="split">
-                    <div class="aspect-name" style="margin-bottom: 4px;">${aspect.name}</div>
+                    <div class="aspect-name" style="margin-bottom: 4px;">${displayName}</div>
                     <div class="aspect-meta">${aspect.source} ${aspect.type}</div>
                     </div>
-                    <div class="aspect-description">${aspect.description}</div>
+                    <div class="aspect-description">${displayDescription}</div>
                 </div>
                 `;
             }).join('')}
@@ -78,16 +86,20 @@ export function renderAdvancementMode(app, character, gameData) {
                 const isSelected = !!selectedAspect;
                 const isDisabled = !isSelected && aspectsSelected >= BUDGETS.maxAspectsAdvancement;
 
+                // Use customized name/description if aspect is selected
+                const displayName = isSelected && selectedAspect ? selectedAspect.name : aspect.name;
+                const displayDescription = isSelected && selectedAspect ? selectedAspect.description : aspect.description;
+
                 return `
                 <div class="aspect-card ${isSelected ? 'selected' : ''} ${isDisabled ? 'disabled' : ''}"
                         data-action="toggleAspect" data-params='{"id":"${escapedId}"}'
                         style="position: relative;">
                     ${isSelected ? renderInteractiveTrack(selectedAspect, escapedId) : renderSmallTrack(aspect.track)}
                     <div class="split">
-                    <div class="aspect-name" style="margin-bottom: 4px;">${aspect.name}</div>
+                    <div class="aspect-name" style="margin-bottom: 4px;">${displayName}</div>
                     <div class="aspect-meta">${aspect.source} ${aspect.type}</div>
                     </div>
-                    <div class="aspect-description">${aspect.description}</div>
+                    <div class="aspect-description">${displayDescription}</div>
                 </div>
                 `;
             }).join('')}
@@ -102,16 +114,20 @@ export function renderAdvancementMode(app, character, gameData) {
                 const isSelected = !!selectedAspect;
                 const isDisabled = !isSelected && aspectsSelected >= BUDGETS.maxAspectsAdvancement;
 
+                // Use customized name/description if aspect is selected
+                const displayName = isSelected && selectedAspect ? selectedAspect.name : aspect.name;
+                const displayDescription = isSelected && selectedAspect ? selectedAspect.description : aspect.description;
+
                 return `
                 <div class="aspect-card ${isSelected ? 'selected' : ''} ${isDisabled ? 'disabled' : ''}"
                         data-action="toggleAspect" data-params='{"id":"${escapedId}"}'
                         style="position: relative;">
                     ${isSelected ? renderInteractiveTrack(selectedAspect, escapedId) : renderSmallTrack(aspect.track)}
                     <div class="split">
-                    <div class="aspect-name" style="margin-bottom: 4px;">${aspect.name}</div>
+                    <div class="aspect-name" style="margin-bottom: 4px;">${displayName}</div>
                     <div class="aspect-meta">${aspect.source} ${aspect.type}</div>
                     </div>
-                    <div class="aspect-description">${aspect.description}</div>
+                    <div class="aspect-description">${displayDescription}</div>
                 </div>
                 `;
             }).join('')}
@@ -132,5 +148,7 @@ export function renderAdvancementMode(app, character, gameData) {
         <button data-action="setMode" data-params='{"mode":"play"}' class="primary">Save Changes</button>
         <button data-action="setMode" data-params='{"mode":"play"}'>Cancel</button>
     </div>
+
+    ${showCustomizeModal ? renderAspectCustomizationModal(character, selectedModalAspectId) : ''}
     `;
 }

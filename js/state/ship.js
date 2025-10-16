@@ -348,6 +348,36 @@ export function calculateShipRatings(ship) {
     ship.engine.forEach(applyBonuses);
   }
 
+  // Apply bonuses from fittings (arrays)
+  if (ship.motifs && Array.isArray(ship.motifs)) {
+    ship.motifs.forEach(applyBonuses);
+  }
+  if (ship.generalAdditions && Array.isArray(ship.generalAdditions)) {
+    ship.generalAdditions.forEach(applyBonuses);
+  }
+  if (ship.bounteousAdditions && Array.isArray(ship.bounteousAdditions)) {
+    ship.bounteousAdditions.forEach(applyBonuses);
+  }
+  if (ship.rooms && Array.isArray(ship.rooms)) {
+    ship.rooms.forEach(applyBonuses);
+  }
+  if (ship.armaments && Array.isArray(ship.armaments)) {
+    ship.armaments.forEach(applyBonuses);
+  }
+
+  // Apply bonuses from undercrew (nested arrays)
+  if (ship.undercrew) {
+    if (ship.undercrew.officers && Array.isArray(ship.undercrew.officers)) {
+      ship.undercrew.officers.forEach(applyBonuses);
+    }
+    if (ship.undercrew.gangs && Array.isArray(ship.undercrew.gangs)) {
+      ship.undercrew.gangs.forEach(applyBonuses);
+    }
+    if (ship.undercrew.packs && Array.isArray(ship.undercrew.packs)) {
+      ship.undercrew.packs.forEach(applyBonuses);
+    }
+  }
+
   return ratings;
 }
 

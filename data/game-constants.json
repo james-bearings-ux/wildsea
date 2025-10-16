@@ -12,7 +12,7 @@
     { "name": "Veils", "tagline": "An edge of stealth, deception, & subterfuge" }
   ],
   "skills": [
-    "Break", "Concoct", "Cook", "Delve", "Flourish", "Hack",
+    "Brace", "Break", "Concoct", "Cook", "Delve", "Flourish", "Hack",
     "Harvest", "Hunt", "Outwit", "Rattle", "Scavenge", "Sense",
     "Study", "Sway", "Tend", "Vault", "Wavewalk"
   ],
