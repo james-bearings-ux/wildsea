@@ -14,7 +14,7 @@
 			color: #111827;
 		}
     
-		button, select, inpunavt {
+		button, select, input {
 			font-family: inherit;
 			font-size: inherit;
 		}
@@ -50,13 +50,13 @@
 		}
     
 		button.primary {
-			background: #A91D3A;
+			background: #004d13;
 			color: white;
-			border-color: #A91D3A;
+			border-color: #004d13;
 		}
     
 		button.primary:hover:not(:disabled) {
-			background: #8B1730;
+			background: #006e1c;
 		}
     
 		select {
@@ -398,19 +398,22 @@
   display: flex;
   background: #000000;
   color: white;
-  padding: 4px 20px;
-  border-bottom: 2px solid #374151;
+  padding: 0 20px;
   font-family: 'Faustina', serif;
 }
 
 .nav-button {
-  padding: 4px 16px;
-  border-radius: 4px;
+  padding: 8px 16px;
+  border-radius: 0;
   border: none;
   cursor: pointer;
-  font-size: 22px;
+  font-size: 20px;
 
   &:hover {
+    color: white;
+    background: #424242;
+  }
+  &:hover:not(:disabled) {
     color: white;
     background: #424242;
   }
@@ -430,20 +433,16 @@
 
 .nav-button-minor {
   font-size: 14px;
-}
-
-.nav-character-wrapper {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  padding: 4px 12px;
+  padding: 2px 8px;
   border-radius: 4px;
-  
-  &:hover {
-    color: white;
-    background: #424242;
+  color: white;
+  background: #353535;
+
+  &:hover:not(:disabled) {
+    background: #004d13;
   }
 }
+
 
 .nav-character-label {
   background: transparent; 
@@ -668,7 +667,7 @@
 .ship-main-container {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 80px);
+  height: calc(100vh - 110px);
 }
 
 .ship-content-row {
@@ -682,9 +681,13 @@
   flex-direction: column;
   gap: 12px;
   padding: 16px;
-  background: #F3F4F6;
-  border-right: 2px solid #D1D5DB;
+  margin: 56px 0 24px;
+  border-radius: 0 8px 8px 0;
+  border-width: 2px 2px 2px 0;
+  border-color: #000;
+  border-style: solid;
   min-width: 180px;
+  background: white;
 }
 
 .ship-ratings-heading {
@@ -766,7 +769,6 @@
   display: flex;
   flex-direction: column;
   padding: 16px;
-  background: #F9FAFB;
   border-right: 2px solid #E5E7EB;
   min-width: 220px;
   max-width: 280px;

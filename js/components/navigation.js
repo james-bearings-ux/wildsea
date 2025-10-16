@@ -42,16 +42,10 @@ export function renderNavigation(session) {
 
       if (character) {
         const activeClass = isActive ? 'nav-button-active' : 'nav-button-inactive';
-        html += '<div class="nav-character-wrapper ' + activeClass + '">';
         html += '<button data-action="switchCharacter" data-params=\'{"characterId":"' + charId + '"}\' ';
-        html += 'class="nav-character-label">';
+        html += 'class="nav-button ' + activeClass + '">';
         html += character.name || 'Unnamed Character';
         html += '</button>';
-        html += '<button data-action="removeCharacter" data-params=\'{"characterId":"' + charId + '"}\' ';
-        html += 'class="remove" title="Remove from crew">';
-        html += '✕';
-        html += '</button>';
-        html += '</div>';
       }
     }
   }

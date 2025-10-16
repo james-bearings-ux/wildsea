@@ -46,7 +46,7 @@ export function renderAdvancementMode(app, character, gameData, showCustomizeMod
         <div style="margin-bottom: 40px;">
         <div class="flex-between" style="margin-bottom: 12px;">
             <h2 class="section-header" style="margin: 0;">Aspects</h2>
-            <button data-action="openCustomizeModal" class="bg-black">Customize an Aspect</button>
+            <button data-action="openCustomizeModal" style="padding: 8px 12px;">Customize an Aspect</button>
         </div>
         <div class="grid-3col">
             <div class="flex-col-gap">
