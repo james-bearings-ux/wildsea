@@ -40,7 +40,7 @@ export function renderPlayMode(app, character, gameData) {
 
         <div>
             <h2 class="section-header">Aspects</h2>
-            ${character.selectedAspects.map(aspect => {
+            ${character.selectedAspects.slice().sort((a, b) => a.name.localeCompare(b.name)).map(aspect => {
             let trackHTML = '<div style="display: flex; gap: 8px; padding-top: 4px; flex-shrink: 0; width: 165px;">';
             for (let i = 0; i < 5; i++) {
                 if (i < aspect.trackSize) {

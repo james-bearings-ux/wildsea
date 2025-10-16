@@ -11,9 +11,9 @@ import { renderAspectCustomizationModal } from '../components/aspect-customizati
 
 export function renderAdvancementMode(app, character, gameData, showCustomizeModal = false, selectedModalAspectId = null) {
   const allAspects = getAvailableAspects(character);
-  const bloodlineAspects = allAspects.filter(a => a.category === 'Bloodline');
-  const originAspects = allAspects.filter(a => a.category === 'Origin');
-  const postAspects = allAspects.filter(a => a.category === 'Post');
+  const bloodlineAspects = allAspects.filter(a => a.category === 'Bloodline').sort((a, b) => a.name.localeCompare(b.name));
+  const originAspects = allAspects.filter(a => a.category === 'Origin').sort((a, b) => a.name.localeCompare(b.name));
+  const postAspects = allAspects.filter(a => a.category === 'Post').sort((a, b) => a.name.localeCompare(b.name));
 
   const aspectsSelected = character.selectedAspects.length;
 
