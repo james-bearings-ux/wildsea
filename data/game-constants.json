@@ -12,12 +12,22 @@
     { "name": "Veils", "tagline": "An edge of stealth, deception, & subterfuge" }
   ],
   "skills": [
-    "Break", "Concoct", "Cook", "Delve", "Flourish", "Hack",
+    "Brace", "Break", "Concoct", "Cook", "Delve", "Flourish", "Hack",
     "Harvest", "Hunt", "Outwit", "Rattle", "Scavenge", "Sense",
     "Study", "Sway", "Tend", "Vault", "Wavewalk"
   ],
   "languages": [
     "Low Sour", "Raka Spit", "Chthonic", "Lyre-Bite",
     "Saprekk", "Old Hand", "Gaudimm", "Signaling", "Knock"
-  ]
+  ],
+  "shipDefaults": {
+    "baseRatings": {
+      "Armour": 1,
+      "Seals": 1,
+      "Speed": 1,
+      "Saws": 1,
+      "Stealth": 1,
+      "Tilt": 1
+    }
+  }
 }

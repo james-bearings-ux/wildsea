@@ -1,0 +1,1382 @@
+{
+  "ratings": [
+    {
+      "name": "Armour",
+      "description": "A measure of your ship's resistance to damage. You'll likely roll your armour rating when a larger creature attacks your ship, when you're fired on by pirates, or when you brute-force the ship through a hazardous area of the sea."
+    },
+    {
+      "name": "Seals",
+      "description": "A measure of how well your ship keeps the wildsea out while travelling. You'll likely roll your seals rating when there's a sporestorm, insect swarm, or other potentially invasive presence."
+    },
+    {
+      "name": "Speed",
+      "description": "The speed of your ship when the engines are running smoothly. You'll likely roll your speed rating when attempting to outrun a pursuer or weather pattern, or if you somehow find yourself in a race."
+    },
+    {
+      "name": "Saws",
+      "description": "How good your ship is at cutting through the denser parts of the sea. You'll likely roll your saws rating when cutting through thicker areas of the sea or trying to ram other ships."
+    },
+    {
+      "name": "Stealth",
+      "description": "Your ship's ability to run low, sleek, and undetected. You'll likely roll your stealth rating when trying to minimize the noise of your engine or the trail you leave, or when trying to avoid the notice of distant threats."
+    },
+    {
+      "name": "Tilt",
+      "description": "A measure of manoeuvrability, and how well your ship can tackle the sharper dips and rises of the waves. You'll likely roll your tilt rating when tackling one of the larger treetop waves, when diving down into the tangle to evade a pursuer, or when trying to keep steady during a rootquake or storm."
+    }
+  ],
+  "sizes": [
+    {
+      "name": "Nano",
+      "stakes": 1,
+      "description": "Suited for a single sailor and maybe a passenger or two. Perfect for the lone wildsailor, possessed of excess bravery (or a deathwish).",
+      "bonuses": [
+        {"rating": "Stealth", "value": 1}
+      ]
+    },
+    {
+      "name": "Small",
+      "stakes": 1,
+      "description": "Suited for 2-4 people, cramped but serviceable for double that. Ideal for a first ship.",
+      "bonuses": [
+        {"rating": "Speed", "value": 1}
+      ]
+    },
+    {
+      "name": "Standard",
+      "stakes": 1,
+      "description": "Comfortable for 5-10 people, but can hold double that number if necessary. The majority of ships out on the Wildsea are of standard size, hence the name.",
+      "bonuses": [
+        {"rating": "Armour", "value": 1}
+      ]
+    },
+    {
+      "name": "Large",
+      "stakes": 1,
+      "description": "Can house 10-20 crew with room to spare, many more if necessary, depending on the internal designs and additional fittings. Large ships are most often used to patrol trade-routes around more lawful areas, or to transport settlers and research teams for large factions.",
+      "bonuses": [
+        {"rating": "Armour", "value": 1},
+        {"rating": "Stealth", "value": -1}
+      ]
+    }
+  ],
+  "frames": [
+    {
+      "name": "Sturdy",
+      "stakes": 1,
+      "description": "Built to last in a place of temporary things, a sturdy frame helps weather the strongest assaults.",
+      "bonuses": [
+        {"rating": "Armour", "value": 1}
+      ]
+    },
+    {
+      "name": "Moulded",
+      "stakes": 1,
+      "description": "A single unbroken structure running through the ship - quite a feat of safety-conscious engineering.",
+      "bonuses": [
+        {"rating": "Seals", "value": 1}
+      ]
+    },
+    {
+      "name": "Light",
+      "stakes": 1,
+      "description": "Made with the lightest possible materials in the smallest possible amounts.",
+      "bonuses": [
+        {"rating": "Speed", "value": 1}
+      ]
+    },
+    {
+      "name": "Scything",
+      "stakes": 1,
+      "description": "Often wedge or blade-shaped, scything frames are constructed specifically to cut as efficiently as possible through the waves.",
+      "bonuses": [
+        {"rating": "Saws", "value": 1}
+      ]
+    },
+    {
+      "name": "Sleek",
+      "stakes": 1,
+      "description": "Quiet is hard to come by on the wildsea, but a sleek frame ensures that no matter how noisy your bite and engine might be, you'll always be low to the waves.",
+      "bonuses": [
+        {"rating": "Stealth", "value": 1}
+      ]
+    },
+    {
+      "name": "Flexible",
+      "stakes": 1,
+      "description": "Built for adjustability and responsiveness, flexible frames are often multi-segmented or jointed in some way.",
+      "bonuses": [
+        {"rating": "Tilt", "value": 1}
+      ]
+    }
+  ],
+  "hulls": [
+    {
+      "name": "Reef-Iron",
+      "stakes": 1,
+      "description": "Metal plating from decommissioned ships, reshaped for your frame. Durable and rust-resistant.",
+      "bonuses": [
+        {"rating": "Armour", "value": 1}
+      ],
+      "specials": []
+    },
+    {
+      "name": "Leviathan Bone",
+      "stakes": 1,
+      "description": "A hull crafted from one or more pieces of leviathan skeleton. Solid, if a little morbid.",
+      "bonuses": [
+        {"rating": "Seals", "value": 1}
+      ],
+      "specials": []
+    },
+    {
+      "name": "Broadwood",
+      "stakes": 1,
+      "description": "Wooden planks cut from the more reliable trees of the wildsea. Strong and flexible.",
+      "bonuses": [
+        {"rating": "Tilt", "value": 1}
+      ],
+      "specials": []
+    },
+    {
+      "name": "Rough Bark",
+      "stakes": 1,
+      "description": "Harvested from the ironroots. Irregular and tough to maintain, but easy for others to overlook at distance across the waves.",
+      "bonuses": [
+        {"rating": "Stealth", "value": 1}
+      ],
+      "specials": []
+    },
+    {
+      "name": "Chitinous",
+      "stakes": 1,
+      "description": "Made from the collected shells of the wildsea's larger insects. Smooth, offering little in the way of friction or snags.",
+      "bonuses": [
+        {"rating": "Speed", "value": 1}
+      ],
+      "specials": []
+    },
+    {
+      "name": "Razorscale",
+      "stakes": 1,
+      "description": "An exterior of interlocking scales sloughed or harvested from a wildsea beast, sharpened for effectiveness.",
+      "bonuses": [
+        {"rating": "Saws", "value": 1}
+      ],
+      "specials": []
+    },
+    {
+      "name": "Beastback",
+      "stakes": 2,
+      "description": "A half-living hull of flesh and bone, flexible and unsettlingly warm.",
+      "bonuses": [
+        {"rating": "Seals", "value": 1},
+        {"rating": "Tilt", "value": 1}
+      ],
+      "specials": []
+    },
+    {
+      "name": "Ceramic",
+      "stakes": 2,
+      "description": "A shell of heavy baked clay. Ostentatious and brittle unless *very* carefully maintained.",
+      "bonuses": [
+        {"rating": "Armour", "value": 1},
+        {"rating": "Seals", "value": 1}
+      ],
+      "specials": []
+    },
+    {
+      "name": "Chrysalid",
+      "stakes": 2,
+      "description": "A hull adapted from the cast-off chrysalis of a massive insect, excellent protection against the sea's incursion.",
+      "bonuses": [
+        {"rating": "Seals", "value": 1},
+        {"rating": "Stealth", "value": 1}
+      ],
+      "specials": []
+    },
+    {
+      "name": "Ghost-Oak",
+      "stakes": 2,
+      "description": "Pale as death and remarkably flexible, ghost-oak is rarely found growing outside the lightless depths of the drown.",
+      "bonuses": [
+        {"rating": "Armour", "value": 1},
+        {"rating": "Tilt", "value": 1}
+      ],
+      "specials": []
+    },
+    {
+      "name": "Arachnesque",
+      "stakes": 2,
+      "description": "Less of a hull and more of a giant insect grown to fit the specifications of your frame, usually something spider-like.",
+      "bonuses": [
+        {"rating": "Tilt", "value": 1},
+        {"rating": "Stealth", "value": 1}
+      ],
+      "specials": []
+    },
+    {
+      "name": "Exile's Copper",
+      "stakes": 2,
+      "description": "A rare metal that weighs far, far less than it has any right to, prized for racing-ship hulls.",
+      "bonuses": [
+        {"rating": "Armour", "value": 1},
+        {"rating": "Speed", "value": 1}
+      ],
+      "specials": []
+    },
+    {
+      "name": "Junk-Strung",
+      "stakes": 0,
+      "description": "The mark of a ship well-scarred and oft-repaired, a junk-strung hull is barely a hull at all... More a collection of scavenged metal, driftwood, and animal bones; unstable, rusting, and leaky.",
+      "bonuses": [
+        {"rating": "Armour", "value": 1},
+        {"rating": "Seals", "value": -1}
+      ],
+      "specials": [
+        "Mark your seals or armour rating to pull a piece of useful salvage from the hull."
+      ]
+    },
+    {
+      "name": "Floraflage",
+      "stakes": 2,
+      "description": "A hull of living vegetation grown purposefully around your frame. Blends easily into the seascape.",
+      "bonuses": [
+        {"rating": "Stealth", "value": 2},
+        {"rating": "Armour", "value": -1}
+      ],
+      "specials": [
+        "A floraflage ship at rest is almost impossible to detect - increase impact when using stealth while motionless."
+      ]
+    },
+    {
+      "name": "Monument",
+      "stakes": 3,
+      "description": "An absurd affectation in a world of flexible branches and endless depth, monument hulls are made of appallingly heavy mountain-stone.",
+      "bonuses": [
+        {"rating": "Armour", "value": 2},
+        {"rating": "Seals", "value": 2}
+      ],
+      "specials": [
+        "A ship with a monument hull can't Forge Ahead during a journey."
+      ]
+    }
+  ],
+  "bite": [
+    {
+      "name": "Sawprow",
+      "stakes": 1,
+      "description": "A wildsea favourite, the sawprow is a chainsaw edge that runs down the curve of the prow. Capable of cutting through most obstructions with ease.",
+      "bonuses": [
+        {"rating": "Saws", "value": 1}
+      ],
+      "specials": [
+        "Deals massive CQ Serrated damage"
+      ]
+    },
+    {
+      "name": "Impellers",
+      "stakes": 1,
+      "description": "Large jet-like outboard engines that push the ship through the waves with brute force.",
+      "bonuses": [
+        {"rating": "Speed", "value": 1}
+      ],
+      "specials": [
+        "Deals massive CQ Blast damage"
+      ]
+    },
+    {
+      "name": "Crawler",
+      "stakes": 1,
+      "description": "Large finger-like mechanisms spread out around the front of the ship, allowing it to move through the waves with a crawling motion.",
+      "bonuses": [
+        {"rating": "Tilt", "value": 1}
+      ],
+      "specials": [
+        "Deals massive CQ Blunt damage"
+      ]
+    },
+    {
+      "name": "Underscales",
+      "stakes": 1,
+      "description": "Thousands of flexing scales that worm the ship forward with a sly, sinuous motion.",
+      "bonuses": [
+        {"rating": "Stealth", "value": 1}
+      ],
+      "specials": [
+        "Deals massive CQ Keen damage"
+      ]
+    },
+    {
+      "name": "Jag-Tracks",
+      "stakes": 1,
+      "description": "Motorised grapple tracks along the keel and hull-sides; a slow, solid, and reliable choice.",
+      "bonuses": [
+        {"rating": "Armour", "value": 1}
+      ],
+      "specials": [
+        "Deals massive CQ Hewing damage"
+      ]
+    },
+    {
+      "name": "Sluicejets",
+      "stakes": 1,
+      "description": "Pressurised sluice systems filled with phytophobic chemicals, for coating the hull and pushing the ship.",
+      "bonuses": [
+        {"rating": "Seals", "value": 1}
+      ],
+      "specials": [
+        "Deals massive CQ Acid damage"
+      ]
+    },
+    {
+      "name": "Longjaw",
+      "stakes": 2,
+      "description": "An underslung chainsaw arrangement that extends from the front of the ship, chewing and pulling forward.",
+      "bonuses": [
+        {"rating": "Saws", "value": 1},
+        {"rating": "Speed", "value": 1}
+      ],
+      "specials": [
+        "Deals massive CQ Serrated damage"
+      ]
+    },
+    {
+      "name": "Propeller-Cage",
+      "stakes": 2,
+      "description": "A cage housing that holds large airboat-style propellers used to push the ship forward.",
+      "bonuses": [
+        {"rating": "Speed", "value": 1},
+        {"rating": "Armour", "value": 1}
+      ],
+      "specials": [
+        "Deals massive CQ Blunt damage"
+      ]
+    },
+    {
+      "name": "Navapede Limbs",
+      "stakes": 2,
+      "description": "Centipedal limbs lining the hull, letting a ship scuttle through the thrash. If such a vessel could truly now be called a ship, of course.",
+      "bonuses": [
+        {"rating": "Tilt", "value": 1},
+        {"rating": "Stealth", "value": 1}
+      ],
+      "specials": [
+        "Deals massive CQ Spike damage"
+      ]
+    },
+    {
+      "name": "Voltaic Runners",
+      "stakes": 2,
+      "description": "Crackling with barely contained lightning, these outboard contraptions let a ship float just above the churning branches of the sea.",
+      "bonuses": [
+        {"rating": "Seals", "value": 2}
+      ],
+      "specials": [
+        "Deals massive CQ Volt damage"
+      ]
+    },
+    {
+      "name": "Mulcher",
+      "stakes": 2,
+      "description": "Grinding teeth in a lamprey-style mouth. Terribly noisy but dreadfully effective.",
+      "bonuses": [
+        {"rating": "Saws", "value": 2},
+        {"rating": "Armour", "value": 1},
+        {"rating": "Stealth", "value": -1}
+      ],
+      "specials": [
+        "Deals massive CQ Serrated damage"
+      ]
+    },
+    {
+      "name": "Tentaculari",
+      "stakes": 2,
+      "description": "A living cluster of tendrils or tentacles attached to the ship's hull, carrying it through and across the waves in an unsettlingly alien motion.",
+      "bonuses": [
+        {"rating": "Tilt", "value": 2}
+      ],
+      "specials": [
+        "Deals massive CQ Salt damage"
+      ]
+    },
+    {
+      "name": "Square Sail",
+      "stakes": 1,
+      "description": "Taut canvas that relies on a strong breeze, this design harks back to an age of calm, clear waters.",
+      "bonuses": [
+        {"rating": "Speed", "value": 1}
+      ],
+      "specials": [
+        "Only effective in favourable winds"
+      ]
+    },
+    {
+      "name": "Sleek Sail",
+      "stakes": 1,
+      "description": "Triangular and manually angled, relying on an attentive crew to catch the right breezes.",
+      "bonuses": [
+        {"rating": "Stealth", "value": 1}
+      ],
+      "specials": [
+        "Only effective in favourable winds"
+      ]
+    },
+    {
+      "name": "Sweat-Sails",
+      "stakes": 1,
+      "description": "Held low to the waves, unfurled canvases shaped to catch the rising under-canopy heat.",
+      "bonuses": [
+        {"rating": "Speed", "value": 1}
+      ],
+      "specials": [
+        "Only effective in warm weather"
+      ]
+    },
+    {
+      "name": "Tethered Kites",
+      "stakes": 2,
+      "description": "An array of kites that catch the stronger winds of the lower air.",
+      "bonuses": [
+        {"rating": "Speed", "value": 2}
+      ],
+      "specials": [
+        "Only effective in favourable winds"
+      ]
+    },
+    {
+      "name": "Gecko Sails",
+      "stakes": 2,
+      "description": "A reinforced multi-sail arrangement designed to tame even the wildest gusts.",
+      "bonuses": [
+        {"rating": "Speed", "value": 1},
+        {"rating": "Armour", "value": 1}
+      ],
+      "specials": [
+        "Only effective in favourable winds"
+      ]
+    },
+    {
+      "name": "Sharpened Prow",
+      "stakes": 0,
+      "description": "Simple and straightforward, a honed blade running the length of the ship's prow to cut through vegetation.",
+      "bonuses": [],
+      "specials": [
+        "Provides a basic cutting edge, but no motive force. Just about works when paired with oars, but you really should choose something better.",
+        "Deals massive CQ Keen damage... or it would, if you could get up enough speed."
+      ]
+    },
+    {
+      "name": "Beast-Reins",
+      "stakes": 1,
+      "description": "An arrangement similar to a leash or yoke, allowing well-trained beasts to pull the ship like a chariot.",
+      "bonuses": [
+        {"rating": "Tilt", "value": 1}
+      ],
+      "specials": [
+        "When you choose beast-reins, decide what kind of beasts they hold (giant centipedes are a solid choice).",
+        "A ship with beast-reins doesn't require an engine choice from the next section, but the beasts themselves do require care, feeding, and sleep."
+      ]
+    },
+    {
+      "name": "Grappling Array",
+      "stakes": 1,
+      "description": "Prow-mounted grappling hooks that are fired out to catch on branches and then laboriously wound back in for slow, inexorable progress.",
+      "bonuses": [
+        {"rating": "Tilt", "value": 2},
+        {"rating": "Speed", "value": -1}
+      ],
+      "specials": [
+        "A ship running solely on a grappling array can't Forge Ahead during a journey.",
+        "Deals massive LR Spike damage."
+      ]
+    }
+  ],
+  "engines": [
+    {
+      "name": "Chemical Compressor",
+      "stakes": 1,
+      "description": "The most common engine on the rustling waves, reliably unreliable but extremely easy to fuel.",
+      "bonuses": [
+        {"rating": "Speed", "value": 1}
+      ],
+      "specials": [
+        "Fuelled with crushed fruit and insect husks"
+      ]
+    },
+    {
+      "name": "Springwork",
+      "stakes": 1,
+      "description": "Wound exhaustively by hand, springwork engines store and release kinetic energy with surprising efficiency.",
+      "bonuses": [
+        {"rating": "Saws", "value": 1}
+      ],
+      "specials": [
+        "Fuelled with sweat, labour, and time spent winding"
+      ]
+    },
+    {
+      "name": "Parasite Pitcher",
+      "stakes": 1,
+      "description": "A large pitcher plant coaxed into taking root in an engine housing, vines intermingling with the ship's systems.",
+      "bonuses": [
+        {"rating": "Stealth", "value": 1}
+      ],
+      "specials": [
+        "Fuelled with organic material (preferably living)"
+      ]
+    },
+    {
+      "name": "Steam Piping",
+      "stakes": 1,
+      "description": "Hellish contraptions of tangled piping, rare chemicals, and scalding steam.",
+      "bonuses": [
+        {"rating": "Seals", "value": 1}
+      ],
+      "specials": [
+        "Fuelled with water (the cleaner the better)"
+      ]
+    },
+    {
+      "name": "Ratwheel Exchange",
+      "stakes": 1,
+      "description": "Exactly what you might imagine, a pure transfer of kinetic energy from restless rats to wheel to bite. Ethical engineers tend to give their rats the run of the ship.",
+      "bonuses": [
+        {"rating": "Tilt", "value": 1}
+      ],
+      "specials": [
+        "The rats need feeding every now and then, but they're not fussy"
+      ]
+    },
+    {
+      "name": "Pulsing Cocoon",
+      "stakes": 1,
+      "description": "An unknown insect shifts inside, glutting on dreams and spinning them into an ebb of arconautic force. Crews report intensely vivid dreams.",
+      "bonuses": [
+        {"rating": "Armour", "value": 1}
+      ],
+      "specials": [
+        "Fueled with the dreams of the crew"
+      ]
+    },
+    {
+      "name": "Tamed Hive",
+      "stakes": 2,
+      "description": "A buzzing organic engine of honeycombs and crawling workers, their movements a complex dance.",
+      "bonuses": [
+        {"rating": "Speed", "value": 1},
+        {"rating": "Seals", "value": 1}
+      ],
+      "specials": [
+        "Fueled with stolen flowers and unprocessed pollen.",
+        "Crew can use a task while at sea to gain a resource, 'Fresh Engine-Honey', once per journey."
+      ]
+    },
+    {
+      "name": "Reclaimed Burner",
+      "stakes": 2,
+      "description": "An ancient burner that runs on processed chemical fuel, salvaged from the innards of a pre-verdant ship. Requires excessive ventilation. Don't use this.",
+      "bonuses": [
+        {"rating": "Speed", "value": 3},
+        {"rating": "Seals", "value": -1}
+      ],
+      "specials": [
+        "Runs on processed chemical fuel.",
+        "Liable to explode if seriously damaged."
+      ]
+    },
+    {
+      "name": "Jawbox",
+      "stakes": 1,
+      "description": "Noisy, wood-fueled engines that create huge clouds of smoke and dust but with minimum chance of flame.",
+      "bonuses": [
+        {"rating": "Saws", "value": 1},
+        {"rating": "Speed", "value": 1},
+        {"rating": "Stealth", "value": -1}
+      ],
+      "specials": [
+        "Fueled with wildsea wood"
+      ]
+    },
+    {
+      "name": "Solar Compressor",
+      "stakes": 2,
+      "description": "Made to store, liquefy, and pressurize sunlight.",
+      "bonuses": [
+        {"rating": "Speed", "value": 1},
+        {"rating": "Stealth", "value": 1}
+      ],
+      "specials": [
+        "Naturally fueled on sunny days"
+      ]
+    },
+    {
+      "name": "Magnetic Coils",
+      "stakes": 2,
+      "description": "Spinning cylinders that, ideally, maintain a state of almost perpetual motion.",
+      "bonuses": [
+        {"rating": "Tilt", "value": 1},
+        {"rating": "Stealth", "value": 1}
+      ],
+      "specials": [
+        "Fueled with magnetic scrap"
+      ]
+    },
+    {
+      "name": "Rope Golem",
+      "stakes": 2,
+      "description": "A semi-sentient mass of animated ropes running through the rooms and corridors of the ship.",
+      "bonuses": [
+        {"rating": "Speed", "value": 1},
+        {"rating": "Stealth", "value": 1}
+      ],
+      "specials": [
+        "Takes no fuel, but the ropes must be replaced when they begin to fray.",
+        "Rope golems have an unpredictable will of their own that may manifest at unexpected moments."
+      ]
+    },
+    {
+      "name": "Leviathan Heart",
+      "stakes": 2,
+      "description": "An actual leviathan heart, still beating reflexively, hooked up to the ship. Pumps viscous black fuel through pipes and valves.",
+      "bonuses": [
+        {"rating": "Speed", "value": 1},
+        {"rating": "Tilt", "value": 1}
+      ],
+      "specials": [
+        "Requires no fuel, but in a particularly ominous way."
+      ]
+    },
+    {
+      "name": "Ceramic Batteries",
+      "stakes": 2,
+      "description": "Volt-storing batteries rigged up to regulate and distribute power. Their crackling hum makes nearby insects (and superstitious undercrew) uneasy.",
+      "bonuses": [
+        {"rating": "Saws", "value": 1},
+        {"rating": "Seals", "value": 1}
+      ],
+      "specials": [
+        "Fueled with lightning strikes"
+      ]
+    },
+    {
+      "name": "Acid Maw",
+      "stakes": 2,
+      "description": "An open chemical vat that melts down scrap metal, piping the resulting pressurised slurry around the ship. Potent and almost impossible to interrupt.",
+      "bonuses": [
+        {"rating": "Saws", "value": 2}
+      ],
+      "specials": [
+        "Fueled with salvage and scrap"
+      ]
+    }
+  ],
+  "motifs": [
+    {
+      "name": "Transport",
+      "stakes": 2,
+      "description": "No matter what is happening on the waves, no matter the problems or curiosities its denizens face, there will always be a space for those willing to move passengers from point A to point B. Ships themed around transport will likely have...",
+      "specials": [
+        "A clean and professional paint job to attract potential passengers",
+        "Built-in passenger quarters with varying levels of comfort",
+        "A sturdily constructed panic room, suitable for holding passengers unwilling to fight in the event the ship is attacked or boarded"
+      ]
+    },
+    {
+      "name": "Hauling",
+      "stakes": 2,
+      "description": "Just as essential as transporting passengers, the movement and trading of cargo is a reliable path to success for dependable types. These ships will likely have...",
+      "specials": [
+        "Gangplanks, winches, and bay doors for swift loading and unloading at port",
+        "An expanded cargo area with extra security and webbing for odd-shaped packages",
+        "A reliable cargo crane built into the ship's structure for holding and transporting particularly heavy crates and objects"
+      ]
+    },
+    {
+      "name": "Hunting",
+      "stakes": 2,
+      "description": "The oldest wildsea profession, a ship kitted out with a hunting motif will likely have...",
+      "specials": [
+        "Trophies of bone, fur, or chitin prominently displayed on the outer hull",
+        "A modified cargo area complete with animal pens",
+        "An array of hunting and butchery tools, allowing crew fighting on or below decks easy access to CQ Keen or Spike damage"
+      ]
+    },
+    {
+      "name": "Salvaging",
+      "stakes": 2,
+      "description": "Useful for scrappers, dredgers, and wreck-wranglers, salvaging ships will likely have...",
+      "specials": [
+        "A scratched and dented appearance, making you look almost like a wreck yourself",
+        "A modified cargo area with work benches and tools for disassembly",
+        "A grappling crane built into the ship's structure for attaching to large wreckage, allowing it to be hauled onto the deck or towed behind the ship"
+      ]
+    },
+    {
+      "name": "Pathfinding",
+      "stakes": 2,
+      "description": "Pathfinding ships are built with tenacious exploration in mind, and will likely have...",
+      "specials": [
+        "Trinkets and gewgaws from various contacted cultures affixed to the hull",
+        "A reinforced engine room with a secondary set of seals or bulkheads protecting it",
+        "An array of wilds-clearing tools, allowing crew fighting on or below decks easy access to Hewing or Serrated damage"
+      ]
+    },
+    {
+      "name": "Raiding",
+      "stakes": 2,
+      "description": "For wildsailors who take to the waves with violence in mind, for noble or not-so-noble reasons. Ships with a raiding motif will likely have...",
+      "specials": [
+        "Fortified deck-rails to give the crew cover while shooting (or being shot at)",
+        "Bulkhead doors that can be closed and locked to isolate boarding parties",
+        "An armoury lockbox containing weapons taken as spoils from previous encounters, allowing crew fighting on or below decks easy access to Blunt or Blast damage"
+      ]
+    },
+    {
+      "name": "Rescue",
+      "stakes": 2,
+      "description": "Yours is the kind of ship people call on when other ships don't make it back to port. Ships with a rescue motif will likely have...",
+      "specials": [
+        "Emergency medicine for some of the more common maladies of the waves",
+        "A photoscope for picking out glints of wreckage or distress flares at a great distance",
+        "An isolation room packed with soft amber resin, for keeping the crew insulated from and slowing the progress of illnesses during a journey"
+      ]
+    },
+    {
+      "name": "Research",
+      "stakes": 2,
+      "description": "The mysteries of the rustling waves are an egg waiting to hatch, and a research vessel is just the right sort of tool to crack them right open. Research ships will likely have...",
+      "specials": [
+        "A higher level of general technology on show than average",
+        "A library for recording new findings and delving into secrets and lore",
+        "A snapograph arrangement, a complex deck-mounted photography system for catching images of the waves and printing them on light-sensitive paper"
+      ]
+    },
+    {
+      "name": "Entertainment",
+      "stakes": 2,
+      "description": "For actors, musicians, performers, and travelling circuses, those that make their living by entrancing the public. Ships with an entertainment motif will likely have...",
+      "specials": [
+        "A gaudy appearance that catches the eye",
+        "A theatrical stage built into the main deck",
+        "Costuming supplies for the representation of various creeds and characters"
+      ]
+    }
+  ],
+  "generalAdditions": [
+    {
+      "name": "Anchor System",
+      "stakes": 0,
+      "description": "Lengths of chain with heavy curved hooks, used to anchor ships to the branches of the Wildsea. Almost every ship comes with this as standard.",
+      "specials": []
+    },
+    {
+      "name": "Rig-Ropes",
+      "stakes": 1,
+      "description": "Ropes strung up above the deck for various purposes, often climbed, used as safety lines for trips over the edge of the ship, or hung with drying washing.",
+      "specials": []
+    },
+    {
+      "name": "Firefly Lanterns",
+      "stakes": 1,
+      "description": "A network of lanterns, their glowing inhabitants woken or sent to sleep with a tap on the glass, ready to illuminate any part of the ship.",
+      "specials": []
+    },
+    {
+      "name": "Luminous Blooms",
+      "stakes": 1,
+      "description": "Patches of moss or flowering plants that shed pale light in the darker hours.",
+      "specials": []
+    },
+    {
+      "name": "Chemical Spotlight",
+      "stakes": 1,
+      "description": "Illuminates surrounding areas with day-like clarity.",
+      "specials": []
+    },
+    {
+      "name": "Survival Station",
+      "stakes": 1,
+      "description": "Containing flares, flags, grapples, wraps, and emergency rations.",
+      "specials": []
+    },
+    {
+      "name": "Cargo Crane",
+      "stakes": 1,
+      "description": "A sturdy crane for loading and unloading cargo, capable of carrying extremely heavy objects without overbalancing the ship.",
+      "specials": []
+    },
+    {
+      "name": "Wrecker's Magnet",
+      "stakes": 1,
+      "description": "A curious electromagnetic crane, often used by salvagers. Controls on the crane can increase, decrease, or cut the magnetism entirely.",
+      "specials": []
+    },
+    {
+      "name": "Signal Flares",
+      "stakes": 1,
+      "description": "Colour-coded flares meant to be fired up into the heavens to communicate findings, threats, and positioning. At least a smattering of the Signalling language is required to use or understand them effectively.",
+      "specials": []
+    },
+    {
+      "name": "Shutter-Lamps",
+      "stakes": 1,
+      "description": "A bank of lights and shutters for blinking visual signals across vast distances. At least a smattering of the Signalling language is required to use or understand them effectively.",
+      "specials": []
+    },
+    {
+      "name": "Steam Whistle",
+      "stakes": 1,
+      "description": "A shrill, piercing whistle used to announce your presence or scare the more skittish denizens of the sea.",
+      "specials": []
+    },
+    {
+      "name": "Vox-Horn",
+      "stakes": 1,
+      "description": "A deep, blaring horn that can also be used as an effective voice amplifier.",
+      "specials": []
+    },
+    {
+      "name": "Tethered Kitesail",
+      "stakes": 1,
+      "description": "A glider tethered to the deck with a long rope, allowing aerial exploration on windy days.",
+      "specials": []
+    },
+    {
+      "name": "Trained Messengers",
+      "stakes": 2,
+      "description": "Flying creatures trained to seek out distant landmasses (or nearby ships), deliver messages to them, and return with replies. When choosing trained messengers, specify the type of creature you're using (such as dragonflies or crows).",
+      "specials": []
+    },
+    {
+      "name": "Fixed-Band Radio",
+      "stakes": 2,
+      "description": "A short-range radio system capable of sending and receiving static-laden signals, based on recently rediscovered pre-verdant technology. Allows instantaneous communication, but relies on fragile antennae affixed to the uppermost portion of the ship.",
+      "specials": []
+    }
+  ],
+  "bounteousAdditions": [
+    {
+      "name": "Fruiting Tree",
+      "stakes": 1,
+      "description": "An ancient tree rooted to your deck, laden with fast-growing fruit.",
+      "specials": [
+        "Automatically acquire a fruit-based specimen when you use a task to tend to the fruiting tree."
+      ]
+    },
+    {
+      "name": "Night Farm",
+      "stakes": 1,
+      "description": "A dark, covered soilpit for growing mushrooms.",
+      "specials": [
+        "Automatically acquire a mushroom-based specimen when you use a task to tend to the night farm."
+      ]
+    },
+    {
+      "name": "Lightning Rod",
+      "stakes": 1,
+      "description": "A multi-pronged metal array for attracting lightning and storing it in ceramic batteries.",
+      "specials": [
+        "Automatically acquire a charged ceramic battery whenever your ship enters a lightning storm."
+      ]
+    },
+    {
+      "name": "Water Purifier",
+      "stakes": 2,
+      "description": "A funnel filtration system.",
+      "specials": [
+        "Automatically acquire a barrel of fresh water with the 'Pure' tag whenever you drop anchor or cut a path in rainy conditions."
+      ]
+    },
+    {
+      "name": "Trawler Nets",
+      "stakes": 2,
+      "description": "Reinforced nets meant to be draped over the sides of the ship during relaxed journeys, catching larger insects and small mammals before they're hauled back in.",
+      "specials": [
+        "Automatically acquire one normal specimen when you cut a path."
+      ]
+    }
+  ],
+  "rooms": [
+    {
+      "name": "Galley",
+      "stakes": 1,
+      "description": "A space for gathering, cooking, and eating, filled with pans, cookware, and usually a chemical stove.",
+      "specials": []
+    },
+    {
+      "name": "Medical Bay",
+      "stakes": 1,
+      "description": "A clean space with tables and soft beds for the wounded and their carers.",
+      "specials": []
+    },
+    {
+      "name": "Workshop",
+      "stakes": 1,
+      "description": "A (probably cluttered) room with smithing and repair tools, as well as a mechanical workbench.",
+      "specials": []
+    },
+    {
+      "name": "Navigational Suite",
+      "stakes": 1,
+      "description": "A room devoted to the storage and usage of maps, charts, and navigational equipment.",
+      "specials": []
+    },
+    {
+      "name": "Butchery",
+      "stakes": 1,
+      "description": "A clean space for rendering and preserving specimens.",
+      "specials": []
+    },
+    {
+      "name": "Tap-Room",
+      "stakes": 1,
+      "description": "For the creation, storage, and consumption of ales, mead, and spirits (the alcoholic kind). Usually furnished with comfortable seating, and maybe card tables.",
+      "specials": []
+    },
+    {
+      "name": "Panic Room",
+      "stakes": 1,
+      "description": "A small room stocked with salted supplies and bedrolls, able to be triple-locked from the inside and extremely hard to break into.",
+      "specials": []
+    },
+    {
+      "name": "Cooling Facility",
+      "stakes": 1,
+      "description": "An insulated room where breath mists in the air, perfect for storing perishables and escaping the sun's glare.",
+      "specials": []
+    },
+    {
+      "name": "Luxury Quarters",
+      "stakes": 1,
+      "description": "Individual spaces for each crewmember to sleep, complete with soft furnishings and tasteful decoration.",
+      "specials": []
+    },
+    {
+      "name": "Lens Room",
+      "stakes": 1,
+      "description": "A room of telescopes and ocular magnifiers offering a commanding view, a good interior alternative to an observation platform.",
+      "specials": []
+    },
+    {
+      "name": "Brig",
+      "stakes": 1,
+      "description": "A hammock. A bucket. A lockable door and a set of iron bars. The cramped conditions of most ships rarely allow for much more.",
+      "specials": []
+    },
+    {
+      "name": "Cargo Bay Extension",
+      "stakes": 1,
+      "description": "A larger space with cargo webbing, wall racks, and reinforced sections for more dangerous items.",
+      "specials": []
+    },
+    {
+      "name": "Underdeck Gymnasium",
+      "stakes": 1,
+      "description": "A set of weights, ropes, and fitness equipment for keeping yourself in shape without braving the treetops.",
+      "specials": []
+    },
+    {
+      "name": "Lounger's Tent",
+      "stakes": 1,
+      "description": "A rest area on the deck of the ship, the canvas providing shade and a break from the wind without being cooped up belowdecks.",
+      "specials": []
+    },
+    {
+      "name": "Observation Platform",
+      "stakes": 1,
+      "description": "A strut-like protuberance giving an unparalleled view of the surrounding waves, usually with some kind of line of communication to the pilot's cabin.",
+      "specials": []
+    },
+    {
+      "name": "Underthrash Platform",
+      "stakes": 1,
+      "description": "A sturdy door leading to an open platform at the base of the ship, usually at the rear, below the riding-line.",
+      "specials": []
+    },
+    {
+      "name": "Cupola",
+      "stakes": 1,
+      "description": "A blister of glass or amber, usually at the side or rear of the ship, with a small seat inside.",
+      "specials": []
+    }
+  ],
+  "armaments": [
+    {
+      "name": "Trebuchet",
+      "stakes": 2,
+      "description": "Lobs stones, chunks of wood, or salvage clusters.",
+      "specials": [
+        "Deals massive LR Blunt damage"
+      ]
+    },
+    {
+      "name": "Harpoon Turret",
+      "stakes": 2,
+      "description": "Fires barbed spears for piercing the hulls of ships and the hides of larger creatures.",
+      "specials": [
+        "Deals massive LR Spike damage"
+      ]
+    },
+    {
+      "name": "Shrapnel Cannon",
+      "stakes": 2,
+      "description": "Fires clouds of tearing metal, usually just armfuls of scrap offcuts tossed into the barrel.",
+      "specials": [
+        "Deals massive LR Serrated damage"
+      ]
+    },
+    {
+      "name": "Viper's Tooth",
+      "stakes": 2,
+      "description": "An unstable weapon that fires corrosive liquid.",
+      "specials": [
+        "Deals massive LR Acid damage"
+      ]
+    },
+    {
+      "name": "Grand Blastbow",
+      "stakes": 2,
+      "description": "A crossbow-like emplacement that fires explosive bolts.",
+      "specials": [
+        "Deals massive LR Blast damage"
+      ]
+    },
+    {
+      "name": "Storm-Rail",
+      "stakes": 2,
+      "description": "Two huge brass rods wrapped with poorly shielded cables, attached to a voltaic generator.",
+      "specials": [
+        "Deals massive LR Volt damage"
+      ]
+    },
+    {
+      "name": "Winch-Claws",
+      "stakes": 1,
+      "description": "A bank of short-range grappling claws on the sides of your ship, used to draw enemy vessels close for boarding.",
+      "specials": [
+        "A tool to aid in close-range encounters rather than a weapon in its own right"
+      ]
+    },
+    {
+      "name": "Broadside Cannons",
+      "stakes": 1,
+      "description": "A blast from the half-forgotten past, these banks of cannons can only fire at targets to either side of you.",
+      "specials": [
+        "Deals massive LR Blunt or Blast damage"
+      ]
+    },
+    {
+      "name": "Ramming Prow",
+      "stakes": 1,
+      "description": "Allows you to ram creatures (and ships) without danger to your own hull.",
+      "specials": [
+        "Deals massive CQ Blunt damage"
+      ]
+    },
+    {
+      "name": "Spearing Prow",
+      "stakes": 1,
+      "description": "A set of reinforced spikes jutting from the front of your ship, for ramming others without danger to your own hull.",
+      "specials": [
+        "Deals massive CQ Spike damage"
+      ]
+    },
+    {
+      "name": "Bladed Prow",
+      "stakes": 1,
+      "description": "A wedge-like cutting edge for slicing into enemy ships without danger to your own hull.",
+      "specials": [
+        "Deals massive CQ Hewing damage"
+      ]
+    },
+    {
+      "name": "Ripsaw Prow",
+      "stakes": 1,
+      "description": "A serrated leading edge for cutting through enemy ships without danger to your own hull.",
+      "specials": [
+        "Deals massive CQ Serrated damage"
+      ]
+    },
+    {
+      "name": "Limited Armoury Rack",
+      "stakes": 2,
+      "description": "A rack stocked with simple weapons.",
+      "specials": [
+        "When leaving or defending the ship, crewmembers can take a temporary piece of gear with the LR or CQ tag and a single damage type (either Blunt, Keen or Spike). This temporary weapon comes with a two-track and can't be repaired."
+      ]
+    },
+    {
+      "name": "Wrecker's Armoury Rack",
+      "stakes": 2,
+      "description": "A rack stocked with less straightforward weapons.",
+      "specials": [
+        "When leaving or defending the ship, crewmembers can take a temporary piece of gear with the LR or CQ tag and a single damage type (either Hewing, Serrated or Blast). This temporary weapon comes with a two-track and can't be repaired."
+      ]
+    },
+    {
+      "name": "Son of Teeth",
+      "stakes": 2,
+      "description": "A microwave cannon. Acts as an energy shield when not shooting. Each shot reduces available shield by 1, recharging 1/day.",
+      "bonuses": [
+        {"rating": "Armour", "value": 3}
+      ],
+      "specials": [
+        "Deals massive LR Salt damage"
+      ]
+    }
+  ],
+  "undercrew": {
+    "officers": [
+      {
+        "name": "Skillful Officer [3-Track]",
+        "stakes": 1,
+        "description": "A seasoned wildsailor, likely on the verge of leaving the undercrew and setting out to find a main crew position of their own.",
+        "specials": [
+          "2 ranks in any skill",
+          "1 rank in any other skill"
+        ]
+      },
+      {
+        "name": "Well-Travelled Officer [3-Track]",
+        "stakes": 1,
+        "description": "An eager contributor to discussions and font of lore, wise in the ways of the wider waves.",
+        "specials": [
+          "2 ranks in any languages",
+          "1 rank in any other language"
+        ]
+      },
+      {
+        "name": "Experienced Officer [X-Track]",
+        "stakes": 1,
+        "description": "A seasoned wildsailor, likely on the verge of leaving the undercrew and setting out to find a full crew position of their own.",
+        "specials": [
+          "Any one aspect",
+          "An experienced officer's track is equal to the track of the aspect they have access to"
+        ]
+      }
+    ],
+    "gangs": [
+      {
+        "name": "Spear-Fishers [3-Track]",
+        "stakes": 2,
+        "description": "Tasked with plucking insects and small mammals from the sea as they travel.",
+        "specials": [
+          "Automatically acquire one normal specimen when you drop anchor"
+        ]
+      },
+      {
+        "name": "Magnet-Fishers [3-Track]",
+        "stakes": 2,
+        "description": "Laconic scavengers that prefer the comfort of the deckside to the embrace of the waves.",
+        "specials": [
+          "Automatically acquire one normal piece of salvage when you drop anchor"
+        ]
+      },
+      {
+        "name": "Stargazers [3-Track]",
+        "stakes": 2,
+        "description": "Sky-watching tale-spinners.",
+        "specials": [
+          "Automatically acquire one normal whisper when you drop anchor"
+        ]
+      },
+      {
+        "name": "Cartographers [3-Track]",
+        "stakes": 2,
+        "description": "Navigator-adjuncts tasked with keeping a record of the ship's journeys and surroundings.",
+        "specials": [
+          "Automatically acquire one normal chart when you drop anchor"
+        ]
+      },
+      {
+        "name": "Deck Engineers [3-Track]",
+        "stakes": 2,
+        "description": "Tasked with keeping the ship in working condition.",
+        "specials": [
+          "Automatically clear one mark from any damaged ship's rating when you drop anchor"
+        ]
+      },
+      {
+        "name": "Bonesaw Troupe [3-Track]",
+        "stakes": 2,
+        "description": "Amateur surgeons eager to keep the crew in some semblance of good health.",
+        "specials": [
+          "A single crewmember can heal a mark from any damaged trait or injury when you drop anchor"
+        ]
+      },
+      {
+        "name": "Tinker Troupe [3-Track]",
+        "stakes": 2,
+        "description": "Amateur metalworkers and clothiers, maintaining the crew's possessions as best they can.",
+        "specials": [
+          "A single crewmember can repair a mark from any gear when you drop anchor"
+        ]
+      },
+      {
+        "name": "Scholars [3-Track]",
+        "stakes": 2,
+        "description": "Students working on unlocking the mysteries of the sea.",
+        "specials": [
+          "You learn a secret of the surrounding waves whenever you drop anchor, supplied by the Firefly"
+        ]
+      },
+      {
+        "name": "Marauders [3-Track]",
+        "stakes": 2,
+        "description": "Rough sorts that take the protection of the ship (and the celebrations after a fight) extremely seriously.",
+        "specials": [
+          "They fight in close combat to defend the ship, gaining focus every now and then to deal CQ Blunt, Keen or Spike damage"
+        ]
+      },
+      {
+        "name": "Picaros [3-Track]",
+        "stakes": 2,
+        "description": "Adventurous slingers armed with crossbows, pistols, and blunderbusses.",
+        "specials": [
+          "They fight at range to defend the ship, gaining focus every now and then to deal LR Blunt, Keen or Spike damage"
+        ]
+      }
+    ],
+    "packs": [
+      {
+        "name": "Lemur Pack [3-Track]",
+        "stakes": 1,
+        "description": "A group of nimble helpers that keep the ship clear of smaller insects.",
+        "specials": []
+      },
+      {
+        "name": "Spring-Foxes [3-Track]",
+        "stakes": 1,
+        "description": "A pod of spring-foxes that dance and leap through the waves around your ship as you travel. Their behaviour can warn of dangers from the deeper canopy.",
+        "specials": []
+      },
+      {
+        "name": "A Stretch of Slinks [3-Track]",
+        "stakes": 1,
+        "description": "Semi-spectral cats usually found in dockyards and spit-city alleyways, ship-born slinks spend most of their time hunting down rats and finding ways to get into the most absurdly awkward spaces.",
+        "specials": []
+      },
+      {
+        "name": "A Brace of Hounds [3-Track]",
+        "stakes": 1,
+        "description": "Perhaps not best friend material, these dogs are at least fiercely protective of their ship (despite having few other uses than comfort and the ability to play a great game of fetch).",
+        "specials": []
+      },
+      {
+        "name": "Rig-Ferrets [3-Track]",
+        "stakes": 1,
+        "description": "Used to tie and untie knots far above deck on ships that evoke the feeling of the old salt sea.",
+        "specials": []
+      },
+      {
+        "name": "Whirling Bats [3-Track]",
+        "stakes": 1,
+        "description": "Lend an appreciably gothic look to your ship from a distance, but are unexpectedly friendly up close.",
+        "specials": []
+      },
+      {
+        "name": "Frenzy-Parrot [3-Track]",
+        "stakes": 1,
+        "description": "Possessed of a shrill and annoying squawk, but tolerated as an early warning system for dangerous predators roaming nearby.",
+        "specials": []
+      },
+      {
+        "name": "Trained Pinwolf [3-Track]",
+        "stakes": 2,
+        "description": "One of the most dangerous predators of the wildsea, raised from birth to regard a ship as its home and the crew as its pack.",
+        "specials": [
+          "They fight in close combat to defend the ship, gaining focus every now and then to deal CQ Blunt, Keen or Spike damage"
+        ]
+      },
+      {
+        "name": "Squirrel Flingers [3-Track]",
+        "stakes": 2,
+        "description": "Tiny but ferocious, a pack of squirrels armed with miniature slings.",
+        "specials": [
+          "They fight at range to defend the ship, gaining focus every now and then to deal LR Blunt, Keen or Spike damage"
+        ]
+      },
+      {
+        "name": "Geist Octopus [5-Track]",
+        "stakes": 3,
+        "description": "A little bit of everything in one cool cephalopackage.",
+        "specials": [
+          "Once per journey, the geist octopus allows a single crewmember to roll 6d6 in place of their usual dice pool on any task it could conceivably help with"
+        ]
+      },
+      {
+        "name": "Dragon-Tail Butterflies [5-Track]",
+        "stakes": 1,
+        "description": "Butterflies with beautiful, elongated wings. Don't do anything useful, but are regarded by many as a good-luck charm.",
+        "specials": []
+      },
+      {
+        "name": "Spider Colony [3-Track]",
+        "stakes": 1,
+        "description": "Once a tzelicrae, now barely holding it together, a spider colony can achieve little on a ship other than keeping insects and rodents away.",
+        "specials": []
+      },
+      {
+        "name": "Glass-Shell Snails [3-Track]",
+        "stakes": 1,
+        "description": "Crews with glass-shell snails on board learn to tread lightly, especially at night.",
+        "specials": []
+      },
+      {
+        "name": "Scorpion Set [3-Track]",
+        "stakes": 1,
+        "description": "Surly, patient, and venomous, often found sunning themselves on railings or hiding inside boots.",
+        "specials": []
+      },
+      {
+        "name": "Medical Mosquitoes [3-Track]",
+        "stakes": 2,
+        "description": "An annoyance for sure, but a useful one - carry a symptomless infection that increases a crew's resistance to other infections.",
+        "specials": [
+          "Infections and viruses don't naturally transfer from crewmember to crewmember"
+        ]
+      },
+      {
+        "name": "Glowbug Parade [3-Track]",
+        "stakes": 2,
+        "description": "A horde of fireflies that follow crewmembers around as they traverse decks and corridors.",
+        "specials": [
+          "Gives all crew members their own dim lantern-like light while they're on the ship (unless shooed away)"
+        ]
+      },
+      {
+        "name": "Mantis Sentries [3-Track]",
+        "stakes": 2,
+        "description": "Stone-still sentries that let their prey come to them, waiting for the perfect moment to strike.",
+        "specials": [
+          "Automatically acquire one normal specimen when you dock at port."
+        ]
+      },
+      {
+        "name": "Rust-Roaches [3-Track]",
+        "stakes": 2,
+        "description": "Feeding off of rust and metallic impurities, these tenacious little things tend to root out forgotten pieces of scrap for their meals.",
+        "specials": [
+          "Automatically acquire one normal piece of salvage when you dock at port."
+        ]
+      },
+      {
+        "name": "Etterescu [3-Track]",
+        "stakes": 2,
+        "description": "Lurking centipedes that prefer darker places, listening to secrets and fragments of lore.",
+        "specials": [
+          "Automatically acquire one normal whisper when you dock at port."
+        ]
+      },
+      {
+        "name": "Library Boatmen [3-Track]",
+        "stakes": 2,
+        "description": "Spider-like creatures that have a habit of making their homes in discarded paper plucked from the waves.",
+        "specials": [
+          "Automatically acquire one normal chart when you dock at port."
+        ]
+      }
+    ]
+  }
+}

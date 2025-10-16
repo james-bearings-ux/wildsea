@@ -1,0 +1,463 @@
+## General Additions
+
+========
+NAME
+STAKES
+DESCRIPTION
+========
+
+Anchor System 
+0 Stakes
+Lengths of chain with heavy curved hooks, used to anchor ships to the branches of the Wildsea. Almost every ship comes with this as standard.
+
+Rig-Ropes 
+1 Stake
+Ropes strung up above the deck for various purposes, often climbed, used as safety lines for trips over the edge of the ship, or hung with drying washing.
+
+Firefly Lanterns 
+1 Stake
+A network of lanterns, their glowing inhabitants woken or sent to sleep with a tap on the glass, ready to illuminate any part of the ship.
+
+Luminous Blooms 
+1 Stake
+Patches of moss or flowering plants that shed pale light in the darker hours.
+
+Chemical Spotlight 
+1 Stake
+Illuminates surrounding areas with day-like clarity.
+
+Survival Station 
+1 Stake
+Containing flares, flags, grapples, wraps, and emergency rations.
+
+Cargo Crane 
+1 Stake
+A sturdy crane for loading and unloading cargo, capable of carrying extremely heavy objects without overbalancing the ship.
+Wrecker's Magnet 
+1 Stake
+A curious electromagnetic crane, often used by salvagers. Controls on the crane can increase, decrease, or cut the magnetism entirely.
+
+Signal Flares 
+1 Stake
+Colour-coded flares meant to be fired up into the heavens to communicate findings, threats, and positioning. At least a smattering of the Signalling language is required to use or understand them effectively.
+
+Shutter-Lamps 
+1 Stake
+A bank of lights and shutters for blinking visual signals across vast distances. At least a smattering of the Signalling language is required to use or understand them effectively.
+
+Steam Whistle 
+1 Stake
+A shrill, piercing whistle used to announce your presence or scare the more skittish denizens of the sea.
+
+Vox-Horn 1 Stake
+A deep, blaring horn that can also be used as an effective voice amplifier.
+
+Tethered Kitesail 
+1 Stake
+A glider tethered to the deck with a long rope, allowing aerial exploration on windy days.
+
+Trained Messengers 
+2 Stakes
+Flying creatures trained to seek out distant landmasses (or nearby ships), deliver messages to them, and return with replies. When choosing trained messengers, specify the type of creature you’re using (such as dragonflies
+or crows).
+
+Fixed-Band Radio 
+2 Stakes
+A short-range radio system capable of sending and receiving static-laden signals, based on recently rediscovered pre-verdant technology. Allows instantaneous communication, but relies on fragile antennae affixed to the uppermost portion of the ship.
+
+
+## Bounteous Additions
+
+========
+NAME
+STAKES
+DESCRIPTION
+SPECIAL (repeats?)
+========
+
+Fruiting Tree 
+1 Stake
+An ancient tree rooted to your deck, laden with fast-
+growing fruit.
+- Automatically acquire a fruit-based specimen when
+you use a task to tend to the fruiting tree.
+
+Night Farm 
+1 Stake
+A dark, covered soilpit for growing mushrooms.
+- Automatically acquire a mushroom-based specimen
+when you use a task to tend to the night farm.
+
+Lightning Rod 
+1 Stake
+A multi-pronged metal array for attracting lightning and
+storing it in ceramic batteries.
+- Automatically acquire a charged ceramic battery
+whenever your ship enters a lightning storm.
+
+Water Purifier 
+2 Stakes
+A funnel filtration system.
+- Automatically acquire a barrel of fresh water with the
+'Pure' tag whenever you drop anchor or cut a path in
+rainy conditions.
+
+Trawler Nets 
+2 Stakes
+Reinforced nets meant to be draped over the sides of the
+ship during relaxed journeys, catching larger insects and
+small mammals before they’re hauled back in.
+- Automatically acquire one normal specimen when
+you cut a path.
+
+## Bounteous Additions
+
+========
+NAME
+STAKES
+DESCRIPTION
+========
+
+
+Galley 
+1 Stake
+A space for gathering, cooking, and eating, filled with pans, cookware, and usually a chemical stove.
+
+Medical Bay 
+1 Stake
+A clean space with tables and soft beds for the wounded and their carers.
+
+Workshop 
+1 Stake
+A (probably cluttered) room with smithing and repair tools, as well as a mechanical workbench.
+
+Navigational Suite 
+1 Stake
+A room devoted to the storage and usage of maps, charts, and navigational equipment.
+
+Butchery 
+1 Stake
+A clean space for rendering and preserving specimens.
+
+Tap-Room 
+1 Stake
+For the creation, storage, and consumption of ales, mead, and spirits (the alcoholic kind). Usually furnished with comfortable seating, and maybe card tables.
+
+Panic Room 
+1 Stake
+A small room stocked with salted supplies and bedrolls, able to be triple-locked from the inside and extremely hard to break into.
+
+Cooling Facility 
+1 Stake
+An insulated room where breath mists in the air, perfect for storing perishables and escaping the sun's glare.
+
+Luxury Quarters 
+1 Stake
+Individual spaces for each crewmember to sleep, complete with soft furnishings and tasteful decoration.
+
+Lens Room 
+1 Stake
+A room of telescopes and ocular magnifiers offering a commanding view, a good interior alternative to an observation platform.
+
+Brig 
+1 Stake
+A hammock. A bucket. A lockable door and a set of iron bars. The cramped conditions of most ships rarely allow for much more.
+
+Cargo Bay Extension 
+1 Stake
+A larger space with cargo webbing, wall racks, and reinforced sections for more dangerous items.
+
+Underdeck Gymnasium 
+1 Stake
+A set of weights, ropes, and fitness equipment for keeping yourself in shape without braving the treetops.
+
+Lounger's Tent 
+1 Stake
+A rest area on the deck of the ship, the canvas providing shade and a break from the wind without being cooped up belowdecks.
+
+Observation Platform 
+1 Stake
+A strut-like protuberance giving an unparalleled view of the surrounding waves, usually with some kind of line of communication to the pilot's cabin.
+
+Underthrash Platform 
+1 Stake
+A sturdy door leading to an open platform at the base of the ship, usually at the rear, below the riding-line.
+
+Cupola 
+1 Stake
+A blister of glass or amber, usually at the side or rear of the ship, with a small seat inside.
+
+
+
+## Armaments
+
+========
+NAME
+STAKES
+DESCRIPTION
+SPECIAL (repeats?)
+========
+
+
+Trebuchet 
+2 Stakes
+Lobs stones, chunks of wood, or salvage clusters.
+- Deals massive LR Blunt damage
+
+Harpoon Turret 
+2 Stakes
+Fires barbed spears for piercing the hulls of ships and the hides of larger creatures.
+- Deals massive LR Spike damage
+
+Shrapnel Cannon 
+2 Stakes
+Fires clouds of tearing metal, usually just armfuls of scrap offcuts tossed into the barrel.
+- Deals massive LR Serrated damage
+
+Viper's Tooth 
+2 Stakes
+An unstable weapon that fires corrosive liquid.
+- Deals massive LR Acid damage
+
+Grand Blastbow 
+2 Stakes
+A crossbow-like emplacement that fires explosive bolts.
+- Deals massive LR Blast damage
+
+Storm-Rail 
+2 Stakes
+Two huge brass rods wrapped with poorly shielded cables, attached to a voltaic generator.
+- Deals massive LR Volt damage
+
+Winch-Claws 
+1 Stake
+A bank of short-range grappling claws on the sides of your ship, used to draw enemy vessels close for boarding.
+- A tool to aid in close-range encounters rather than a weapon in its own right
+
+Broadside Cannons 
+1 Stake
+A blast from the half-forgotten past, these banks of cannons can only fire at targets to either side of you.
+- Deals massive LR Blunt or Blast damage
+
+Ramming Prow 
+1 Stake
+Allows you to ram creatures (and ships) without danger to your own hull.
+- Deals massive CQ Blunt damage
+
+Spearing Prow 
+1 Stake
+A set of reinforced spikes jutting from the front of your ship, for ramming others without danger to your
+own hull.
+- Deals massive CQ Spike damage
+
+Bladed Prow 
+1 Stake
+A wedge-like cutting edge for slicing into enemy ships without danger to your own hull.
+- Deals massive CQ Hewing damage
+
+Ripsaw Prow 
+1 Stake
+A serrated leading edge for cutting through enemy ships without danger to your own hull.
+- Deals massive CQ Serrated damage
+
+Limited Armoury Rack 
+2 Stakes
+A rack stocked with simple weapons.
+- When leaving or defending the ship, crewmembers can take a temporary piece of gear with the LR or CQ tag and a single damage type (either Blunt, Keen or Spike). This temporary weapon comes with a two-track and can’t be repaired.
+
+Wrecker's Armoury Rack 
+2 Stakes
+A rack stocked with less straightforward weapons. 
+- When leaving or defending the ship, crewmembers can take a temporary piece of gear with the LR or CQ tag and a single damage type (either Hewing, Serrated or Blast). This temporary weapon comes with a two-track and can’t be repaired.
+
+
+# Undercrew
+
+## Officers
+
+========
+NAME
+STAKES
+DESCRIPTION
+SPECIAL (repeats?)
+========
+
+Skillful Officer [3-Track] 
+1 Stake
+A seasoned wildsailor, likely on the verge of leaving the undercrew and setting out to find a main crew position of their own. Skillful officers have access to...
+· 2 ranks in any skill
+· 1 rank in any other skill
+Well-Travelled Officer [3-Track] 
+1 Stake
+An eager contributor to discussions and font of lore, wise in the ways of the wider waves. Well-travelled officers
+have access to...
+· 2 ranks in any languages
+· 1 rank in any other language
+Experienced Officer [X-Track] 
+1 Stake
+A seasoned wildsailor, likely on the verge of leaving the undercrew and setting out to find a full crew position of their own. Experienced officers have access to...
+· Any one aspect
+· An experienced officer's track is equal to the track of the aspect they have access to
+
+
+## Officers
+
+========
+NAME
+STAKES
+DESCRIPTION
+SPECIAL (repeats?)
+========
+
+Spear-Fishers [3-Track] 
+2 Stakes
+Tasked with plucking insects and small mammals from the sea as they travel.
+· Automatically acquire one normal specimen when you drop anchor
+
+Magnet-Fishers [3-Track] 
+2 Stakes
+Laconic scavengers that prefer the comfort of the deckside to the embrace of the waves.
+· Automatically acquire one normal piece of salvage when you drop anchor
+
+Stargazers [3-Track] 
+2 Stakes
+Sky-watching tale-spinners.
+· Automatically acquire one normal whisper when you drop anchor
+
+Cartographers [3-Track] 
+2 Stakes
+Navigator-adjuncts tasked with keeping a record of the ship’s journeys and surroundings.
+· Automatically acquire one normal chart when you drop anchor
+
+Deck Engineers [3-Track] 
+2 Stakes
+Tasked with keeping the ship in working condition.
+· Automatically clear one mark from any damaged ship’s rating when you drop anchor
+
+Bonesaw Troupe [3-Track] 
+2 Stakes
+Amateur surgeons eager to keep the crew in some semblance of good health.
+· A single crewmember can heal a mark from any damaged trait or injury when you drop anchor
+
+Tinker Troupe [3-Track] 
+2 Stakes
+Amateur metalworkers and clothiers, maintaining the crew's possessions as best they can.
+· A single crewmember can repair a mark from any gear when you drop anchor
+
+Scholars [3-Track] 
+2 Stakes
+Students working on unlocking the mysteries of the sea.
+· You learn a secret of the surrounding waves whenever you drop anchor, supplied by the Firefly
+
+Marauders [3-Track] 
+2 Stakes
+Rough sorts that take the protection of the ship (and the celebrations after a fight) extremely seriously.
+· They fight in close combat to defend the ship, gaining focus every now and then to deal CQ Blunt,
+Keen or Spike damage
+
+Picaros [3-Track] 
+2 Stakes
+Adventurous slingers armed with crossbows, pistols, and blunderbusses.
+· They fight at range to defend the ship, gaining focus every now and then to deal LR Blunt, Keen or Spike damage
+
+
+## Packs
+
+========
+NAME
+STAKES
+DESCRIPTION
+SPECIAL (repeats?)
+========
+
+Lemur Pack [3-Track] 
+1 Stake
+A group of nimble helpers that keep the ship clear of smaller insects.
+
+Spring-Foxes [3-Track] 
+1 Stake
+A pod of spring-foxes that dance and leap through the waves around your ship as you travel. Their behaviour can warn of dangers from the deeper canopy.
+
+A Stretch of Slinks [3-Track] 
+1 Stake
+Semi-spectral cats usually found in dockyards and spit-city alleyways, ship-born slinks spend most of their time hunting down rats and finding ways to get into the most absurdly awkward spaces.
+
+A Brace of Hounds [3-Track] 
+1 Stake
+Perhaps not best friend material, these dogs are at least fiercely protective of their ship (despite having few other uses than comfort and the ability to play a great game of fetch).
+
+Rig-Ferrets [3-Track] 
+1 Stake
+Used to tie and untie knots far above deck on ships that evoke the feeling of the old salt sea.
+
+Whirling Bats [3-Track] 
+1 Stake
+Lend an appreciably gothic look to your ship from a distance, but are unexpectedly friendly up close.
+
+Frenzy-Parrot [3-Track] 
+1 Stake
+Possessed of a shrill and annoying squawk, but tolerated as an early warning system for dangerous predators roaming nearby.
+
+Trained Pinwolf [3-Track] 
+2 Stakes
+One of the most dangerous predators of the wildsea, raised from birth to regard a ship as its home and the crew as its pack.
+· They fight in close combat to defend the ship, gaining focus every now and then to deal CQ Blunt, Keen or Spike damage
+
+Squirrel Flingers [3-Track] 
+2 Stakes
+Tiny but ferocious, a pack of squirrels armed with miniature slings.
+· They fight at range to defend the ship, gaining focus every now and then to deal LR Blunt, Keen or Spike damage
+
+Geist Octopus [5-Track] 
+3 Stakes
+A little bit of everything in one cool cephalopackage.
+· Once per journey, the geist octopus allows a single crewmember to roll 6d6 in place of their usual dice pool on any task it could conceivably help with
+
+
+Dragon-Tail Butterflies [5-Track] 
+1 Stake
+Butterflies with beautiful, elongated wings. Don’t do anything useful, but are regarded by many as a good-luck charm.
+
+Spider Colony [3-Track] 
+1 Stake
+Once a tzelicrae, now barely holding it together, a spider colony can achieve little on a ship other than keeping insects and rodents away.
+
+Glass-Shell Snails [3-Track] 
+1 Stake
+Crews with glass-shell snails on board learn to tread lightly, especially at night.
+
+Scorpion Set [3-Track] 
+1 Stake
+Surly, patient, and venomous, often found sunning themselves on railings or hiding inside boots.
+
+Medical Mosquitoes [3-Track] 
+2 Stakes
+An annoyance for sure, but a useful one - carry a symptomless infection that increases a crew's resistance to other infections
+· Infections and viruses don't naturally transfer from crewmember to crewmember
+
+Glowbug Parade [3-Track] 
+2 Stakes
+A horde of fireflies that follow crewmembers around as they traverse decks and corridors.
+· Gives all crew members their own dim lantern-like light while they're on the ship (unless shooed away)
+
+Mantis Sentries [3-Track] 
+2 Stakes
+Stone-still sentries that let their prey come to them, waiting for the perfect moment to strike.
+· Automatically acquire one normal specimen when you dock at port.
+
+Rust-Roaches [3-Track] 
+2 Stakes
+Feeding off of rust and metallic impurities, these tenacious little things tend to root out forgotten pieces of scrap for their meals.
+· Automatically acquire one normal piece of salvage when you dock at port.
+
+Etterescu [3-Track] 
+2 Stakes
+Lurking centipedes that prefer darker places, listening to secrets and fragments of lore.
+· Automatically acquire one normal whisper when you dock at port.
+
+Library Boatmen [3-Track] 
+2 Stakes
+Spider-like creatures that have a habit of making their homes in discarded paper plucked from the waves.
+· Automatically acquire one normal chart when you dock at port.
+
+

@@ -1,0 +1,821 @@
+Ships start with a 1 in every rating. 
+
+## Ratings
+
+========
+NAME
+DESCRIPTION
+========
+
+Armour
+
+A measure of your ship’s resistance to damage. You’ll likely roll your armour rating when a larger creature attacks your ship, when you’re fired on by pirates, or when you brute-force the ship through a hazardous area of the sea.
+
+Seals
+
+A measure of how well your ship keeps the wildsea out while travelling. You’ll likely roll your seals rating when there’s a sporestorm, insect swarm, or other potentially invasive presence.
+
+Speed
+
+The speed of your ship when the engines are running smoothly. You’ll likely roll your speed rating when attempting to outrun a pursuer or weather pattern, or if you somehow find yourself in a race.
+
+Saws
+
+How good your ship is at cutting through the denser parts of the sea. You’ll likely roll your saws rating when cutting through thicker areas of the sea or trying to ram other ships.
+
+Stealth
+
+Your ship’s ability to run low, sleek, and undetected. You’ll likely roll your stealth rating when trying to minimize the noise of your engine or the trail you leave, or when trying to avoid the notice of distant threats.
+
+Tilt
+
+A measure of manoeuvrability, and how well your ship can tackle the sharper dips and rises of the waves. You’ll likely roll your tilt rating when tackling one of the larger treetop waves, when diving down into the tangle to evade a pursuer, or when trying to keep steady during a rootquake or storm.
+
+## Sizes
+
+========
+NAME
+STAKES
+DESCRIPTION
+- BONUS TO RATING (repeating?)
+========
+
+Nano 
+
+1 Stake
+
+Suited for a single sailor and maybe a passenger or two. Perfect for the lone wildsailor, possessed of excess bravery (or a deathwish).
+
+- Stealth +1
+
+Small 
+
+1 Stake
+
+Suited for 2-4 people, cramped but serviceable for double that. Ideal for a first ship.
+
+- Speed +1
+
+Standard 
+
+1 Stake
+
+Comfortable for 5-10 people, but can hold double that number if necessary. The majority of ships out on the Wildsea are of standard size, hence the name.
+
+- Armour +1
+
+Large 
+
+1 Stake
+
+Can house 10-20 crew with room to spare, many more if necessary, depending on the internal designs and additional fittings. Large ships are most often used to patrol trade-routes around more lawful areas, or to transport settlers and research teams for large factions.
+
+- Armour +1
+
+- Stealth -1
+
+## Frames
+
+========
+NAME
+STAKES
+DESCRIPTION
+- BONUS TO RATING
+========
+
+Sturdy 
+
+1 Stake
+
+Built to last in a place of temporary things, a sturdy frame helps weather the strongest assaults.
+
+- Armour +1
+
+Moulded 
+
+1 Stake
+
+A single unbroken structure running through the ship - quite a feat of safety-conscious engineering.
+
+- Seals +1
+
+Light 
+
+1 Stake
+
+Made with the lightest possible materials in the smallest possible amounts.
+
+- Speed +1
+
+Scything 
+
+1 Stake
+
+Often wedge or blade-shaped, scything frames are constructed specifically to cut as efficiently as possible through the waves.
+
+- Saws +1
+
+Sleek 
+
+1 Stake
+
+Quiet is hard to come by on the wildsea, but a sleek frame ensures that no matter how noisy your bite and engine might be, you’ll always be low to the waves.
+
+- Stealth +1
+
+Flexible 
+
+1 Stake
+
+Built for adjustability and responsiveness, flexible frames are often multi-segmented or jointed in some way.
+
+- Tilt +1
+
+## Hulls
+
+========
+NAME
+STAKES
+DESCRIPTION
+- BONUS TO RATING (repeating?)
+SPECIAL (repeating?)
+========
+
+Reef-Iron 
+
+1 Stake
+
+Metal plating from decommissioned ships, reshaped for
+
+your frame. Durable and rust-resistant.
+
+- Armour +1
+
+Leviathan Bone 
+
+1 Stake
+
+A hull crafted from one or more pieces of leviathan
+
+skeleton. Solid, if a little morbid.
+
+- Seals +1
+
+Broadwood 
+
+1 Stake
+
+Wooden planks cut from the more reliable trees of the wildsea. Strong and flexible.
+
+- Tilt +1
+
+Rough Bark 
+
+1 Stake
+
+Harvested from the ironroots. Irregular and tough to maintain, but easy for others to overlook at distance across the waves.
+
+- Stealth +1
+
+Chitinous 
+
+1 Stake
+
+Made from the collected shells of the wildsea’s larger insects. Smooth, offering little in the way of friction or snags.
+
+- Speed +1
+
+Razorscale 
+
+1 Stake
+
+An exterior of interlocking scales sloughed or harvested from a wildsea beast, sharpened for effectiveness.
+
+- Saws +1
+
+Beastback 
+
+2 Stakes
+
+A half-living hull of flesh and bone, flexible and unsettlingly warm.
+
+- Seals +1
+
+- Tilt +1
+
+Ceramic 
+
+2 Stakes
+
+A shell of heavy baked clay. Ostentatious and brittle unless *very* carefully maintained.
+
+- Armour +1
+
+- Seals +1
+
+Chrysalid 
+
+2 Stakes
+
+A hull adapted from the cast-off chrysalis of a massive insect, excellent protection against the sea’s incursion.
+
+- Seals +1
+
+- Stealth +1
+
+Ghost-Oak 
+
+2 Stakes
+
+Pale as death and remarkably flexible, ghost-oak is rarely found growing outside the lightless depths of the drown.
+
+- Armour +1
+
+- Tilt +1
+
+Arachnesque 
+
+2 Stakes
+
+Less of a hull and more of a giant insect grown to fit the specifications of your frame, usually something spider-like.
+
+- Tilt +1
+
+- Stealth +1
+
+Exile's Copper 
+
+2 Stakes
+
+A rare metal that weighs far, far less than it has any right to, prized for racing-ship hulls.
+
+- Armour +1
+
+- Speed +1
+
+Junk-Strung 
+
+0 Stakes
+
+The mark of a ship well-scarred and oft-repaired, a junk-strung hull is barely a hull at all... More a collection of scavenged metal, driftwood, and animal bones; unstable, rusting, and leaky.
+
+- Armour +1
+
+- Seals -1
+
+Ability: Mark your seals or armour rating to pull a piece of useful salvage from the hull.
+
+Floraflage 
+
+2 Stakes
+
+A hull of living vegetation grown purposefully around your frame. Blends easily into the seascape.
+
+- Stealth +2
+
+- Armour -1
+
+Ability: A floraflage ship at rest is almost impossible to detect - increase impact when using stealth while motionless.
+
+Monument 
+
+3 Stakes
+
+An absurd affectation in a world of flexible branches and endless depth, monument hulls are made of appallingly heavy mountain-stone.
+
+- Armour +2
+
+- Seals +2
+
+Ability: A ship with a monument hull can’t Forge Ahead during a journey.
+
+## Bite
+
+========
+NAME
+STAKES
+DESCRIPTION
+- BONUS TO RATING (repeating?)
+SPECIAL (repeating?)
+========
+
+Sawprow 
+
+1 Stake
+
+A wildsea favourite, the sawprow is a chainsaw edge that runs down the curve of the prow. Capable of cutting through most obstructions with ease.
+
+- Saws +1
+
+Damage Type: Deals massive CQ Serrated damage
+
+Impellers 
+
+1 Stake
+
+Large jet-like outboard engines that push the ship through the waves with brute force.
+
+- Speed +1
+
+Damage Type: Deals massive CQ Blast damage
+
+Crawler 
+
+1 Stake
+
+Large finger-like mechanisms spread out around the front of the ship, allowing it to move through the waves with a crawling motion.
+
+- Tilt +1
+
+Damage Type: Deals massive CQ Blunt damage
+
+Underscales 
+
+1 Stake
+
+Thousands of flexing scales that worm the ship forward with a sly, sinuous motion.
+
+- Stealth +1
+
+Damage Type: Deals massive CQ Keen damage
+
+Jag-Tracks 
+
+1 Stake
+
+Motorised grapple tracks along the keel and hull-sides; a slow, solid, and reliable choice.
+
+- Armour +1
+
+Damage Type: Deals massive CQ Hewing damage
+
+Sluicejets 
+
+1 Stake
+
+Pressurised sluice systems filled with phytophobic chemicals, for coating the hull and pushing the ship.
+
+- Seals +1
+
+Damage Type: Deals massive CQ Acid damage
+
+Longjaw 2 Stakes
+
+An underslung chainsaw arrangement that extends from the front of the ship, chewing and pulling forward.
+
+- Saws +1
+
+- Speed +1
+
+Damage Type: Deals massive CQ Serrated damage
+
+Propeller-Cage 
+
+2 Stakes
+
+A cage housing that holds large airboat-style propellers used to push the ship forward.
+
+- Speed +1
+
+- Armour +1
+
+Damage Type: Deals massive CQ Blunt damage
+
+Navapede Limbs 
+
+2 Stakes
+
+Centipedal limbs lining the hull, letting a ship scuttle through the thrash. If such a vessel could truly now be called a ship, of course.
+
+- Tilt +1
+
+- Stealth +1
+
+Damage Type: Deals massive CQ Spike damage
+
+Voltaic Runners 
+
+2 Stakes
+
+Crackling with barely contained lightning, these outboard contraptions let a ship float just above the churning branches of the sea.
+
+- Seals +2
+
+Damage Type: Deals massive CQ Volt damage
+
+Mulcher 
+
+2 Stakes
+
+Grinding teeth in a lamprey-style mouth. Terribly noisy but dreadfully effective.
+
+- Saws +2
+
+- Armour +1
+
+- Stealth -1
+
+Damage Type: Deals massive CQ Serrated damage
+
+Tentaculari 
+
+2 Stakes
+
+A living cluster of tendrils or tentacles attached to the ship's hull, carrying it through and across the waves in an unsettlingly alien motion.
+
+- Tilt +2
+
+Ability: Deals massive CQ Salt damage
+
+Square Sail 
+
+1 Stake
+
+Taut canvas that relies on a strong breeze, this design harks back to an age of calm, clear waters.
+
+- Speed +1
+
+Ability: Only effective in favourable winds
+
+Sleek Sail 
+
+1 Stake
+
+Triangular and manually angled, relying on an attentive
+
+crew to catch the right breezes.
+
+- Stealth +1
+
+- Only effective in favourable winds
+
+Sweat-Sails 
+
+1 Stake
+
+Held low to the waves, unfurled canvases shaped to catch the rising under-canopy heat.
+
+- Speed +1
+
+Ability: Only effective in warm weather
+
+Tethered Kites 
+
+2 Stakes
+
+An array of kites that catch the stronger winds of the lower air.
+
+- Speed +2
+
+Ability: Only effective in favourable winds
+
+Gecko Sails 
+
+2 Stakes
+
+A reinforced multi-sail arrangement designed to tame even the wildest gusts.
+
+- Speed +1
+
+- Armour +1
+
+Ability: Only effective in favourable winds
+
+Sharpened Prow 
+
+0 Stakes
+
+Simple and straightforward, a honed blade running the length of the ship’s prow to cut through vegetation.
+
+- Provides a basic cutting edge, but no motive force. Just about works when paired with oars, but you really should choose something better.
+
+Ability: Deals massive CQ Keen damage... or it would, if you could get up enough speed.
+
+Beast-Reins 
+
+1 Stake
+
+An arrangement similar to a leash or yoke, allowing well-trained beasts to pull the ship like a chariot.
+
+- Tilt +1
+
+Ability: When you choose beast-reins, decide what kind of beasts they hold (giant centipedes are a solid choice).
+
+Ability: A ship with beast-reins doesn’t require an engine choice from the next section, but the beasts themselves do require care, feeding, and sleep.
+
+Grappling Array 
+
+1 Stake
+
+Prow-mounted grappling hooks that are fired out to catch on branches and then laboriously wound back in for slow, inexorable progress.
+
+- Tilt +2
+
+- Speed -1
+
+Ability: A ship running solely on a grappling array can’t Forge Ahead during a journey.
+
+- Deals massive LR Spike damage.
+
+## Engines
+
+========
+NAME
+STAKES
+DESCRIPTION
+- BONUS TO RATING (repeating?)
+SPECIAL (repeating?)
+========
+
+Chemical Compressor
+
+1 Stake
+
+The most common engine on the rustling waves, reliably unreliable but extremely easy to fuel.
+
+- Speed +1
+
+Ability: Fuelled with crushed fruit and insect husks
+
+Springwork 
+
+1 Stake
+
+Wound exhaustively by hand, springwork engines store and release kinetic energy with surprising efficiency.
+
+- Saws +1
+
+Ability: Fuelled with sweat, labour, and time spent winding
+
+Parasite Pitcher 
+
+1 Stake
+
+A large pitcher plant coaxed into taking root in an engine housing, vines intermingling with the ship's systems.
+
+- Stealth +1
+
+Ability: Fuelled with organic material (preferably living)
+
+Steam Piping 
+
+1 Stake
+
+Hellish contraptions of tangled piping, rare chemicals, and scalding steam.
+
+- Seals +1
+
+Ability: Fuelled with water (the cleaner the better)
+
+Ratwheel Exchange 
+
+1 Stake
+
+Exactly what you might imagine, a pure transfer of kinetic energy from restless rats to wheel to bite. Ethical engineers tend to give their rats the run of the ship.
+
+- Tilt +1
+
+Ability: The rats need feeding every now and then, but they're not fussy
+
+Pulsing Cocoon 
+
+1 Stake
+
+An unknown insect shifts inside, glutting on dreams and spinning them into an ebb of arconautic force. Crews report intensely vivid dreams.
+
+- Armour +1
+
+Ability: Fueled with the dreams of the crew
+
+Tamed Hive 
+
+2 Stakes
+
+A buzzing organic engine of honeycombs and crawling workers, their movements a complex dance.
+
+- Speed +1
+
+- Seals +1
+
+Ability: Fueled with stolen flowers and unprocessed pollen.
+
+Ability: Crew can use a task while at sea to gain a resource, 'Fresh Engine-Honey', once per journey.
+
+Reclaimed Burner 
+
+2 Stakes
+
+An ancient burner that runs on processed chemical fuel, salvaged from the innards of a pre-verdant ship. Requires excessive ventilation. Don't use this.
+
+- Speed +3
+
+- Seals -1
+
+Ability: Runs on processed chemical fuel.
+
+Ability: Liable to explode if seriously damaged.
+
+Jawbox 
+
+1 Stake
+
+Noisy, wood-fueled engines that create huge clouds of smoke and dust but with minimum chance of flame.
+
+- Saws +1
+
+- Speed +1
+
+- Stealth -1
+
+Ability: Fueled with wildsea wood
+
+Solar Compressor 
+
+2 Stakes
+
+Made to store, liquefy, and pressurize sunlight.
+
+- Speed +1
+
+- Stealth +1
+
+Ability: Naturally fueled on sunny days
+
+Magnetic Coils 
+
+2 Stakes
+
+Spinning cylinders that, ideally, maintain a state of almost perpetual motion.
+
+- Tilt +1
+
+- Stealth +1
+
+Ability: Fueled with magnetic scrap
+
+Rope Golem 
+
+2 Stakes
+
+A semi-sentient mass of animated ropes running through the rooms and corridors of the ship.
+
+- Speed +1
+
+- Stealth +1
+
+Ability: Takes no fuel, but the ropes must be replaced when they begin to fray.
+
+Ability: Rope golems have an unpredictable will of their own that may manifest at unexpected moments.
+
+Leviathan Heart 
+
+2 Stakes
+
+An actual leviathan heart, still beating reflexively, hooked up to the ship. Pumps viscous black fuel
+
+through pipes and valves.
+
+- Speed +1
+
+- Tilt +1
+
+Ability: Requires no fuel, but in a particularly ominous way.
+
+Ceramic Batteries 
+
+2 Stakes
+
+Volt-storing batteries rigged up to regulate and distribute power. Their crackling hum makes nearby insects (and superstitious undercrew) uneasy.
+
+- Saws +1
+
+- Seals +1
+
+Ability: Fueled with lightning strikes
+
+Acid Maw 
+
+2 Stakes
+
+An open chemical vat that melts down scrap metal, piping the resulting pressurised slurry around the ship. Potent and almost impossible to interrupt.
+
+- Saws +2
+
+Ability: Fueled with salvage and scrap
+
+## Motif
+
+========
+NAME
+STAKES
+DESCRIPTION
+SPECIAL (repeating?)
+========
+
+Transport 
+
+2 Stakes
+
+No matter what is happening on the waves, no matter the problems or curiosities its denizens face, there will always be a space for those willing to move passengers from point A to point B. Ships themed around transport will likely have...
+
+- A clean and professional paint job to attract potential passengers
+
+- Built-in passenger quarters with varying levels of comfort
+
+- A sturdily constructed panic room, suitable for holding passengers unwilling to fight in the event the ship is attacked or boarded
+
+Hauling 
+
+2 Stakes
+
+Just as essential as transporting passengers, the movement and trading of cargo is a reliable path to success for dependable types. These ships will likely have...
+
+- Gangplanks, winches, and bay doors for swift loading and unloading at port
+
+- An expanded cargo area with extra security and webbing for odd-shaped packages
+
+- A reliable cargo crane built into the ship's structure for holding and transporting particularly heavy crates and objects
+
+Hunting 
+
+2 Stakes
+
+The oldest wildsea profession, a ship kitted out with a hunting motif will likely have...
+
+- Trophies of bone, fur, or chitin prominently displayed on the outer hull
+
+- A modified cargo area complete with animal pens
+
+- An array of hunting and butchery tools, allowing crew fighting on or below decks easy access to CQ Keen or Spike damage
+
+Salvaging 
+
+2 Stakes
+
+Useful for scrappers, dredgers, and wreck-wranglers, salvaging ships will likely have...
+
+- A scratched and dented appearance, making you look almost like a wreck yourself
+
+- A modified cargo area with work benches and tools for disassembly
+
+- A grappling crane built into the ship's structure for attaching to large wreckage, allowing it to be hauled onto the deck or towed behind the ship
+
+Pathfinding 
+
+2 Stakes
+
+Pathfinding ships are built with tenacious exploration in mind, and will likely have...
+
+- Trinkets and gewgaws from various contacted cultures affixed to the hull
+
+- A reinforced engine room with a secondary set of seals or bulkheads protecting it
+
+- An array of wilds-clearing tools, allowing crew fighting on or below decks easy access to Hewing or Serrated damage
+
+Raiding 
+
+2 Stakes
+
+For wildsailors who take to the waves with violence in mind, for noble or not-so-noble reasons. Ships with a raiding motif will likely have...
+
+- Fortified deck-rails to give the crew cover while shooting (or being shot at)
+
+- Bulkhead doors that can be closed and locked to isolate boarding parties
+
+- An armoury lockbox containing weapons taken as spoils from previous encounters, allowing crew fighting on or below decks easy access to Blunt or Blast damage
+
+Rescue 
+
+2 Stakes
+
+Yours is the kind of ship people call on when other ships don't make it back to port. Ships with a rescue motif will likely have...
+
+- Emergency medicine for some of the more common maladies of the waves
+
+- A photoscope for picking out glints of wreckage or distress flares at a great distance
+
+- An isolation room packed with soft amber resin, for keeping the crew insulated from and slowing the progress of illnesses during a journey
+
+Research 
+
+2 Stakes
+
+The mysteries of the rustling waves are an egg waiting to hatch, and a research vessel is just the right sort of tool to crack them right open. Research ships will likely have...
+
+- A higher level of general technology on show than average
+
+- A library for recording new findings and delving into secrets and lore
+
+- A snapograph arrangement, a complex deck-mounted photography system for catching images of the waves and printing them on light-sensitive paper
+
+Entertainment 
+
+ Stakes
+
+For actors, musicians, performers, and travelling circuses, those that make their living by entrancing the public. Ships with an entertainment motif will likely have...
+
+- A gaudy appearance that catches the eye
+
+- A theatrical stage built into the main deck
+
+- Costuming supplies for the representation of various creeds and characters

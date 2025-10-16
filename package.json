@@ -3,10 +3,17 @@
   "version": "1.0.0",
   "description": "Character sheet for the Wildsea TTRPG",
   "scripts": {
-    "start": "http-server -p 8080 -c-1 --cors",
-    "dev": "http-server -p 8080 -c-1 --cors -o"
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "start": "http-server -p 8080 -c-1 --cors"
   },
   "devDependencies": {
-    "http-server": "^14.1.1"
+    "@tailwindcss/postcss": "^4.1.14",
+    "autoprefixer": "^10.4.21",
+    "http-server": "^14.1.1",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^4.1.14",
+    "vite": "^7.1.9"
   }
 }

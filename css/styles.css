@@ -1,9 +1,11 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
     * {
       box-sizing: border-box;
     }
-    
-	#app {
-	
+
 		body {
 			font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 			margin: 0;
@@ -69,8 +71,9 @@
 			border: none;
 			border-bottom: 2px solid #000000;
 			background: white;
-			padding: 8px 10px;
+			padding: 3px 6px;
 			outline: none;
+      font-size: 14px;
 		}
     
 		input:disabled {
@@ -114,22 +117,22 @@
 			cursor: not-allowed;
 		}
 		
-	    .sticky-action-bar button {
-	      padding: 8px 12px;
-	    }
-    
-	    button.ghost {
-	      border: 0;
-	      text-align: left;
-	      background: transparent;
-	    }
-    
-	    hr {
-	      border-color: #6B7280;
-	      margin: 20px 0;
-	    }
+    .sticky-action-bar button {
+      padding: 8px 12px;
+    }
+  
+    button.ghost {
+      border: 0;
+      text-align: left;
+      background: transparent;
+    }
+  
+    hr {
+      border-color: #6B7280;
+      margin: 20px 0;
+    }
 	
-	}
+
     
     .sticky-action-bar {
       position: fixed;
@@ -268,13 +271,13 @@
       font-family: 'Faustina', serif;
       font-size: 24px;
       font-weight: 700;
+      line-height: 100%;
     }
     
     .char-label {
       font-family: 'Faustina', serif;
       font-size: 12px;
       color: #6B7280;
-      margin-bottom: 4px;
     }
     
     .grid-3col {
@@ -364,3 +367,615 @@
 	  display: flex;
 	  justify-content: space-between;
 	}
+
+/* ===========================
+   SHIP STYLES
+   =========================== */
+
+/* Navigation Bar */
+.nav-bar {
+  display: flex;
+  background: #000000;
+  color: white;
+  padding: 4px 20px;
+  border-bottom: 2px solid #374151;
+  font-family: 'Faustina', serif;
+}
+
+.nav-button {
+  padding: 4px 16px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  font-size: 22px;
+
+  &:hover {
+    color: white;
+    background: #424242;
+  }
+  &:hover:not(:disabled) {
+    color: white;
+    background: #424242;
+  }
+}
+
+.nav-button-active {
+  background: #FFFFFF;
+  color: #000000;
+  font-weight: 600;
+}
+
+.nav-button-inactive {
+  background: transparent;
+  color: #FFFFFF;
+  font-weight: 600;
+}
+
+.nav-button-minor {
+  font-size: 14px;
+}
+
+.nav-character-wrapper {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding: 4px 12px;
+  border-radius: 4px;
+  
+  &:hover {
+    color: white;
+    background: #424242;
+  }
+}
+
+.nav-character-label {
+  background: transparent; 
+  color: inherit; 
+  padding: 0; 
+  border: none; 
+  cursor: pointer; 
+  font-weight: inherit;
+  font-family: 'Faustina', serif;
+  font-size: 22px;
+
+  &:hover:not(:disabled) {
+    background: transparent;
+  }
+}
+
+/* Ship Top Bar (Creation Mode) */
+.ship-top-bar {
+  display: flex;
+  align-items: stretch;
+  padding: 0 20px;
+  background: #FFFFFF;
+  color: #000000;
+  border-bottom: 2px solid #000;
+  gap: 24px;
+  height: 80px;
+}
+
+.ship-top-bar-controls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.ship-control-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ship-name-label {
+  font-family: 'Faustina', serif;
+  font-size: 22px;
+  font-weight: 600;
+  color: #000000;
+}
+
+.ship-control-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #000000;
+  width: 5em;
+}
+
+.ship-input {
+  width: 200px;
+  padding: 3px 6px;
+  border: none;
+  border-bottom: 2px solid #000000;
+  background: white;
+  color: #000000;
+  outline: none;
+  font-size: 14px;
+}
+
+.ship-input-small {
+  width: 60px;
+  padding: 3px 6px;
+  border: none;
+  border-bottom: 2px solid #000000;
+  background: white;
+  color: #000000;
+  text-align: center;
+  outline: none;
+  font-size: 14px;
+}
+
+.ship-wizard-buttons {
+  display: flex;
+  gap: 0;
+  margin-left: auto;
+  margin-right: auto;
+  height: 100%;
+}
+
+.ship-wizard-button {
+  padding: 0 20px;
+  border-width: 0;
+  border-radius: 0;
+  cursor: pointer;
+  font-family: 'Faustina', serif;
+  font-weight: 600;
+  font-size: 22px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  border-bottom-width: 6px;
+  border-color: transparent;
+}
+
+.ship-wizard-button-active {
+  border-color: #000;
+}
+
+.ship-wizard-button-inactive {
+  
+}
+
+/* Ship Tabs */
+.ship-tabs-container {
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+  padding: 8px 16px 0px 16px;
+  background: #414141;
+  border-bottom: 2px solid #000;
+}
+
+.ship-tab {
+  padding: 4px 16px;
+  border-radius: 4px 4px 0 0;
+  cursor: pointer;
+  font-family: 'Faustina', serif;
+  font-weight: 600;
+  font-size: 18px;
+  transition: all 0.2s;
+  bottom: -2px;
+  position: relative;
+}
+
+.ship-tab-active {
+  background: white;
+  color: #000;
+  border: 2px solid #000;
+  border-bottom: 2px solid transparent;
+}
+
+.ship-tab-inactive {
+  background: transparent;
+  color: #d6d6d6;
+  border: none;
+  border-bottom: 2px solid #000000;
+  
+  &:hover {
+    color: white;
+  }
+
+  &:hover:not(:disabled) {
+    background: #000;
+  }
+}
+
+/* Ship Cards */
+.ship-card {
+  border: 2px solid #E5E7EB;
+  padding: 16px;
+  border-radius: 8px;
+  background: white;
+  cursor: pointer;
+}
+
+.ship-card-selected {
+  border: 3px solid #A91D3A;
+  background: #FEF2F2;
+}
+
+.ship-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 8px;
+}
+
+.ship-card-name {
+  font-weight: 700;
+  font-size: 16px;
+  color: #1F2937;
+}
+
+.ship-card-stakes {
+  font-size: 11px;
+  color: #6B7280;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.ship-card-description {
+  font-size: 14px;
+  color: #4B5563;
+  margin-bottom: 12px;
+  line-height: 1.5;
+}
+
+.ship-bonuses {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.ship-bonus-pill {
+  background: #DBEAFE;
+  color: #1E40AF;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.ship-specials {
+  margin-top: 8px;
+}
+
+.ship-special-item {
+  font-size: 13px;
+  color: #059669;
+  font-style: italic;
+  margin-bottom: 4px;
+}
+
+/* Ship Layout */
+.ship-main-container {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 80px);
+}
+
+.ship-content-row {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+.ship-ratings-column {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  background: #F3F4F6;
+  border-right: 2px solid #D1D5DB;
+  min-width: 180px;
+}
+
+.ship-ratings-heading {
+  font-family: 'Faustina', serif;
+  font-weight: 600;
+  font-size: 15px;
+  font-weight: 700;
+  color: #6B7280;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid #D1D5DB;
+}
+
+.ship-rating-item {
+  margin-bottom: 4px;
+}
+
+.ship-rating-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 6px;
+}
+
+.ship-rating-track {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.ship-stakes-section {
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid #D1D5DB;
+}
+
+.ship-stakes-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ship-stakes-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+}
+
+.ship-stakes-row-total {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  padding-top: 4px;
+  border-top: 1px solid #D1D5DB;
+}
+
+.ship-stakes-label {
+  color: #6B7280;
+}
+
+.ship-stakes-value {
+  font-weight: 600;
+  color: #374151;
+}
+
+.ship-stakes-label-bold {
+  color: #6B7280;
+  font-weight: 600;
+}
+
+.ship-stakes-value-bold {
+  font-weight: 700;
+  color: #000000;
+}
+
+.ship-inventory-column {
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  background: #F9FAFB;
+  border-right: 2px solid #E5E7EB;
+  min-width: 220px;
+  max-width: 280px;
+  overflow-y: auto;
+}
+
+.ship-content-column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.ship-content-scrollable {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.ship-parts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+  padding: 16px;
+}
+
+.ship-card-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Ship Play Mode Layout */
+.ship-play-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  padding-bottom: 100px;
+  overflow-y: auto;
+}
+
+.ship-three-col-grid {
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr;
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+.ship-two-col-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.ship-fittings-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.ship-separator {
+  border: none;
+  border-top: 1px solid #000000;
+  margin: 32px 0;
+}
+
+/* Ship Cargo/Passengers */
+.ship-cargo-item {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.ship-cargo-input {
+  flex: 1;
+  padding: 4px 8px;
+  border: none;
+  border-bottom: 1px solid #D1D5DB;
+  background: transparent;
+  outline: none;
+  font-size: 14px;
+}
+
+.ship-cargo-remove {
+  background: transparent;
+  color: #EF4444;
+  padding: 2px 4px;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 1;
+  font-weight: 400;
+}
+
+.ship-add-button {
+  background: transparent;
+  color: #6B7280;
+  padding: 4px 8px;
+  border: 1px dashed #D1D5DB;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+/* Modal Overlay */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-container {
+  background: white;
+  border: 2px solid #000000;
+  border-radius: 4px;
+  width: 90%;
+  max-width: 700px;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+}
+
+.modal-header {
+  padding: 20px 24px;
+  border-bottom: 2px solid #E5E7EB;
+}
+
+.modal-title {
+  font-family: 'Faustina', serif;
+  font-size: 22px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.modal-body {
+  padding: 24px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.modal-footer {
+  padding: 16px 24px;
+  border-top: 2px solid #E5E7EB;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.modal-footer-left {
+  display: flex;
+  gap: 12px;
+}
+
+.modal-footer-right {
+  display: flex;
+  gap: 12px;
+}
+
+.modal-aspect-dropdown {
+  margin-bottom: 24px;
+}
+
+.modal-aspect-dropdown label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.modal-aspect-card {
+  border: 2px solid #6B7280;
+  border-radius: 2px;
+  padding: 16px;
+  background: white;
+  margin-top: 16px;
+}
+
+.modal-aspect-card .aspect-name-input {
+  font-weight: 600;
+  font-size: 16px;
+  width: 100%;
+  border: none;
+  border-bottom: 2px solid #000000;
+  background: white;
+  padding: 4px 0;
+  outline: none;
+  margin-bottom: 12px;
+}
+
+.modal-aspect-card .aspect-description-textarea {
+  width: 100%;
+  border: 2px solid #6B7280;
+  border-radius: 2px;
+  padding: 8px;
+  outline: none;
+  font-size: 12px;
+  color: #6B7280;
+  resize: vertical;
+  min-height: 80px;
+  font-family: inherit;
+}
+
+.modal-aspect-card .aspect-meta {
+  font-size: 12px;
+  font-weight: 600;
+  color: #6B7280;
+  margin-bottom: 8px;
+}
+
+.modal-char-count {
+  font-size: 11px;
+  color: #9CA3AF;
+  text-align: right;
+  margin-top: 4px;
+}
+
+.modal-char-count.over-limit {
+  color: #DC2626;
+  font-weight: 600;
+}
