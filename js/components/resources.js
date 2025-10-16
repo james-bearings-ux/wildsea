@@ -46,6 +46,7 @@ export function renderResources(character = null) {
       html += 'data-params=\'{"type":"' + type.key + '","id":"' + item.id + '"}\' ';
       html += 'style="width: 100%;">';
       html += '<button data-action="removeResource" ';
+      html += 'class="remove" ';
       html += 'data-params=\'{"type":"' + type.key + '","id":"' + item.id + '"}\' ';
       html += 'style="flex-shrink: 0; border: 0;">✕</button>';
       html += '</div>';

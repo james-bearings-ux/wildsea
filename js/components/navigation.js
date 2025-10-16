@@ -48,7 +48,7 @@ export function renderNavigation(session) {
         html += character.name || 'Unnamed Character';
         html += '</button>';
         html += '<button data-action="removeCharacter" data-params=\'{"characterId":"' + charId + '"}\' ';
-        html += 'class="ship-cargo-remove" title="Remove from crew">';
+        html += 'class="remove" title="Remove from crew">';
         html += '✕';
         html += '</button>';
         html += '</div>';
