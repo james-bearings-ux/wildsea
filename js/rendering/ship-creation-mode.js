@@ -39,24 +39,6 @@ export function renderShipCreationMode(container, ship, gameData, activeTab = 's
   />`;
   html += '</div>';
 
-  // Crew size control
-  html += '<div class="ship-control-group">';
-  html += '<label class="ship-control-label">Anticipated Crew Size:</label>';
-  html += `<input type="number" min="1" max="20" value="${ship.anticipatedCrewSize}"
-    data-action="updateAnticipatedCrewSize"
-    class="ship-input-small"
-  />`;
-  html += '</div>';
-
-  // Additional stakes control
-  html += '<div class="ship-control-group">';
-  html += '<label class="ship-control-label">Additional Stakes:</label>';
-  html += `<input type="number" min="0" value="${ship.additionalStakes || 0}"
-    data-action="updateAdditionalStakes"
-    class="ship-input-small"
-  />`;
-  html += '</div>';
-
   html += '</div>';
 
   // Center: Wizard stage buttons

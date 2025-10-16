@@ -12,8 +12,31 @@ import { calculateStakesSpent, calculateStakesBudget } from '../state/ship.js';
 export function renderShipInventory(ship) {
   let html = '<div class="ship-inventory-column" style="min-width: 250px; max-width: 250px;">';
 
+  html += '<div style="margin-bottom:24px">';
+
+    // Crew size control
+  html += '<div class="ship-control-group">';
+  html += '<label class="ship-control-label">Anticipated Crew Size:</label>';
+  html += `<input type="number" min="1" max="20" value="${ship.anticipatedCrewSize}"
+    data-action="updateAnticipatedCrewSize"
+    class="ship-input-small"
+  />`;
+  html += '</div>';
+
+  // Additional stakes control
+  html += '<div class="ship-control-group">';
+  html += '<label class="ship-control-label">Additional Stakes:</label>';
+  html += `<input type="number" min="0" value="${ship.additionalStakes || 0}"
+    data-action="updateAdditionalStakes"
+    class="ship-input-small"
+  />`;
+  html += '</div>';
+
+  html += '</div>';
+
+
   // Design Elements section
-  html += renderInventorySection('DESIGN ELEMENTS', [
+  html += renderInventorySection('Design Elements', [
     { label: 'Size', items: ship.size ? [ship.size] : [], required: true },
     { label: 'Frame', items: ship.frame ? [ship.frame] : [], required: true },
     { label: 'Hull', items: ship.hull || [], required: true },
@@ -22,7 +45,7 @@ export function renderShipInventory(ship) {
   ]);
 
   // Fittings section
-  html += renderInventorySection('FITTINGS', [
+  html += renderInventorySection('Fittings', [
     { label: 'Motifs', items: ship.motifs || [] },
     { label: 'General Additions', items: ship.generalAdditions || [] },
     { label: 'Bounteous Additions', items: ship.bounteousAdditions || [] },
@@ -43,7 +66,7 @@ export function renderShipInventory(ship) {
       undercrewCategories.push({ label: 'Packs', items: ship.undercrew.packs });
     }
   }
-  html += renderInventorySection('UNDERCREW', undercrewCategories);
+  html += renderInventorySection('Undercrew', undercrewCategories);
 
   // Stakes indicator inline under the list
   const stakesSpent = calculateStakesSpent(ship);
@@ -52,7 +75,7 @@ export function renderShipInventory(ship) {
 
   html += '<div style="padding-top: 16px; border-top: 2px solid #D1D5DB;">';
   html += '<div style="display: flex; justify-content: space-between; align-items: baseline;">';
-  html += '<span style="font-size: 12px; font-weight: 600; color: #374151;">STAKES</span>';
+  html += '<span style="font-size: 12px; font-weight: 600; color: #374151;">Stakes</span>';
   html += `<span style="font-size: 14px; font-weight: 700; color: ${budgetColor};">${stakesSpent} / ${stakesBudget}</span>`;
   html += '</div>';
   html += '</div>';

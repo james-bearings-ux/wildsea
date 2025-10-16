@@ -328,7 +328,8 @@ export function calculateShipRatings(ship) {
   const applyBonuses = (part) => {
     if (part && part.bonuses) {
       part.bonuses.forEach(bonus => {
-        ratings[bonus.rating] = (ratings[bonus.rating] || 1) + bonus.value;
+        // Use nullish coalescing to preserve 0 values (unlike || which treats 0 as falsy)
+        ratings[bonus.rating] = (ratings[bonus.rating] ?? 1) + bonus.value;
       });
     }
   };

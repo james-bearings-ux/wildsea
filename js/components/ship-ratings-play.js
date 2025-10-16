@@ -15,7 +15,7 @@ export function renderShipRatingsPlay(ship) {
   let html = '<div class="ship-ratings-column">';
 
   // Ratings heading
-  html += '<div class="ship-ratings-heading">RATINGS</div>';
+  html += '<div class="ship-ratings-heading">Ratings</div>';
 
   const ratingNames = ['Armour', 'Seals', 'Speed', 'Saws', 'Stealth', 'Tilt'];
 
@@ -46,7 +46,7 @@ export function renderShipRatingsPlay(ship) {
   const availableStakes = totalBudget - stakesSpent;
 
   html += '<div class="ship-stakes-section">';
-  html += '<div class="ship-ratings-heading">STAKES</div>';
+  html += '<div class="ship-ratings-heading">Stakes</div>';
 
   html += '<div class="ship-stakes-list">';
   html += `<div class="ship-stakes-row"><span class="ship-stakes-label">Original:</span><span class="ship-stakes-value">${originalBudget}</span></div>`;
