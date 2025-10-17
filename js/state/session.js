@@ -39,7 +39,17 @@ export async function createSession(crewName = 'New Crew') {
   // Store session ID in localStorage for quick access
   localStorage.setItem('wildsea-current-session-id', data.id);
 
-  return data;
+  // Convert database format to app format
+  return {
+    id: data.id,
+    crewName: data.name,
+    activeShipId: data.active_ship_id,
+    activeCharacterIds: [], // New session has no characters yet
+    activeView: data.active_view,
+    activeCharacterId: data.active_character_id,
+    created: new Date(data.created_at).getTime(),
+    lastModified: new Date(data.updated_at).getTime()
+  };
 }
 
 /**
