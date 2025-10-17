@@ -66,7 +66,8 @@ export async function importCharacter(session, renderCallback) {
         );
 
         // Now update all properties from the imported data
-        newCharacter.mode = importedData.mode || 'creation';
+        // Always import in play mode (exported characters have passed creation validation)
+        newCharacter.mode = 'play';
         newCharacter.selectedAspects = importedData.selectedAspects || [];
         newCharacter.selectedEdges = importedData.selectedEdges || [];
         newCharacter.skills = importedData.skills || {};

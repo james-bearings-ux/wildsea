@@ -8,6 +8,9 @@ Run these SQL migrations in your Supabase SQL Editor in order:
 2. **002_add_user_id_to_sessions.sql** - Adds user_id to sessions table
 3. **003_add_whitelist_emails.sql** - Insert your 5 whitelisted emails (edit first!)
 4. **004_create_shared_session.sql** - Creates shared session for multiplayer
+5. **005_enable_realtime.sql** - Enables real-time subscriptions on all tables (IMPORTANT!)
+6. **006_grant_realtime_permissions.sql** - Grants SELECT permissions for realtime
+7. **008_set_replica_identity.sql** - Sets replica identity to FULL (CRITICAL for realtime!)
 
 ## Configuring Magic Link Auth
 

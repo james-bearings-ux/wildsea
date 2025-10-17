@@ -77,15 +77,21 @@ import { renderShipCreationMode } from './rendering/ship-creation-mode.js';
 import { renderShipPlayMode } from './rendering/ship-play-mode.js';
 import { renderShipUpgradeMode } from './rendering/ship-upgrade-mode.js';
 import { switchToShip, setActiveShip } from './state/session.js';
-import { setupSubscriptions, unsubscribeAll } from './realtime.js';
+// Realtime has infrastructure issues - using polling instead
+// import { setupSubscriptions, unsubscribeAll } from './realtime.js';
+import { startPolling, stopPolling } from './polling.js';
 import { getCurrentUser, onAuthStateChange, sendMagicLink, signOut } from './auth.js';
 import { renderLoginScreen, renderCheckEmailScreen } from './components/login.js';
+import { supabase } from './supabaseClient.js';
+import { startPresenceHeartbeat, stopPresenceHeartbeat, getOnlineUsers, removePresence } from './presence.js';
+import { renderPresenceBar } from './components/presence-bar.js';
 
 // Global state
 let currentUser = null; // Current authenticated user
 let session = null;
 let character = null; // Cached active character
 let ship = null; // Cached active ship
+let onlineUsers = []; // List of online users in the session
 let activeShipTab = 'size'; // Track active tab for ship creation mode
 let activeWizardStage = 'design'; // Track wizard stage: 'design' | 'fittings' | 'undercrew'
 let showCustomizeModal = false; // Track if customization modal is open
@@ -169,7 +175,11 @@ async function render(reloadSession = false) {
     return;
   }
 
-  // Render navigation
+  // Fetch online users
+  onlineUsers = await getOnlineUsers(session.id);
+
+  // Render presence bar and navigation
+  const presenceBarHtml = renderPresenceBar(onlineUsers);
   const navHtml = await renderNavigation(session);
 
   // Check if we're viewing the ship
@@ -180,7 +190,7 @@ async function render(reloadSession = false) {
     }
 
     if (!ship) {
-      app.innerHTML = navHtml + '<div style="padding: 20px; color: red;">Error: Could not load ship.</div>';
+      app.innerHTML = presenceBarHtml + navHtml + '<div style="padding: 20px; color: red;">Error: Could not load ship.</div>';
       return;
     }
 
@@ -197,13 +207,13 @@ async function render(reloadSession = false) {
     }
 
     // Combine navigation and content
-    app.innerHTML = navHtml + tempDiv.innerHTML;
+    app.innerHTML = presenceBarHtml + navHtml + tempDiv.innerHTML;
     return;
   }
 
   // Otherwise render character view
   if (!session.activeCharacterId) {
-    app.innerHTML = navHtml + '<div style="padding: 20px;">No active character. Please create or import a character.</div>';
+    app.innerHTML = presenceBarHtml + navHtml + '<div style="padding: 20px;">No active character. Please create or import a character.</div>';
     return;
   }
 
@@ -213,7 +223,7 @@ async function render(reloadSession = false) {
   }
 
   if (!character) {
-    app.innerHTML = navHtml + '<div style="padding: 20px; color: red;">Error: Could not load active character.</div>';
+    app.innerHTML = presenceBarHtml + navHtml + '<div style="padding: 20px; color: red;">Error: Could not load active character.</div>';
     return;
   }
 
@@ -230,7 +240,7 @@ async function render(reloadSession = false) {
   }
 
   // Combine navigation and content
-  app.innerHTML = navHtml + tempDiv.innerHTML;
+  app.innerHTML = presenceBarHtml + navHtml + tempDiv.innerHTML;
 }
 
 /**
@@ -246,7 +256,10 @@ async function handleCreateCharacter() {
     return;
   }
 
+  // Set mode and save to localStorage (mode is per-user, not saved to DB)
   character.mode = 'play';
+  localStorage.setItem(`wildsea-character-${character.id}-mode`, 'play');
+
   await saveCharacter(character);
   await render();
 }
@@ -558,14 +571,20 @@ function setupEventDelegation() {
                     return;
                   }
 
+                  // Set mode and save to localStorage (mode is per-user, not saved to DB)
                   ship.mode = 'play';
+                  localStorage.setItem(`wildsea-ship-${ship.id}-mode`, 'play');
+
                   await saveShip(ship);
                   await render();
                 }
                 break;
               case 'saveShipUpgrade':
                 if (ship) {
+                  // Set mode and save to localStorage (mode is per-user, not saved to DB)
                   ship.mode = 'play';
+                  localStorage.setItem(`wildsea-ship-${ship.id}-mode`, 'play');
+
                   await saveShip(ship);
                   await render();
                 }
@@ -682,6 +701,12 @@ function setupEventDelegation() {
                 break;
               case 'signOut':
                 if (confirm('Are you sure you want to sign out?')) {
+                  // Clean up presence
+                  if (session) {
+                    await removePresence(session.id);
+                  }
+                  stopPresenceHeartbeat();
+
                   await signOut();
                   // Auth state change will handle the rest
                 }
@@ -903,8 +928,14 @@ async function loadApp() {
       ship = await loadShip(session.activeShipId);
     }
 
-    console.log('Setting up real-time subscriptions...');
-    setupSubscriptions(session.id, render);
+    console.log('Setting up polling-based sync...');
+
+    // Start polling for changes (check every 3 seconds)
+    startPolling(session.id, () => render(true));
+
+    // Start presence heartbeat
+    console.log('Starting presence heartbeat...');
+    startPresenceHeartbeat(session.id, currentUser.email);
 
     console.log('Rendering...');
     await render();
@@ -945,17 +976,23 @@ async function init() {
         await loadApp();
       } else {
         // User signed out - clear state and show login
+        stopPolling();
+        stopPresenceHeartbeat();
         session = null;
         character = null;
         ship = null;
-        unsubscribeAll();
         await render();
       }
     });
 
-    // Cleanup subscriptions when page unloads
+    // Cleanup polling and presence when page unloads
     window.addEventListener('beforeunload', () => {
-      unsubscribeAll();
+      stopPolling();
+      stopPresenceHeartbeat();
+      // Try to remove presence (may not complete due to page unload)
+      if (session) {
+        removePresence(session.id);
+      }
     });
 
     // If already authenticated, load the app
