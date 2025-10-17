@@ -81,18 +81,29 @@ export async function loadShip(shipId) {
     return null;
   }
 
-  return convertFromDB(data);
+  const ship = convertFromDB(data);
+
+  // Override mode with per-user preference from localStorage
+  const userMode = localStorage.getItem(`wildsea-ship-${shipId}-mode`);
+  if (userMode) {
+    ship.mode = userMode;
+  }
+
+  return ship;
 }
 
 /**
  * Save a ship to Supabase
+ * Note: Mode is NOT saved to database - it's per-user in localStorage
  */
 export async function saveShip(ship) {
+  console.log('[SAVE] Saving ship to database:', ship.id, ship.name, 'at', new Date().toISOString());
+
   const { error } = await supabase
     .from('ships')
     .update({
       name: ship.name,
-      mode: ship.mode,
+      // mode: ship.mode, // Mode is per-user, not saved to DB
       anticipated_crew_size: ship.anticipatedCrewSize,
       additional_stakes: ship.additionalStakes,
       rating_damage: ship.ratingDamage,
@@ -115,9 +126,11 @@ export async function saveShip(ship) {
     .eq('id', ship.id);
 
   if (error) {
-    console.error(`Failed to save ship ${ship.id}:`, error);
+    console.error(`[SAVE] Failed to save ship ${ship.id}:`, error);
     throw error;
   }
+
+  console.log('[SAVE] Ship saved successfully:', ship.id);
 }
 
 /**
@@ -193,9 +206,13 @@ function convertFromDB(dbShip) {
 
 /**
  * Set ship mode
+ * Note: Mode is saved to localStorage per-user, not to database
  */
 export function setShipMode(mode, renderCallback, ship) {
   ship.mode = mode;
+
+  // Save mode to localStorage for this user only
+  localStorage.setItem(`wildsea-ship-${ship.id}-mode`, mode);
 }
 
 /**

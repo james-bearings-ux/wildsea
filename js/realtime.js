@@ -13,7 +13,7 @@ let subscriptions = [];
  * @param {Function} onUpdate - Callback when session data changes
  */
 export function subscribeToSession(sessionId, onUpdate) {
-  console.log('Subscribing to session:', sessionId);
+  console.log('[SUBSCRIBE] Subscribing to session:', sessionId);
 
   const subscription = supabase
     .channel(`session-${sessionId}`)
@@ -25,12 +25,22 @@ export function subscribeToSession(sessionId, onUpdate) {
         filter: `id=eq.${sessionId}`
       },
       (payload) => {
-        console.log('Session changed:', payload);
+        console.log('[REALTIME] Session changed at', new Date().toISOString(), payload);
         onUpdate(payload);
       }
     )
-    .subscribe((status) => {
-      console.log('Session subscription status:', status);
+    .subscribe((status, err) => {
+      console.log('[SUBSCRIBE] Session subscription status:', status, 'Error:', err);
+      if (status === 'SUBSCRIBED') {
+        console.log('[SUBSCRIBE] ✓ Session subscription is ACTIVE');
+      } else if (status === 'CHANNEL_ERROR') {
+        console.error('[SUBSCRIBE] ✗ Session subscription ERROR:', err);
+      } else if (status === 'TIMED_OUT') {
+        console.error('[SUBSCRIBE] ✗ Session subscription TIMED OUT');
+      } else if (status === 'CLOSED') {
+        console.warn('[SUBSCRIBE] ⚠ Session subscription CLOSED - Check Supabase Dashboard for realtime status');
+        console.warn('[SUBSCRIBE] ⚠ Verify Database > Replication has these tables enabled');
+      }
     });
 
   subscriptions.push(subscription);
@@ -43,7 +53,7 @@ export function subscribeToSession(sessionId, onUpdate) {
  * @param {Function} onUpdate - Callback when character data changes
  */
 export function subscribeToCharacters(sessionId, onUpdate) {
-  console.log('Subscribing to characters for session:', sessionId);
+  console.log('[SUBSCRIBE] Subscribing to characters for session:', sessionId);
 
   const subscription = supabase
     .channel(`characters-${sessionId}`)
@@ -55,12 +65,17 @@ export function subscribeToCharacters(sessionId, onUpdate) {
         filter: `session_id=eq.${sessionId}`
       },
       (payload) => {
-        console.log('Character changed:', payload);
+        console.log('[REALTIME] Character changed at', new Date().toISOString(), payload);
         onUpdate(payload);
       }
     )
-    .subscribe((status) => {
-      console.log('Characters subscription status:', status);
+    .subscribe((status, err) => {
+      console.log('[SUBSCRIBE] Characters subscription status:', status, err || '');
+      if (status === 'SUBSCRIBED') {
+        console.log('[SUBSCRIBE] ✓ Characters subscription is ACTIVE');
+      } else if (status === 'CHANNEL_ERROR') {
+        console.error('[SUBSCRIBE] ✗ Characters subscription ERROR:', err);
+      }
     });
 
   subscriptions.push(subscription);
@@ -73,7 +88,7 @@ export function subscribeToCharacters(sessionId, onUpdate) {
  * @param {Function} onUpdate - Callback when ship data changes
  */
 export function subscribeToShips(sessionId, onUpdate) {
-  console.log('Subscribing to ships for session:', sessionId);
+  console.log('[SUBSCRIBE] Subscribing to ships for session:', sessionId);
 
   const subscription = supabase
     .channel(`ships-${sessionId}`)
@@ -85,12 +100,17 @@ export function subscribeToShips(sessionId, onUpdate) {
         filter: `session_id=eq.${sessionId}`
       },
       (payload) => {
-        console.log('Ship changed:', payload);
+        console.log('[REALTIME] Ship changed at', new Date().toISOString(), payload);
         onUpdate(payload);
       }
     )
-    .subscribe((status) => {
-      console.log('Ships subscription status:', status);
+    .subscribe((status, err) => {
+      console.log('[SUBSCRIBE] Ships subscription status:', status, err || '');
+      if (status === 'SUBSCRIBED') {
+        console.log('[SUBSCRIBE] ✓ Ships subscription is ACTIVE');
+      } else if (status === 'CHANNEL_ERROR') {
+        console.error('[SUBSCRIBE] ✗ Ships subscription ERROR:', err);
+      }
     });
 
   subscriptions.push(subscription);
@@ -103,7 +123,7 @@ export function subscribeToShips(sessionId, onUpdate) {
  * @param {Function} onUpdate - Callback when session-character relationships change
  */
 export function subscribeToSessionCharacters(sessionId, onUpdate) {
-  console.log('Subscribing to session_characters for session:', sessionId);
+  console.log('[SUBSCRIBE] Subscribing to session_characters for session:', sessionId);
 
   const subscription = supabase
     .channel(`session-characters-${sessionId}`)
@@ -115,12 +135,17 @@ export function subscribeToSessionCharacters(sessionId, onUpdate) {
         filter: `session_id=eq.${sessionId}`
       },
       (payload) => {
-        console.log('Session-character relationship changed:', payload);
+        console.log('[REALTIME] Session-character relationship changed at', new Date().toISOString(), payload);
         onUpdate(payload);
       }
     )
-    .subscribe((status) => {
-      console.log('Session-characters subscription status:', status);
+    .subscribe((status, err) => {
+      console.log('[SUBSCRIBE] Session-characters subscription status:', status, err || '');
+      if (status === 'SUBSCRIBED') {
+        console.log('[SUBSCRIBE] ✓ Session-characters subscription is ACTIVE');
+      } else if (status === 'CHANNEL_ERROR') {
+        console.error('[SUBSCRIBE] ✗ Session-characters subscription ERROR:', err);
+      }
     });
 
   subscriptions.push(subscription);
@@ -146,29 +171,42 @@ export async function unsubscribeAll() {
  * @param {string} sessionId - The session ID to watch
  * @param {Function} renderCallback - Callback to re-render the UI
  */
-export function setupSubscriptions(sessionId, renderCallback) {
+export async function setupSubscriptions(sessionId, renderCallback) {
   console.log('Setting up all subscriptions for session:', sessionId);
+
+  // CRITICAL: Set auth token for realtime connection
+  const { data: { session } } = await supabase.auth.getSession();
+  if (session?.access_token) {
+    console.log('[REALTIME] Setting access token for realtime connection');
+    await supabase.realtime.setAuth(session.access_token);
+  } else {
+    console.error('[REALTIME] No access token found - subscriptions may fail!');
+  }
 
   // Subscribe to session changes (name, active character, active ship, etc.)
   subscribeToSession(sessionId, (payload) => {
+    console.log('[REALTIME] Session changed - Event:', payload.eventType, 'New data:', payload.new);
     // Session data changed, trigger re-render with session reload
     renderCallback(true);
   });
 
   // Subscribe to character changes (any character in this session)
   subscribeToCharacters(sessionId, (payload) => {
+    console.log('[REALTIME] Character changed - Event:', payload.eventType, 'Character ID:', payload.new?.id, 'Name:', payload.new?.name);
     // Character data changed, trigger re-render with session reload
     renderCallback(true);
   });
 
   // Subscribe to ship changes (any ship in this session)
   subscribeToShips(sessionId, (payload) => {
+    console.log('[REALTIME] Ship changed - Event:', payload.eventType, 'Ship ID:', payload.new?.id, 'Name:', payload.new?.name);
     // Ship data changed, trigger re-render with session reload
     renderCallback(true);
   });
 
   // Subscribe to session-character relationship changes (characters added/removed)
   subscribeToSessionCharacters(sessionId, (payload) => {
+    console.log('[REALTIME] Session-character link changed - Event:', payload.eventType, 'Character ID:', payload.new?.character_id);
     // Character added or removed from session, trigger re-render with session reload
     renderCallback(true);
   });

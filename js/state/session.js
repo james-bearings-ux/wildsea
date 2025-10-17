@@ -25,9 +25,19 @@ import { supabase } from '../supabaseClient.js';
  * Create a new session in Supabase
  */
 export async function createSession(crewName = 'New Crew') {
+  // Get current user
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) {
+    throw new Error('User must be authenticated to create a session');
+  }
+
   const { data, error } = await supabase
     .from('sessions')
-    .insert([{ name: crewName }])
+    .insert([{
+      name: crewName,
+      user_id: user.id
+    }])
     .select()
     .single();
 
@@ -47,6 +57,62 @@ export async function createSession(crewName = 'New Crew') {
     activeCharacterIds: [], // New session has no characters yet
     activeView: data.active_view,
     activeCharacterId: data.active_character_id,
+    created: new Date(data.created_at).getTime(),
+    lastModified: new Date(data.updated_at).getTime()
+  };
+}
+
+/**
+ * Get or create the shared session for multiplayer
+ * All authenticated users join the same shared session
+ */
+export async function getOrCreateSharedSession() {
+  // Call the database function to get or create shared session
+  const { data: sessionId, error: funcError } = await supabase.rpc('get_or_create_shared_session');
+
+  if (funcError) {
+    console.error('Failed to get shared session:', funcError);
+    throw funcError;
+  }
+
+  // Now load the full session data
+  const { data, error } = await supabase
+    .from('sessions')
+    .select('*')
+    .eq('id', sessionId)
+    .single();
+
+  if (error) {
+    console.error('Failed to load shared session:', error);
+    throw error;
+  }
+
+  // Store in localStorage so we remember it
+  localStorage.setItem('wildsea-current-session-id', data.id);
+
+  // Also fetch character IDs from junction table
+  const { data: characterLinks, error: linkError } = await supabase
+    .from('session_characters')
+    .select('character_id, position')
+    .eq('session_id', sessionId)
+    .order('position', { ascending: true });
+
+  if (linkError) {
+    console.error('Failed to load character links:', linkError);
+  }
+
+  // Load per-user view state from localStorage
+  const activeView = localStorage.getItem('wildsea-active-view') || 'character';
+  const activeCharacterId = localStorage.getItem('wildsea-active-character-id') || null;
+
+  // Convert database format to app format
+  return {
+    id: data.id,
+    crewName: data.name,
+    activeShipId: data.active_ship_id,
+    activeCharacterIds: characterLinks ? characterLinks.map(link => link.character_id) : [],
+    activeView: activeView, // Per-user from localStorage
+    activeCharacterId: activeCharacterId, // Per-user from localStorage
     created: new Date(data.created_at).getTime(),
     lastModified: new Date(data.updated_at).getTime()
   };
@@ -85,30 +151,37 @@ export async function loadSession() {
     console.error('Failed to load character links:', linkError);
   }
 
+  // Load per-user view state from localStorage
+  const activeView = localStorage.getItem('wildsea-active-view') || 'character';
+  const activeCharacterId = localStorage.getItem('wildsea-active-character-id') || null;
+
   // Convert database format to app format
   return {
     id: data.id,
     crewName: data.name,
     activeShipId: data.active_ship_id,
     activeCharacterIds: characterLinks ? characterLinks.map(link => link.character_id) : [],
-    activeView: data.active_view,
-    activeCharacterId: data.active_character_id,
+    activeView: activeView, // Per-user from localStorage
+    activeCharacterId: activeCharacterId, // Per-user from localStorage
     created: new Date(data.created_at).getTime(),
     lastModified: new Date(data.updated_at).getTime()
   };
 }
 
 /**
- * Save session to Supabase
+ * Save session to Supabase (only shared state, not per-user view state)
  */
 export async function saveSession(session) {
+  // Save per-user view state to localStorage
+  localStorage.setItem('wildsea-active-view', session.activeView);
+  localStorage.setItem('wildsea-active-character-id', session.activeCharacterId || '');
+
+  // Only save shared state to database (crew name, ship)
   const { error } = await supabase
     .from('sessions')
     .update({
       name: session.crewName,
-      active_character_id: session.activeCharacterId,
       active_ship_id: session.activeShipId,
-      active_view: session.activeView,
       updated_at: new Date().toISOString()
     })
     .eq('id', session.id);

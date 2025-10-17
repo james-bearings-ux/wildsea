@@ -73,18 +73,29 @@ export async function loadCharacter(characterId) {
     return null;
   }
 
-  return convertFromDB(data);
+  const character = convertFromDB(data);
+
+  // Override mode with per-user preference from localStorage
+  const userMode = localStorage.getItem(`wildsea-character-${characterId}-mode`);
+  if (userMode) {
+    character.mode = userMode;
+  }
+
+  return character;
 }
 
 /**
  * Save a character to Supabase
+ * Note: Mode is NOT saved to database - it's per-user in localStorage
  */
 export async function saveCharacter(character) {
+  console.log('[SAVE] Saving character to database:', character.id, character.name, 'at', new Date().toISOString());
+
   const { error } = await supabase
     .from('characters')
     .update({
       name: character.name,
-      mode: character.mode,
+      // mode: character.mode, // Mode is per-user, not saved to DB
       bloodline: character.bloodline,
       origin: character.origin,
       post: character.post,
@@ -101,9 +112,11 @@ export async function saveCharacter(character) {
     .eq('id', character.id);
 
   if (error) {
-    console.error(`Failed to save character ${character.id}:`, error);
+    console.error(`[SAVE] Failed to save character ${character.id}:`, error);
     throw error;
   }
+
+  console.log('[SAVE] Character saved successfully:', character.id);
 }
 
 /**
@@ -567,9 +580,14 @@ export function populateDefaultResources(renderCallback, char) {
 
 /**
  * Mode mutations
+ * Note: Mode is saved to localStorage per-user, not to database
  */
 export function setMode(mode, renderCallback, char) {
   char.mode = mode;
+
+  // Save mode to localStorage for this user only
+  localStorage.setItem(`wildsea-character-${char.id}-mode`, mode);
+
   renderCallback();
 }
 
