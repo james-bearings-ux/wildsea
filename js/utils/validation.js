@@ -2,15 +2,14 @@
  * Validation utilities for character creation
  */
 
-import { BUDGETS, getCharacter } from '../state/character.js';
+import { BUDGETS } from '../state/character.js';
 
 /**
  * Validate character is ready to transition from creation to play mode
- * @param {Object} char - Character object (optional, defaults to global character)
+ * @param {Object} character - Character object
  * @returns {Object} { valid: boolean, errors: string[] }
  */
-export function validateCharacterCreation(char = null) {
-  const character = char || getCharacter();
+export function validateCharacterCreation(character) {
   const errors = [];
 
   // Validate aspects

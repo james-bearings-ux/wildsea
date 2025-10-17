@@ -50,13 +50,13 @@
 		}
     
 		button.primary {
-			background: #A91D3A;
+			background: #004d13;
 			color: white;
-			border-color: #A91D3A;
+			border-color: #004d13;
 		}
     
 		button.primary:hover:not(:disabled) {
-			background: #8B1730;
+			background: #006e1c;
 		}
     
 		select {
@@ -152,8 +152,8 @@
     }
     
     .aspect-card {
-      border: 2px solid #6B7280;
-      border-radius: 2px;
+      border: 2px solid #E5E7EB;
+      border-radius: 8px;
       padding: 12px 16px;
       background: white;
       cursor: pointer;
@@ -161,9 +161,7 @@
     }
     
     .aspect-card.selected {
-      background: #000000;
-      border-color: #0F172A;
-      color: white;
+      border-color: #000;
     }
     
     .aspect-card.selected .aspect-meta {
@@ -368,6 +366,27 @@
 	  justify-content: space-between;
 	}
 
+.remove {
+  background: transparent;
+  color: #000;
+  padding: 3px 4px 3px;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
+  font-weight: 600;
+  border-radius: 16px;
+  border: none;
+
+  &:hover {
+    color: white;
+    background-color: #8B1730;
+  }
+  &:hover:not(:disabled) {
+		background: #8B1730;
+	}
+}
+
 /* ===========================
    SHIP STYLES
    =========================== */
@@ -377,17 +396,16 @@
   display: flex;
   background: #000000;
   color: white;
-  padding: 4px 20px;
-  border-bottom: 2px solid #374151;
+  padding: 0 20px;
   font-family: 'Faustina', serif;
 }
 
 .nav-button {
-  padding: 4px 16px;
-  border-radius: 4px;
+  padding: 8px 16px;
+  border-radius: 0;
   border: none;
   cursor: pointer;
-  font-size: 22px;
+  font-size: 20px;
 
   &:hover {
     color: white;
@@ -413,20 +431,16 @@
 
 .nav-button-minor {
   font-size: 14px;
-}
-
-.nav-character-wrapper {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  padding: 4px 12px;
+  padding: 2px 8px;
   border-radius: 4px;
-  
-  &:hover {
-    color: white;
-    background: #424242;
+  color: white;
+  background: #353535;
+
+  &:hover:not(:disabled) {
+    background: #004d13;
   }
 }
+
 
 .nav-character-label {
   background: transparent; 
@@ -450,7 +464,6 @@
   padding: 0 20px;
   background: #FFFFFF;
   color: #000000;
-  border-bottom: 2px solid #000;
   gap: 24px;
   height: 80px;
 }
@@ -465,6 +478,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
+  justify-content: space-between;
 }
 
 .ship-name-label {
@@ -478,7 +492,6 @@
   font-size: 14px;
   font-weight: 600;
   color: #000000;
-  width: 5em;
 }
 
 .ship-input {
@@ -525,6 +538,7 @@
   align-items: center;
   border-bottom-width: 6px;
   border-color: transparent;
+  background: transparent;
 }
 
 .ship-wizard-button-active {
@@ -541,8 +555,8 @@
   justify-content: center;
   gap: 4px;
   padding: 8px 16px 0px 16px;
-  background: #414141;
-  border-bottom: 2px solid #000;
+  border-bottom: 2px solid #e5e7eb;
+  border-top: 2px solid #000;
 }
 
 .ship-tab {
@@ -560,22 +574,23 @@
 .ship-tab-active {
   background: white;
   color: #000;
-  border: 2px solid #000;
+  border: 2px solid #e5e7eb;
   border-bottom: 2px solid transparent;
+  background: #F3F4F6;
+  
+  &:hover:not(:disabled) {
+    background: #F3F4F6;
+  }
 }
 
 .ship-tab-inactive {
   background: transparent;
-  color: #d6d6d6;
+  color: #868686;
   border: none;
-  border-bottom: 2px solid #000000;
+  border-bottom: 2px solid #e5e7eb;
   
-  &:hover {
-    color: white;
-  }
-
   &:hover:not(:disabled) {
-    background: #000;
+    background: #F3F4F6;
   }
 }
 
@@ -589,8 +604,7 @@
 }
 
 .ship-card-selected {
-  border: 3px solid #A91D3A;
-  background: #FEF2F2;
+  border: 3px solid #000;
 }
 
 .ship-card-header {
@@ -651,7 +665,7 @@
 .ship-main-container {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 80px);
+  height: calc(100vh - 110px);
 }
 
 .ship-content-row {
@@ -665,22 +679,24 @@
   flex-direction: column;
   gap: 12px;
   padding: 16px;
-  background: #F3F4F6;
-  border-right: 2px solid #D1D5DB;
+  margin: 56px 0 24px;
+  border-width: 2px 2px 2px 0;
+  border-color: #000;
+  border-style: solid;
   min-width: 180px;
+  background: white;
+  align-self: flex-start;
 }
 
 .ship-ratings-heading {
   font-family: 'Faustina', serif;
   font-weight: 600;
-  font-size: 15px;
+  font-size: 20px;
   font-weight: 700;
-  color: #6B7280;
-  text-transform: uppercase;
+  color: #000000;
   letter-spacing: 0.5px;
   margin-bottom: 8px;
   padding-bottom: 4px;
-  border-bottom: 1px solid #D1D5DB;
 }
 
 .ship-rating-item {
@@ -703,7 +719,6 @@
 .ship-stakes-section {
   margin-top: 24px;
   padding-top: 16px;
-  border-top: 1px solid #D1D5DB;
 }
 
 .ship-stakes-list {
@@ -749,8 +764,7 @@
   display: flex;
   flex-direction: column;
   padding: 16px;
-  background: #F9FAFB;
-  border-right: 2px solid #E5E7EB;
+  border-right: 2px solid #000;
   min-width: 220px;
   max-width: 280px;
   overflow-y: auto;
@@ -765,6 +779,7 @@
 .ship-content-scrollable {
   flex: 1;
   overflow-y: auto;
+  background: #F3F4F6;
 }
 
 .ship-parts-grid {
@@ -831,17 +846,6 @@
   background: transparent;
   outline: none;
   font-size: 14px;
-}
-
-.ship-cargo-remove {
-  background: transparent;
-  color: #EF4444;
-  padding: 2px 4px;
-  border: none;
-  cursor: pointer;
-  font-size: 16px;
-  line-height: 1;
-  font-weight: 400;
 }
 
 .ship-add-button {

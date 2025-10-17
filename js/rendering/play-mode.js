@@ -83,7 +83,10 @@ export function renderPlayMode(app, character, gameData) {
     </div>
 
     <div class="sticky-action-bar split">
-        <button data-action="exportCharacter">Export</button>
+        <div style="display: flex; gap: 8px;">
+            <button data-action="removeCharacter" data-params='{"characterId":"${character.id}"}' style="background-color: #A91D3A; color: #fff;">Delete</button>
+            <button data-action="exportCharacter">Export</button>
+        </div>
         <button data-action="setMode" data-params='{"mode":"advancement"}'>Advancement</button>
     </div>
     `;

@@ -39,32 +39,14 @@ export function renderShipCreationMode(container, ship, gameData, activeTab = 's
   />`;
   html += '</div>';
 
-  // Crew size control
-  html += '<div class="ship-control-group">';
-  html += '<label class="ship-control-label">Anticipated Crew Size:</label>';
-  html += `<input type="number" min="1" max="20" value="${ship.anticipatedCrewSize}"
-    data-action="updateAnticipatedCrewSize"
-    class="ship-input-small"
-  />`;
-  html += '</div>';
-
-  // Additional stakes control
-  html += '<div class="ship-control-group">';
-  html += '<label class="ship-control-label">Additional Stakes:</label>';
-  html += `<input type="number" min="0" value="${ship.additionalStakes || 0}"
-    data-action="updateAdditionalStakes"
-    class="ship-input-small"
-  />`;
-  html += '</div>';
-
   html += '</div>';
 
   // Center: Wizard stage buttons
   html += '<div class="ship-wizard-buttons">';
   const stages = [
-    { id: 'design', label: 'Ship Design' },
-    { id: 'fittings', label: 'Fittings' },
-    { id: 'undercrew', label: 'Undercrew' }
+    { id: 'design', label: '1. Ship Design' },
+    { id: 'fittings', label: '2. Fittings' },
+    { id: 'undercrew', label: '3. Undercrew' }
   ];
   stages.forEach(stage => {
     const isActive = stage.id === wizardStage;

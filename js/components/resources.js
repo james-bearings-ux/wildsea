@@ -2,10 +2,8 @@
  * Resources rendering component
  */
 
-import { getCharacter } from '../state/character.js';
-
-export function renderResources(character = null) {
-  const char = character || getCharacter();
+export function renderResources(character) {
+  const char = character;
   const resourceTypes = [
     { key: 'charts', label: 'Charts', placeholder: 'Name your Chart...', singular: 'Chart' },
     { key: 'salvage', label: 'Salvage', placeholder: 'Name your Salvage...', singular: 'Salvage' },
@@ -46,6 +44,7 @@ export function renderResources(character = null) {
       html += 'data-params=\'{"type":"' + type.key + '","id":"' + item.id + '"}\' ';
       html += 'style="width: 100%;">';
       html += '<button data-action="removeResource" ';
+      html += 'class="remove" ';
       html += 'data-params=\'{"type":"' + type.key + '","id":"' + item.id + '"}\' ';
       html += 'style="flex-shrink: 0; border: 0;">✕</button>';
       html += '</div>';

@@ -76,19 +76,63 @@ import { renderShipCreationMode } from './rendering/ship-creation-mode.js';
 import { renderShipPlayMode } from './rendering/ship-play-mode.js';
 import { renderShipUpgradeMode } from './rendering/ship-upgrade-mode.js';
 import { switchToShip, setActiveShip } from './state/session.js';
+import { setupSubscriptions, unsubscribeAll } from './realtime.js';
 
 // Global state
 let session = null;
+let character = null; // Cached active character
+let ship = null; // Cached active ship
 let activeShipTab = 'size'; // Track active tab for ship creation mode
 let activeWizardStage = 'design'; // Track wizard stage: 'design' | 'fittings' | 'undercrew'
 let showCustomizeModal = false; // Track if customization modal is open
 let selectedModalAspectId = null; // Track which aspect is selected in modal
 
+// Debounce timers for text inputs
+const debounceTimers = new Map();
+
+/**
+ * Debounce a function call by key
+ * @param {string} key - Unique identifier for this debounce
+ * @param {Function} fn - Function to debounce
+ * @param {number} delay - Delay in milliseconds (default 400ms)
+ */
+function debounce(key, fn, delay = 400) {
+  // Clear existing timer for this key
+  if (debounceTimers.has(key)) {
+    clearTimeout(debounceTimers.get(key));
+  }
+
+  // Set new timer
+  const timer = setTimeout(() => {
+    debounceTimers.delete(key);
+    fn();
+  }, delay);
+
+  debounceTimers.set(key, timer);
+}
+
 /**
  * Main render function - delegates to mode-specific renderers
+ * @param {boolean} reloadSession - Whether to reload session from DB (true for real-time updates, false for user actions)
  */
-function render() {
+async function render(reloadSession = false) {
   const app = document.getElementById('app');
+
+  // Only reload session from DB when explicitly requested (e.g., from real-time subscription)
+  if (reloadSession) {
+    const latestSession = await loadSession();
+    if (latestSession) {
+      session = latestSession;
+    }
+
+    // Also reload character and ship when session reloads (from real-time updates)
+    if (session && session.activeCharacterId) {
+      character = await loadCharacter(session.activeCharacterId);
+    }
+    if (session && session.activeShipId) {
+      ship = await loadShip(session.activeShipId);
+    }
+  }
 
   if (!session) {
     app.innerHTML = '<div style="padding: 20px;">No session found. Reloading...</div>';
@@ -96,11 +140,15 @@ function render() {
   }
 
   // Render navigation
-  const navHtml = renderNavigation(session);
+  const navHtml = await renderNavigation(session);
 
   // Check if we're viewing the ship
   if (session.activeView === 'ship' && session.activeShipId) {
-    const ship = loadShip(session.activeShipId);
+    // Load ship if not cached or if active ship changed
+    if (!ship || ship.id !== session.activeShipId) {
+      ship = await loadShip(session.activeShipId);
+    }
+
     if (!ship) {
       app.innerHTML = navHtml + '<div style="padding: 20px; color: red;">Error: Could not load ship.</div>';
       return;
@@ -129,7 +177,11 @@ function render() {
     return;
   }
 
-  const character = loadCharacter(session.activeCharacterId);
+  // Load character if not cached or if active character changed
+  if (!character || character.id !== session.activeCharacterId) {
+    character = await loadCharacter(session.activeCharacterId);
+  }
+
   if (!character) {
     app.innerHTML = navHtml + '<div style="padding: 20px; color: red;">Error: Could not load active character.</div>';
     return;
@@ -154,10 +206,7 @@ function render() {
 /**
  * Handle character creation validation and mode transition
  */
-function handleCreateCharacter() {
-  if (!session || !session.activeCharacterId) return;
-
-  const character = loadCharacter(session.activeCharacterId);
+async function handleCreateCharacter() {
   if (!character) return;
 
   const validation = validateCharacterCreation(character);
@@ -168,8 +217,8 @@ function handleCreateCharacter() {
   }
 
   character.mode = 'play';
-  saveCharacter(character);
-  render();
+  await saveCharacter(character);
+  await render();
 }
 
 /**
@@ -188,394 +237,376 @@ function setupEventDelegation() {
       if (action) {
         const params = target.getAttribute('data-params');
         // Decode HTML entities before parsing JSON
-        const decodedParams = params ? params.replace(/&quot;/g, '"') : '{}';
-        const parsedParams = decodedParams ? JSON.parse(decodedParams) : {};
-
-        // Get active character for mutations
-        const character = session && session.activeCharacterId ? loadCharacter(session.activeCharacterId) : null;
-
-        // Route to appropriate function
-        switch (action) {
-          case 'toggleAspect':
-            if (character) {
-              toggleAspect(parsedParams.id, render, character);
-              saveCharacter(character);
-              render();
-            }
-            break;
-          case 'toggleEdge':
-            if (character) {
-              toggleEdge(parsedParams.name, render, character);
-              saveCharacter(character);
-              render();
-            }
-            break;
-          case 'adjustSkill':
-            if (character) {
-              adjustSkill(parsedParams.name, parsedParams.delta, render, character);
-              saveCharacter(character);
-              render();
-            }
-            break;
-          case 'adjustLanguage':
-            if (character) {
-              adjustLanguage(parsedParams.name, parsedParams.delta, render, character);
-              saveCharacter(character);
-              render();
-            }
-            break;
-          case 'cycleAspectDamage':
-            e.stopPropagation();
-            if (character) {
-              cycleAspectDamage(parsedParams.id, parsedParams.index, render, character);
-              saveCharacter(character);
-              render();
-            }
-            break;
-          case 'expandAspectTrack':
-            e.stopPropagation();
-            if (character) {
-              expandAspectTrack(parsedParams.id, parsedParams.delta, render, character);
-              saveCharacter(character);
-              render();
-            }
-            break;
-          case 'addMilestone':
-            if (character) {
-              addMilestone(render, character);
-              saveCharacter(character);
-              render();
-            }
-            break;
-          case 'toggleMilestoneUsed':
-            if (character) {
-              toggleMilestoneUsed(parsedParams.id, render, character);
-              saveCharacter(character);
-              render();
-            }
-            break;
-          case 'deleteMilestone':
-            if (character) {
-              deleteMilestone(parsedParams.id, render, character);
-              saveCharacter(character);
-              render();
-            }
-            break;
-          case 'addResource':
-            if (character) {
-              addResource(parsedParams.type, render, character);
-              saveCharacter(character);
-              render();
-            }
-            break;
-          case 'removeResource':
-            if (character) {
-              removeResource(parsedParams.type, parsedParams.id, render, character);
-              saveCharacter(character);
-              render();
-            }
-            break;
-          case 'populateDefaultResources':
-            if (character) {
-              populateDefaultResources(render, character);
-              saveCharacter(character);
-              render();
-            }
-            break;
-          case 'generateRandomCharacter':
-            if (character) {
-              generateRandomCharacter(render, character);
-              saveCharacter(character);
-              render();
-            }
-            break;
-          case 'createCharacter':
-            handleCreateCharacter();
-            break;
-          case 'setMode':
-            if (character) {
-              setMode(parsedParams.mode, render, character);
-              saveCharacter(character);
-              render();
-            }
-            break;
-          case 'exportCharacter':
-            if (character) {
-              exportCharacter(character);
-            }
-            break;
-          case 'importCharacter':
-            importCharacter(session, render);
-            break;
-          case 'toggleMireCheckbox':
-            if (character) {
-              toggleMireCheckbox(parsedParams.index, parsedParams.num, render, character);
-              saveCharacter(character);
-              render();
-            }
-            break;
-          case 'switchCharacter':
-            if (session && parsedParams.characterId) {
-              setActiveCharacter(session, parsedParams.characterId);
-              render();
-            }
-            break;
-          case 'removeCharacter':
-            if (session && parsedParams.characterId) {
-              if (confirm('Remove this character from the crew? The character data will be deleted.')) {
-                removeCharacterFromSession(session, parsedParams.characterId);
-                deleteCharacter(parsedParams.characterId);
-                render();
-              }
-            }
-            break;
-          case 'createNewCharacter':
-            if (session) {
-              const newCharacter = createCharacter();
-              saveCharacter(newCharacter);
-              addCharacterToSession(session, newCharacter.id);
-              setActiveCharacter(session, newCharacter.id);
-              render();
-            }
-            break;
-          case 'createNewShip':
-            if (session) {
-              const newShip = createShip();
-              saveShip(newShip);
-              setActiveShip(session, newShip.id);
-              switchToShip(session);
-              render();
-            }
-            break;
-          case 'switchToShip':
-            if (session) {
-              switchToShip(session);
-              render();
-            }
-            break;
-          case 'setShipMode':
-            if (session && session.activeShipId) {
-              const ship = loadShip(session.activeShipId);
-              if (ship) {
-                setShipMode(parsedParams.mode, render, ship);
-                saveShip(ship);
-                render();
-              }
-            }
-            break;
-          case 'switchShipTab':
-            activeShipTab = parsedParams.tab;
-            render();
-            break;
-          case 'switchWizardStage':
-            activeWizardStage = parsedParams.stage;
-            // Reset to default tab when switching stages
-            if (activeWizardStage === 'design') {
-              activeShipTab = 'size';
-            } else if (activeWizardStage === 'fittings') {
-              activeShipTab = 'motifs';
-            } else if (activeWizardStage === 'undercrew') {
-              activeShipTab = 'officers';
-            }
-            render();
-            break;
-          case 'selectShipPart':
-            if (session && session.activeShipId) {
-              const ship = loadShip(session.activeShipId);
-              if (ship) {
-                selectShipPart(parsedParams.partType, parsedParams.part, render, ship);
-                saveShip(ship);
-                render();
-              }
-            }
-            break;
-          case 'selectShipFitting':
-            if (session && session.activeShipId) {
-              const ship = loadShip(session.activeShipId);
-              if (ship) {
-                selectShipFitting(parsedParams.fittingType, parsedParams.fitting, render, ship);
-                saveShip(ship);
-                render();
-              }
-            }
-            break;
-          case 'selectShipUndercrew':
-            if (session && session.activeShipId) {
-              const ship = loadShip(session.activeShipId);
-              if (ship) {
-                selectShipUndercrew(parsedParams.undercrewType, parsedParams.undercrew, render, ship);
-                saveShip(ship);
-                render();
-              }
-            }
-            break;
-          case 'importShip':
-            if (session) {
-              importShip(session, render);
-            }
-            break;
-          case 'exportShip':
-            if (session && session.activeShipId) {
-              const ship = loadShip(session.activeShipId);
-              if (ship) {
-                exportShip(ship);
-              }
-            }
-            break;
-          case 'createShip':
-            if (session && session.activeShipId) {
-              const ship = loadShip(session.activeShipId);
-              if (ship) {
-                // Validate required elements
-                const hasAllRequired = ship.size && ship.frame &&
-                  Array.isArray(ship.hull) && ship.hull.length > 0 &&
-                  Array.isArray(ship.bite) && ship.bite.length > 0 &&
-                  Array.isArray(ship.engine) && ship.engine.length > 0;
-
-                if (!hasAllRequired) {
-                  alert('Please select all required ship design elements (Size, Frame, Hull, Bite, and Engine)');
-                  return;
-                }
-
-                ship.mode = 'play';
-                saveShip(ship);
-                render();
-              }
-            }
-            break;
-          case 'saveShipUpgrade':
-            if (session && session.activeShipId) {
-              const ship = loadShip(session.activeShipId);
-              if (ship) {
-                ship.mode = 'play';
-                saveShip(ship);
-                render();
-              }
-            }
-            break;
-          case 'cycleRatingDamage':
-            e.stopPropagation();
-            if (session && session.activeShipId) {
-              const ship = loadShip(session.activeShipId);
-              if (ship) {
-                cycleRatingDamage(parsedParams.rating, parsedParams.index, render, ship);
-                saveShip(ship);
-                render();
-              }
-            }
-            break;
-          case 'cycleUndercrewDamage':
-            e.stopPropagation();
-            if (session && session.activeShipId) {
-              const ship = loadShip(session.activeShipId);
-              if (ship) {
-                cycleUndercrewDamage(parsedParams.undercrewName, parsedParams.index, render, ship);
-                saveShip(ship);
-                render();
-              }
-            }
-            break;
-          case 'addCargo':
-            if (session && session.activeShipId) {
-              const ship = loadShip(session.activeShipId);
-              if (ship) {
-                addCargo(render, ship);
-                saveShip(ship);
-                render();
-              }
-            }
-            break;
-          case 'removeCargo':
-            if (session && session.activeShipId) {
-              const ship = loadShip(session.activeShipId);
-              if (ship) {
-                removeCargo(parsedParams.id, render, ship);
-                saveShip(ship);
-                render();
-              }
-            }
-            break;
-          case 'addPassenger':
-            if (session && session.activeShipId) {
-              const ship = loadShip(session.activeShipId);
-              if (ship) {
-                addPassenger(render, ship);
-                saveShip(ship);
-                render();
-              }
-            }
-            break;
-          case 'removePassenger':
-            if (session && session.activeShipId) {
-              const ship = loadShip(session.activeShipId);
-              if (ship) {
-                removePassenger(parsedParams.id, render, ship);
-                saveShip(ship);
-                render();
-              }
-            }
-            break;
-          case 'openCustomizeModal':
-            showCustomizeModal = true;
-            selectedModalAspectId = null; // Default to first aspect
-            render();
-            break;
-          case 'closeCustomizeModal':
-            // Only close if clicked directly on overlay, not on modal content
-            if (e.target.classList && e.target.classList.contains('modal-overlay')) {
-              showCustomizeModal = false;
-              selectedModalAspectId = null;
-              render();
-            }
-            break;
-          case 'selectAspectInModal':
-            // This is handled by change event
-            break;
-          case 'saveAspectCustomization':
-            if (character) {
-              const nameInput = document.getElementById('modal-aspect-name');
-              const descInput = document.getElementById('modal-aspect-description');
-
-              if (!nameInput || !descInput) break;
-
-              const name = nameInput.value.trim();
-              const description = descInput.value.trim();
-
-              // Validation
-              if (!name || name.length === 0) {
-                alert('Aspect name is required');
-                break;
-              }
-              if (name.length > 250) {
-                alert('Aspect name must be 250 characters or less');
-                break;
-              }
-              if (!description || description.length === 0) {
-                alert('Aspect description is required');
-                break;
-              }
-              if (description.length > 800) {
-                alert('Aspect description must be 800 characters or less');
-                break;
-              }
-
-              customizeAspect(parsedParams.id, name, description, character);
-              saveCharacter(character);
-              showCustomizeModal = false;
-              selectedModalAspectId = null;
-              render();
-            }
-            break;
-          case 'resetAspectCustomization':
-            if (character && parsedParams.id) {
-              if (confirm('Reset this aspect to its original name and description?')) {
-                resetAspectCustomization(parsedParams.id, character);
-                saveCharacter(character);
-                render();
-              }
-            }
-            break;
+        let parsedParams = {};
+        if (params && params.trim() !== '') {
+          const decodedParams = params.replace(/&quot;/g, '"');
+          try {
+            parsedParams = JSON.parse(decodedParams);
+          } catch (e) {
+            console.error('Failed to parse data-params:', params, e);
+            parsedParams = {};
+          }
         }
+
+        // Handle async actions
+        (async () => {
+          try {
+            // Route to appropriate function
+            switch (action) {
+              case 'toggleAspect':
+                if (character) {
+                  toggleAspect(parsedParams.id, render, character);
+                  await saveCharacter(character);
+                  await render();
+                }
+                break;
+              case 'toggleEdge':
+                if (character) {
+                  toggleEdge(parsedParams.name, render, character);
+                  await saveCharacter(character);
+                  await render();
+                }
+                break;
+              case 'adjustSkill':
+                if (character) {
+                  adjustSkill(parsedParams.name, parsedParams.delta, render, character);
+                  await saveCharacter(character);
+                  await render();
+                }
+                break;
+              case 'adjustLanguage':
+                if (character) {
+                  adjustLanguage(parsedParams.name, parsedParams.delta, render, character);
+                  await saveCharacter(character);
+                  await render();
+                }
+                break;
+              case 'cycleAspectDamage':
+                e.stopPropagation();
+                if (character) {
+                  cycleAspectDamage(parsedParams.id, parsedParams.index, render, character);
+                  await saveCharacter(character);
+                  await render();
+                }
+                break;
+              case 'expandAspectTrack':
+                e.stopPropagation();
+                if (character) {
+                  expandAspectTrack(parsedParams.id, parsedParams.delta, render, character);
+                  await saveCharacter(character);
+                  await render();
+                }
+                break;
+              case 'addMilestone':
+                if (character) {
+                  addMilestone(render, character);
+                  await saveCharacter(character);
+                  await render();
+                }
+                break;
+              case 'toggleMilestoneUsed':
+                if (character) {
+                  toggleMilestoneUsed(parsedParams.id, render, character);
+                  await saveCharacter(character);
+                  await render();
+                }
+                break;
+              case 'deleteMilestone':
+                if (character) {
+                  deleteMilestone(parsedParams.id, render, character);
+                  await saveCharacter(character);
+                  await render();
+                }
+                break;
+              case 'addResource':
+                if (character) {
+                  addResource(parsedParams.type, render, character);
+                  await saveCharacter(character);
+                  await render();
+                }
+                break;
+              case 'removeResource':
+                if (character) {
+                  removeResource(parsedParams.type, parsedParams.id, render, character);
+                  await saveCharacter(character);
+                  await render();
+                }
+                break;
+              case 'populateDefaultResources':
+                if (character) {
+                  populateDefaultResources(render, character);
+                  await saveCharacter(character);
+                  await render();
+                }
+                break;
+              case 'generateRandomCharacter':
+                if (character) {
+                  generateRandomCharacter(render, character);
+                  await saveCharacter(character);
+                  await render();
+                }
+                break;
+              case 'createCharacter':
+                await handleCreateCharacter();
+                break;
+              case 'setMode':
+                if (character) {
+                  setMode(parsedParams.mode, render, character);
+                  await saveCharacter(character);
+                  await render();
+                }
+                break;
+              case 'exportCharacter':
+                if (character) {
+                  exportCharacter(character);
+                }
+                break;
+              case 'importCharacter':
+                await importCharacter(session, render);
+                break;
+              case 'toggleMireCheckbox':
+                if (character) {
+                  toggleMireCheckbox(parsedParams.index, parsedParams.num, render, character);
+                  await saveCharacter(character);
+                  await render();
+                }
+                break;
+              case 'switchCharacter':
+                if (session && parsedParams.characterId) {
+                  await setActiveCharacter(session, parsedParams.characterId);
+                  // Load the new character into cache
+                  character = await loadCharacter(parsedParams.characterId);
+                  await render();
+                }
+                break;
+              case 'removeCharacter':
+                if (session && parsedParams.characterId) {
+                  if (confirm('Remove this character from the crew? The character data will be deleted.')) {
+                    await removeCharacterFromSession(session, parsedParams.characterId);
+                    await deleteCharacter(parsedParams.characterId);
+                    // Clear character cache if we deleted the active one
+                    if (character && character.id === parsedParams.characterId) {
+                      character = null;
+                    }
+                    await render();
+                  }
+                }
+                break;
+              case 'createNewCharacter':
+                if (session) {
+                  const newCharacter = await createCharacter(session.id);
+                  await addCharacterToSession(session, newCharacter.id);
+                  await setActiveCharacter(session, newCharacter.id);
+                  // Cache the new character
+                  character = newCharacter;
+                  await render();
+                }
+                break;
+              case 'createNewShip':
+                if (session) {
+                  const newShip = await createShip(session.id);
+                  await setActiveShip(session, newShip.id);
+                  await switchToShip(session);
+                  // Cache the new ship
+                  ship = newShip;
+                  await render();
+                }
+                break;
+              case 'switchToShip':
+                if (session) {
+                  await switchToShip(session);
+                  await render();
+                }
+                break;
+              case 'setShipMode':
+                if (ship) {
+                  setShipMode(parsedParams.mode, render, ship);
+                  await saveShip(ship);
+                  await render();
+                }
+                break;
+              case 'switchShipTab':
+                activeShipTab = parsedParams.tab;
+                await render();
+                break;
+              case 'switchWizardStage':
+                activeWizardStage = parsedParams.stage;
+                // Reset to default tab when switching stages
+                if (activeWizardStage === 'design') {
+                  activeShipTab = 'size';
+                } else if (activeWizardStage === 'fittings') {
+                  activeShipTab = 'motifs';
+                } else if (activeWizardStage === 'undercrew') {
+                  activeShipTab = 'officers';
+                }
+                await render();
+                break;
+              case 'selectShipPart':
+                if (ship) {
+                  selectShipPart(parsedParams.partType, parsedParams.part, render, ship);
+                  await saveShip(ship);
+                  await render();
+                }
+                break;
+              case 'selectShipFitting':
+                if (ship) {
+                  selectShipFitting(parsedParams.fittingType, parsedParams.fitting, render, ship);
+                  await saveShip(ship);
+                  await render();
+                }
+                break;
+              case 'selectShipUndercrew':
+                if (ship) {
+                  selectShipUndercrew(parsedParams.undercrewType, parsedParams.undercrew, render, ship);
+                  await saveShip(ship);
+                  await render();
+                }
+                break;
+              case 'importShip':
+                if (session) {
+                  await importShip(session, render);
+                }
+                break;
+              case 'exportShip':
+                if (ship) {
+                  exportShip(ship);
+                }
+                break;
+              case 'createShip':
+                if (ship) {
+                  // Validate required elements
+                  const hasAllRequired = ship.size && ship.frame &&
+                    Array.isArray(ship.hull) && ship.hull.length > 0 &&
+                    Array.isArray(ship.bite) && ship.bite.length > 0 &&
+                    Array.isArray(ship.engine) && ship.engine.length > 0;
+
+                  if (!hasAllRequired) {
+                    alert('Please select all required ship design elements (Size, Frame, Hull, Bite, and Engine)');
+                    return;
+                  }
+
+                  ship.mode = 'play';
+                  await saveShip(ship);
+                  await render();
+                }
+                break;
+              case 'saveShipUpgrade':
+                if (ship) {
+                  ship.mode = 'play';
+                  await saveShip(ship);
+                  await render();
+                }
+                break;
+              case 'cycleRatingDamage':
+                e.stopPropagation();
+                if (ship) {
+                  cycleRatingDamage(parsedParams.rating, parsedParams.index, render, ship);
+                  await saveShip(ship);
+                  await render();
+                }
+                break;
+              case 'cycleUndercrewDamage':
+                e.stopPropagation();
+                if (ship) {
+                  cycleUndercrewDamage(parsedParams.undercrewName, parsedParams.index, render, ship);
+                  await saveShip(ship);
+                  await render();
+                }
+                break;
+              case 'addCargo':
+                if (ship) {
+                  addCargo(render, ship);
+                  await saveShip(ship);
+                  await render();
+                }
+                break;
+              case 'removeCargo':
+                if (ship) {
+                  removeCargo(parsedParams.id, render, ship);
+                  await saveShip(ship);
+                  await render();
+                }
+                break;
+              case 'addPassenger':
+                if (ship) {
+                  addPassenger(render, ship);
+                  await saveShip(ship);
+                  await render();
+                }
+                break;
+              case 'removePassenger':
+                if (ship) {
+                  removePassenger(parsedParams.id, render, ship);
+                  await saveShip(ship);
+                  await render();
+                }
+                break;
+              case 'openCustomizeModal':
+                showCustomizeModal = true;
+                selectedModalAspectId = null; // Default to first aspect
+                await render();
+                break;
+              case 'closeCustomizeModal':
+                // Only close if clicked directly on overlay, not on modal content
+                if (e.target.classList && e.target.classList.contains('modal-overlay')) {
+                  showCustomizeModal = false;
+                  selectedModalAspectId = null;
+                  await render();
+                }
+                break;
+              case 'selectAspectInModal':
+                // This is handled by change event
+                break;
+              case 'saveAspectCustomization':
+                if (character) {
+                  const nameInput = document.getElementById('modal-aspect-name');
+                  const descInput = document.getElementById('modal-aspect-description');
+
+                  if (!nameInput || !descInput) break;
+
+                  const name = nameInput.value.trim();
+                  const description = descInput.value.trim();
+
+                  // Validation
+                  if (!name || name.length === 0) {
+                    alert('Aspect name is required');
+                    break;
+                  }
+                  if (name.length > 250) {
+                    alert('Aspect name must be 250 characters or less');
+                    break;
+                  }
+                  if (!description || description.length === 0) {
+                    alert('Aspect description is required');
+                    break;
+                  }
+                  if (description.length > 800) {
+                    alert('Aspect description must be 800 characters or less');
+                    break;
+                  }
+
+                  customizeAspect(parsedParams.id, name, description, character);
+                  await saveCharacter(character);
+                  showCustomizeModal = false;
+                  selectedModalAspectId = null;
+                  await render();
+                }
+                break;
+              case 'resetAspectCustomization':
+                if (character && parsedParams.id) {
+                  if (confirm('Reset this aspect to its original name and description?')) {
+                    resetAspectCustomization(parsedParams.id, character);
+                    await saveCharacter(character);
+                    await render();
+                  }
+                }
+                break;
+            }
+          } catch (error) {
+            console.error('Error handling action:', action, error);
+            alert('An error occurred. Please try again.');
+          }
+        })();
         return; // Stop after handling the action
       }
       target = target.parentElement; // Move up the DOM tree
@@ -592,114 +623,129 @@ function setupEventDelegation() {
     const params = target.getAttribute('data-params');
     const parsedParams = params ? JSON.parse(params) : {};
 
-    // Handle ship-related change events
-    if (action === 'updateShipName') {
-      if (session && session.activeShipId) {
-        const ship = loadShip(session.activeShipId);
-        if (ship) {
-          updateShipName(target.value, ship);
-          saveShip(ship);
+    // Handle async operations
+    (async () => {
+      try {
+        // Handle ship-related change events
+        if (action === 'updateShipName') {
+          if (ship) {
+            updateShipName(target.value, ship);
+            // Debounce ship name saves
+            debounce('ship-name', async () => {
+              await saveShip(ship);
+            });
+          }
+          return;
         }
-      }
-      return;
-    }
 
-    if (action === 'updateAnticipatedCrewSize') {
-      if (session && session.activeShipId) {
-        const ship = loadShip(session.activeShipId);
-        if (ship) {
-          updateAnticipatedCrewSize(target.value, render, ship);
-          saveShip(ship);
-          render();
+        if (action === 'updateAnticipatedCrewSize') {
+          if (ship) {
+            updateAnticipatedCrewSize(target.value, render, ship);
+            await saveShip(ship);
+            await render();
+          }
+          return;
         }
-      }
-      return;
-    }
 
-    if (action === 'updateAdditionalStakes') {
-      if (session && session.activeShipId) {
-        const ship = loadShip(session.activeShipId);
-        if (ship) {
-          updateAdditionalStakes(target.value, render, ship);
-          saveShip(ship);
-          render();
+        if (action === 'updateAdditionalStakes') {
+          if (ship) {
+            updateAdditionalStakes(target.value, render, ship);
+            await saveShip(ship);
+            await render();
+          }
+          return;
         }
-      }
-      return;
-    }
 
-    if (action === 'updateCargoName') {
-      if (session && session.activeShipId) {
-        const ship = loadShip(session.activeShipId);
-        if (ship) {
-          updateCargoName(parsedParams.id, target.value, ship);
-          saveShip(ship);
+        if (action === 'updateCargoName') {
+          if (ship) {
+            updateCargoName(parsedParams.id, target.value, ship);
+            // Debounce cargo name saves
+            debounce('cargo-name-' + parsedParams.id, async () => {
+              await saveShip(ship);
+            });
+          }
+          return;
         }
-      }
-      return;
-    }
 
-    if (action === 'updatePassengerName') {
-      if (session && session.activeShipId) {
-        const ship = loadShip(session.activeShipId);
-        if (ship) {
-          updatePassengerName(parsedParams.id, target.value, ship);
-          saveShip(ship);
+        if (action === 'updatePassengerName') {
+          if (ship) {
+            updatePassengerName(parsedParams.id, target.value, ship);
+            // Debounce passenger name saves
+            debounce('passenger-name-' + parsedParams.id, async () => {
+              await saveShip(ship);
+            });
+          }
+          return;
         }
+
+        // Handle character-related change events (use cached character)
+        if (!character) return;
+
+        switch (action) {
+          case 'onCharacterNameChange':
+            onCharacterNameChange(target.value, character);
+            // Debounce character name saves
+            debounce('character-name', async () => {
+              await saveCharacter(character);
+            });
+            break;
+          case 'onBloodlineChange':
+            onBloodlineChange(target.value, render, character);
+            await saveCharacter(character);
+            await render();
+            break;
+          case 'onOriginChange':
+            onOriginChange(target.value, render, character);
+            await saveCharacter(character);
+            await render();
+            break;
+          case 'onPostChange':
+            onPostChange(target.value, render, character);
+            await saveCharacter(character);
+            await render();
+            break;
+          case 'updateDrive':
+            updateDrive(parsedParams.index, target.value, character);
+            // Debounce drive saves
+            debounce('drive-' + parsedParams.index, async () => {
+              await saveCharacter(character);
+            });
+            break;
+          case 'updateMire':
+            updateMire(parsedParams.index, target.value, character);
+            // Debounce mire saves
+            debounce('mire-' + parsedParams.index, async () => {
+              await saveCharacter(character);
+            });
+            break;
+          case 'updateMilestoneName':
+            updateMilestoneName(parsedParams.id, target.value, character);
+            // Debounce milestone name saves
+            debounce('milestone-name-' + parsedParams.id, async () => {
+              await saveCharacter(character);
+            });
+            break;
+          case 'updateMilestoneScale':
+            updateMilestoneScale(parsedParams.id, target.value, render, character);
+            await saveCharacter(character);
+            await render();
+            break;
+          case 'updateResourceName':
+            updateResourceName(parsedParams.type, parsedParams.id, target.value, character);
+            // Debounce resource name saves
+            debounce('resource-name-' + parsedParams.type + '-' + parsedParams.id, async () => {
+              await saveCharacter(character);
+            });
+            break;
+          case 'selectAspectInModal':
+            selectedModalAspectId = target.value;
+            await render();
+            break;
+        }
+      } catch (error) {
+        console.error('Error handling change event:', action, error);
       }
-      return;
-    }
-
-    // Handle character-related change events
-    const character = session && session.activeCharacterId ? loadCharacter(session.activeCharacterId) : null;
-    if (!character) return;
-
-    switch (action) {
-      case 'onCharacterNameChange':
-        onCharacterNameChange(target.value, character);
-        saveCharacter(character);
-        break;
-      case 'onBloodlineChange':
-        onBloodlineChange(target.value, render, character);
-        saveCharacter(character);
-        render();
-        break;
-      case 'onOriginChange':
-        onOriginChange(target.value, render, character);
-        saveCharacter(character);
-        render();
-        break;
-      case 'onPostChange':
-        onPostChange(target.value, render, character);
-        saveCharacter(character);
-        render();
-        break;
-      case 'updateDrive':
-        updateDrive(parsedParams.index, target.value, character);
-        saveCharacter(character);
-        break;
-      case 'updateMire':
-        updateMire(parsedParams.index, target.value, character);
-        saveCharacter(character);
-        break;
-      case 'updateMilestoneName':
-        updateMilestoneName(parsedParams.id, target.value, character);
-        saveCharacter(character);
-        break;
-      case 'updateMilestoneScale':
-        updateMilestoneScale(parsedParams.id, target.value, render, character);
-        saveCharacter(character);
-        render();
-        break;
-      case 'updateResourceName':
-        updateResourceName(parsedParams.type, parsedParams.id, target.value, character);
-        saveCharacter(character);
-        break;
-      case 'selectAspectInModal':
-        selectedModalAspectId = target.value;
-        render();
-        break;
-    }
+    })();
   });
 
   // Input event delegation for live character count updates
@@ -740,28 +786,72 @@ function setupEventDelegation() {
  * Initialize the application
  */
 async function init() {
-  const success = await loadGameData();
+  const app = document.getElementById('app');
+  app.innerHTML = '<div style="padding: 20px;">Loading...</div>';
 
-  if (!success) {
-    document.getElementById('app').innerHTML = '<div style="padding: 20px; color: red;">Failed to load game data. Check console for errors.</div>';
-    return;
+  try {
+    console.log('Starting initialization...');
+
+    console.log('Loading game data...');
+    const success = await loadGameData();
+
+    if (!success) {
+      console.error('Game data failed to load');
+      app.innerHTML = '<div style="padding: 20px; color: red;">Failed to load game data. Check console for errors.</div>';
+      return;
+    }
+    console.log('Game data loaded successfully');
+
+    // Load or create session
+    console.log('Loading session...');
+    session = await loadSession();
+
+    if (!session) {
+      console.log('No session found, creating new session...');
+      // New user - create default session with one character
+      session = await createSession('My Crew');
+      console.log('Session created:', session.id);
+
+      console.log('Creating default character...');
+      character = await createCharacter(session.id);
+      console.log('Character created:', character.id);
+
+      console.log('Adding character to session...');
+      await addCharacterToSession(session, character.id);
+      console.log('Character added to session');
+    } else {
+      console.log('Session loaded:', session.id);
+    }
+
+    // Cache initial character and ship
+    if (session.activeCharacterId) {
+      console.log('Loading active character...');
+      character = await loadCharacter(session.activeCharacterId);
+    }
+    if (session.activeShipId) {
+      console.log('Loading active ship...');
+      ship = await loadShip(session.activeShipId);
+    }
+
+    console.log('Setting up real-time subscriptions...');
+    setupSubscriptions(session.id, render);
+
+    console.log('Setting up event delegation...');
+    setupEventDelegation();
+
+    // Cleanup subscriptions when page unloads
+    window.addEventListener('beforeunload', () => {
+      unsubscribeAll();
+    });
+
+    console.log('Rendering...');
+    await render();
+    console.log('Initialization complete!');
+  } catch (error) {
+    console.error('Failed to initialize:', error);
+    console.error('Error stack:', error.stack);
+    app.innerHTML = '<div style="padding: 20px; color: red;">Failed to load: ' + error.message + '<br><br>Check console for details.</div>';
   }
-
-  // Load or create session
-  session = loadSession();
-  if (!session) {
-    // New user - create default session with one character
-    session = createSession('My Crew');
-
-    const character = createCharacter();
-    saveCharacter(character);
-    addCharacterToSession(session, character.id);
-
-    saveSession(session);
-  }
-
-  setupEventDelegation();
-  render();
 }
 
 // Start the app

@@ -11,11 +11,13 @@ let GAME_DATA = {};
  */
 export async function loadGameData() {
   try {
+    // Use Vite's base URL for proper path resolution in production
+    const base = import.meta.env.BASE_URL;
     const [constants, aspects, resources, shipParts] = await Promise.all([
-      fetch('data/game-constants.json').then(r => r.json()),
-      fetch('data/aspects.json').then(r => r.json()),
-      fetch('data/resources.json').then(r => r.json()),
-      fetch('data/ship-parts.json').then(r => r.json())
+      fetch(`${base}data/game-constants.json`).then(r => r.json()),
+      fetch(`${base}data/aspects.json`).then(r => r.json()),
+      fetch(`${base}data/resources.json`).then(r => r.json()),
+      fetch(`${base}data/ship-parts.json`).then(r => r.json())
     ]);
 
     GAME_DATA = {

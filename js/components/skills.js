@@ -3,11 +3,11 @@
  */
 
 import { getGameData } from '../data/loader.js';
-import { getCharacter, BUDGETS } from '../state/character.js';
+import { BUDGETS } from '../state/character.js';
 
-export function renderSkills(character = null, gameData = null) {
+export function renderSkills(character, gameData = null) {
   const GAME_DATA = gameData || getGameData();
-  const char = character || getCharacter();
+  const char = character;
   const isCreationMode = char.mode === 'creation';
   const isPlayMode = char.mode === 'play';
 
@@ -47,11 +47,12 @@ export function renderSkills(character = null, gameData = null) {
       const skill = GAME_DATA.skills[i];
       const rank = char.skills[skill] || 0;
       const canIncrease = rank < 2 && totalPoints < BUDGETS.skillPoints;
+      const escapedSkill = skill.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
 
       html += '<div class="flex-between" style="margin-bottom: 8px;">';
       html += '<div class="skill-name">' + skill + '</div>';
       html += '<div style="display: flex; gap: 8px; align-items: center;">';
-      html += '<button data-action="adjustSkill" data-params=\'{"name":"' + skill + '","delta":-1}\'';
+      html += '<button data-action="adjustSkill" data-params="{&quot;name&quot;:&quot;' + escapedSkill + '&quot;,&quot;delta&quot;:-1}"';
       if (rank === 0) html += ' disabled';
       html += '>−</button>';
 
@@ -61,7 +62,7 @@ export function renderSkills(character = null, gameData = null) {
         html += '"></div>';
       }
 
-      html += '<button data-action="adjustSkill" data-params=\'{"name":"' + skill + '","delta":1}\'';
+      html += '<button data-action="adjustSkill" data-params="{&quot;name&quot;:&quot;' + escapedSkill + '&quot;,&quot;delta&quot;:1}"';
       if (!canIncrease) html += ' disabled';
       html += '>+</button>';
       html += '</div></div>';
@@ -75,11 +76,12 @@ export function renderSkills(character = null, gameData = null) {
     for (let i = 0; i < GAME_DATA.skills.length; i++) {
       const skill = GAME_DATA.skills[i];
       const rank = char.skills[skill] || 0;
+      const escapedSkill = skill.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
 
       html += '<div class="flex-between" style="margin-bottom: 8px;">';
       html += '<div class="skill-name">' + skill + '</div>';
       html += '<div style="display: flex; gap: 8px; align-items: center;">';
-      html += '<button data-action="adjustSkill" data-params=\'{"name":"' + skill + '","delta":-1}\'';
+      html += '<button data-action="adjustSkill" data-params="{&quot;name&quot;:&quot;' + escapedSkill + '&quot;,&quot;delta&quot;:-1}"';
       if (rank === 0) html += ' disabled';
       html += '>−</button>';
 
@@ -89,7 +91,7 @@ export function renderSkills(character = null, gameData = null) {
         html += '"></div>';
       }
 
-      html += '<button data-action="adjustSkill" data-params=\'{"name":"' + skill + '","delta":1}\'';
+      html += '<button data-action="adjustSkill" data-params="{&quot;name&quot;:&quot;' + escapedSkill + '&quot;,&quot;delta&quot;:1}"';
       if (rank >= 3) html += ' disabled';
       html += '>+</button>';
       html += '</div></div>';
@@ -100,9 +102,9 @@ export function renderSkills(character = null, gameData = null) {
   }
 }
 
-export function renderLanguages(character = null, gameData = null) {
+export function renderLanguages(character, gameData = null) {
   const GAME_DATA = gameData || getGameData();
-  const char = character || getCharacter();
+  const char = character;
   const isCreationMode = char.mode === 'creation';
   const isPlayMode = char.mode === 'play';
 
@@ -144,11 +146,12 @@ export function renderLanguages(character = null, gameData = null) {
       const isLowSour = lang === 'Low Sour';
       const canIncrease = !isLowSour && rank < 2 && totalPoints < BUDGETS.skillPoints;
       const canDecrease = !isLowSour && rank > 0;
+      const escapedLang = lang.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
 
       html += '<div class="flex-between" style="margin-bottom: 8px;">';
       html += '<div class="skill-name">' + lang + '</div>';
       html += '<div style="display: flex; gap: 8px; align-items: center;">';
-      html += '<button data-action="adjustLanguage" data-params=\'{"name":"' + lang + '","delta":-1}\'';
+      html += '<button data-action="adjustLanguage" data-params="{&quot;name&quot;:&quot;' + escapedLang + '&quot;,&quot;delta&quot;:-1}"';
       if (!canDecrease) html += ' disabled';
       html += '>−</button>';
 
@@ -158,7 +161,7 @@ export function renderLanguages(character = null, gameData = null) {
         html += '"></div>';
       }
 
-      html += '<button data-action="adjustLanguage" data-params=\'{"name":"' + lang + '","delta":1}\'';
+      html += '<button data-action="adjustLanguage" data-params="{&quot;name&quot;:&quot;' + escapedLang + '&quot;,&quot;delta&quot;:1}"';
       if (!canIncrease) html += ' disabled';
       html += '>+</button>';
       html += '</div></div>';
@@ -172,11 +175,12 @@ export function renderLanguages(character = null, gameData = null) {
     for (let i = 0; i < GAME_DATA.languages.length; i++) {
       const lang = GAME_DATA.languages[i];
       const rank = char.languages[lang] || 0;
+      const escapedLang = lang.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
 
       html += '<div class="flex-between" style="margin-bottom: 8px;">';
       html += '<div class="skill-name">' + lang + '</div>';
       html += '<div style="display: flex; gap: 8px; align-items: center;">';
-      html += '<button data-action="adjustLanguage" data-params=\'{"name":"' + lang + '","delta":-1}\'';
+      html += '<button data-action="adjustLanguage" data-params="{&quot;name&quot;:&quot;' + escapedLang + '&quot;,&quot;delta&quot;:-1}"';
       if (rank === 0 || lang === 'Low Sour') html += ' disabled';
       html += '>−</button>';
 
@@ -186,7 +190,7 @@ export function renderLanguages(character = null, gameData = null) {
         html += '"></div>';
       }
 
-      html += '<button data-action="adjustLanguage" data-params=\'{"name":"' + lang + '","delta":1}\'';
+      html += '<button data-action="adjustLanguage" data-params="{&quot;name&quot;:&quot;' + escapedLang + '&quot;,&quot;delta&quot;:1}"';
       if (rank >= 3) html += ' disabled';
       html += '>+</button>';
       html += '</div></div>';

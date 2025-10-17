@@ -15,7 +15,7 @@ export function renderShipRatings(ship) {
   let html = '<div class="ship-ratings-column" style="gap: 8px;">';
 
   // Ratings heading
-  html += '<div class="ship-ratings-heading">RATINGS</div>';
+  html += '<div class="ship-ratings-heading">Ratings</div>';
 
   const ratingNames = ['Armour', 'Seals', 'Speed', 'Saws', 'Stealth', 'Tilt'];
 
