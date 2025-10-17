@@ -101,14 +101,18 @@ export async function getOrCreateSharedSession() {
     console.error('Failed to load character links:', linkError);
   }
 
+  // Load per-user view state from localStorage
+  const activeView = localStorage.getItem('wildsea-active-view') || 'character';
+  const activeCharacterId = localStorage.getItem('wildsea-active-character-id') || null;
+
   // Convert database format to app format
   return {
     id: data.id,
     crewName: data.name,
     activeShipId: data.active_ship_id,
     activeCharacterIds: characterLinks ? characterLinks.map(link => link.character_id) : [],
-    activeView: data.active_view,
-    activeCharacterId: data.active_character_id,
+    activeView: activeView, // Per-user from localStorage
+    activeCharacterId: activeCharacterId, // Per-user from localStorage
     created: new Date(data.created_at).getTime(),
     lastModified: new Date(data.updated_at).getTime()
   };
@@ -147,30 +151,37 @@ export async function loadSession() {
     console.error('Failed to load character links:', linkError);
   }
 
+  // Load per-user view state from localStorage
+  const activeView = localStorage.getItem('wildsea-active-view') || 'character';
+  const activeCharacterId = localStorage.getItem('wildsea-active-character-id') || null;
+
   // Convert database format to app format
   return {
     id: data.id,
     crewName: data.name,
     activeShipId: data.active_ship_id,
     activeCharacterIds: characterLinks ? characterLinks.map(link => link.character_id) : [],
-    activeView: data.active_view,
-    activeCharacterId: data.active_character_id,
+    activeView: activeView, // Per-user from localStorage
+    activeCharacterId: activeCharacterId, // Per-user from localStorage
     created: new Date(data.created_at).getTime(),
     lastModified: new Date(data.updated_at).getTime()
   };
 }
 
 /**
- * Save session to Supabase
+ * Save session to Supabase (only shared state, not per-user view state)
  */
 export async function saveSession(session) {
+  // Save per-user view state to localStorage
+  localStorage.setItem('wildsea-active-view', session.activeView);
+  localStorage.setItem('wildsea-active-character-id', session.activeCharacterId || '');
+
+  // Only save shared state to database (crew name, ship)
   const { error } = await supabase
     .from('sessions')
     .update({
       name: session.crewName,
-      active_character_id: session.activeCharacterId,
       active_ship_id: session.activeShipId,
-      active_view: session.activeView,
       updated_at: new Date().toISOString()
     })
     .eq('id', session.id);

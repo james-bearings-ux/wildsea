@@ -151,24 +151,28 @@ export function setupSubscriptions(sessionId, renderCallback) {
 
   // Subscribe to session changes (name, active character, active ship, etc.)
   subscribeToSession(sessionId, (payload) => {
+    console.log('[REALTIME] Session changed - Event:', payload.eventType, 'New data:', payload.new);
     // Session data changed, trigger re-render with session reload
     renderCallback(true);
   });
 
   // Subscribe to character changes (any character in this session)
   subscribeToCharacters(sessionId, (payload) => {
+    console.log('[REALTIME] Character changed - Event:', payload.eventType, 'Character ID:', payload.new?.id, 'Name:', payload.new?.name);
     // Character data changed, trigger re-render with session reload
     renderCallback(true);
   });
 
   // Subscribe to ship changes (any ship in this session)
   subscribeToShips(sessionId, (payload) => {
+    console.log('[REALTIME] Ship changed - Event:', payload.eventType, 'Ship ID:', payload.new?.id, 'Name:', payload.new?.name);
     // Ship data changed, trigger re-render with session reload
     renderCallback(true);
   });
 
   // Subscribe to session-character relationship changes (characters added/removed)
   subscribeToSessionCharacters(sessionId, (payload) => {
+    console.log('[REALTIME] Session-character link changed - Event:', payload.eventType, 'Character ID:', payload.new?.character_id);
     // Character added or removed from session, trigger re-render with session reload
     renderCallback(true);
   });
