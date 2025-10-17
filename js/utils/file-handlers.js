@@ -114,6 +114,9 @@ export async function importCharacter(session, renderCallback) {
         // Save the updated character data
         await saveCharacter(newCharacter);
 
+        // Save mode to localStorage (mode is per-user, not saved to DB)
+        localStorage.setItem(`wildsea-character-${newCharacter.id}-mode`, 'play');
+
         // Add to session and set as active
         await addCharacterToSession(session, newCharacter.id);
         await setActiveCharacter(session, newCharacter.id);
@@ -185,7 +188,8 @@ export async function importShip(session, renderCallback) {
 
         // Now update all properties from the imported data
         newShip.name = importedData.name || 'Imported Ship';
-        newShip.mode = importedData.mode || 'creation';
+        // Always import in play mode (exported ships have passed creation validation)
+        newShip.mode = 'play';
         newShip.size = importedData.size || null;
         newShip.frame = importedData.frame || null;
         newShip.hull = importedData.hull || [];
@@ -238,6 +242,9 @@ export async function importShip(session, renderCallback) {
 
         // Save the updated ship data
         await saveShip(newShip);
+
+        // Save mode to localStorage (mode is per-user, not saved to DB)
+        localStorage.setItem(`wildsea-ship-${newShip.id}-mode`, 'play');
 
         // Set as active ship and switch to ship view
         await setActiveShip(session, newShip.id);
