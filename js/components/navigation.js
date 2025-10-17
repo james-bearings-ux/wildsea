@@ -60,6 +60,11 @@ export async function renderNavigation(session) {
   html += '↓ Import Character';
   html += '</button>';
 
+  // Sign out button
+  html += '<button data-action="signOut" class="nav-button nav-button-minor" style="margin-left: 16px;">';
+  html += 'Sign Out';
+  html += '</button>';
+
   html += '</div>';
   html += '</div>';
 

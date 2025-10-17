@@ -42,7 +42,8 @@ import {
   saveSession,
   addCharacterToSession,
   removeCharacterFromSession,
-  setActiveCharacter
+  setActiveCharacter,
+  getOrCreateSharedSession
 } from './state/session.js';
 import { validateCharacterCreation } from './utils/validation.js';
 import { exportCharacter, importCharacter, exportShip, importShip } from './utils/file-handlers.js';
@@ -77,8 +78,11 @@ import { renderShipPlayMode } from './rendering/ship-play-mode.js';
 import { renderShipUpgradeMode } from './rendering/ship-upgrade-mode.js';
 import { switchToShip, setActiveShip } from './state/session.js';
 import { setupSubscriptions, unsubscribeAll } from './realtime.js';
+import { getCurrentUser, onAuthStateChange, sendMagicLink, signOut } from './auth.js';
+import { renderLoginScreen, renderCheckEmailScreen } from './components/login.js';
 
 // Global state
+let currentUser = null; // Current authenticated user
 let session = null;
 let character = null; // Cached active character
 let ship = null; // Cached active ship
@@ -86,6 +90,9 @@ let activeShipTab = 'size'; // Track active tab for ship creation mode
 let activeWizardStage = 'design'; // Track wizard stage: 'design' | 'fittings' | 'undercrew'
 let showCustomizeModal = false; // Track if customization modal is open
 let selectedModalAspectId = null; // Track which aspect is selected in modal
+let loginState = 'login'; // 'login' | 'check-email'
+let loginEmail = ''; // Store email for check-email screen
+let loginMessage = ''; // Status message for login screen
 
 // Debounce timers for text inputs
 const debounceTimers = new Map();
@@ -112,11 +119,30 @@ function debounce(key, fn, delay = 400) {
 }
 
 /**
+ * Render login screen
+ */
+function renderLogin() {
+  const app = document.getElementById('app');
+
+  if (loginState === 'check-email') {
+    app.innerHTML = renderCheckEmailScreen(loginEmail);
+  } else {
+    app.innerHTML = renderLoginScreen(loginMessage, loginEmail);
+  }
+}
+
+/**
  * Main render function - delegates to mode-specific renderers
  * @param {boolean} reloadSession - Whether to reload session from DB (true for real-time updates, false for user actions)
  */
 async function render(reloadSession = false) {
   const app = document.getElementById('app');
+
+  // Check if user is authenticated
+  if (!currentUser) {
+    renderLogin();
+    return;
+  }
 
   // Only reload session from DB when explicitly requested (e.g., from real-time subscription)
   if (reloadSession) {
@@ -226,6 +252,49 @@ async function handleCreateCharacter() {
  */
 function setupEventDelegation() {
   const app = document.getElementById('app');
+
+  // Handle login form submission
+  app.addEventListener('submit', async function (e) {
+    if (e.target.id === 'login-form') {
+      e.preventDefault();
+
+      const emailInput = document.getElementById('email');
+      const email = emailInput?.value?.trim();
+
+      if (!email) {
+        loginMessage = 'Please enter your email address';
+        renderLogin();
+        return;
+      }
+
+      // Disable button and show loading
+      const button = document.getElementById('login-button');
+      if (button) {
+        button.disabled = true;
+        button.textContent = 'Sending...';
+      }
+
+      try {
+        const result = await sendMagicLink(email);
+
+        if (result.success) {
+          loginState = 'check-email';
+          loginEmail = email;
+          loginMessage = '';
+          renderLogin();
+        } else {
+          loginMessage = result.error || 'Failed to send magic link';
+          loginEmail = email;
+          renderLogin();
+        }
+      } catch (error) {
+        console.error('Login error:', error);
+        loginMessage = 'An error occurred. Please try again.';
+        loginEmail = email;
+        renderLogin();
+      }
+    }
+  });
 
   // Click event delegation
   app.addEventListener('click', function (e) {
@@ -601,6 +670,18 @@ function setupEventDelegation() {
                   }
                 }
                 break;
+              case 'backToLogin':
+                loginState = 'login';
+                loginEmail = '';
+                loginMessage = '';
+                renderLogin();
+                break;
+              case 'signOut':
+                if (confirm('Are you sure you want to sign out?')) {
+                  await signOut();
+                  // Auth state change will handle the rest
+                }
+                break;
             }
           } catch (error) {
             console.error('Error handling action:', action, error);
@@ -783,44 +864,29 @@ function setupEventDelegation() {
 }
 
 /**
- * Initialize the application
+ * Load app data after authentication
  */
-async function init() {
-  const app = document.getElementById('app');
-  app.innerHTML = '<div style="padding: 20px;">Loading...</div>';
-
+async function loadApp() {
   try {
-    console.log('Starting initialization...');
-
     console.log('Loading game data...');
     const success = await loadGameData();
 
     if (!success) {
       console.error('Game data failed to load');
+      const app = document.getElementById('app');
       app.innerHTML = '<div style="padding: 20px; color: red;">Failed to load game data. Check console for errors.</div>';
       return;
     }
     console.log('Game data loaded successfully');
 
-    // Load or create session
-    console.log('Loading session...');
-    session = await loadSession();
+    // Load the shared session (creates it if it doesn't exist)
+    console.log('Loading shared session...');
+    session = await getOrCreateSharedSession();
+    console.log('Shared session loaded:', session.id);
 
-    if (!session) {
-      console.log('No session found, creating new session...');
-      // New user - create default session with one character
-      session = await createSession('My Crew');
-      console.log('Session created:', session.id);
-
-      console.log('Creating default character...');
-      character = await createCharacter(session.id);
-      console.log('Character created:', character.id);
-
-      console.log('Adding character to session...');
-      await addCharacterToSession(session, character.id);
-      console.log('Character added to session');
-    } else {
-      console.log('Session loaded:', session.id);
+    // If the shared session has no characters, show a prompt but don't auto-create
+    if (session.activeCharacterIds.length === 0) {
+      console.log('Shared session has no characters yet');
     }
 
     // Cache initial character and ship
@@ -836,16 +902,67 @@ async function init() {
     console.log('Setting up real-time subscriptions...');
     setupSubscriptions(session.id, render);
 
+    console.log('Rendering...');
+    await render();
+    console.log('App loaded successfully!');
+  } catch (error) {
+    console.error('Failed to load app:', error);
+    console.error('Error stack:', error.stack);
+    const app = document.getElementById('app');
+    app.innerHTML = '<div style="padding: 20px; color: red;">Failed to load: ' + error.message + '<br><br>Check console for details.</div>';
+  }
+}
+
+/**
+ * Initialize the application
+ */
+async function init() {
+  const app = document.getElementById('app');
+  app.innerHTML = '<div style="padding: 20px;">Loading...</div>';
+
+  try {
+    console.log('Starting initialization...');
+
+    // Set up event delegation first (works for both login and app)
     console.log('Setting up event delegation...');
     setupEventDelegation();
+
+    // Check current auth state
+    console.log('Checking authentication...');
+    currentUser = await getCurrentUser();
+
+    // Set up auth state listener
+    onAuthStateChange(async (user) => {
+      console.log('Auth state changed:', user ? user.email : 'signed out');
+      currentUser = user;
+
+      if (user) {
+        // User signed in - load the app
+        await loadApp();
+      } else {
+        // User signed out - clear state and show login
+        session = null;
+        character = null;
+        ship = null;
+        unsubscribeAll();
+        await render();
+      }
+    });
 
     // Cleanup subscriptions when page unloads
     window.addEventListener('beforeunload', () => {
       unsubscribeAll();
     });
 
-    console.log('Rendering...');
-    await render();
+    // If already authenticated, load the app
+    if (currentUser) {
+      console.log('User already authenticated:', currentUser.email);
+      await loadApp();
+    } else {
+      console.log('No user authenticated, showing login');
+      await render(); // Will show login screen
+    }
+
     console.log('Initialization complete!');
   } catch (error) {
     console.error('Failed to initialize:', error);

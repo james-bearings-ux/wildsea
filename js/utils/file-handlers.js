@@ -191,20 +191,28 @@ export async function importShip(session, renderCallback) {
         newShip.bite = importedData.bite || [];
         newShip.engine = importedData.engine || [];
         newShip.motifs = importedData.motifs || [];
-        newShip.weapons = importedData.weapons || [];
-        newShip.equipment = importedData.equipment || [];
-        newShip.officers = importedData.officers || [];
-        newShip.wards = importedData.wards || [];
-        newShip.specimen = importedData.specimen || [];
-        newShip.crew_size = importedData.crew_size || null;
-        newShip.stakes = importedData.stakes || null;
+        newShip.generalAdditions = importedData.generalAdditions || [];
+        newShip.bounteousAdditions = importedData.bounteousAdditions || [];
+        newShip.rooms = importedData.rooms || [];
+        newShip.armaments = importedData.armaments || [];
+        newShip.anticipatedCrewSize = importedData.anticipatedCrewSize || 3;
+        newShip.additionalStakes = importedData.additionalStakes || 0;
+
+        // Copy undercrew structure
+        if (importedData.undercrew) {
+          newShip.undercrew = {
+            officers: importedData.undercrew.officers || [],
+            gangs: importedData.undercrew.gangs || [],
+            packs: importedData.undercrew.packs || []
+          };
+        }
 
         // Copy damage states if they exist
-        if (importedData.ratingDamageStates) {
-          newShip.ratingDamageStates = importedData.ratingDamageStates;
+        if (importedData.ratingDamage) {
+          newShip.ratingDamage = importedData.ratingDamage;
         }
-        if (importedData.undercrewDamageStates) {
-          newShip.undercrewDamageStates = importedData.undercrewDamageStates;
+        if (importedData.undercrewDamage) {
+          newShip.undercrewDamage = importedData.undercrewDamage;
         }
 
         // Copy cargo with regenerated IDs
