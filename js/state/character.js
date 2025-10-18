@@ -86,7 +86,7 @@ export async function loadCharacter(characterId) {
 
 /**
  * Save a character to Supabase
- * Note: Mode is NOT saved to database - it's per-user in localStorage
+ * Note: Mode IS saved to database as the canonical state, but can be overridden per-user via localStorage
  */
 export async function saveCharacter(character) {
   console.log('[SAVE] Saving character to database:', character.id, character.name, 'at', new Date().toISOString());
@@ -95,7 +95,7 @@ export async function saveCharacter(character) {
     .from('characters')
     .update({
       name: character.name,
-      // mode: character.mode, // Mode is per-user, not saved to DB
+      mode: character.mode, // Save canonical mode (creation/play)
       bloodline: character.bloodline,
       origin: character.origin,
       post: character.post,

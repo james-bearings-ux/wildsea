@@ -94,7 +94,7 @@ export async function loadShip(shipId) {
 
 /**
  * Save a ship to Supabase
- * Note: Mode is NOT saved to database - it's per-user in localStorage
+ * Note: Mode IS saved to database as the canonical state, but can be overridden per-user via localStorage
  */
 export async function saveShip(ship) {
   console.log('[SAVE] Saving ship to database:', ship.id, ship.name, 'at', new Date().toISOString());
@@ -103,7 +103,7 @@ export async function saveShip(ship) {
     .from('ships')
     .update({
       name: ship.name,
-      // mode: ship.mode, // Mode is per-user, not saved to DB
+      mode: ship.mode, // Save canonical mode (creation/play/upgrade)
       anticipated_crew_size: ship.anticipatedCrewSize,
       additional_stakes: ship.additionalStakes,
       rating_damage: ship.ratingDamage,
