@@ -47,10 +47,13 @@ export async function sendMagicLink(email) {
   }
 
   // Send magic link
+  // Use full URL including path for GitHub Pages subdirectories
+  const redirectUrl = window.location.origin + window.location.pathname;
+
   const { error } = await supabase.auth.signInWithOtp({
     email: normalizedEmail,
     options: {
-      emailRedirectTo: window.location.origin
+      emailRedirectTo: redirectUrl
     }
   });
 
