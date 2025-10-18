@@ -47,8 +47,11 @@ export async function sendMagicLink(email) {
   }
 
   // Send magic link
-  // Use full URL including path for GitHub Pages subdirectories
-  const redirectUrl = window.location.origin + window.location.pathname;
+  // Use full URL including Vite base path for GitHub Pages subdirectories
+  // import.meta.env.BASE_URL comes from vite.config.js (e.g., '/wildsea/')
+  const redirectUrl = window.location.origin + import.meta.env.BASE_URL;
+
+  console.log('[AUTH] Magic link redirect URL:', redirectUrl);
 
   const { error } = await supabase.auth.signInWithOtp({
     email: normalizedEmail,
