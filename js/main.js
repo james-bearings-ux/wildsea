@@ -96,6 +96,8 @@ let session = null;
 let character = null; // Cached active character
 let ship = null; // Cached active ship
 let onlineUsers = []; // List of online users in the session
+let hasPendingCharacterSave = false; // Track if character save is pending
+let hasPendingShipSave = false; // Track if ship save is pending
 let activeShipTab = 'size'; // Track active tab for ship creation mode
 let activeWizardStage = 'design'; // Track wizard stage: 'design' | 'fittings' | 'undercrew'
 let showCustomizeModal = false; // Track if customization modal is open
@@ -134,9 +136,11 @@ function debounce(key, fn, delay = 400) {
  * This provides optimistic UI updates while batching database writes
  */
 function scheduleSave() {
+  hasPendingCharacterSave = true; // Mark as pending
   debounce('character-save', async () => {
     if (character) {
       await saveCharacter(character);
+      hasPendingCharacterSave = false; // Clear pending flag after save
     }
   }, 1000);
 }
@@ -145,9 +149,11 @@ function scheduleSave() {
  * Schedule a ship save after 1 second of inactivity
  */
 function scheduleShipSave() {
+  hasPendingShipSave = true; // Mark as pending
   debounce('ship-save', async () => {
     if (ship) {
       await saveShip(ship);
+      hasPendingShipSave = false; // Clear pending flag after save
     }
   }, 1000);
 }
@@ -179,7 +185,8 @@ async function render(reloadSession = false) {
   }
 
   // Only reload session from DB when explicitly requested (e.g., from real-time subscription)
-  if (reloadSession) {
+  // BUT skip reload if we have pending unsaved changes to avoid race conditions
+  if (reloadSession && !hasPendingCharacterSave && !hasPendingShipSave) {
     if (DEBUG) console.log('[RENDER] Reloading session from database...');
     const latestSession = await loadSession();
     if (latestSession) {
@@ -196,6 +203,8 @@ async function render(reloadSession = false) {
       if (DEBUG) console.log('[RENDER] Reloading active ship:', session.activeShipId);
       ship = await loadShip(session.activeShipId);
     }
+  } else if (reloadSession && (hasPendingCharacterSave || hasPendingShipSave)) {
+    if (DEBUG) console.log('[RENDER] Skipping reload - pending saves in progress');
   }
 
   if (!session) {

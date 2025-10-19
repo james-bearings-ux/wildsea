@@ -106,18 +106,20 @@ if (DEBUG) {
 
 ## Implementation Phases
 
-### Phase 1: Quick Wins (CURRENT - 30 minutes)
-**Status**: In Progress
+### Phase 1: Quick Wins (COMPLETED - 30 minutes)
+**Status**: Complete
 
 **Goals**:
 1. ✅ Document performance plan
-2. ⏳ Implement debounced saves for all button clicks
-3. ⏳ Add DEBUG flag and remove production console logs
-4. ⏳ Add performance measurement markers
+2. ✅ Implement debounced saves for all button clicks
+3. ✅ Add DEBUG flag and remove production console logs
+4. ✅ Fix race condition with polling system
 
-**Files to modify**:
-- `js/main.js` - Replace immediate saves with debounced saves
-- `js/state/character.js` - Add DEBUG flag for console logs
+**Files modified**:
+- `js/main.js` - Debounced saves, DEBUG flag, race condition fix
+- `js/state/character.js` - DEBUG flag for save logs
+- `js/state/ship.js` - DEBUG flag for save logs
+- `js/polling.js` - DEBUG flag for polling logs
 
 **Implementation notes**:
 - Use existing `debounce()` function in main.js
@@ -152,6 +154,13 @@ if (DEBUG) {
 **Keep immediate saves for**:
 - createCharacter (initial save required)
 - removeCharacter (immediate deletion makes sense)
+
+**Race Condition Fix**:
+- Issue: Debounced saves + polling created race condition where UI would update, then immediately revert
+- Example: Click aspect damage → UI updates → polling detects change → reloads from DB before save completes → UI reverts
+- Solution: Track pending saves with `hasPendingCharacterSave` and `hasPendingShipSave` flags
+- Behavior: Skip polling-triggered reloads when pending saves exist
+- Files: `js/main.js` (added flags, updated scheduleSave/scheduleShipSave, modified render logic)
 
 ---
 
