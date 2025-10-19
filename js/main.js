@@ -87,6 +87,9 @@ import { supabase } from './supabaseClient.js';
 import { startPresenceHeartbeat, stopPresenceHeartbeat, getOnlineUsers, removePresence } from './presence.js';
 import { renderPresenceBar } from './components/presence-bar.js';
 
+// Debug flag - only log in development mode
+const DEBUG = import.meta.env.DEV;
+
 // Global state
 let currentUser = null; // Current authenticated user
 let session = null;
@@ -177,20 +180,20 @@ async function render(reloadSession = false) {
 
   // Only reload session from DB when explicitly requested (e.g., from real-time subscription)
   if (reloadSession) {
-    console.log('[RENDER] Reloading session from database...');
+    if (DEBUG) console.log('[RENDER] Reloading session from database...');
     const latestSession = await loadSession();
     if (latestSession) {
-      console.log('[RENDER] Session reloaded. Character IDs:', latestSession.activeCharacterIds);
+      if (DEBUG) console.log('[RENDER] Session reloaded. Character IDs:', latestSession.activeCharacterIds);
       session = latestSession;
     }
 
     // Also reload character and ship when session reloads (from real-time updates)
     if (session && session.activeCharacterId) {
-      console.log('[RENDER] Reloading active character:', session.activeCharacterId);
+      if (DEBUG) console.log('[RENDER] Reloading active character:', session.activeCharacterId);
       character = await loadCharacter(session.activeCharacterId);
     }
     if (session && session.activeShipId) {
-      console.log('[RENDER] Reloading active ship:', session.activeShipId);
+      if (DEBUG) console.log('[RENDER] Reloading active ship:', session.activeShipId);
       ship = await loadShip(session.activeShipId);
     }
   }
