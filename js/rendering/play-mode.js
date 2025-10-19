@@ -7,6 +7,8 @@ import { renderSkills, renderLanguages } from '../components/skills.js';
 import { renderResources } from '../components/resources.js';
 import { renderDrives, renderMires } from '../components/drives-mires.js';
 import { renderMilestones } from '../components/milestones.js';
+import { renderDamageSummary, renderDamageTypeTable } from '../components/damage-summary.js';
+import { highlightDamageTypesInDescription, renderDamageTypeWarning } from '../components/damage-type-selector.js';
 
 export function renderPlayMode(app, character, gameData) {
 
@@ -62,7 +64,8 @@ export function renderPlayMode(app, character, gameData) {
                         <div class="aspect-name" style="margin-bottom: 4px;">${aspect.name}</div>
                         <div class="aspect-meta">${aspect.source} ${aspect.type}</div>
                     </div>
-                    <div class="aspect-description">${aspect.description}</div>
+                    <div class="aspect-description">${highlightDamageTypesInDescription(aspect)}</div>
+                    ${renderDamageTypeWarning(aspect)}
                     </div>
                 </div>
                 </div>
@@ -80,6 +83,9 @@ export function renderPlayMode(app, character, gameData) {
             ${renderMilestones(character)}
         </div>
         </div>
+
+        ${renderDamageSummary(character)}
+        ${renderDamageTypeTable(character)}
     </div>
 
     <div class="sticky-action-bar split">

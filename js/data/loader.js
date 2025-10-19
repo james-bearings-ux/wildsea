@@ -15,7 +15,7 @@ export async function loadGameData() {
     const base = import.meta.env.BASE_URL;
     const [constants, aspects, resources, shipParts] = await Promise.all([
       fetch(`${base}data/game-constants.json`).then(r => r.json()),
-      fetch(`${base}data/aspects.json`).then(r => r.json()),
+      fetch(`${base}data/aspects-enhanced.json`).then(r => r.json()), // Using enhanced aspects with damage type metadata
       fetch(`${base}data/resources.json`).then(r => r.json()),
       fetch(`${base}data/ship-parts.json`).then(r => r.json())
     ]);

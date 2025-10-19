@@ -1183,3 +1183,216 @@
   color: #EF4444;
   background: transparent;
 }
+
+/* ========================================
+   DAMAGE TYPE COMPONENTS
+   ======================================== */
+
+/* Damage Type Chip (for selectors) */
+.dt-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 8px;
+  font-size: 12px;
+  font-weight: 500;
+  border-radius: 4px;
+  border: 1px solid #D1D5DB;
+  background: #FFFFFF;
+  color: #374151;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.dt-chip:hover:not(:disabled) {
+  background: #F3F4F6;
+  border-color: #9CA3AF;
+}
+
+.dt-chip.selected {
+  background: #DBEAFE;
+  border-color: #3B82F6;
+  color: #1E3A8A;
+  font-weight: 600;
+}
+
+.dt-chip.selected:hover:not(:disabled) {
+  background: #BFDBFE;
+}
+
+.dt-chip.disabled,
+.dt-chip:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  background: #F9FAFB;
+}
+
+/* Warning Pill */
+.warning-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  font-size: 11px;
+  font-weight: 500;
+  border-radius: 12px;
+  background: #FEF3C7;
+  color: #92400E;
+  border: 1px solid #FCD34D;
+}
+
+/* Damage Type Selector Container */
+.damage-type-selector {
+  margin-top: 8px;
+  padding: 8px;
+  background: #F9FAFB;
+  border-radius: 6px;
+  border: 1px solid #E5E7EB;
+}
+
+/* Selected Damage Types Display */
+.selected-damage-types {
+  margin-top: 6px;
+}
+
+.damage-type-badge {
+  display: inline-block;
+  padding: 2px 6px;
+  margin: 2px;
+  font-size: 11px;
+  font-weight: 500;
+  border-radius: 4px;
+  background: #F3F4F6;
+  color: #4B5563;
+  border: 1px solid #D1D5DB;
+}
+
+/* Description Highlighting */
+.dt-option {
+  font-weight: 500;
+  color: #4B5563;
+}
+
+.dt-option.selected {
+  font-weight: 600;
+  color: #2563EB;
+  text-decoration: underline;
+  text-decoration-color: #60A5FA;
+  text-decoration-thickness: 2px;
+}
+
+/* Damage Type Popover */
+.damage-type-popover {
+  position: absolute;
+  z-index: 50;
+  margin-top: 4px;
+  padding: 12px;
+  background: #FFFFFF;
+  border: 1px solid #D1D5DB;
+  border-radius: 8px;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  min-width: 250px;
+}
+
+.damage-type-popover.hidden {
+  display: none;
+}
+
+/* Damage Summary Section */
+.damage-summary {
+  background: #F9FAFB;
+  border: 1px solid #E5E7EB;
+  border-radius: 8px;
+  padding: 16px;
+  margin-top: 24px;
+}
+
+.damage-summary h3 {
+  font-weight: 700;
+  font-size: 14px;
+  margin-bottom: 12px;
+  color: #111827;
+}
+
+.damage-summary .label {
+  font-weight: 600;
+  font-size: 11px;
+  color: #6B7280;
+  margin-right: 8px;
+}
+
+/* Damage Summary Badges */
+.damage-summary .badge {
+  display: inline-block;
+  padding: 2px 8px;
+  margin: 2px;
+  font-size: 11px;
+  font-weight: 500;
+  border-radius: 9999px;
+}
+
+.damage-summary .badge.resistance {
+  background: #DBEAFE;
+  color: #1E3A8A;
+  border: 1px solid #93C5FD;
+}
+
+.damage-summary .badge.immune {
+  background: #D1FAE5;
+  color: #065F46;
+  border: 1px solid #6EE7B7;
+}
+
+.damage-summary .badge.weakness {
+  background: #FEE2E2;
+  color: #991B1B;
+  border: 1px solid #FCA5A5;
+}
+
+.damage-summary .badge.dealing {
+  background: #F3E8FF;
+  color: #6B21A8;
+  border: 1px solid #D8B4FE;
+}
+
+/* Dealing Damage Summary */
+.dealing-damage-summary {
+  background: #F9FAFB;
+  border: 1px solid #E5E7EB;
+  border-radius: 8px;
+  padding: 16px;
+  margin-top: 16px;
+}
+
+.dealing-damage-summary h3 {
+  font-weight: 700;
+  font-size: 14px;
+  margin-bottom: 12px;
+  color: #111827;
+}
+
+/* Compact Summary (for sidebars) */
+.damage-summary-compact {
+  font-size: 11px;
+  color: #6B7280;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 640px) {
+  .dt-chip {
+    font-size: 11px;
+    padding: 3px 6px;
+  }
+
+  .damage-type-popover {
+    min-width: 200px;
+  }
+
+  .damage-summary,
+  .dealing-damage-summary {
+    padding: 12px;
+  }
+}

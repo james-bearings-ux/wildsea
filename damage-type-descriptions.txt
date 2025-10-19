@@ -1,0 +1,47 @@
+Blunt
+Crushing damage
+Good at stunning and breaking. This might come from a club, hammer, or tail swipe, or impact with an object or the ground at high speed. It could cause bruising or leave a target with broken bones.
+
+Keen
+Cutting damage
+Good at slicing and bleeding. This might come from a cutlass, claw, or sharp-edged leaf, and will likely leave wounds that need bandaging to prevent heavy blood loss.
+
+Spike
+Piercing damage
+Good at penetrating and impaling. This might come from a spearhead, arrow, or bite, or high-speed impact with a sturdy branch at the wrong angle. Lasting damage to internal organs is a real possibility.
+
+Hewing
+Chopping damage
+Good at splitting and breaking. This might come from an axe or the claws of a particularly powerful creature, and hewing injuries are likely to come in the form of lost limbs and bone breaks.
+
+Serrated
+Sawing damage
+Good at ripping and tearing. This might come from a jagserry, sawtooth prow, or any other kind of serrated edge, and will leave ragged-edged wounds that scar prominently.
+
+Toxin
+Poison damage
+Good at sickening and confusing. This might come from tainted food or plant venom, and will usually cause illnesses and short-term loss of senses.
+
+Acid
+Corrosive damage
+Good at melting and searing. This might come from... well, acid (and other caustic or corrosive substances). It's likely to disfigure or blind, even if only temporarily, or dull and damage nerves.
+
+Blast
+Explosive damage
+Good at stunning and shattering. This might come from gunshots, massive sounds, or the impact of nearby detonations, such as from cannon fire. Likely to leave a sufferer dazed, confused, deafened, and staggering, and can definitely break bones.
+
+Volt
+Electrical damage
+Good at shocking and paralysing. This might come from lightning strikes or electrically charged weapons, and is likely to temporarily knock an individual out as well as leaving burns.
+
+Frost
+Cold damage
+Good at slowing and freezing. This is most likely to be an environmental threat, caused by winter winds and exposure, but some creatures can manipulate cryonic glands as a weapon. Causes shivering, numbness, and invites future illnesses.
+
+Salt
+Crystalline damage
+Good at drying and banishing. This might come from spirits or dessicants, and can leave weird and arcane complications or rough, tender skin.
+
+Flame
+Forbidden damage that burns, melts, and inspires fear
+Comes from fire, or occasionally searing liquids.

@@ -14,6 +14,7 @@ import {
   onOriginChange,
   onPostChange,
   toggleAspect,
+  toggleAspectDamageType,
   toggleEdge,
   adjustSkill,
   adjustLanguage,
@@ -342,6 +343,13 @@ function setupEventDelegation() {
               case 'toggleAspect':
                 if (character) {
                   toggleAspect(parsedParams.id, render, character);
+                  await saveCharacter(character);
+                  await render();
+                }
+                break;
+              case 'toggleDamageType':
+                if (character) {
+                  toggleAspectDamageType(parsedParams.aspectId, parsedParams.damageType, render, character);
                   await saveCharacter(character);
                   await render();
                 }

@@ -5,7 +5,9 @@
       "Bash(git add:*)",
       "Bash(git commit:*)",
       "Bash(npm run build:*)",
-      "Bash(cat:*)"
+      "Bash(cat:*)",
+      "Bash(node -e \"\nconst fs = require(''fs'');\nconst aspects = JSON.parse(fs.readFileSync(''public/data/aspects.json'', ''utf8''));\n\n// Extract just our test subset\nconst subset = {\n  Ketra: aspects.Ketra,\n  Ridgeback: aspects.Ridgeback,\n  Crash: aspects.Crash\n};\n\nfs.writeFileSync(''ketra-ridgeback-crash-subset.json'', JSON.stringify(subset, null, 2));\nconsole.log(''Subset extracted successfully'');\n\")",
+      "Bash(node -e \"\n// Test the normalizeDamageType function with alias handling\nconst DAMAGE_TYPE_ALIASES = {\n  ''cold'': ''Frost''\n};\n\nfunction normalizeDamageType(type) {\n  const lowercased = type.toLowerCase();\n  if (DAMAGE_TYPE_ALIASES[lowercased]) {\n    return DAMAGE_TYPE_ALIASES[lowercased];\n  }\n  return type.charAt(0).toUpperCase() + type.slice(1).toLowerCase();\n}\n\n// Test cases\nconsole.log(''Testing damage type normalization:'');\nconsole.log(''cold -> '' + normalizeDamageType(''cold''));\nconsole.log(''Cold -> '' + normalizeDamageType(''Cold''));\nconsole.log(''COLD -> '' + normalizeDamageType(''COLD''));\nconsole.log(''frost -> '' + normalizeDamageType(''frost''));\nconsole.log(''Frost -> '' + normalizeDamageType(''Frost''));\nconsole.log(''keen -> '' + normalizeDamageType(''keen''));\nconsole.log(''Keen -> '' + normalizeDamageType(''Keen''));\n\")"
     ],
     "deny": [],
     "ask": []
