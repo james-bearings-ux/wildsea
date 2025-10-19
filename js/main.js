@@ -97,6 +97,7 @@ let activeShipTab = 'size'; // Track active tab for ship creation mode
 let activeWizardStage = 'design'; // Track wizard stage: 'design' | 'fittings' | 'undercrew'
 let showCustomizeModal = false; // Track if customization modal is open
 let selectedModalAspectId = null; // Track which aspect is selected in modal
+let modalUnsavedEdits = {}; // Track unsaved edits in customization modal { aspectId: { name, description } }
 let loginState = 'login'; // 'login' | 'check-email'
 let loginEmail = ''; // Store email for check-email screen
 let loginMessage = ''; // Status message for login screen
@@ -237,7 +238,7 @@ async function render(reloadSession = false) {
   } else if (character.mode === 'play') {
     renderPlayMode(tempDiv, character, gameData);
   } else if (character.mode === 'advancement') {
-    renderAdvancementMode(tempDiv, character, gameData, showCustomizeModal, selectedModalAspectId);
+    renderAdvancementMode(tempDiv, character, gameData, showCustomizeModal, selectedModalAspectId, modalUnsavedEdits);
   }
 
   // Combine navigation and content
@@ -651,6 +652,7 @@ function setupEventDelegation() {
                 if (e.target.classList && e.target.classList.contains('modal-overlay')) {
                   showCustomizeModal = false;
                   selectedModalAspectId = null;
+                  modalUnsavedEdits = {}; // Clear unsaved edits
                   await render();
                 }
                 break;
@@ -689,11 +691,16 @@ function setupEventDelegation() {
                   await saveCharacter(character);
                   showCustomizeModal = false;
                   selectedModalAspectId = null;
+                  modalUnsavedEdits = {}; // Clear unsaved edits
                   await render();
                 }
                 break;
               case 'resetAspectCustomization':
                 if (character && parsedParams.id) {
+                  // Clear unsaved edits for this aspect
+                  if (modalUnsavedEdits[parsedParams.id]) {
+                    delete modalUnsavedEdits[parsedParams.id];
+                  }
                   if (confirm('Reset this aspect to its original name and description?')) {
                     resetAspectCustomization(parsedParams.id, character);
                     await saveCharacter(character);
@@ -882,6 +889,13 @@ function setupEventDelegation() {
           countContainer.classList.remove('over-limit');
         }
       }
+      // Save to temporary storage
+      if (selectedModalAspectId) {
+        if (!modalUnsavedEdits[selectedModalAspectId]) {
+          modalUnsavedEdits[selectedModalAspectId] = {};
+        }
+        modalUnsavedEdits[selectedModalAspectId].name = target.value;
+      }
     }
 
     // Update character count for description textarea
@@ -895,6 +909,13 @@ function setupEventDelegation() {
         } else {
           countContainer.classList.remove('over-limit');
         }
+      }
+      // Save to temporary storage
+      if (selectedModalAspectId) {
+        if (!modalUnsavedEdits[selectedModalAspectId]) {
+          modalUnsavedEdits[selectedModalAspectId] = {};
+        }
+        modalUnsavedEdits[selectedModalAspectId].description = target.value;
       }
     }
   });

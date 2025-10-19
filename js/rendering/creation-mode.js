@@ -159,10 +159,13 @@ export function renderCreationMode(app, character, gameData) {
     </div>
 
     <div class="sticky-action-bar split">
-        <button data-action="importCharacter">Import</button>
-        <div>
-        <button data-action="generateRandomCharacter">Generate Random Character</button>
-        <button data-action="createCharacter" class="primary">Create Character</button>
+        <div style="display: flex; gap: 8px;">
+            <button data-action="importCharacter">Import</button>
+            <button data-action="generateRandomCharacter">Generate Random</button>
+        </div>
+        <div style="display: flex; gap: 8px;">
+            <button data-action="createCharacter" class="primary">Create Character</button>
+            <button data-action="removeCharacter" data-params='{"characterId":"${character.id}"}'>Cancel</button>
         </div>
     </div>
     `;

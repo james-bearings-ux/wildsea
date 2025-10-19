@@ -15,7 +15,7 @@ import {
   highlightDamageTypesInDescription
 } from '../components/damage-type-selector.js';
 
-export function renderAdvancementMode(app, character, gameData, showCustomizeModal = false, selectedModalAspectId = null) {
+export function renderAdvancementMode(app, character, gameData, showCustomizeModal = false, selectedModalAspectId = null, modalUnsavedEdits = {}) {
   const allAspects = getAvailableAspects(character);
   const bloodlineAspects = allAspects.filter(a => a.category === 'Bloodline').sort((a, b) => a.name.localeCompare(b.name));
   const originAspects = allAspects.filter(a => a.category === 'Origin').sort((a, b) => a.name.localeCompare(b.name));
@@ -164,6 +164,6 @@ export function renderAdvancementMode(app, character, gameData, showCustomizeMod
         <button data-action="setMode" data-params='{"mode":"play"}'>Cancel</button>
     </div>
 
-    ${showCustomizeModal ? renderAspectCustomizationModal(character, selectedModalAspectId) : ''}
+    ${showCustomizeModal ? renderAspectCustomizationModal(character, selectedModalAspectId, modalUnsavedEdits) : ''}
     `;
 }
