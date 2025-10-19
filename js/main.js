@@ -374,8 +374,8 @@ function setupEventDelegation() {
               case 'toggleDamageType':
                 if (character) {
                   toggleAspectDamageType(parsedParams.aspectId, parsedParams.damageType, render, character);
-                  await saveCharacter(character);
                   await render();
+                  scheduleSave();
                 }
                 break;
               case 'toggleEdge':
