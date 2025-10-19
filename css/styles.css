@@ -1183,3 +1183,287 @@
   color: #EF4444;
   background: transparent;
 }
+
+/* ========================================
+   DAMAGE TYPE COMPONENTS
+   ======================================== */
+
+/* Damage Type Chip (for selectors) */
+.dt-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 8px;
+  font-size: 12px;
+  font-weight: 500;
+  border-radius: 4px;
+  border: 1px solid #D1D5DB;
+  background: #FFFFFF;
+  color: #374151;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.dt-chip:hover:not(:disabled) {
+  background: #F3F4F6;
+  border-color: #9CA3AF;
+}
+
+.dt-chip.selected {
+  background: #DBEAFE;
+  border-color: #3B82F6;
+  color: #1E3A8A;
+  font-weight: 600;
+}
+
+.dt-chip.selected:hover:not(:disabled) {
+  background: #BFDBFE;
+}
+
+.dt-chip.disabled,
+.dt-chip:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  background: #F9FAFB;
+}
+
+/* Warning Pill */
+.warning-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  font-size: 11px;
+  font-weight: 500;
+  border-radius: 12px;
+  background: #FEF3C7;
+  color: #92400E;
+  border: 1px solid #FCD34D;
+}
+
+/* Damage Type Selector Container */
+.damage-type-selector {
+  margin-top: 8px;
+  padding: 8px;
+  background: #F9FAFB;
+  border-radius: 6px;
+  border: 1px solid #E5E7EB;
+}
+
+/* Selected Damage Types Display */
+.selected-damage-types {
+  margin-top: 6px;
+}
+
+.damage-type-badge {
+  display: inline-block;
+  padding: 2px 6px;
+  margin: 2px;
+  font-size: 11px;
+  font-weight: 500;
+  border-radius: 4px;
+  background: #F3F4F6;
+  color: #4B5563;
+  border: 1px solid #D1D5DB;
+}
+
+/* Description Highlighting */
+.dt-option {
+  font-weight: 500;
+  color: #4B5563;
+}
+
+.dt-option.selected {
+  font-weight: 600;
+  color: #2563EB;
+  text-decoration: underline;
+  text-decoration-color: #60A5FA;
+  text-decoration-thickness: 2px;
+}
+
+/* Damage Type Popover */
+.damage-type-popover {
+  position: absolute;
+  z-index: 50;
+  margin-top: 4px;
+  padding: 12px;
+  background: #FFFFFF;
+  border: 1px solid #D1D5DB;
+  border-radius: 8px;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  min-width: 250px;
+}
+
+.damage-type-popover.hidden {
+  display: none;
+}
+
+/* Damage Type Table Styles */
+.damage-type-table {
+  background: #FFFFFF;
+  border: 2px solid #000;
+  padding: 16px;
+  width: 250px;
+  align-self: flex-start;
+}
+
+.damage-type-table .section-header {
+  margin-bottom: 12px;
+}
+
+.damage-type-table .subsection-header {
+  margin-bottom: 8px;
+  margin-top: 0;
+}
+
+/* Damage type table badges */
+.damage-type-table .badge {
+  display: inline-block;
+  padding: 2px 8px;
+  margin: 2px;
+  font-size: 11px;
+  font-weight: 500;
+  border-radius: 9999px;
+  border: 1px solid;
+}
+
+.damage-type-table .badge.resistance {
+  background: #DBEAFE;
+  color: #1E3A8A;
+  border-color: #93C5FD;
+}
+
+.damage-type-table .badge.immune {
+  background: #D1FAE5;
+  color: #065F46;
+  border-color: #6EE7B7;
+}
+
+.damage-type-table .badge.weakness {
+  background: #FEE2E2;
+  color: #991B1B;
+  border-color: #FCA5A5;
+}
+
+.damage-type-table .badge.dealing {
+  background: #F3E8FF;
+  color: #6B21A8;
+  border-color: #D8B4FE;
+}
+
+/* Default badge (no defense) */
+.damage-type-table .badge:not(.resistance):not(.immune):not(.weakness):not(.dealing) {
+  background: #F3F4F6;
+  color: #6B7280;
+  border-color: #D1D5DB;
+}
+
+/* Status text sizing */
+.status-text {
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.status-none {
+  font-size: 9px;
+  color: #9CA3AF;
+}
+
+.damage-type-table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.damage-type-table .table-header-left {
+  text-align: left;
+  padding: 8px 6px;
+  font-weight: 600;
+  font-size: 11px;
+  color: #4B5563;
+}
+
+.damage-type-table tbody tr {
+  transition: background-color 0.15s ease;
+}
+
+.damage-type-table tbody tr:hover {
+  background-color: #F9FAFB;
+}
+
+.damage-type-table tbody td {
+  padding: 6px 6px;
+}
+
+.damage-type-table .dealing-damage-section {
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #E5E7EB;
+}
+
+.damage-type-table .dealing-damage-section .subsection-header {
+  margin-bottom: 8px;
+}
+
+.damage-type-table .resistances-section {
+  margin-bottom: 16px;
+}
+
+.damage-type-table .resistances-section .subsection-header {
+  margin-bottom: 8px;
+}
+
+.damage-type-table .hazards-section {
+  margin-top: 0;
+  padding-top: 12px;
+  border-top: 2px solid #E5E7EB;
+}
+
+.damage-type-table .range-cell {
+  padding: 6px 6px;
+  vertical-align: top;
+}
+
+.damage-type-table .range-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.damage-type-table .types-cell {
+  padding: 6px 6px;
+  vertical-align: top;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  align-items: flex-start;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 640px) {
+  .dt-chip {
+    font-size: 11px;
+    padding: 3px 6px;
+  }
+
+  .damage-type-popover {
+    min-width: 200px;
+  }
+
+  .damage-type-table {
+    padding: 12px;
+    width: 220px;
+  }
+
+  .damage-type-table .badge {
+    font-size: 10px;
+    padding: 2px 6px;
+  }
+
+  .status-text {
+    font-size: 9px;
+  }
+
+  .status-none {
+    font-size: 8px;
+  }
+}

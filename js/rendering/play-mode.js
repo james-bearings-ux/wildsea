@@ -7,6 +7,8 @@ import { renderSkills, renderLanguages } from '../components/skills.js';
 import { renderResources } from '../components/resources.js';
 import { renderDrives, renderMires } from '../components/drives-mires.js';
 import { renderMilestones } from '../components/milestones.js';
+import { renderDamageTypeTable } from '../components/damage-summary.js';
+import { highlightDamageTypesInDescription, renderDamageTypeWarning } from '../components/damage-type-selector.js';
 
 export function renderPlayMode(app, character, gameData) {
 
@@ -62,7 +64,8 @@ export function renderPlayMode(app, character, gameData) {
                         <div class="aspect-name" style="margin-bottom: 4px;">${aspect.name}</div>
                         <div class="aspect-meta">${aspect.source} ${aspect.type}</div>
                     </div>
-                    <div class="aspect-description">${aspect.description}</div>
+                    <div class="aspect-description">${highlightDamageTypesInDescription(aspect)}</div>
+                    ${renderDamageTypeWarning(aspect)}
                     </div>
                 </div>
                 </div>
@@ -71,14 +74,16 @@ export function renderPlayMode(app, character, gameData) {
         </div>
         </div>
         <hr />
-        ${renderResources(character)}
-        <hr />
-        <div style="margin-bottom: 32px;">
-        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 32px;">
-            ${renderDrives(character)}
-            ${renderMires(character)}
-            ${renderMilestones(character)}
-        </div>
+        <div style="display: grid; grid-template-columns: 1fr 250px 1fr; gap: 32px; margin-bottom: 32px;">
+            <div style="display: flex; flex-direction: column; gap: 24px;">
+                ${renderResources(character)}
+            </div>
+            ${renderDamageTypeTable(character)}
+            <div style="display: flex; flex-direction: column; gap: 32px;">
+                ${renderDrives(character)}
+                ${renderMires(character)}
+                ${renderMilestones(character)}
+            </div>
         </div>
     </div>
 

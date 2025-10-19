@@ -8,9 +8,10 @@ import { renderInteractiveTrack } from './aspects.js';
  * Render the aspect customization modal
  * @param {Object} character - Character object
  * @param {string} selectedAspectId - Currently selected aspect ID in modal
+ * @param {Object} modalUnsavedEdits - Unsaved edits { aspectId: { name, description } }
  * @returns {string} HTML string
  */
-export function renderAspectCustomizationModal(character, selectedAspectId = null) {
+export function renderAspectCustomizationModal(character, selectedAspectId = null, modalUnsavedEdits = {}) {
   // Default to first aspect if none selected
   const aspectToShow = selectedAspectId || (character.selectedAspects[0]?.id || null);
 
@@ -22,6 +23,9 @@ export function renderAspectCustomizationModal(character, selectedAspectId = nul
   if (!currentAspect) return '';
 
   const escapedId = currentAspect.id.replace(/'/g, "\\'");
+
+  // Check for unsaved edits for this aspect
+  const unsavedEdits = modalUnsavedEdits[aspectToShow] || {};
 
   let html = '<div class="modal-overlay" data-action="closeCustomizeModal">';
   html += '  <div class="modal-container">';
@@ -54,8 +58,8 @@ export function renderAspectCustomizationModal(character, selectedAspectId = nul
   // Meta info (non-editable)
   html += `        <div class="aspect-meta">${currentAspect.type} • ${currentAspect.category}</div>`;
 
-  // Editable name
-  const nameValue = currentAspect.name || '';
+  // Editable name - use unsaved edit if available
+  const nameValue = unsavedEdits.name !== undefined ? unsavedEdits.name : (currentAspect.name || '');
   html += '        <input type="text" ';
   html += '               class="aspect-name-input" ';
   html += '               id="modal-aspect-name" ';
@@ -69,8 +73,8 @@ export function renderAspectCustomizationModal(character, selectedAspectId = nul
   // Track (non-editable in modal)
   html += renderInteractiveTrack(currentAspect, escapedId);
 
-  // Editable description
-  const descValue = currentAspect.description || '';
+  // Editable description - use unsaved edit if available
+  const descValue = unsavedEdits.description !== undefined ? unsavedEdits.description : (currentAspect.description || '');
   html += '        <textarea ';
   html += '               class="aspect-description-textarea" ';
   html += '               id="modal-aspect-description" ';

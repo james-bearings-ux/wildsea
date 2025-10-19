@@ -1,0 +1,429 @@
+{
+  "Ketra": [
+    {
+      "name": "Gelatinous Form",
+      "type": "Trait",
+      "track": 5,
+      "description": "You have an inherent weakness to salt damage, but can squeeze and compress your body enough to move through spaces much smaller than expected.",
+      "damageTypes": {
+        "category": "weakness",
+        "selectionType": "fixed",
+        "options": ["Salt"]
+      }
+    },
+    {
+      "name": "Sensory Stalks",
+      "type": "Trait",
+      "track": 4,
+      "description": "A rare mutation that hones your sight. You can see clearly without light."
+    },
+    {
+      "name": "Crawling Pattern",
+      "type": "Trait",
+      "track": 4,
+      "description": "The glowing patches on your flesh crawl at your command, even onto others nearby. Mark this track to create a dim but lasting light on you or a nearby target."
+    },
+    {
+      "name": "Tunnel-Wise",
+      "type": "Trait",
+      "track": 3,
+      "description": "Treat conflicts as triumphs when navigating or moving through enclosed areas."
+    },
+    {
+      "name": "Whispers in the Dark",
+      "type": "Trait",
+      "track": 3,
+      "description": "While in a dimly lit or unlit area, mark to learn a secret from the darkness (once per scene)."
+    },
+    {
+      "name": "Scrapper Enzymes",
+      "type": "Trait",
+      "track": 3,
+      "description": "You can use salvage as a component when concocting a potion or chemical mixture, no matter its form."
+    },
+    {
+      "name": "Voltaic Mantle",
+      "type": "Trait",
+      "track": 4,
+      "description": "The tendrils of your mantle crackle with lightning as they strike, dealing CQ volt damage.",
+      "damageTypes": {
+        "category": "dealing",
+        "selectionType": "fixed",
+        "options": ["Volt"],
+        "range": "CQ"
+      }
+    },
+    {
+      "name": "Driftwood Core",
+      "type": "Gear",
+      "track": 3,
+      "description": "You're resistant to three damage types, chosen from the following list: Blunt, Spike, Toxin, Frost, Volt.",
+      "damageTypes": {
+        "category": "resistance",
+        "selectionType": "choose",
+        "chooseCount": 3,
+        "options": ["Blunt", "Spike", "Toxin", "Frost", "Volt"]
+      }
+    },
+    {
+      "name": "Rebreather Mask",
+      "type": "Gear",
+      "track": 3,
+      "description": "You have a short supply of clean air you can tap into when you need to, and you also resist the effects of bad air and airborne spores.",
+      "damageTypes": {
+        "category": "resistance",
+        "selectionType": "fixed",
+        "options": ["bad air", "airborne spores"]
+      }
+    },
+    {
+      "name": "Climbing Hooks",
+      "type": "Gear",
+      "track": 4,
+      "description": "Attached to a harness or embedded in your gelatinous flesh. Ignore cut while climbing, as long as you're moving with care."
+    },
+    {
+      "name": "Driving-Chain",
+      "type": "Gear",
+      "track": 3,
+      "description": "A rusted chain from a long-dead machine, now wielded as a weapon dealing blunt damage at CQ or LR.",
+      "damageTypes": {
+        "category": "dealing",
+        "selectionType": "fixed",
+        "options": ["Blunt"],
+        "range": "CQ/LR"
+      }
+    },
+    {
+      "name": "Scrap-Metal Skeleton",
+      "type": "Gear",
+      "track": 3,
+      "description": "The internal structures you've collected can store biovoltaic energy. Use a task to create a resource, Scrap-Bone Battery."
+    },
+    {
+      "name": "Old Ore Piercings",
+      "type": "Gear",
+      "track": 1,
+      "description": "You're immune to the usual effects of crezzerin. Concentrated sources of crezzerin heal rather than harm you.",
+      "damageTypes": {
+        "category": "immunity",
+        "selectionType": "fixed",
+        "options": ["crezzerin effects"]
+      }
+    },
+    {
+      "name": "Oiljelly",
+      "type": "Companion",
+      "track": 4,
+      "description": "A slick, symbiotic slime-like creature bonded with your body."
+    },
+    {
+      "name": "Drone Attendant",
+      "type": "Companion",
+      "track": 5,
+      "description": "A simple punchcard-driven repair construct. Increase impact when repairing or tinkering with other machines."
+    },
+    {
+      "name": "Plasmic Form",
+      "type": "Trait",
+      "track": 4,
+      "description": "Your flesh is malleable and regenerative, even by Ketra standards. Mark Mire to gain a rare resource, Living Protoplasmic Flesh."
+    }
+  ],
+  "Ridgeback": [
+    {
+      "name": "Barrel-Chested",
+      "type": "Trait",
+      "track": 5,
+      "description": "You may not be built fancy, but you are built sturdy."
+    },
+    {
+      "name": "Stone Hearted",
+      "type": "Trait",
+      "track": 4,
+      "description": "Once per scene, increase impact on any successful action taken whilst on ancient ground."
+    },
+    {
+      "name": "Search for Omens",
+      "type": "Trait",
+      "track": 3,
+      "description": "Mark to ask a question and receive an omen to interpret in return (supplied by the Firefly)."
+    },
+    {
+      "name": "Thick Skin",
+      "type": "Trait",
+      "track": 4,
+      "description": "You're resistant to three damage types, chosen from the following list: Blunt, Toxin, Cold, Salt, Volt.",
+      "damageTypes": {
+        "category": "resistance",
+        "selectionType": "choose",
+        "chooseCount": 3,
+        "options": ["Blunt", "Toxin", "Frost", "Salt", "Volt"]
+      }
+    },
+    {
+      "name": "Crushing Blows",
+      "type": "Trait",
+      "track": 3,
+      "description": "Your fists and feet are the only weapons you need. They deal CQ blunt and salt damage.",
+      "damageTypes": {
+        "category": "dealing",
+        "selectionType": "fixed",
+        "options": ["Blunt", "Salt"],
+        "range": "CQ"
+      }
+    },
+    {
+      "name": "Fragments Like Gods",
+      "type": "Trait",
+      "track": 2,
+      "description": "Whenever you gain a stone-based resource, give it the Sacred tag."
+    },
+    {
+      "name": "Archaeodermis",
+      "type": "Trait",
+      "track": 3,
+      "description": "Your skin (or whatever you have as an outer covering) mimics the mountain you were raised on. You're immune to keen damage, as well as bites and stings from small creatures.",
+      "damageTypes": {
+        "category": "immunity",
+        "selectionType": "fixed",
+        "options": ["Keen", "bites and stings"]
+      }
+    },
+    {
+      "name": "Chipping Tools",
+      "type": "Gear",
+      "track": 4,
+      "description": "Treat conflicts as triumphs when altering or working with stone or bone"
+    },
+    {
+      "name": "Leviathan Furs",
+      "type": "Gear",
+      "track": 4,
+      "description": "You never mark mire when confronted with an unknown or terrifying beast, no matter the size."
+    },
+    {
+      "name": "Ritual Mask",
+      "type": "Gear",
+      "track": 3,
+      "description": "You can clearly see spirits and the spectral realm."
+    },
+    {
+      "name": "Whispering Charm",
+      "type": "Gear",
+      "track": 3,
+      "description": "Consume a whisper to learn a secret about a nearby individual (supplied by the Firefly)."
+    },
+    {
+      "name": "Hexed Tooth",
+      "type": "Gear",
+      "track": 3,
+      "description": "Mark to levitate and control exposed bone."
+    },
+    {
+      "name": "Great Beast Horns",
+      "type": "Gear",
+      "track": 3,
+      "description": "These might have deep ceremonial meaning, or just cut an impressive silhouette - either way these horns deal CQ spike damage, and you ignore cut when defending yourself against charging opponents.",
+      "damageTypes": {
+        "category": "dealing",
+        "selectionType": "fixed",
+        "options": ["Spike"],
+        "range": "CQ"
+      }
+    },
+    {
+      "name": "Shamanic Idol",
+      "type": "Gear",
+      "track": 4,
+      "description": "Holds a sliver of power from a not-quite-god. Deals LR salt damage.",
+      "damageTypes": {
+        "category": "dealing",
+        "selectionType": "fixed",
+        "options": ["Salt"],
+        "range": "LR"
+      }
+    },
+    {
+      "name": "Swift Hawk",
+      "type": "Companion",
+      "track": 2,
+      "description": "A surly, vicious bird that can deal LR keen damage. Once per scene, hijack to temporarily blind or distract an attacking opponent.",
+      "damageTypes": {
+        "category": "dealing",
+        "selectionType": "fixed",
+        "options": ["Keen"],
+        "range": "LR"
+      }
+    },
+    {
+      "name": "Mountain Snouter",
+      "type": "Companion",
+      "track": 3,
+      "description": "An ill-tempered boar with cruel tusks. Deals CQ spike damage, and is large enough to ride.",
+      "damageTypes": {
+        "category": "dealing",
+        "selectionType": "fixed",
+        "options": ["Spike"],
+        "range": "CQ"
+      }
+    },
+    {
+      "name": "Surface Stone",
+      "type": "Gear",
+      "track": 2,
+      "description": "Not somethign to be worshipped, but most definitely something to be remembered. Burn to reduce the Pressure Level by one."
+    }
+  ],
+  "Crash": [
+    {
+      "name": "Thick Skin",
+      "type": "Trait",
+      "track": 5,
+      "description": "A history of breaking yourself while breaking other things has toughened you up."
+    },
+    {
+      "name": "Zero Days",
+      "type": "Trait",
+      "track": 3,
+      "description": "Once per scene, ignore any damage to yourself that comes as a result of your own destructive actions."
+    },
+    {
+      "name": "The Seam Bear Secrets",
+      "type": "Trait",
+      "track": 4,
+      "description": "Ancient buildings remember. Receive a whisper when you destroy an ancient structure."
+    },
+    {
+      "name": "Load-Bearing Wall",
+      "type": "Trait",
+      "track": 4,
+      "description": "Use a task to identify hidden elements essential to the integrity of a structure."
+    },
+    {
+      "name": "Cannonball Dreams",
+      "type": "Trait",
+      "track": 3,
+      "description": "You jump headfirst into destruction. Literally. You can use your own body as a projectile, dealing LR Blunt damage. You end up wherever you land.",
+      "damageTypes": {
+        "category": "dealing",
+        "selectionType": "fixed",
+        "options": ["Blunt"],
+        "range": "LR"
+      }
+    },
+    {
+      "name": "Padded Boilersuit",
+      "type": "Trait",
+      "track": 3,
+      "description": "You're resistant to three damage types, chosen from the following list: Blunt, Spike, Hewing, Blast, Volt.",
+      "damageTypes": {
+        "category": "resistance",
+        "selectionType": "choose",
+        "chooseCount": 3,
+        "options": ["Blunt", "Spike", "Hewing", "Blast", "Volt"]
+      }
+    },
+    {
+      "name": "Broken Points",
+      "type": "Trait",
+      "track": 4,
+      "description": "Increase impact when you break something as a show of strength or intimidation."
+    },
+    {
+      "name": "Crude Tools",
+      "type": "Trait",
+      "track": 3,
+      "description": "Your solutions may not be clever, but they work. You may use the Break skill to construct simple tools."
+    },
+    {
+      "name": "Canis Box Detonator",
+      "type": "Gear",
+      "track": 4,
+      "description": "A simple detonator used to set off explosives from a (presumably) safe distance."
+    },
+    {
+      "name": "Crash Mask",
+      "type": "Gear",
+      "track": 2,
+      "description": "A mask favoured by those who work in dusty environments. You can see clearly through dust and smoke, and resist the effects of spores and bad air.",
+      "damageTypes": {
+        "category": "resistance",
+        "selectionType": "fixed",
+        "options": ["airborne spores", "bad air"]
+      }
+    },
+    {
+      "name": "Baby Bombs",
+      "type": "Gear",
+      "track": 2,
+      "description": "Handheld explosives waiting to be thrown. Deals LR Blast damage to multiple nearby targets at once.",
+      "damageTypes": {
+        "category": "dealing",
+        "selectionType": "fixed",
+        "options": ["Blast"],
+        "range": "LR"
+      }
+    },
+    {
+      "name": "Demolisher",
+      "type": "Gear",
+      "track": 2,
+      "description": "An over-sized weapon, usually a hammer or pickaxe. Deals CQ Blunt or Spike damage. Increase impact when destroying architecture.",
+      "damageTypes": {
+        "category": "dealing",
+        "selectionType": "fixed",
+        "options": ["Blunt", "Spike"],
+        "range": "CQ"
+      }
+    },
+    {
+      "name": "Wrecker's Globe",
+      "type": "Gear",
+      "track": 3,
+      "description": "A large, heavy ball on the end of a chain. Deals CQ Blunt damage. Useful for knocking foes back.",
+      "damageTypes": {
+        "category": "dealing",
+        "selectionType": "fixed",
+        "options": ["Blunt"],
+        "range": "CQ"
+      }
+    },
+    {
+      "name": "Torteaver",
+      "type": "Companion",
+      "track": 4,
+      "description": "A small creature with a hard shell known for gnawing through wood and stone."
+    },
+    {
+      "name": "Burrowhip Colony",
+      "type": "Companion",
+      "track": 4,
+      "description": "A small colony of burrowing insects. Mark to weaken a structure without destroying it."
+    },
+    {
+      "name": "Blitceros",
+      "type": "Companion",
+      "track": 3,
+      "description": "A quadruped large enough to be ridden. Tends to bring down barriers by charging into them horn-first."
+    },
+    {
+      "name": "The Joy of Direct Paths",
+      "type": "Trait",
+      "track": 3,
+      "description": "Whenever your ship rams or cuts through a particularly difficult obstacle using a ratings roll, you gain a piece of salvage or specimen with the Broken tag related to the obstacle."
+    },
+    {
+      "name": "Torpedo Mallet",
+      "type": "Gear",
+      "track": 2,
+      "description": "Yes, this was once an armament for a submersible. No, there really aren't many safety precautions in place. Deals CQ Blunt or Blast damage, or burn to deal Massive CQ Blast damage to multiple nearby targets (including yourself).",
+      "damageTypes": {
+        "category": "dealing",
+        "selectionType": "fixed",
+        "options": ["Blunt", "Blast"],
+        "range": "CQ"
+      }
+    }
+  ]
+}

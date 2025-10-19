@@ -8,6 +8,12 @@ import { renderEdgesSkillsLanguagesRow } from '../components/edges.js';
 import { renderSkills, renderLanguages } from '../components/skills.js';
 import { renderResources } from '../components/resources.js';
 import { renderDrives, renderMires } from '../components/drives-mires.js';
+import {
+  renderDamageTypeSelector,
+  renderDamageTypeWarning,
+  renderSelectedDamageTypes,
+  highlightDamageTypesInDescription
+} from '../components/damage-type-selector.js';
 
 export function renderCreationMode(app, character, gameData) {
   const allAspects = getAvailableAspects(character);
@@ -67,6 +73,7 @@ export function renderCreationMode(app, character, gameData) {
                 const escapedId = id.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
                 const isSelected = character.selectedAspects.some(a => a.id === id);
                 const isDisabled = !isSelected && aspectsSelected >= BUDGETS.aspects;
+                const selectedAspect = character.selectedAspects.find(a => a.id === id);
                 return `
                 <div class="aspect-card ${isSelected ? 'selected' : ''} ${isDisabled ? 'disabled' : ''}"
                         data-action="toggleAspect" data-params="{&quot;id&quot;:&quot;${escapedId}&quot;}">
@@ -75,7 +82,10 @@ export function renderCreationMode(app, character, gameData) {
                     <div class="aspect-name" style="margin-bottom: 4px;">${aspect.name}</div>
                     <div class="aspect-meta">${aspect.source} ${aspect.type}</div>
                     </div>
-                    <div class="aspect-description">${aspect.description}</div>
+                    <div class="aspect-description">${highlightDamageTypesInDescription(selectedAspect || aspect)}</div>
+                    ${isSelected && selectedAspect ? renderDamageTypeWarning(selectedAspect) : ''}
+                    ${isSelected && selectedAspect ? renderDamageTypeSelector(selectedAspect, 'creation') : ''}
+                    ${isSelected && selectedAspect ? renderSelectedDamageTypes(selectedAspect, character) : ''}
                 </div>
                 `;
             }).join('')}
@@ -88,6 +98,7 @@ export function renderCreationMode(app, character, gameData) {
                 const escapedId = id.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
                 const isSelected = character.selectedAspects.some(a => a.id === id);
                 const isDisabled = !isSelected && aspectsSelected >= BUDGETS.aspects;
+                const selectedAspect = character.selectedAspects.find(a => a.id === id);
                 return `
                 <div class="aspect-card ${isSelected ? 'selected' : ''} ${isDisabled ? 'disabled' : ''}"
                         data-action="toggleAspect" data-params="{&quot;id&quot;:&quot;${escapedId}&quot;}">
@@ -96,7 +107,10 @@ export function renderCreationMode(app, character, gameData) {
                     <div class="aspect-name" style="margin-bottom: 4px;">${aspect.name}</div>
                     <div class="aspect-meta">${aspect.source} ${aspect.type}</div>
                     </div>
-                    <div class="aspect-description">${aspect.description}</div>
+                    <div class="aspect-description">${highlightDamageTypesInDescription(selectedAspect || aspect)}</div>
+                    ${isSelected && selectedAspect ? renderDamageTypeWarning(selectedAspect) : ''}
+                    ${isSelected && selectedAspect ? renderDamageTypeSelector(selectedAspect, 'creation') : ''}
+                    ${isSelected && selectedAspect ? renderSelectedDamageTypes(selectedAspect, character) : ''}
                 </div>
                 `;
             }).join('')}
@@ -109,6 +123,7 @@ export function renderCreationMode(app, character, gameData) {
                 const escapedId = id.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
                 const isSelected = character.selectedAspects.some(a => a.id === id);
                 const isDisabled = !isSelected && aspectsSelected >= BUDGETS.aspects;
+                const selectedAspect = character.selectedAspects.find(a => a.id === id);
                 return `
                 <div class="aspect-card ${isSelected ? 'selected' : ''} ${isDisabled ? 'disabled' : ''}"
                         data-action="toggleAspect" data-params="{&quot;id&quot;:&quot;${escapedId}&quot;}">
@@ -117,7 +132,10 @@ export function renderCreationMode(app, character, gameData) {
                     <div class="aspect-name" style="margin-bottom: 4px;">${aspect.name}</div>
                     <div class="aspect-meta">${aspect.source} ${aspect.type}</div>
                     </div>
-                    <div class="aspect-description">${aspect.description}</div>
+                    <div class="aspect-description">${highlightDamageTypesInDescription(selectedAspect || aspect)}</div>
+                    ${isSelected && selectedAspect ? renderDamageTypeWarning(selectedAspect) : ''}
+                    ${isSelected && selectedAspect ? renderDamageTypeSelector(selectedAspect, 'creation') : ''}
+                    ${isSelected && selectedAspect ? renderSelectedDamageTypes(selectedAspect, character) : ''}
                 </div>
                 `;
             }).join('')}
@@ -141,10 +159,13 @@ export function renderCreationMode(app, character, gameData) {
     </div>
 
     <div class="sticky-action-bar split">
-        <button data-action="importCharacter">Import</button>
-        <div>
-        <button data-action="generateRandomCharacter">Generate Random Character</button>
-        <button data-action="createCharacter" class="primary">Create Character</button>
+        <div style="display: flex; gap: 8px;">
+            <button data-action="importCharacter">Import</button>
+            <button data-action="generateRandomCharacter">Generate Random</button>
+        </div>
+        <div style="display: flex; gap: 8px;">
+            <button data-action="createCharacter" class="primary">Create Character</button>
+            <button data-action="removeCharacter" data-params='{"characterId":"${character.id}"}'>Cancel</button>
         </div>
     </div>
     `;

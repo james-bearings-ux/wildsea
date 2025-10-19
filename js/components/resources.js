@@ -12,24 +12,34 @@ export function renderResources(character) {
   ];
 
   const isCreationMode = char.mode === 'creation';
+  const isPlayMode = char.mode === 'play';
 
-  let html = '<div style="margin-bottom: 32px;">';
+  let html = '';
 
+  // Add header based on mode
   if (isCreationMode) {
+    html += '<div style="margin-bottom: 32px;">';
     html += '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">';
     html += '<h2 class="section-header" style="margin: 0;">Resources</h2>';
     html += '<p>A new character may have up to 6 starting resources.</p> <button data-action="populateDefaultResources">Load Suggested Resources</button>';
     html += '</div>';
-  } else {
+  } else if (isPlayMode) {
+    // Add header for play mode too
     html += '<h2 class="section-header">Resources</h2>';
   }
 
-  html += '<div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px;">';
+  // Use column layout for play mode, grid for creation mode
+  if (isPlayMode) {
+    // No wrapper, resources will be stacked by parent container
+  } else if (isCreationMode) {
+    html += '<div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px;">';
+  }
 
   for (let i = 0; i < resourceTypes.length; i++) {
     const type = resourceTypes[i];
     const items = char.resources[type.key];
 
+    // Wrap in a container div for proper stacking in play mode
     html += '<div>';
     html += '<h3 class="subsection-header" style="margin-bottom: 12px;">' + type.label + '</h3>';
     html += '<div style="display: flex; flex-direction: column; gap: 12px;">';
@@ -56,8 +66,11 @@ export function renderResources(character) {
     html += '</div>';
   }
 
-  html += '</div>';
-  html += '</div>';
+  // Close grid wrapper for creation mode
+  if (isCreationMode) {
+    html += '</div>';
+    html += '</div>'; // Close outer wrapper
+  }
 
   return html;
 }

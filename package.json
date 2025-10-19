@@ -2,6 +2,7 @@
   "name": "wildsea-character-sheet",
   "version": "1.0.0",
   "description": "Character sheet for the Wildsea TTRPG",
+  "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",

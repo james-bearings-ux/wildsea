@@ -8,8 +8,14 @@ import { renderEdgesSkillsLanguagesRow } from '../components/edges.js';
 import { renderSkills, renderLanguages } from '../components/skills.js';
 import { renderMilestones } from '../components/milestones.js';
 import { renderAspectCustomizationModal } from '../components/aspect-customization-modal.js';
+import {
+  renderDamageTypeSelector,
+  renderDamageTypeWarning,
+  renderSelectedDamageTypes,
+  highlightDamageTypesInDescription
+} from '../components/damage-type-selector.js';
 
-export function renderAdvancementMode(app, character, gameData, showCustomizeModal = false, selectedModalAspectId = null) {
+export function renderAdvancementMode(app, character, gameData, showCustomizeModal = false, selectedModalAspectId = null, modalUnsavedEdits = {}) {
   const allAspects = getAvailableAspects(character);
   const bloodlineAspects = allAspects.filter(a => a.category === 'Bloodline').sort((a, b) => a.name.localeCompare(b.name));
   const originAspects = allAspects.filter(a => a.category === 'Origin').sort((a, b) => a.name.localeCompare(b.name));
@@ -71,7 +77,10 @@ export function renderAdvancementMode(app, character, gameData, showCustomizeMod
                     <div class="aspect-name" style="margin-bottom: 4px;">${displayName}</div>
                     <div class="aspect-meta">${aspect.source} ${aspect.type}</div>
                     </div>
-                    <div class="aspect-description">${displayDescription}</div>
+                    <div class="aspect-description">${highlightDamageTypesInDescription(selectedAspect || aspect)}</div>
+                    ${isSelected && selectedAspect ? renderDamageTypeWarning(selectedAspect) : ''}
+                    ${isSelected && selectedAspect ? renderDamageTypeSelector(selectedAspect, 'advancement') : ''}
+                    ${isSelected && selectedAspect ? renderSelectedDamageTypes(selectedAspect, character) : ''}
                 </div>
                 `;
             }).join('')}
@@ -99,7 +108,10 @@ export function renderAdvancementMode(app, character, gameData, showCustomizeMod
                     <div class="aspect-name" style="margin-bottom: 4px;">${displayName}</div>
                     <div class="aspect-meta">${aspect.source} ${aspect.type}</div>
                     </div>
-                    <div class="aspect-description">${displayDescription}</div>
+                    <div class="aspect-description">${highlightDamageTypesInDescription(selectedAspect || aspect)}</div>
+                    ${isSelected && selectedAspect ? renderDamageTypeWarning(selectedAspect) : ''}
+                    ${isSelected && selectedAspect ? renderDamageTypeSelector(selectedAspect, 'advancement') : ''}
+                    ${isSelected && selectedAspect ? renderSelectedDamageTypes(selectedAspect, character) : ''}
                 </div>
                 `;
             }).join('')}
@@ -127,7 +139,10 @@ export function renderAdvancementMode(app, character, gameData, showCustomizeMod
                     <div class="aspect-name" style="margin-bottom: 4px;">${displayName}</div>
                     <div class="aspect-meta">${aspect.source} ${aspect.type}</div>
                     </div>
-                    <div class="aspect-description">${displayDescription}</div>
+                    <div class="aspect-description">${highlightDamageTypesInDescription(selectedAspect || aspect)}</div>
+                    ${isSelected && selectedAspect ? renderDamageTypeWarning(selectedAspect) : ''}
+                    ${isSelected && selectedAspect ? renderDamageTypeSelector(selectedAspect, 'advancement') : ''}
+                    ${isSelected && selectedAspect ? renderSelectedDamageTypes(selectedAspect, character) : ''}
                 </div>
                 `;
             }).join('')}
@@ -149,6 +164,6 @@ export function renderAdvancementMode(app, character, gameData, showCustomizeMod
         <button data-action="setMode" data-params='{"mode":"play"}'>Cancel</button>
     </div>
 
-    ${showCustomizeModal ? renderAspectCustomizationModal(character, selectedModalAspectId) : ''}
+    ${showCustomizeModal ? renderAspectCustomizationModal(character, selectedModalAspectId, modalUnsavedEdits) : ''}
     `;
 }
