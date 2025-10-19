@@ -76,15 +76,14 @@ export function renderPlayMode(app, character, gameData) {
         <hr />
         ${renderResources(character)}
         <hr />
-        <div style="margin-bottom: 32px;">
-        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 32px;">
-            ${renderDrives(character)}
-            ${renderMires(character)}
-            ${renderMilestones(character)}
+        <div style="display: grid; grid-template-columns: 250px 1fr; gap: 32px; margin-bottom: 32px;">
+            ${renderDamageTypeTable(character)}
+            <div style="display: flex; flex-direction: column; gap: 32px;">
+                ${renderDrives(character)}
+                ${renderMires(character)}
+                ${renderMilestones(character)}
+            </div>
         </div>
-        </div>
-
-        ${renderDamageTypeTable(character)}
     </div>
 
     <div class="sticky-action-bar split">

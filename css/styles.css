@@ -1301,11 +1301,10 @@
 /* Damage Type Table Styles */
 .damage-type-table {
   background: #FFFFFF;
-  border: 2px solid #E5E7EB;
-  border-radius: 8px;
+  border: 2px solid #000;
   padding: 16px;
-  margin-top: 24px;
   width: 250px;
+  align-self: flex-start;
 }
 
 .damage-type-table .section-header {
