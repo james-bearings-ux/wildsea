@@ -1,0 +1,314 @@
+# Performance Optimization Plan
+
+## Overview
+
+This document tracks performance enhancements for the Wildsea character sheet application.
+
+**Date Started**: 2025-10-19
+**Current Phase**: Phase 1 - Quick Wins (Debounced Saves)
+**Budget Usage**: 80% when started
+
+---
+
+## Performance Issues Identified
+
+### 1. Database Writes on Every Click (CRITICAL)
+**Current behavior**: Every button click saves the entire character to Supabase:
+```javascript
+// Happens on EVERY interaction
+cycleAspectDamage(parsedParams.id, parsedParams.index, render, character);
+await saveCharacter(character); // Network call (100-500ms)
+await render(); // Full DOM replacement
+```
+
+**Problems**:
+- Network latency on every click (typically 100-500ms)
+- Unnecessary database writes for rapidly changing UI state
+- User waits for save to complete before seeing UI update
+- Expensive Supabase operations (potential cost issue)
+
+**Solution**: Optimistic updates with debounced saves
+```javascript
+// Immediate UI update
+cycleAspectDamage(parsedParams.id, parsedParams.index, render, character);
+await render();
+
+// Debounced save (only persist after user stops interacting)
+debounce('character-save', async () => {
+  await saveCharacter(character);
+}, 1000); // Save after 1 second of inactivity
+```
+
+**Expected Impact**:
+- **90% reduction in database calls**
+- Instant UI responsiveness
+- Lower Supabase costs
+- Better user experience
+
+---
+
+### 2. Full DOM Replacement on Every Render (HIGH IMPACT)
+**Current behavior**: Every render does `app.innerHTML = ...` which:
+- Destroys and recreates entire DOM tree (~500+ elements)
+- Loses scroll position and focus state
+- Forces full browser re-layout/re-paint
+- Triggers complete CSS recalculation
+- Re-attaches all event listeners
+
+**Solution A** (Quick win): Only re-render changed sections
+```javascript
+// Instead of full app.innerHTML, update specific containers
+function renderPartial(section) {
+  const container = document.querySelector(`[data-section="${section}"]`);
+  if (container) {
+    container.innerHTML = generateSectionHTML(character, section);
+  }
+}
+```
+
+**Solution B** (Better long-term): Virtual DOM diffing
+- Consider a lightweight framework like Preact (~3kb gzipped)
+- Or implement simple DOM diffing for frequently updated sections
+- Preserve event delegation pattern
+
+**Expected Impact**:
+- **50-80% reduction in render time**
+- No scroll position loss
+- Maintained focus state
+- Smoother interactions
+
+---
+
+### 3. Console Logging in Production (MEDIUM IMPACT)
+**Current locations**:
+```javascript
+// character.js:92-93
+console.log('[SAVE] Saving character to database:', character.id, character.name, 'at', new Date().toISOString());
+console.log('[SAVE] Character saved successfully:', character.id);
+```
+
+**Problem**: Console logging is expensive, especially with large objects
+
+**Solution**: Use production flag to disable logging
+```javascript
+const DEBUG = import.meta.env.DEV;
+if (DEBUG) {
+  console.log('[SAVE] Saving character...');
+}
+```
+
+**Expected Impact**:
+- **5-10% reduction in save time**
+- Cleaner production console
+- Reduced memory usage
+
+---
+
+## Implementation Phases
+
+### Phase 1: Quick Wins (CURRENT - 30 minutes)
+**Status**: In Progress
+
+**Goals**:
+1. ✅ Document performance plan
+2. ⏳ Implement debounced saves for all button clicks
+3. ⏳ Add DEBUG flag and remove production console logs
+4. ⏳ Add performance measurement markers
+
+**Files to modify**:
+- `js/main.js` - Replace immediate saves with debounced saves
+- `js/state/character.js` - Add DEBUG flag for console logs
+
+**Implementation notes**:
+- Use existing `debounce()` function in main.js
+- Set debounce delay to 1000ms (1 second)
+- Keep text input debouncing at 400ms (already working well)
+- Create single `scheduleSave()` helper function
+- Add performance.mark() calls for measurement
+
+**Actions affected**:
+- toggleAspect
+- toggleEdge
+- adjustSkill
+- adjustLanguage
+- cycleAspectDamage
+- expandAspectTrack
+- addMilestone
+- toggleMilestoneUsed
+- deleteMilestone
+- addResource
+- removeResource
+- populateDefaultResources
+- generateRandomCharacter
+- setMode
+- toggleMireCheckbox
+- saveAspectCustomization
+- resetAspectCustomization
+- onBloodlineChange
+- onOriginChange
+- onPostChange
+- updateMilestoneScale
+
+**Keep immediate saves for**:
+- createCharacter (initial save required)
+- removeCharacter (immediate deletion makes sense)
+
+---
+
+### Phase 2: Render Optimization (1-2 hours)
+**Status**: Not Started
+
+**Goals**:
+1. Add `data-section` attributes to major UI sections
+2. Implement partial re-render logic
+3. Track what changed and only update those sections
+4. Preserve scroll position and focus
+
+**Sections to mark**:
+- Character header (name, bloodline, origin, post)
+- Aspects grid
+- Edges/Skills/Languages row
+- Resources
+- Damage Type Matrix
+- Drives/Mires/Milestones
+
+**Implementation approach**:
+```javascript
+// Track dirty sections
+const dirtySections = new Set();
+
+// Mark section as needing update
+function markDirty(section) {
+  dirtySections.add(section);
+}
+
+// Smart render - only update dirty sections
+async function smartRender() {
+  if (dirtySections.size === 0) return;
+
+  for (const section of dirtySections) {
+    renderSection(section, character);
+  }
+
+  dirtySections.clear();
+}
+```
+
+**Challenges**:
+- Event delegation still needs to work
+- Modal rendering needs special handling
+- Mode switching still requires full render
+
+---
+
+### Phase 3: Advanced Optimizations (4+ hours)
+**Status**: Not Started (Optional)
+
+**Potential improvements**:
+
+1. **Virtual DOM Library**
+   - Consider Preact (3kb) or similar
+   - Automatic efficient DOM updates
+   - Maintain current architecture
+   - Gradual migration possible
+
+2. **Web Workers**
+   - Offload damage type aggregation calculations
+   - Parse aspect damage types in background
+   - Return results via postMessage
+
+3. **IndexedDB Caching**
+   - Cache aspect data locally
+   - Faster initial load
+   - Offline support potential
+
+4. **Code Splitting**
+   - Split mode renderers into separate chunks
+   - Lazy load advancement mode (rarely used)
+   - Reduce initial bundle size
+
+5. **Image/Asset Optimization**
+   - Check if any assets can be optimized
+   - Consider lazy loading non-critical resources
+
+---
+
+## Performance Measurement
+
+### Baseline (Before Phase 1)
+- Button click to UI update: ~200-600ms (includes network save)
+- Full render time: ~50-150ms (DOM replacement)
+- Database saves per minute (active user): ~20-40
+
+### Target Metrics (After Phase 1)
+- Button click to UI update: <50ms (no network wait)
+- Database saves per minute (active user): ~1-3 (90% reduction)
+- Console overhead: 0ms (disabled in production)
+
+### Target Metrics (After Phase 2)
+- Partial render time: ~10-30ms (5x faster)
+- Scroll position: Preserved
+- Focus state: Preserved
+
+---
+
+## Testing Checklist
+
+### Phase 1 Testing
+- [ ] Click aspect damage track rapidly - UI updates instantly
+- [ ] Wait 1 second - database save happens
+- [ ] Click multiple things rapidly - only one save after idle
+- [ ] Change text inputs - still debounce at 400ms
+- [ ] Create character - saves immediately
+- [ ] Delete character - deletes immediately
+- [ ] Check console in production - no save logs
+- [ ] Check console in dev - save logs present
+
+### Phase 2 Testing
+- [ ] Click aspect damage - only aspect section re-renders
+- [ ] Change skill - only skills section updates
+- [ ] Scroll to bottom, click something - scroll position maintained
+- [ ] Focus input, trigger render - focus maintained
+- [ ] Switch modes - full render still works
+
+---
+
+## Rollback Plan
+
+If Phase 1 causes issues:
+1. Git revert to commit before changes
+2. Issues likely related to:
+   - Unsaved data loss (user closes tab before save)
+   - Multiplayer race conditions (two users editing same character)
+
+**Mitigation**:
+- Add beforeunload handler to save on tab close
+- Supabase real-time subscriptions handle multiplayer conflicts
+- Add "Saving..." indicator so user knows when safe to close
+
+---
+
+## Future Considerations
+
+### Potential Issues
+1. **Unsaved changes on tab close** - Add beforeunload save
+2. **Multiplayer conflicts** - Already handled by Supabase
+3. **Offline support** - Would need service worker + IndexedDB
+4. **Very large aspect lists** - Could add virtual scrolling
+5. **Mobile performance** - May need additional optimizations
+
+### Monitoring
+- Consider adding performance.mark() calls
+- Track render times in production
+- Monitor Supabase database call counts
+- User feedback on responsiveness
+
+---
+
+## Notes
+
+- Current architecture (event delegation, full re-renders) is simple and maintainable
+- Phase 1 gives 90% of benefit with 10% of effort
+- Phase 2 adds complexity but worth it if rendering feels slow
+- Phase 3 should only be done if Phase 1+2 aren't sufficient
+- Keep changes incremental and testable

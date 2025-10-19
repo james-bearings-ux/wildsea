@@ -4,6 +4,9 @@
 
 import { supabase } from '../supabaseClient.js';
 
+// Debug flag - only log in development mode
+const DEBUG = import.meta.env.DEV;
+
 /**
  * Parse track size from undercrew name
  * Format: " [#-Track]" where # is the track size
@@ -97,7 +100,9 @@ export async function loadShip(shipId) {
  * Note: Mode IS saved to database as the canonical state, but can be overridden per-user via localStorage
  */
 export async function saveShip(ship) {
-  console.log('[SAVE] Saving ship to database:', ship.id, ship.name, 'at', new Date().toISOString());
+  if (DEBUG) {
+    console.log('[SAVE] Saving ship to database:', ship.id, ship.name, 'at', new Date().toISOString());
+  }
 
   const { error } = await supabase
     .from('ships')
@@ -130,7 +135,9 @@ export async function saveShip(ship) {
     throw error;
   }
 
-  console.log('[SAVE] Ship saved successfully:', ship.id);
+  if (DEBUG) {
+    console.log('[SAVE] Ship saved successfully:', ship.id);
+  }
 }
 
 /**

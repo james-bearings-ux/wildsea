@@ -7,6 +7,9 @@
 import { getGameData } from '../data/loader.js';
 import { supabase } from '../supabaseClient.js';
 
+// Debug flag - only log in development mode
+const DEBUG = import.meta.env.DEV;
+
 export const BUDGETS = {
   aspects: 4,
   edges: 3,
@@ -89,7 +92,9 @@ export async function loadCharacter(characterId) {
  * Note: Mode IS saved to database as the canonical state, but can be overridden per-user via localStorage
  */
 export async function saveCharacter(character) {
-  console.log('[SAVE] Saving character to database:', character.id, character.name, 'at', new Date().toISOString());
+  if (DEBUG) {
+    console.log('[SAVE] Saving character to database:', character.id, character.name, 'at', new Date().toISOString());
+  }
 
   const { error } = await supabase
     .from('characters')
@@ -116,7 +121,9 @@ export async function saveCharacter(character) {
     throw error;
   }
 
-  console.log('[SAVE] Character saved successfully:', character.id);
+  if (DEBUG) {
+    console.log('[SAVE] Character saved successfully:', character.id);
+  }
 }
 
 /**

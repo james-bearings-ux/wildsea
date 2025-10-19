@@ -125,6 +125,29 @@ function debounce(key, fn, delay = 400) {
 }
 
 /**
+ * Schedule a save after 1 second of inactivity
+ * This provides optimistic UI updates while batching database writes
+ */
+function scheduleSave() {
+  debounce('character-save', async () => {
+    if (character) {
+      await saveCharacter(character);
+    }
+  }, 1000);
+}
+
+/**
+ * Schedule a ship save after 1 second of inactivity
+ */
+function scheduleShipSave() {
+  debounce('ship-save', async () => {
+    if (ship) {
+      await saveShip(ship);
+    }
+  }, 1000);
+}
+
+/**
  * Render login screen
  */
 function renderLogin() {
@@ -342,94 +365,94 @@ function setupEventDelegation() {
               case 'toggleAspect':
                 if (character) {
                   toggleAspect(parsedParams.id, render, character);
-                  await saveCharacter(character);
                   await render();
+                  scheduleSave();
                 }
                 break;
               case 'toggleEdge':
                 if (character) {
                   toggleEdge(parsedParams.name, render, character);
-                  await saveCharacter(character);
                   await render();
+                  scheduleSave();
                 }
                 break;
               case 'adjustSkill':
                 if (character) {
                   adjustSkill(parsedParams.name, parsedParams.delta, render, character);
-                  await saveCharacter(character);
                   await render();
+                  scheduleSave();
                 }
                 break;
               case 'adjustLanguage':
                 if (character) {
                   adjustLanguage(parsedParams.name, parsedParams.delta, render, character);
-                  await saveCharacter(character);
                   await render();
+                  scheduleSave();
                 }
                 break;
               case 'cycleAspectDamage':
                 e.stopPropagation();
                 if (character) {
                   cycleAspectDamage(parsedParams.id, parsedParams.index, render, character);
-                  await saveCharacter(character);
                   await render();
+                  scheduleSave();
                 }
                 break;
               case 'expandAspectTrack':
                 e.stopPropagation();
                 if (character) {
                   expandAspectTrack(parsedParams.id, parsedParams.delta, render, character);
-                  await saveCharacter(character);
                   await render();
+                  scheduleSave();
                 }
                 break;
               case 'addMilestone':
                 if (character) {
                   addMilestone(render, character);
-                  await saveCharacter(character);
                   await render();
+                  scheduleSave();
                 }
                 break;
               case 'toggleMilestoneUsed':
                 if (character) {
                   toggleMilestoneUsed(parsedParams.id, render, character);
-                  await saveCharacter(character);
                   await render();
+                  scheduleSave();
                 }
                 break;
               case 'deleteMilestone':
                 if (character) {
                   deleteMilestone(parsedParams.id, render, character);
-                  await saveCharacter(character);
                   await render();
+                  scheduleSave();
                 }
                 break;
               case 'addResource':
                 if (character) {
                   addResource(parsedParams.type, render, character);
-                  await saveCharacter(character);
                   await render();
+                  scheduleSave();
                 }
                 break;
               case 'removeResource':
                 if (character) {
                   removeResource(parsedParams.type, parsedParams.id, render, character);
-                  await saveCharacter(character);
                   await render();
+                  scheduleSave();
                 }
                 break;
               case 'populateDefaultResources':
                 if (character) {
                   populateDefaultResources(render, character);
-                  await saveCharacter(character);
                   await render();
+                  scheduleSave();
                 }
                 break;
               case 'generateRandomCharacter':
                 if (character) {
                   generateRandomCharacter(render, character);
-                  await saveCharacter(character);
                   await render();
+                  scheduleSave();
                 }
                 break;
               case 'createCharacter':
@@ -438,8 +461,8 @@ function setupEventDelegation() {
               case 'setMode':
                 if (character) {
                   setMode(parsedParams.mode, render, character);
-                  await saveCharacter(character);
                   await render();
+                  scheduleSave();
                 }
                 break;
               case 'exportCharacter':
@@ -453,8 +476,8 @@ function setupEventDelegation() {
               case 'toggleMireCheckbox':
                 if (character) {
                   toggleMireCheckbox(parsedParams.index, parsedParams.num, render, character);
-                  await saveCharacter(character);
                   await render();
+                  scheduleSave();
                 }
                 break;
               case 'switchCharacter':
@@ -507,8 +530,8 @@ function setupEventDelegation() {
               case 'setShipMode':
                 if (ship) {
                   setShipMode(parsedParams.mode, render, ship);
-                  await saveShip(ship);
                   await render();
+                  scheduleShipSave();
                 }
                 break;
               case 'switchShipTab':
@@ -530,22 +553,22 @@ function setupEventDelegation() {
               case 'selectShipPart':
                 if (ship) {
                   selectShipPart(parsedParams.partType, parsedParams.part, render, ship);
-                  await saveShip(ship);
                   await render();
+                  scheduleShipSave();
                 }
                 break;
               case 'selectShipFitting':
                 if (ship) {
                   selectShipFitting(parsedParams.fittingType, parsedParams.fitting, render, ship);
-                  await saveShip(ship);
                   await render();
+                  scheduleShipSave();
                 }
                 break;
               case 'selectShipUndercrew':
                 if (ship) {
                   selectShipUndercrew(parsedParams.undercrewType, parsedParams.undercrew, render, ship);
-                  await saveShip(ship);
                   await render();
+                  scheduleShipSave();
                 }
                 break;
               case 'importShip':
@@ -593,44 +616,44 @@ function setupEventDelegation() {
                 e.stopPropagation();
                 if (ship) {
                   cycleRatingDamage(parsedParams.rating, parsedParams.index, render, ship);
-                  await saveShip(ship);
                   await render();
+                  scheduleShipSave();
                 }
                 break;
               case 'cycleUndercrewDamage':
                 e.stopPropagation();
                 if (ship) {
                   cycleUndercrewDamage(parsedParams.undercrewName, parsedParams.index, render, ship);
-                  await saveShip(ship);
                   await render();
+                  scheduleShipSave();
                 }
                 break;
               case 'addCargo':
                 if (ship) {
                   addCargo(render, ship);
-                  await saveShip(ship);
                   await render();
+                  scheduleShipSave();
                 }
                 break;
               case 'removeCargo':
                 if (ship) {
                   removeCargo(parsedParams.id, render, ship);
-                  await saveShip(ship);
                   await render();
+                  scheduleShipSave();
                 }
                 break;
               case 'addPassenger':
                 if (ship) {
                   addPassenger(render, ship);
-                  await saveShip(ship);
                   await render();
+                  scheduleShipSave();
                 }
                 break;
               case 'removePassenger':
                 if (ship) {
                   removePassenger(parsedParams.id, render, ship);
-                  await saveShip(ship);
                   await render();
+                  scheduleShipSave();
                 }
                 break;
               case 'openCustomizeModal':
@@ -678,18 +701,18 @@ function setupEventDelegation() {
                   }
 
                   customizeAspect(parsedParams.id, name, description, character);
-                  await saveCharacter(character);
                   showCustomizeModal = false;
                   selectedModalAspectId = null;
                   await render();
+                  scheduleSave();
                 }
                 break;
               case 'resetAspectCustomization':
                 if (character && parsedParams.id) {
                   if (confirm('Reset this aspect to its original name and description?')) {
                     resetAspectCustomization(parsedParams.id, character);
-                    await saveCharacter(character);
                     await render();
+                    scheduleSave();
                   }
                 }
                 break;
@@ -751,8 +774,8 @@ function setupEventDelegation() {
         if (action === 'updateAnticipatedCrewSize') {
           if (ship) {
             updateAnticipatedCrewSize(target.value, render, ship);
-            await saveShip(ship);
             await render();
+            scheduleShipSave();
           }
           return;
         }
@@ -760,8 +783,8 @@ function setupEventDelegation() {
         if (action === 'updateAdditionalStakes') {
           if (ship) {
             updateAdditionalStakes(target.value, render, ship);
-            await saveShip(ship);
             await render();
+            scheduleShipSave();
           }
           return;
         }
@@ -801,18 +824,18 @@ function setupEventDelegation() {
             break;
           case 'onBloodlineChange':
             onBloodlineChange(target.value, render, character);
-            await saveCharacter(character);
             await render();
+            scheduleSave();
             break;
           case 'onOriginChange':
             onOriginChange(target.value, render, character);
-            await saveCharacter(character);
             await render();
+            scheduleSave();
             break;
           case 'onPostChange':
             onPostChange(target.value, render, character);
-            await saveCharacter(character);
             await render();
+            scheduleSave();
             break;
           case 'updateDrive':
             updateDrive(parsedParams.index, target.value, character);
@@ -837,8 +860,8 @@ function setupEventDelegation() {
             break;
           case 'updateMilestoneScale':
             updateMilestoneScale(parsedParams.id, target.value, render, character);
-            await saveCharacter(character);
             await render();
+            scheduleSave();
             break;
           case 'updateResourceName':
             updateResourceName(parsedParams.type, parsedParams.id, target.value, character);
