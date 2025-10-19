@@ -1,7 +1,11 @@
 {
   "permissions": {
     "allow": [
-      "Bash(npm run dev)"
+      "Bash(npm run dev)",
+      "Bash(node parse-aspects.js)",
+      "Bash(node -e \"const fs = require(''fs''); const data = JSON.parse(fs.readFileSync(''public/data/aspects.json'', ''utf8'')); console.log(JSON.stringify(data.Crash.find(a => a.name === ''Padded Boilersuit''), null, 2));\")",
+      "Bash(node -e \"const fs = require(''fs''); const data = JSON.parse(fs.readFileSync(''public/data/aspects.json'', ''utf8'')); const aspect = data.Crash.find(a => a.name === ''Padded Boilersuit''); console.log(JSON.stringify(aspect, null, 2));\")",
+      "Bash(node -e \"const fs = require(''fs''); const data = JSON.parse(fs.readFileSync(''public/data/aspects.json'', ''utf8'')); const aspect = data.Hacker.find(a => a.name === ''Petalcrusher''); console.log(JSON.stringify(aspect, null, 2));\")"
     ],
     "deny": [],
     "ask": []

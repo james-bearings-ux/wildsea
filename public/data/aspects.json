@@ -22,7 +22,14 @@
       "name": "Ironclad Mind",
       "type": "Trait",
       "track": 4,
-      "description": "You are immune to hallucinations, mesmerics and mental compulsions."
+      "description": "You are immune to hallucinations, mesmerics and mental compulsions.",
+      "damageTypes": {
+        "category": "immunity",
+        "selectionType": "fixed",
+        "options": [
+          "hallucinations"
+        ]
+      }
     },
     {
       "name": "Guide My Hands",
@@ -34,7 +41,15 @@
       "name": "Sporescarf",
       "type": "Gear",
       "track": 4,
-      "description": "Thickly-woven fibres sealed with tar. Resist the effects of bad air and airborne spores."
+      "description": "Thickly-woven fibres sealed with tar. Resist the effects of bad air and airborne spores.",
+      "damageTypes": {
+        "category": "resistance",
+        "selectionType": "fixed",
+        "options": [
+          "bad air",
+          "airborne spores"
+        ]
+      }
     },
     {
       "name": "Pre-Verdant Heirloom",
@@ -58,25 +73,61 @@
       "name": "Scimitar",
       "type": "Gear",
       "track": 4,
-      "description": "A curved blade that deals CQ keen damage."
+      "description": "A curved blade that deals CQ keen damage.",
+      "damageTypes": {
+        "category": "dealing",
+        "selectionType": "fixed",
+        "options": [
+          "Keen"
+        ],
+        "range": "CQ"
+      }
     },
     {
       "name": "Machete",
       "type": "Gear",
       "track": 2,
-      "description": "A trusty blade used as a tool as often as it is a weapon. Deals CQ hewing damage. Increase impact when clearing vegetation with this gear."
+      "description": "A trusty blade used as a tool as often as it is a weapon. Deals CQ hewing damage. Increase impact when clearing vegetation with this gear.",
+      "damageTypes": {
+        "category": "dealing",
+        "selectionType": "fixed",
+        "options": [
+          "Hewing"
+        ],
+        "range": "CQ"
+      }
     },
     {
       "name": "Hand Crossbow",
       "type": "Gear",
       "track": 4,
-      "description": "A compact crossbow. Deals LR spike damage."
+      "description": "A compact crossbow. Deals LR spike damage.",
+      "damageTypes": {
+        "category": "dealing",
+        "selectionType": "fixed",
+        "options": [
+          "Spike"
+        ],
+        "range": "LR"
+      }
     },
     {
       "name": "Ragged Longcoat",
       "type": "Gear",
       "track": 3,
-      "description": "You're resistant to three damage types, chosen from the following list: Blunt, Keen, Spike, Hewing, Serrated"
+      "description": "You're resistant to three damage types, chosen from the following list: Blunt, Keen, Spike, Hewing, Serrated",
+      "damageTypes": {
+        "category": "resistance",
+        "selectionType": "choose",
+        "chooseCount": 3,
+        "options": [
+          "Blunt",
+          "Keen",
+          "Spike",
+          "Hewing",
+          "Serrated"
+        ]
+      }
     },
     {
       "name": "Ancestral Spirit",
@@ -88,7 +139,15 @@
       "name": "Watch-Wolf",
       "type": "Companion",
       "track": 3,
-      "description": "A loyal lupine companion that will defend you to the death. Deals CQ spike damage."
+      "description": "A loyal lupine companion that will defend you to the death. Deals CQ spike damage.",
+      "damageTypes": {
+        "category": "dealing",
+        "selectionType": "fixed",
+        "options": [
+          "Spike"
+        ],
+        "range": "CQ"
+      }
     },
     {
       "name": "Grizzled Ratter",
@@ -114,7 +173,14 @@
       "name": "1000 Needles",
       "type": "Trait",
       "track": 3,
-      "description": "Deal spike damage to any creature that attacks you with their own body in close quarters (such as with tail or bite attacks)."
+      "description": "Deal spike damage to any creature that attacks you with their own body in close quarters (such as with tail or bite attacks).",
+      "damageTypes": {
+        "category": "dealing",
+        "selectionType": "fixed",
+        "options": [
+          "Spike"
+        ]
+      }
     },
     {
       "name": "Iris Blossom",
@@ -138,13 +204,29 @@
       "name": "Longspine",
       "type": "Trait",
       "track": 4,
-      "description": "Your body is covered in iron-hard spines that deal CQ spike damage."
+      "description": "Your body is covered in iron-hard spines that deal CQ spike damage.",
+      "damageTypes": {
+        "category": "dealing",
+        "selectionType": "fixed",
+        "options": [
+          "Spike"
+        ],
+        "range": "CQ"
+      }
     },
     {
       "name": "Tar-Scrawl Tattoos",
       "type": "Trait",
       "track": 3,
-      "description": "Resist the effects of bad air and airborne spores."
+      "description": "Resist the effects of bad air and airborne spores.",
+      "damageTypes": {
+        "category": "resistance",
+        "selectionType": "fixed",
+        "options": [
+          "bad air",
+          "airborne spores"
+        ]
+      }
     },
     {
       "name": "Solid Footing",
@@ -180,25 +262,62 @@
       "name": "Wedge-Axe",
       "type": "Gear",
       "track": 4,
-      "description": "A long-handled axe that deals CQ hewing damage."
+      "description": "A long-handled axe that deals CQ hewing damage.",
+      "damageTypes": {
+        "category": "dealing",
+        "selectionType": "fixed",
+        "options": [
+          "Hewing"
+        ],
+        "range": "CQ"
+      }
     },
     {
       "name": "Heavy Chakram",
       "type": "Gear",
       "track": 3,
-      "description": "A set of weighty throwing blades, dealing LR keen or hewing damage."
+      "description": "A set of weighty throwing blades, dealing LR keen or hewing damage.",
+      "damageTypes": {
+        "category": "dealing",
+        "selectionType": "fixed",
+        "options": [
+          "Keen",
+          "Hewing"
+        ],
+        "range": "LR"
+      }
     },
     {
       "name": "Desert Harness",
       "type": "Gear",
       "track": 3,
-      "description": "You're resistant to three damage types, chosen from the following list: Spike, Hewing, Serrated, Frost, Flame."
+      "description": "You're resistant to three damage types, chosen from the following list: Spike, Hewing, Serrated, Frost, Flame.",
+      "damageTypes": {
+        "category": "resistance",
+        "selectionType": "choose",
+        "chooseCount": 3,
+        "options": [
+          "Spike",
+          "Hewing",
+          "Serrated",
+          "Frost",
+          "Flame"
+        ]
+      }
     },
     {
       "name": "Catekora",
       "type": "Companion",
       "track": 3,
-      "description": "A quilled, fibrous feline with a penchant for firing spines when provoked. Deals LR spike damage."
+      "description": "A quilled, fibrous feline with a penchant for firing spines when provoked. Deals LR spike damage.",
+      "damageTypes": {
+        "category": "dealing",
+        "selectionType": "fixed",
+        "options": [
+          "Spike"
+        ],
+        "range": "LR"
+      }
     },
     {
       "name": "Burrowing Bees",
@@ -242,7 +361,15 @@
       "name": "Mycofiltration",
       "type": "Trait",
       "track": 2,
-      "description": "You can see perfectly within sporeclouds, and you resist the effects of bad air and airborne spores."
+      "description": "You can see perfectly within sporeclouds, and you resist the effects of bad air and airborne spores.",
+      "damageTypes": {
+        "category": "resistance",
+        "selectionType": "fixed",
+        "options": [
+          "bad air",
+          "airborne spores"
+        ]
+      }
     },
     {
       "name": "Spore-Sacs",
@@ -260,7 +387,19 @@
       "name": "Fungal Fortress",
       "type": "Trait",
       "track": 3,
-      "description": "You're resistant to three damage types, chosen from the following list: Keen, Hewing, Toxin, Acid, Frost."
+      "description": "You're resistant to three damage types, chosen from the following list: Keen, Hewing, Toxin, Acid, Frost.",
+      "damageTypes": {
+        "category": "resistance",
+        "selectionType": "choose",
+        "chooseCount": 3,
+        "options": [
+          "Keen",
+          "Hewing",
+          "Toxin",
+          "Acid",
+          "Frost"
+        ]
+      }
     },
     {
       "name": "Proliferation",
@@ -284,13 +423,30 @@
       "name": "Jag-Lash",
       "type": "Gear",
       "track": 4,
-      "description": "A leather cord studded with teeth or salvaged metal. Deals CQ serrated damage."
+      "description": "A leather cord studded with teeth or salvaged metal. Deals CQ serrated damage.",
+      "damageTypes": {
+        "category": "dealing",
+        "selectionType": "fixed",
+        "options": [
+          "Serrated"
+        ],
+        "range": "CQ"
+      }
     },
     {
       "name": "Spore-Slinger",
       "type": "Gear",
       "track": 3,
-      "description": "A sling-like contraption for lobbing spore-bombs, dealing LR toxin or blast damage."
+      "description": "A sling-like contraption for lobbing spore-bombs, dealing LR toxin or blast damage.",
+      "damageTypes": {
+        "category": "dealing",
+        "selectionType": "fixed",
+        "options": [
+          "Toxin",
+          "Blast"
+        ],
+        "range": "LR"
+      }
     },
     {
       "name": "Pangoshroom",
@@ -302,7 +458,15 @@
       "name": "Sporehund",
       "type": "Companion",
       "track": 3,
-      "description": "A loyal companion that deals CQ toxin damage."
+      "description": "A loyal companion that deals CQ toxin damage.",
+      "damageTypes": {
+        "category": "dealing",
+        "selectionType": "fixed",
+        "options": [
+          "Toxin"
+        ],
+        "range": "CQ"
+      }
     },
     {
       "name": "Cordysect",
@@ -382,25 +546,65 @@
       "name": "Prowhammer",
       "type": "Gear",
       "track": 4,
-      "description": "A ship's prow, refashioned into a massive bludgeoning weapon. Deals CQ blunt damage."
+      "description": "A ship's prow, refashioned into a massive bludgeoning weapon. Deals CQ blunt damage.",
+      "damageTypes": {
+        "category": "dealing",
+        "selectionType": "fixed",
+        "options": [
+          "Blunt"
+        ],
+        "range": "CQ"
+      }
     },
     {
       "name": "Ornate Cannon",
       "type": "Gear",
       "track": 2,
-      "description": "A huge ships's cannon loaded with explosive shells. Deals LR blast damage. Increase impact when targeting a horde or swarm of targets."
+      "description": "A huge ships's cannon loaded with explosive shells. Deals LR blast damage. Increase impact when targeting a horde or swarm of targets.",
+      "damageTypes": {
+        "category": "dealing",
+        "selectionType": "fixed",
+        "options": [
+          "Blast"
+        ],
+        "range": "LR"
+      }
     },
     {
       "name": "Broadwood Carapace",
       "type": "Gear",
       "track": 3,
-      "description": "You're resistant to three damage types, chosen from the following list: Blunt, Keen, Serrated, Acid, Volt."
+      "description": "You're resistant to three damage types, chosen from the following list: Blunt, Keen, Serrated, Acid, Volt.",
+      "damageTypes": {
+        "category": "resistance",
+        "selectionType": "choose",
+        "chooseCount": 3,
+        "options": [
+          "Blunt",
+          "Keen",
+          "Serrated",
+          "Acid",
+          "Volt"
+        ]
+      }
     },
     {
       "name": "Reef-Iron Plating",
       "type": "Gear",
       "track": 3,
-      "description": "You're resistant to three damage types, chosen from the following list: Spike, Hewing, Serrated, Frost, Flame."
+      "description": "You're resistant to three damage types, chosen from the following list: Spike, Hewing, Serrated, Frost, Flame.",
+      "damageTypes": {
+        "category": "resistance",
+        "selectionType": "choose",
+        "chooseCount": 3,
+        "options": [
+          "Spike",
+          "Hewing",
+          "Serrated",
+          "Frost",
+          "Flame"
+        ]
+      }
     },
     {
       "name": "Shipside Symbiote",
@@ -426,7 +630,14 @@
       "name": "Gelatinous Form",
       "type": "Trait",
       "track": 5,
-      "description": "You have an inherent weakness to salt damage, but can squeeze and compress your body enough to move through spaces much smaller than expected."
+      "description": "You have an inherent weakness to salt damage, but can squeeze and compress your body enough to move through spaces much smaller than expected.",
+      "damageTypes": {
+        "category": "weakness",
+        "selectionType": "fixed",
+        "options": [
+          "Salt"
+        ]
+      }
     },
     {
       "name": "Sensory Stalks",
@@ -462,19 +673,47 @@
       "name": "Voltaic Mantle",
       "type": "Trait",
       "track": 4,
-      "description": "The tendrils of your mantle crackle with lightning as they strike, dealing CQ volt damage."
+      "description": "The tendrils of your mantle crackle with lightning as they strike, dealing CQ volt damage.",
+      "damageTypes": {
+        "category": "dealing",
+        "selectionType": "fixed",
+        "options": [
+          "Volt"
+        ],
+        "range": "CQ"
+      }
     },
     {
       "name": "Driftwood Core",
       "type": "Gear",
       "track": 3,
-      "description": "You're resistant to three damage types, chosen from the following list: Blunt, Spike, Toxin, Frost, Volt."
+      "description": "You're resistant to three damage types, chosen from the following list: Blunt, Spike, Toxin, Frost, Volt.",
+      "damageTypes": {
+        "category": "resistance",
+        "selectionType": "choose",
+        "chooseCount": 3,
+        "options": [
+          "Blunt",
+          "Spike",
+          "Toxin",
+          "Frost",
+          "Volt"
+        ]
+      }
     },
     {
       "name": "Rebreather Mask",
       "type": "Gear",
       "track": 3,
-      "description": "You have a short supply of clean air you can tap into when you need to, and you also resist the effects of bad air and airborne spores."
+      "description": "You have a short supply of clean air you can tap into when you need to, and you also resist the effects of bad air and airborne spores.",
+      "damageTypes": {
+        "category": "resistance",
+        "selectionType": "fixed",
+        "options": [
+          "bad air",
+          "airborne spores"
+        ]
+      }
     },
     {
       "name": "Climbing Hooks",
@@ -486,7 +725,15 @@
       "name": "Driving-Chain",
       "type": "Gear",
       "track": 3,
-      "description": "A rusted chain from a long-dead machine, now wielded as a weapon dealing blunt damage at CQ or LR."
+      "description": "A rusted chain from a long-dead machine, now wielded as a weapon dealing blunt damage at CQ or LR.",
+      "damageTypes": {
+        "category": "dealing",
+        "selectionType": "fixed",
+        "options": [
+          "Blunt"
+        ],
+        "range": "CQ/LR"
+      }
     },
     {
       "name": "Scrap-Metal Skeleton",
@@ -542,7 +789,15 @@
       "name": "Thick Fur",
       "type": "Trait",
       "track": 4,
-      "description": "You're weak to Flame, but resist the effects of bad air and airborne spores."
+      "description": "You're weak to Flame, but resist the effects of bad air and airborne spores.",
+      "damageTypes": {
+        "category": "resistance",
+        "selectionType": "fixed",
+        "options": [
+          "bad air",
+          "airborne spores"
+        ]
+      }
     },
     {
       "name": "Elaborate Beard-Braids",
@@ -566,7 +821,16 @@
       "name": "Chaos Dancing",
       "type": "Trait",
       "track": 3,
-      "description": "A fighting style that makes use of wing-edges and scything kicks. Deals CQ keen or spike damage."
+      "description": "A fighting style that makes use of wing-edges and scything kicks. Deals CQ keen or spike damage.",
+      "damageTypes": {
+        "category": "dealing",
+        "selectionType": "fixed",
+        "options": [
+          "Keen",
+          "Spike"
+        ],
+        "range": "CQ"
+      }
     },
     {
       "name": "Ceremonial Patterning",
@@ -584,13 +848,33 @@
       "name": "Flowing Fabrics",
       "type": "Gear",
       "track": 3,
-      "description": "You're resistant to three damage types, chosen from the following list: Keen, Blast, Acid, Frost, Salt."
+      "description": "You're resistant to three damage types, chosen from the following list: Keen, Blast, Acid, Frost, Salt.",
+      "damageTypes": {
+        "category": "resistance",
+        "selectionType": "choose",
+        "chooseCount": 3,
+        "options": [
+          "Keen",
+          "Blast",
+          "Acid",
+          "Frost",
+          "Salt"
+        ]
+      }
     },
     {
       "name": "Wing-Studs",
       "type": "Gear",
       "track": 4,
-      "description": "Can be launched like shrapnel with a deft twist, dealing LR blunt damage."
+      "description": "Can be launched like shrapnel with a deft twist, dealing LR blunt damage.",
+      "damageTypes": {
+        "category": "dealing",
+        "selectionType": "fixed",
+        "options": [
+          "Blunt"
+        ],
+        "range": "LR"
+      }
     },
     {
       "name": "Silkspire Byx",
@@ -652,7 +936,15 @@
       "name": "Spiderbite",
       "type": "Trait",
       "track": 4,
-      "description": "You have a set of fangs that can deal CQ toxin damage."
+      "description": "You have a set of fangs that can deal CQ toxin damage.",
+      "damageTypes": {
+        "category": "dealing",
+        "selectionType": "fixed",
+        "options": [
+          "Toxin"
+        ],
+        "range": "CQ"
+      }
     },
     {
       "name": "Shirk the Skin",
@@ -664,7 +956,19 @@
       "name": "Shroom Hookah",
       "type": "Gear",
       "track": 3,
-      "description": "You're resistant to three damage types, chosen from the following list: Keen, Spike, Serrated, Hewing, Toxin."
+      "description": "You're resistant to three damage types, chosen from the following list: Keen, Spike, Serrated, Hewing, Toxin.",
+      "damageTypes": {
+        "category": "resistance",
+        "selectionType": "choose",
+        "chooseCount": 3,
+        "options": [
+          "Keen",
+          "Spike",
+          "Serrated",
+          "Hewing",
+          "Toxin"
+        ]
+      }
     },
     {
       "name": "Motley Carapace",
@@ -688,7 +992,16 @@
       "name": "Blade of Husks",
       "type": "Gear",
       "track": 3,
-      "description": "A ritual weapon made from the chitin of lost colonymembers. Deals CQ keen or salt damage."
+      "description": "A ritual weapon made from the chitin of lost colonymembers. Deals CQ keen or salt damage.",
+      "damageTypes": {
+        "category": "dealing",
+        "selectionType": "fixed",
+        "options": [
+          "Keen",
+          "Salt"
+        ],
+        "range": "CQ"
+      }
     },
     {
       "name": "Swarm-Scout",
@@ -732,7 +1045,14 @@
       "name": "Ambervein",
       "type": "Trait",
       "track": 4,
-      "description": "You're weak to Blunt damage, but immune to the harmful effects of crezzerin."
+      "description": "You're weak to Blunt damage, but immune to the harmful effects of crezzerin.",
+      "damageTypes": {
+        "category": "weakness",
+        "selectionType": "fixed",
+        "options": [
+          "Blunt"
+        ]
+      }
     },
     {
       "name": "Dream-Dredge",
@@ -774,13 +1094,33 @@
       "name": "Half-Clogged Firearm",
       "type": "Gear",
       "track": 4,
-      "description": "A double-barreled pre-verdant shotgun, one of the firing chambers hopelessly clogged. Deals LR Blast damage."
+      "description": "A double-barreled pre-verdant shotgun, one of the firing chambers hopelessly clogged. Deals LR Blast damage.",
+      "damageTypes": {
+        "category": "dealing",
+        "selectionType": "fixed",
+        "options": [
+          "Blast"
+        ],
+        "range": "LR"
+      }
     },
     {
       "name": "Shard-Cloak",
       "type": "Gear",
       "track": 5,
-      "description": "You're resistant to three damage types, chosen from the following list: Keen, Spike, Serrated, Hewing, Salt."
+      "description": "You're resistant to three damage types, chosen from the following list: Keen, Spike, Serrated, Hewing, Salt.",
+      "damageTypes": {
+        "category": "resistance",
+        "selectionType": "choose",
+        "chooseCount": 3,
+        "options": [
+          "Keen",
+          "Spike",
+          "Serrated",
+          "Hewing",
+          "Salt"
+        ]
+      }
     },
     {
       "name": "Pre-V Pet",
@@ -800,7 +1140,14 @@
       "name": "By a Thread",
       "type": "Trait",
       "track": 1,
-      "description": "Your grip on the world is tentative, but that does come with certain benefits. You are weak to salt and volt damage, but immune to blunt, keen and spike."
+      "description": "Your grip on the world is tentative, but that does come with certain benefits. You are weak to salt and volt damage, but immune to blunt, keen and spike.",
+      "damageTypes": {
+        "category": "immunity",
+        "selectionType": "fixed",
+        "options": [
+          "Blunt"
+        ]
+      }
     },
     {
       "name": "Spectral Variance",
@@ -842,7 +1189,16 @@
       "name": "Matching Death Mask Set",
       "type": "Gear",
       "track": 1,
-      "description": "Some anchored prefer to hide their face, letting the memories of their time among the living fade. Treat conflicts as triumphs when attempting to unnerve or unsettle. Now with a matching sawnana blade tongue attachment weapon, dealing CQ Volt or Salt damage. Haunter and Salt Lick."
+      "description": "Some anchored prefer to hide their face, letting the memories of their time among the living fade. Treat conflicts as triumphs when attempting to unnerve or unsettle. Now with a matching sawnana blade tongue attachment weapon, dealing CQ Volt or Salt damage. Haunter and Salt Lick.",
+      "damageTypes": {
+        "category": "dealing",
+        "selectionType": "fixed",
+        "options": [
+          "Volt",
+          "Salt"
+        ],
+        "range": "CQ"
+      }
     },
     {
       "name": "Siphoning Fork",
@@ -854,7 +1210,15 @@
       "name": "Phantom Blade",
       "type": "Gear",
       "track": 3,
-      "description": "The ghost of a sword hovering at your hip. Deals CQ salt damage, and doesn't have to be held to be used."
+      "description": "The ghost of a sword hovering at your hip. Deals CQ salt damage, and doesn't have to be held to be used.",
+      "damageTypes": {
+        "category": "dealing",
+        "selectionType": "fixed",
+        "options": [
+          "Salt"
+        ],
+        "range": "CQ"
+      }
     },
     {
       "name": "Anchor Fragment",
@@ -890,7 +1254,15 @@
       "name": "Reavolver",
       "type": "Gear",
       "track": 3,
-      "description": "A six-shooter with permanently empty chambers, smelling of darkness and wandering ghosts. Deals LR Salt damage, and any spirit struck by this weapon is dragged into complete corporeality for a short time."
+      "description": "A six-shooter with permanently empty chambers, smelling of darkness and wandering ghosts. Deals LR Salt damage, and any spirit struck by this weapon is dragged into complete corporeality for a short time.",
+      "damageTypes": {
+        "category": "dealing",
+        "selectionType": "fixed",
+        "options": [
+          "Salt"
+        ],
+        "range": "LR"
+      }
     }
   ],
   "Ridgeback": [
@@ -916,13 +1288,33 @@
       "name": "Thick Skin",
       "type": "Trait",
       "track": 4,
-      "description": "You're resistant to three damage types, chosen from the following list: Blunt, Toxin, Cold, Salt, Volt."
+      "description": "You're resistant to three damage types, chosen from the following list: Blunt, Toxin, Cold, Salt, Volt.",
+      "damageTypes": {
+        "category": "resistance",
+        "selectionType": "choose",
+        "chooseCount": 3,
+        "options": [
+          "Blunt",
+          "Toxin",
+          "Salt",
+          "Volt"
+        ]
+      }
     },
     {
       "name": "Crushing Blows",
       "type": "Trait",
       "track": 3,
-      "description": "Your fists and feet are the only weapons you need. They deal CQ blunt and salt damage."
+      "description": "Your fists and feet are the only weapons you need. They deal CQ blunt and salt damage.",
+      "damageTypes": {
+        "category": "dealing",
+        "selectionType": "fixed",
+        "options": [
+          "Blunt",
+          "Salt"
+        ],
+        "range": "CQ"
+      }
     },
     {
       "name": "Fragments Like Gods",
@@ -934,7 +1326,14 @@
       "name": "Archaeodermis",
       "type": "Trait",
       "track": 3,
-      "description": "Your skin (or whatever you have as an outer covering) mimics the mountain you were raised on. You're immune to keen damage, as well as bites and stings from small creatures."
+      "description": "Your skin (or whatever you have as an outer covering) mimics the mountain you were raised on. You're immune to keen damage, as well as bites and stings from small creatures.",
+      "damageTypes": {
+        "category": "immunity",
+        "selectionType": "fixed",
+        "options": [
+          "Keen"
+        ]
+      }
     },
     {
       "name": "Chipping Tools",
@@ -970,25 +1369,57 @@
       "name": "Great Beast Horns",
       "type": "Gear",
       "track": 3,
-      "description": "These might have deep ceremonial meaning, or just cut an impressive silhouette - either way these horns deal CQ spike damage, and you ignore cut when defending yourself against charging opponents."
+      "description": "These might have deep ceremonial meaning, or just cut an impressive silhouette - either way these horns deal CQ spike damage, and you ignore cut when defending yourself against charging opponents.",
+      "damageTypes": {
+        "category": "dealing",
+        "selectionType": "fixed",
+        "options": [
+          "Spike"
+        ],
+        "range": "CQ"
+      }
     },
     {
       "name": "Shamanic Idol",
       "type": "Gear",
       "track": 4,
-      "description": "Holds a sliver of power from a not-quite-god. Deals LR salt damage."
+      "description": "Holds a sliver of power from a not-quite-god. Deals LR salt damage.",
+      "damageTypes": {
+        "category": "dealing",
+        "selectionType": "fixed",
+        "options": [
+          "Salt"
+        ],
+        "range": "LR"
+      }
     },
     {
       "name": "Swift Hawk",
       "type": "Companion",
       "track": 2,
-      "description": "A surly, vicious bird that can deal LR keen damage. Once per scene, hijack to temporarily blind or distract an attacking opponent."
+      "description": "A surly, vicious bird that can deal LR keen damage. Once per scene, hijack to temporarily blind or distract an attacking opponent.",
+      "damageTypes": {
+        "category": "dealing",
+        "selectionType": "fixed",
+        "options": [
+          "Keen"
+        ],
+        "range": "LR"
+      }
     },
     {
       "name": "Mountain Snouter",
       "type": "Companion",
       "track": 3,
-      "description": "An ill-tempered boar with cruel tusks. Deals CQ spike damage, and is large enough to ride."
+      "description": "An ill-tempered boar with cruel tusks. Deals CQ spike damage, and is large enough to ride.",
+      "damageTypes": {
+        "category": "dealing",
+        "selectionType": "fixed",
+        "options": [
+          "Spike"
+        ],
+        "range": "CQ"
+      }
     },
     {
       "name": "Surface Stone",
@@ -1038,7 +1469,15 @@
       "name": "Fleetfamily Scarf",
       "type": "Gear",
       "track": 3,
-      "description": "A beautifully made sporescarf passed from traveller to seasoned traveller. You're immune to the effects of bad air and airborne spores."
+      "description": "A beautifully made sporescarf passed from traveller to seasoned traveller. You're immune to the effects of bad air and airborne spores.",
+      "damageTypes": {
+        "category": "immunity",
+        "selectionType": "fixed",
+        "options": [
+          "bad air",
+          "airborne spores"
+        ]
+      }
     },
     {
       "name": "Nomad's Phrasebook",
@@ -1068,13 +1507,30 @@
       "name": "Shortspear",
       "type": "Gear",
       "track": 4,
-      "description": "Traditionally used for deckside defence. Deals CQ spike damage."
+      "description": "Traditionally used for deckside defence. Deals CQ spike damage.",
+      "damageTypes": {
+        "category": "dealing",
+        "selectionType": "fixed",
+        "options": [
+          "Spike"
+        ],
+        "range": "CQ"
+      }
     },
     {
       "name": "Slingshot",
       "type": "Gear",
       "track": 3,
-      "description": "A simple slingshot, loaded with anything from stones to scrap to seeds. Deals LR blunt or blast damage."
+      "description": "A simple slingshot, loaded with anything from stones to scrap to seeds. Deals LR blunt or blast damage.",
+      "damageTypes": {
+        "category": "dealing",
+        "selectionType": "fixed",
+        "options": [
+          "Blunt",
+          "Blast"
+        ],
+        "range": "LR"
+      }
     },
     {
       "name": "Tarscale Armour",
@@ -1154,25 +1610,62 @@
       "name": "Balancing Staff",
       "type": "Gear",
       "track": 4,
-      "description": "Both a weapon and an acrobatic aid. Deals CQ blunt damage."
+      "description": "Both a weapon and an acrobatic aid. Deals CQ blunt damage.",
+      "damageTypes": {
+        "category": "dealing",
+        "selectionType": "fixed",
+        "options": [
+          "Blunt"
+        ],
+        "range": "CQ"
+      }
     },
     {
       "name": "Raptor's Claw",
       "type": "Gear",
       "track": 3,
-      "description": "A talon-like gauntlet inspired by the hunting patterns of wingless birds. Deals CQ hewing damage, and can be used to make controlled descents down vertical surfaces."
+      "description": "A talon-like gauntlet inspired by the hunting patterns of wingless birds. Deals CQ hewing damage, and can be used to make controlled descents down vertical surfaces.",
+      "damageTypes": {
+        "category": "dealing",
+        "selectionType": "fixed",
+        "options": [
+          "Hewing"
+        ],
+        "range": "CQ"
+      }
     },
     {
       "name": "Broadwood Bow",
       "type": "Gear",
       "track": 3,
-      "description": "Exquisitely crafted. Deals LR spike or toxin damage."
+      "description": "Exquisitely crafted. Deals LR spike or toxin damage.",
+      "damageTypes": {
+        "category": "dealing",
+        "selectionType": "fixed",
+        "options": [
+          "Spike",
+          "Toxin"
+        ],
+        "range": "LR"
+      }
     },
     {
       "name": "Feathered Mantle",
       "type": "Gear",
       "track": 3,
-      "description": "You're resistant to three damage types, chosen from the following list: Blunt, Serrated, Toxin, Frost, Salt."
+      "description": "You're resistant to three damage types, chosen from the following list: Blunt, Serrated, Toxin, Frost, Salt.",
+      "damageTypes": {
+        "category": "resistance",
+        "selectionType": "choose",
+        "chooseCount": 3,
+        "options": [
+          "Blunt",
+          "Serrated",
+          "Toxin",
+          "Frost",
+          "Salt"
+        ]
+      }
     },
     {
       "name": "Sentinel Skywing",
@@ -1190,7 +1683,15 @@
       "name": "Feathered Raptor",
       "type": "Companion",
       "track": 3,
-      "description": "A beautifully-feathered lizard, the result of generations of careful breeding to engender a modicum of sociability (still not quite there yet). Deals CQ hewing damage, and is large enough to ride."
+      "description": "A beautifully-feathered lizard, the result of generations of careful breeding to engender a modicum of sociability (still not quite there yet). Deals CQ hewing damage, and is large enough to ride.",
+      "damageTypes": {
+        "category": "dealing",
+        "selectionType": "fixed",
+        "options": [
+          "Hewing"
+        ],
+        "range": "CQ"
+      }
     },
     {
       "name": "Flutter-Lamps",
@@ -1270,13 +1771,29 @@
       "name": "Brass Knucle",
       "type": "Gear",
       "track": 4,
-      "description": "A brute but reliable weapon for street fights. Deals CQ blunt damage."
+      "description": "A brute but reliable weapon for street fights. Deals CQ blunt damage.",
+      "damageTypes": {
+        "category": "dealing",
+        "selectionType": "fixed",
+        "options": [
+          "Blunt"
+        ],
+        "range": "CQ"
+      }
     },
     {
       "name": "Black-Market Pistol",
       "type": "Gear",
       "track": 4,
-      "description": "A firearm sourced from unsavoury types. Deals LR blast damage."
+      "description": "A firearm sourced from unsavoury types. Deals LR blast damage.",
+      "damageTypes": {
+        "category": "dealing",
+        "selectionType": "fixed",
+        "options": [
+          "Blast"
+        ],
+        "range": "LR"
+      }
     },
     {
       "name": "Trained Ratroach",
@@ -1392,7 +1909,16 @@
       "name": "Living Liquid",
       "type": "Companion",
       "track": 2,
-      "description": "Winds its way around your form, studded with broken glass. Deals CQ acid or keen damage."
+      "description": "Winds its way around your form, studded with broken glass. Deals CQ acid or keen damage.",
+      "damageTypes": {
+        "category": "dealing",
+        "selectionType": "fixed",
+        "options": [
+          "Acid",
+          "Keen"
+        ],
+        "range": "CQ"
+      }
     },
     {
       "name": "Syringiosquito",
@@ -1454,7 +1980,14 @@
       "name": "Taste Test",
       "type": "Trait",
       "track": 4,
-      "description": "You're immune to poisons, and can determine their presence and characteristics by taste alone."
+      "description": "You're immune to poisons, and can determine their presence and characteristics by taste alone.",
+      "damageTypes": {
+        "category": "immunity",
+        "selectionType": "fixed",
+        "options": [
+          "poisons"
+        ]
+      }
     },
     {
       "name": "Acid-Etched Cookpot",
@@ -1490,19 +2023,47 @@
       "name": "Seasoned Cleaver",
       "type": "Gear",
       "track": 2,
-      "description": "As useful on the battlefield as it is in the galley. Deals CQ hewing damage. Increase impact when acquiring dangerous or disruptive specimens."
+      "description": "As useful on the battlefield as it is in the galley. Deals CQ hewing damage. Increase impact when acquiring dangerous or disruptive specimens.",
+      "damageTypes": {
+        "category": "dealing",
+        "selectionType": "fixed",
+        "options": [
+          "Hewing"
+        ],
+        "range": "CQ"
+      }
     },
     {
       "name": "Reef-Iron Pan",
       "type": "Gear",
       "track": 4,
-      "description": "A colossal implement. Deals CQ blunt damage."
+      "description": "A colossal implement. Deals CQ blunt damage.",
+      "damageTypes": {
+        "category": "dealing",
+        "selectionType": "fixed",
+        "options": [
+          "Blunt"
+        ],
+        "range": "CQ"
+      }
     },
     {
       "name": "Husk-Leather Apron",
       "type": "Gear",
       "track": 3,
-      "description": "You're resistant to three damage types, chosen from the following list: Toxin, Acid, Blast, Salt, Flame."
+      "description": "You're resistant to three damage types, chosen from the following list: Toxin, Acid, Blast, Salt, Flame.",
+      "damageTypes": {
+        "category": "resistance",
+        "selectionType": "choose",
+        "chooseCount": 3,
+        "options": [
+          "Toxin",
+          "Acid",
+          "Blast",
+          "Salt",
+          "Flame"
+        ]
+      }
     },
     {
       "name": "Sous Squirrel",
@@ -1514,7 +2075,15 @@
       "name": "The Only Knife",
       "type": "Gear",
       "track": 2,
-      "description": "Shaped, honed, perfectly balanced. Deals CQ Keen damage, and lets you increase impact when creating a dish using raw meat. Raw meat dishes prepared in this way never sicken you or your crewmembers."
+      "description": "Shaped, honed, perfectly balanced. Deals CQ Keen damage, and lets you increase impact when creating a dish using raw meat. Raw meat dishes prepared in this way never sicken you or your crewmembers.",
+      "damageTypes": {
+        "category": "dealing",
+        "selectionType": "fixed",
+        "options": [
+          "Keen"
+        ],
+        "range": "CQ"
+      }
     }
   ],
   "Corsair": [
@@ -1588,31 +2157,76 @@
       "name": "Corsair's Sabre",
       "type": "Gear",
       "track": 4,
-      "description": "A classic wildsea blade. Deals CQ keen damage."
+      "description": "A classic wildsea blade. Deals CQ keen damage.",
+      "damageTypes": {
+        "category": "dealing",
+        "selectionType": "fixed",
+        "options": [
+          "Keen"
+        ],
+        "range": "CQ"
+      }
     },
     {
       "name": "Boarding Axe",
       "type": "Gear",
       "track": 2,
-      "description": "A savage weapon used to chop through foes. Deals CQ hewing damage. Increase impact when attacking ships, objects and structures."
+      "description": "A savage weapon used to chop through foes. Deals CQ hewing damage. Increase impact when attacking ships, objects and structures.",
+      "damageTypes": {
+        "category": "dealing",
+        "selectionType": "fixed",
+        "options": [
+          "Hewing"
+        ],
+        "range": "CQ"
+      }
     },
     {
       "name": "Slinghammer",
       "type": "Gear",
       "track": 3,
-      "description": "A versatile weighted hammer with a fabric tether. Deals blunt damage at CQ or LR."
+      "description": "A versatile weighted hammer with a fabric tether. Deals blunt damage at CQ or LR.",
+      "damageTypes": {
+        "category": "dealing",
+        "selectionType": "fixed",
+        "options": [
+          "Blunt"
+        ],
+        "range": "CQ/LR"
+      }
     },
     {
       "name": "Throwing Knives",
       "type": "Gear",
       "track": 3,
-      "description": "Perfectly weighted. Deals LR keen or spike damage."
+      "description": "Perfectly weighted. Deals LR keen or spike damage.",
+      "damageTypes": {
+        "category": "dealing",
+        "selectionType": "fixed",
+        "options": [
+          "Keen",
+          "Spike"
+        ],
+        "range": "LR"
+      }
     },
     {
       "name": "Dragonfly Mantle",
       "type": "Gear",
       "track": 3,
-      "description": "You're resistant to three damage types, chosen from the following list: Blunt, Keen, Spike, Hewing, Blast."
+      "description": "You're resistant to three damage types, chosen from the following list: Blunt, Keen, Spike, Hewing, Blast.",
+      "damageTypes": {
+        "category": "resistance",
+        "selectionType": "choose",
+        "chooseCount": 3,
+        "options": [
+          "Blunt",
+          "Keen",
+          "Spike",
+          "Hewing",
+          "Blast"
+        ]
+      }
     },
     {
       "name": "Hooded Crow",
@@ -1630,7 +2244,15 @@
       "name": "Comet-Forged Sabre",
       "type": "Gear",
       "track": 1,
-      "description": "A fragile blade made for precise, debilitating strikes. Deals CQ Keen damage. When attacking, a triumph allows you to reduce a slashed target's immunity or resistance to a single type of damage by one step."
+      "description": "A fragile blade made for precise, debilitating strikes. Deals CQ Keen damage. When attacking, a triumph allows you to reduce a slashed target's immunity or resistance to a single type of damage by one step.",
+      "damageTypes": {
+        "category": "dealing",
+        "selectionType": "fixed",
+        "options": [
+          "Keen"
+        ],
+        "range": "CQ"
+      }
     }
   ],
   "Crash": [
@@ -1662,13 +2284,33 @@
       "name": "Cannonball Dreams",
       "type": "Trait",
       "track": 3,
-      "description": "You jump headfirst into destruction. Literally. You can use your own body as a projectile, dealing LR Blunt damage. You end up wherever you land."
+      "description": "You jump headfirst into destruction. Literally. You can use your own body as a projectile, dealing LR Blunt damage. You end up wherever you land.",
+      "damageTypes": {
+        "category": "dealing",
+        "selectionType": "fixed",
+        "options": [
+          "Blunt"
+        ],
+        "range": "LR"
+      }
     },
     {
       "name": "Padded Boilersuit",
       "type": "Trait",
       "track": 3,
-      "description": "You're resistant to three damage types, chosen from the following list: Blunt, Spike, Hewing, Blast, Volt."
+      "description": "You're resistant to three damage types, chosen from the following list: Blunt, Spike, Hewing, Blast, Volt.",
+      "damageTypes": {
+        "category": "resistance",
+        "selectionType": "choose",
+        "chooseCount": 3,
+        "options": [
+          "Blunt",
+          "Spike",
+          "Hewing",
+          "Blast",
+          "Volt"
+        ]
+      }
     },
     {
       "name": "Broken Points",
@@ -1692,25 +2334,58 @@
       "name": "Crash Mask",
       "type": "Gear",
       "track": 2,
-      "description": "A mask favoured by those who work in dusty environments. You can see clearly through dust and smoke, and resist the effects of spores and bad air."
+      "description": "A mask favoured by those who work in dusty environments. You can see clearly through dust and smoke, and resist the effects of spores and bad air.",
+      "damageTypes": {
+        "category": "resistance",
+        "selectionType": "fixed",
+        "options": [
+          "airborne spores",
+          "bad air"
+        ]
+      }
     },
     {
       "name": "Baby Bombs",
       "type": "Gear",
       "track": 2,
-      "description": "Handheld explosives waiting to be thrown. Deals LR Blast damage to multiple nearby targets at once."
+      "description": "Handheld explosives waiting to be thrown. Deals LR Blast damage to multiple nearby targets at once.",
+      "damageTypes": {
+        "category": "dealing",
+        "selectionType": "fixed",
+        "options": [
+          "Blast"
+        ],
+        "range": "LR"
+      }
     },
     {
       "name": "Demolisher",
       "type": "Gear",
       "track": 2,
-      "description": "An over-sized weapon, usually a hammer or pickaxe. Deals CQ Blunt or Spike damage. Increase impact when destroying architecture."
+      "description": "An over-sized weapon, usually a hammer or pickaxe. Deals CQ Blunt or Spike damage. Increase impact when destroying architecture.",
+      "damageTypes": {
+        "category": "dealing",
+        "selectionType": "fixed",
+        "options": [
+          "Blunt",
+          "Spike"
+        ],
+        "range": "CQ"
+      }
     },
     {
       "name": "Wrecker's Globe",
       "type": "Gear",
       "track": 3,
-      "description": "A large, heavy ball on the end of a chain. Deals CQ Blunt damage. Useful for knocking foes back."
+      "description": "A large, heavy ball on the end of a chain. Deals CQ Blunt damage. Useful for knocking foes back.",
+      "damageTypes": {
+        "category": "dealing",
+        "selectionType": "fixed",
+        "options": [
+          "Blunt"
+        ],
+        "range": "CQ"
+      }
     },
     {
       "name": "Torteaver",
@@ -1740,7 +2415,16 @@
       "name": "Torpedo Mallet",
       "type": "Gear",
       "track": 2,
-      "description": "Yes, this was once an armament for a submersible. No, there really aren't many safety precautions in place. Deals CQ Blunt or Blast damage, or burn to deal Massive CQ Blast damage to multiple nearby targets (including yourself)."
+      "description": "Yes, this was once an armament for a submersible. No, there really aren't many safety precautions in place. Deals CQ Blunt or Blast damage, or burn to deal Massive CQ Blast damage to multiple nearby targets (including yourself).",
+      "damageTypes": {
+        "category": "dealing",
+        "selectionType": "fixed",
+        "options": [
+          "Blunt",
+          "Blast"
+        ],
+        "range": "CQ"
+      }
     }
   ],
   "Dredger": [
@@ -1820,7 +2504,15 @@
       "name": "Tomb Hammer",
       "type": "Gear",
       "track": 2,
-      "description": "As much a tool as it is a weapon. Deals CQ blunt damage. Increase impact when smashing stonework and structures."
+      "description": "As much a tool as it is a weapon. Deals CQ blunt damage. Increase impact when smashing stonework and structures.",
+      "damageTypes": {
+        "category": "dealing",
+        "selectionType": "fixed",
+        "options": [
+          "Blunt"
+        ],
+        "range": "CQ"
+      }
     },
     {
       "name": "Key-Tail Scorpion",
@@ -1844,7 +2536,15 @@
       "name": "Arc Lamp",
       "type": "Gear",
       "track": 4,
-      "description": "A bright source of directed light. Mark to overcharge the lamp, allowing it to deal LR Salt damage for the duration of a scene."
+      "description": "A bright source of directed light. Mark to overcharge the lamp, allowing it to deal LR Salt damage for the duration of a scene.",
+      "damageTypes": {
+        "category": "dealing",
+        "selectionType": "fixed",
+        "options": [
+          "Salt"
+        ],
+        "range": "LR"
+      }
     },
     {
       "name": "Roving Shadow",
@@ -1894,7 +2594,15 @@
       "name": "Petalcrusher",
       "type": "Trait",
       "track": 3,
-      "description": "You ignore mire caused by plant-based hazards and horrors, and are resistant to acids, toxins and hallucinatory effects caused by predatory plants"
+      "description": "You ignore mire caused by plant-based hazards and horrors, and are resistant to acids, toxins and hallucinatory effects caused by predatory plants",
+      "damageTypes": {
+        "category": "resistance",
+        "selectionType": "fixed",
+        "options": [
+          "Acid",
+          "Toxin"
+        ]
+      }
     },
     {
       "name": "Rusting-Leaf Ale",
@@ -1918,25 +2626,59 @@
       "name": "Wavestrider Jacket",
       "type": "Gear",
       "track": 2,
-      "description": "Resist the hazardous effects of crezzerin exposure, insect bites and poisons."
+      "description": "Resist the hazardous effects of crezzerin exposure, insect bites and poisons.",
+      "damageTypes": {
+        "category": "resistance",
+        "selectionType": "fixed",
+        "options": [
+          "poisons"
+        ]
+      }
     },
     {
       "name": "Jagserry",
       "type": "Gear",
       "track": 3,
-      "description": "The archetypal hacker weapon, a sawtooth sabre that deals CQ hewing or serrated damage."
+      "description": "The archetypal hacker weapon, a sawtooth sabre that deals CQ hewing or serrated damage.",
+      "damageTypes": {
+        "category": "dealing",
+        "selectionType": "fixed",
+        "options": [
+          "Hewing",
+          "Serrated"
+        ],
+        "range": "CQ"
+      }
     },
     {
       "name": "Sawtooth Chakram",
       "type": "Gear",
       "track": 3,
-      "description": "A set of sharpened circular blades made for throwing, dealing LR keen or serrated damage."
+      "description": "A set of sharpened circular blades made for throwing, dealing LR keen or serrated damage.",
+      "damageTypes": {
+        "category": "dealing",
+        "selectionType": "fixed",
+        "options": [
+          "Keen",
+          "Serrated"
+        ],
+        "range": "LR"
+      }
     },
     {
       "name": "Defoliant Grenades",
       "type": "Gear",
       "track": 3,
-      "description": "Explosive packets that burst when lobbed with force. Deals LR acid or salt damage"
+      "description": "Explosive packets that burst when lobbed with force. Deals LR acid or salt damage",
+      "damageTypes": {
+        "category": "dealing",
+        "selectionType": "fixed",
+        "options": [
+          "Acid",
+          "Salt"
+        ],
+        "range": "LR"
+      }
     },
     {
       "name": "Gyrewing Moths",
@@ -1954,13 +2696,29 @@
       "name": "Mockserry",
       "type": "Gear",
       "track": 2,
-      "description": "A blade that looks like a normal jagserry, until it unfolds with an insectile shudder. Deals CQ Serrated damage, and allows the wielder to detect the smallest vibrations in the ground and air around them."
+      "description": "A blade that looks like a normal jagserry, until it unfolds with an insectile shudder. Deals CQ Serrated damage, and allows the wielder to detect the smallest vibrations in the ground and air around them.",
+      "damageTypes": {
+        "category": "dealing",
+        "selectionType": "fixed",
+        "options": [
+          "Serrated"
+        ],
+        "range": "CQ"
+      }
     },
     {
       "name": "Gnashing Sawskull",
       "type": "Companion",
       "track": 2,
-      "description": "For the hands-off hacker, this grisly spectral relic of some unnamed undercanopy predator has teeth strong enough to turn wood to splinters. Deals CQ Hewing damage, with increased impact while under Pressure."
+      "description": "For the hands-off hacker, this grisly spectral relic of some unnamed undercanopy predator has teeth strong enough to turn wood to splinters. Deals CQ Hewing damage, with increased impact while under Pressure.",
+      "damageTypes": {
+        "category": "dealing",
+        "selectionType": "fixed",
+        "options": [
+          "Hewing"
+        ],
+        "range": "CQ"
+      }
     }
   ],
   "Horizoneer": [
@@ -2138,13 +2896,28 @@
       "name": "Boat-Knife",
       "type": "Gear",
       "track": 3,
-      "description": "Deal keen damage to any creature that attacks you with their own body in close quarters (such as with tail or bite attacks)."
+      "description": "Deal keen damage to any creature that attacks you with their own body in close quarters (such as with tail or bite attacks).",
+      "damageTypes": {
+        "category": "dealing",
+        "selectionType": "fixed",
+        "options": [
+          "Keen"
+        ]
+      }
     },
     {
       "name": "Jawspear",
       "type": "Gear",
       "track": 4,
-      "description": "A long-bladed spear with cruelly curving teeth. Deals CQ serrated damage."
+      "description": "A long-bladed spear with cruelly curving teeth. Deals CQ serrated damage.",
+      "damageTypes": {
+        "category": "dealing",
+        "selectionType": "fixed",
+        "options": [
+          "Serrated"
+        ],
+        "range": "CQ"
+      }
     },
     {
       "name": "Manifold Bow",
@@ -2188,7 +2961,15 @@
       "name": "Wildlung",
       "type": "Trait",
       "track": 3,
-      "description": "Resist the effects of bad air and airborne spores."
+      "description": "Resist the effects of bad air and airborne spores.",
+      "damageTypes": {
+        "category": "resistance",
+        "selectionType": "fixed",
+        "options": [
+          "bad air",
+          "airborne spores"
+        ]
+      }
     },
     {
       "name": "Revelatory",
@@ -2248,13 +3029,29 @@
       "name": "Flare Pistol",
       "type": "Gear",
       "track": 2,
-      "description": "A small sidearm loaded with chemical flares. Deals LR acid damage. Can also be used to shed light over extremely large areas at will."
+      "description": "A small sidearm loaded with chemical flares. Deals LR acid damage. Can also be used to shed light over extremely large areas at will.",
+      "damageTypes": {
+        "category": "dealing",
+        "selectionType": "fixed",
+        "options": [
+          "Acid"
+        ],
+        "range": "LR"
+      }
     },
     {
       "name": "Scout Falcon",
       "type": "Companion",
       "track": 2,
-      "description": "Once per journey allows a crewmember to roll 2d6 when on watch, then pick the preferred result. Also deals LR keen damage."
+      "description": "Once per journey allows a crewmember to roll 2d6 when on watch, then pick the preferred result. Also deals LR keen damage.",
+      "damageTypes": {
+        "category": "dealing",
+        "selectionType": "fixed",
+        "options": [
+          "Keen"
+        ],
+        "range": "LR"
+      }
     },
     {
       "name": "Weatherbug",
@@ -2346,19 +3143,46 @@
       "name": "Volt-Rail",
       "type": "Gear",
       "track": 2,
-      "description": "An insulated grip around a crackling, rudimentary cattleprod. Deals CQ volt damage, and you're immune to volt damage yourself."
+      "description": "An insulated grip around a crackling, rudimentary cattleprod. Deals CQ volt damage, and you're immune to volt damage yourself.",
+      "damageTypes": {
+        "category": "immunity",
+        "selectionType": "fixed",
+        "options": [
+          "Volt"
+        ]
+      }
     },
     {
       "name": "Hazard Suit",
       "type": "Gear",
       "track": 3,
-      "description": "You're resistant to three damage types, chosen from the following list: Spike, Acid, Blast, Volt, Flame."
+      "description": "You're resistant to three damage types, chosen from the following list: Spike, Acid, Blast, Volt, Flame.",
+      "damageTypes": {
+        "category": "resistance",
+        "selectionType": "choose",
+        "chooseCount": 3,
+        "options": [
+          "Spike",
+          "Acid",
+          "Blast",
+          "Volt",
+          "Flame"
+        ]
+      }
     },
     {
       "name": "Artillery Spider",
       "type": "Companion",
       "track": 3,
-      "description": "A self-made automaton designed to offer fire support. Deals LR blast damage"
+      "description": "A self-made automaton designed to offer fire support. Deals LR blast damage",
+      "damageTypes": {
+        "category": "dealing",
+        "selectionType": "fixed",
+        "options": [
+          "Blast"
+        ],
+        "range": "LR"
+      }
     },
     {
       "name": "Autocrawler",
@@ -2420,7 +3244,14 @@
       "name": "Reactive Riveter",
       "type": "Trait",
       "track": 3,
-      "description": "Deal spike damage to any creature that attacks you with their own body in close quarters (such as with tail or bite attacks)."
+      "description": "Deal spike damage to any creature that attacks you with their own body in close quarters (such as with tail or bite attacks).",
+      "damageTypes": {
+        "category": "dealing",
+        "selectionType": "fixed",
+        "options": [
+          "Spike"
+        ]
+      }
     },
     {
       "name": "Field Charge",
@@ -2444,7 +3275,19 @@
       "name": "Iron-Ring Jacket",
       "type": "Gear",
       "track": 3,
-      "description": "You're resistant to three damage types, chosen from the following list: Blunt, Spike, Serrated, Toxin, Volt."
+      "description": "You're resistant to three damage types, chosen from the following list: Blunt, Spike, Serrated, Toxin, Volt.",
+      "damageTypes": {
+        "category": "resistance",
+        "selectionType": "choose",
+        "chooseCount": 3,
+        "options": [
+          "Blunt",
+          "Spike",
+          "Serrated",
+          "Toxin",
+          "Volt"
+        ]
+      }
     },
     {
       "name": "Chaff Pouch",
@@ -2456,13 +3299,30 @@
       "name": "Kinetic Anchor",
       "type": "Gear",
       "track": 3,
-      "description": "A large mass of metal shaped to make it easy to carry, often used to enable ferrokinesis in places otherwise empty of metal. Deals CQ blunt damage."
+      "description": "A large mass of metal shaped to make it easy to carry, often used to enable ferrokinesis in places otherwise empty of metal. Deals CQ blunt damage.",
+      "damageTypes": {
+        "category": "dealing",
+        "selectionType": "fixed",
+        "options": [
+          "Blunt"
+        ],
+        "range": "CQ"
+      }
     },
     {
       "name": "Rivet Swarm",
       "type": "Companion",
       "track": 3,
-      "description": "A cloud of floating debris you can direct with a flick of the wrist. Deals LR spike or keen damage."
+      "description": "A cloud of floating debris you can direct with a flick of the wrist. Deals LR spike or keen damage.",
+      "damageTypes": {
+        "category": "dealing",
+        "selectionType": "fixed",
+        "options": [
+          "Spike",
+          "Keen"
+        ],
+        "range": "LR"
+      }
     },
     {
       "name": "Distant Repulsion",
@@ -2474,7 +3334,14 @@
       "name": "Crisis Bolts",
       "type": "Gear",
       "track": 3,
-      "description": "Deal Blast damage to any creature that attacks you with their own body in close quarters (such as with tail or bite attacks)."
+      "description": "Deal Blast damage to any creature that attacks you with their own body in close quarters (such as with tail or bite attacks).",
+      "damageTypes": {
+        "category": "dealing",
+        "selectionType": "fixed",
+        "options": [
+          "Blast"
+        ]
+      }
     }
   ],
   "Slinger": [
@@ -2554,25 +3421,59 @@
       "name": "Hammerpin Revolver",
       "type": "Gear",
       "track": 3,
-      "description": "A heavy revolver with a rotating cylinder. Deals LR blunt or blast damage."
+      "description": "A heavy revolver with a rotating cylinder. Deals LR blunt or blast damage.",
+      "damageTypes": {
+        "category": "dealing",
+        "selectionType": "fixed",
+        "options": [
+          "Blunt",
+          "Blast"
+        ],
+        "range": "LR"
+      }
     },
     {
       "name": "Bolt-Action Rifle",
       "type": "Gear",
       "track": 2,
-      "description": "A long-barrelled rifle with an amber-lensed scope. Deals LR blast damage. Increase impact when attacking from a hidden position."
+      "description": "A long-barrelled rifle with an amber-lensed scope. Deals LR blast damage. Increase impact when attacking from a hidden position.",
+      "damageTypes": {
+        "category": "dealing",
+        "selectionType": "fixed",
+        "options": [
+          "Blast"
+        ],
+        "range": "LR"
+      }
     },
     {
       "name": "Copper Sawn-Off",
       "type": "Gear",
       "track": 3,
-      "description": "A sawn-off shotgun that can be loaded with shrapnel or salt rounds. Deals LR blast or salt damage."
+      "description": "A sawn-off shotgun that can be loaded with shrapnel or salt rounds. Deals LR blast or salt damage.",
+      "damageTypes": {
+        "category": "dealing",
+        "selectionType": "fixed",
+        "options": [
+          "Blast",
+          "Salt"
+        ],
+        "range": "LR"
+      }
     },
     {
       "name": "Experimental Accelerator",
       "type": "Gear",
       "track": 1,
-      "description": "Deals LR Spike damage. With each shot, decide if you want to increase your impact without cutting or affect multiple nearby targets at once."
+      "description": "Deals LR Spike damage. With each shot, decide if you want to increase your impact without cutting or affect multiple nearby targets at once.",
+      "damageTypes": {
+        "category": "dealing",
+        "selectionType": "fixed",
+        "options": [
+          "Spike"
+        ],
+        "range": "LR"
+      }
     },
     {
       "name": "Yardtongue Anteater",
@@ -2640,7 +3541,15 @@
       "name": "Salamini",
       "type": "Companion",
       "track": 3,
-      "description": "Like a Salamax, just smaller. Their boiling spit is just the perfect temperature for a mull. Their scalding saliva deals CQ flame damage."
+      "description": "Like a Salamax, just smaller. Their boiling spit is just the perfect temperature for a mull. Their scalding saliva deals CQ flame damage.",
+      "damageTypes": {
+        "category": "dealing",
+        "selectionType": "fixed",
+        "options": [
+          "Flame"
+        ],
+        "range": "CQ"
+      }
     },
     {
       "name": "Steam-Familiar",
@@ -2670,13 +3579,29 @@
       "name": "Overwhelming Aromas",
       "type": "Gear",
       "track": 1,
-      "description": "The fragrance of your brews and concoctions wafts through passageways and corridors like a pleasant dream. Any ship you crew is immune to bad air and drifting spores while delving."
+      "description": "The fragrance of your brews and concoctions wafts through passageways and corridors like a pleasant dream. Any ship you crew is immune to bad air and drifting spores while delving.",
+      "damageTypes": {
+        "category": "immunity",
+        "selectionType": "fixed",
+        "options": [
+          "bad air",
+          "airborne spores"
+        ]
+      }
     },
     {
       "name": "Silver Split-Prong",
       "type": "Gear",
       "track": 3,
-      "description": "An ordinary-looking fork, by all accounts. Deals CQ Spike damage. You can use a task to swap a tag from any one of your resources to any other resource you own (whether it's logical or not)."
+      "description": "An ordinary-looking fork, by all accounts. Deals CQ Spike damage. You can use a task to swap a tag from any one of your resources to any other resource you own (whether it's logical or not).",
+      "damageTypes": {
+        "category": "dealing",
+        "selectionType": "fixed",
+        "options": [
+          "Spike"
+        ],
+        "range": "CQ"
+      }
     }
   ],
   "Surgeon": [
@@ -2744,7 +3669,15 @@
       "name": "Spice-Nosed Mask",
       "type": "Gear",
       "track": 2,
-      "description": "You're immune to disease, and resist the effects of bad air and airborne spores."
+      "description": "You're immune to disease, and resist the effects of bad air and airborne spores.",
+      "damageTypes": {
+        "category": "resistance",
+        "selectionType": "fixed",
+        "options": [
+          "bad air",
+          "airborne spores"
+        ]
+      }
     },
     {
       "name": "Doctor's Trusty Satchel",
@@ -2762,7 +3695,15 @@
       "name": "Bonesaw",
       "type": "Gear",
       "track": 4,
-      "description": "Works just as well on foes as it does patients. Deals CQ serrated damage."
+      "description": "Works just as well on foes as it does patients. Deals CQ serrated damage.",
+      "damageTypes": {
+        "category": "dealing",
+        "selectionType": "fixed",
+        "options": [
+          "Serrated"
+        ],
+        "range": "CQ"
+      }
     },
     {
       "name": "Whisperspit Leech",
@@ -2780,7 +3721,15 @@
       "name": "Jar of Old Fears",
       "type": "Gear",
       "track": 2,
-      "description": "Deals LR Salt damage. In addition, you may use a task to heal a mark of mire from any member of the crew, and gain a whisper based on that mire's nature."
+      "description": "Deals LR Salt damage. In addition, you may use a task to heal a mark of mire from any member of the crew, and gain a whisper based on that mire's nature.",
+      "damageTypes": {
+        "category": "dealing",
+        "selectionType": "fixed",
+        "options": [
+          "Salt"
+        ],
+        "range": "LR"
+      }
     }
   ],
   "Tempest": [
@@ -2812,25 +3761,56 @@
       "name": "The Skies Agree",
       "type": "Trait",
       "track": 4,
-      "description": "Increase impact when dealing volt or blast damage during an electrical storm or heavy rainfall."
+      "description": "Increase impact when dealing volt or blast damage during an electrical storm or heavy rainfall.",
+      "damageTypes": {
+        "category": "dealing",
+        "selectionType": "fixed",
+        "options": [
+          "Volt",
+          "Blast"
+        ]
+      }
     },
     {
       "name": "Thunder's Tone",
       "type": "Trait",
       "track": 3,
-      "description": "You can raise your voice to an ear-splitting shout, dealing CQ blast damage and being easily heard over long distances."
+      "description": "You can raise your voice to an ear-splitting shout, dealing CQ blast damage and being easily heard over long distances.",
+      "damageTypes": {
+        "category": "dealing",
+        "selectionType": "fixed",
+        "options": [
+          "Blast"
+        ],
+        "range": "CQ"
+      }
     },
     {
       "name": "Lightning's Call",
       "type": "Trait",
       "track": 3,
-      "description": "You can direct bursts of voltaic energy through your palms or fingers, dealing LR volt damage."
+      "description": "You can direct bursts of voltaic energy through your palms or fingers, dealing LR volt damage.",
+      "damageTypes": {
+        "category": "dealing",
+        "selectionType": "fixed",
+        "options": [
+          "Volt"
+        ],
+        "range": "LR"
+      }
     },
     {
       "name": "Ground Zero Overload",
       "type": "Trait",
       "track": 1,
-      "description": "Mark to deal volt damage to all nearby foes, or burn to increase it to massive volt damage."
+      "description": "Mark to deal volt damage to all nearby foes, or burn to increase it to massive volt damage.",
+      "damageTypes": {
+        "category": "dealing",
+        "selectionType": "fixed",
+        "options": [
+          "Volt"
+        ]
+      }
     },
     {
       "name": "Ironjaw Seven-String",
@@ -2842,7 +3822,14 @@
       "name": "Mesh Relay",
       "type": "Gear",
       "track": 3,
-      "description": "Deal volt damage to any creature that attacks you with their own body in close quarters (such as with tail or bite attacks)."
+      "description": "Deal volt damage to any creature that attacks you with their own body in close quarters (such as with tail or bite attacks).",
+      "damageTypes": {
+        "category": "dealing",
+        "selectionType": "fixed",
+        "options": [
+          "Volt"
+        ]
+      }
     },
     {
       "name": "Voltomotive Interfacing",
@@ -2860,7 +3847,19 @@
       "name": "Singed Coat",
       "type": "Gear",
       "track": 3,
-      "description": "You're resistant to three damage types, chosen from the following list: Frost, Flame, Salt, Blast, Volt."
+      "description": "You're resistant to three damage types, chosen from the following list: Frost, Flame, Salt, Blast, Volt.",
+      "damageTypes": {
+        "category": "resistance",
+        "selectionType": "choose",
+        "chooseCount": 3,
+        "options": [
+          "Frost",
+          "Flame",
+          "Salt",
+          "Blast",
+          "Volt"
+        ]
+      }
     },
     {
       "name": "Internal battery",
@@ -2872,7 +3871,14 @@
       "name": "Squallkitten",
       "type": "Companion",
       "track": 2,
-      "description": "A small, playful feline made of roiling stormclouds. Gives your entire crew resistance to volt damage"
+      "description": "A small, playful feline made of roiling stormclouds. Gives your entire crew resistance to volt damage",
+      "damageTypes": {
+        "category": "resistance",
+        "selectionType": "fixed",
+        "options": [
+          "Volt"
+        ]
+      }
     },
     {
       "name": "Sparking-Eel",
@@ -2928,7 +3934,19 @@
       "name": "Weatherbeaten",
       "type": "Trait",
       "track": 3,
-      "description": "You're resistant to three damage types, chosen from the following list: Blast, Acid, Toxin, Frost, Flame."
+      "description": "You're resistant to three damage types, chosen from the following list: Blast, Acid, Toxin, Frost, Flame.",
+      "damageTypes": {
+        "category": "resistance",
+        "selectionType": "choose",
+        "chooseCount": 3,
+        "options": [
+          "Blast",
+          "Acid",
+          "Toxin",
+          "Frost",
+          "Flame"
+        ]
+      }
     },
     {
       "name": "Promise-Twine",
@@ -2964,7 +3982,15 @@
       "name": "Canvas Sling",
       "type": "Gear",
       "track": 3,
-      "description": "A simple but effective weapon. Deals LR Blunt damage, and increases impact on CQ actions made to trip or restrain a target"
+      "description": "A simple but effective weapon. Deals LR Blunt damage, and increases impact on CQ actions made to trip or restrain a target",
+      "damageTypes": {
+        "category": "dealing",
+        "selectionType": "fixed",
+        "options": [
+          "Blunt"
+        ],
+        "range": "LR"
+      }
     },
     {
       "name": "Sortomaton",
@@ -3032,7 +4058,14 @@
       "name": "Intricate Tattoos",
       "type": "Trait",
       "track": 3,
-      "description": "You're immune to confusion and hallucinations that you don't invite or create yourself."
+      "description": "You're immune to confusion and hallucinations that you don't invite or create yourself.",
+      "damageTypes": {
+        "category": "immunity",
+        "selectionType": "fixed",
+        "options": [
+          "hallucinations"
+        ]
+      }
     },
     {
       "name": "Staredown",
