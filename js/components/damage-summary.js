@@ -88,6 +88,7 @@ export function renderCompactDamageSummary(char) {
 
 /**
  * Render dealing damage summary (what damage the character can deal)
+ * Table format with range in column 1, damage type pills in column 2
  * @param {object} char - Character object
  * @returns {string} - HTML string for dealing damage summary
  */
@@ -100,36 +101,42 @@ export function renderDealingDamageSummary(char) {
     return '';
   }
 
+  const ranges = [];
+  if (dealing.CQ.length > 0) {
+    ranges.push({ label: 'CQ', types: dealing.CQ });
+  }
+  if (dealing.LR.length > 0) {
+    ranges.push({ label: 'LR', types: dealing.LR });
+  }
+  if (dealing.UR.length > 0) {
+    ranges.push({ label: 'UR', types: dealing.UR });
+  }
+
   return `
-    <div class="dealing-damage-summary bg-gray-50 border border-gray-200 rounded-lg p-4 mt-4">
-      <h3 class="font-bold text-sm mb-3 text-gray-900">Damage Types Available</h3>
-
-      ${dealing.CQ.length > 0 ? `
-        <div class="mb-2">
-          <span class="label font-semibold text-xs text-gray-600 mr-2">Close Quarters (CQ):</span>
-          ${dealing.CQ.map(type =>
-            `<span class="badge dealing inline-block px-2 py-0.5 m-0.5 text-xs rounded-full bg-purple-100 text-purple-900 border border-purple-300">${type}</span>`
-          ).join('')}
-        </div>
-      ` : ''}
-
-      ${dealing.LR.length > 0 ? `
-        <div class="mb-2">
-          <span class="label font-semibold text-xs text-gray-600 mr-2">Long Range (LR):</span>
-          ${dealing.LR.map(type =>
-            `<span class="badge dealing inline-block px-2 py-0.5 m-0.5 text-xs rounded-full bg-purple-100 text-purple-900 border border-purple-300">${type}</span>`
-          ).join('')}
-        </div>
-      ` : ''}
-
-      ${dealing.UR.length > 0 ? `
-        <div>
-          <span class="label font-semibold text-xs text-gray-600 mr-2">Undercrew (UR):</span>
-          ${dealing.UR.map(type =>
-            `<span class="badge dealing inline-block px-2 py-0.5 m-0.5 text-xs rounded-full bg-purple-100 text-purple-900 border border-purple-300">${type}</span>`
-          ).join('')}
-        </div>
-      ` : ''}
+    <div class="dealing-damage-section">
+      <h4 class="subsection-header">Types Dealt</h4>
+      <table>
+        <thead>
+          <tr>
+            <th class="table-header-left">Range</th>
+            <th class="table-header-left">Types</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${ranges.map(range => `
+            <tr>
+              <td class="range-cell">
+                <span class="range-label">${range.label}</span>
+              </td>
+              <td class="types-cell">
+                ${range.types.map(type =>
+                  `<span class="badge dealing">${type}</span>`
+                ).join('')}
+              </td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
     </div>
   `;
 }
@@ -163,7 +170,7 @@ export function renderFullDamageReport(char) {
  * @returns {string} - HTML string for damage type table
  */
 export function renderDamageTypeTable(char) {
-  const { resistances, immunities } = getCharacterDefenses(char);
+  const { resistances, immunities, weaknesses } = getCharacterDefenses(char);
 
   // Filter hazards to only show ones with resistance/immunity
   const relevantHazards = HAZARD_CONDITIONS.filter(hazard =>
@@ -171,56 +178,67 @@ export function renderDamageTypeTable(char) {
   );
 
   return `
-    <div class="damage-type-table bg-white border border-gray-300 rounded-lg p-4 mt-4">
-      <h3 class="font-bold text-sm mb-3 text-gray-900">Damage Type Matrix</h3>
-      <table class="w-full text-xs">
+    <div class="damage-type-table">
+      <h3 class="section-header">Damage Type Matrix</h3>
+
+      ${renderDealingDamageSummary(char)}
+
+      <div class="resistances-section">
+        <h4 class="subsection-header">Resistances</h4>
+        <table>
         <thead>
-          <tr class="border-b-2 border-gray-300">
-            <th class="text-left py-2 px-3 font-semibold text-gray-700">Damage Type</th>
-            <th class="text-left py-2 px-3 font-semibold text-gray-700">Defense Level</th>
+          <tr>
+            <th class="table-header-left">Type</th>
+            <th class="table-header-left">Status</th>
           </tr>
         </thead>
         <tbody>
           ${DAMAGE_TYPES.map(type => {
             const isImmune = immunities.includes(type);
             const isResistant = resistances.includes(type);
+            const isWeak = weaknesses.includes(type);
 
-            let defenseLevel = 'No Defense';
-            let defenseLevelClass = 'text-gray-500';
-            let pillClass = 'bg-gray-100 text-gray-700 border-gray-300';
+            let defenseLevel = 'None';
+            let statusClass = 'status-none';
+            let badgeClass = 'badge';
 
             if (isImmune) {
               defenseLevel = 'Immune';
-              defenseLevelClass = 'text-green-700 font-semibold';
-              pillClass = 'bg-green-100 text-green-900 border-green-300';
+              statusClass = 'status-text';
+              badgeClass = 'badge immune';
             } else if (isResistant) {
               defenseLevel = 'Resistant';
-              defenseLevelClass = 'text-blue-600 font-semibold';
-              pillClass = 'bg-blue-100 text-blue-900 border-blue-300';
+              statusClass = 'status-text';
+              badgeClass = 'badge resistance';
+            } else if (isWeak) {
+              defenseLevel = 'Weak';
+              statusClass = 'status-text';
+              badgeClass = 'badge weakness';
             }
 
             return `
-              <tr class="border-b border-gray-200 hover:bg-gray-50">
-                <td class="py-2 px-3">
-                  <span class="badge inline-block px-2 py-0.5 text-xs rounded-full border ${pillClass}">${type}</span>
+              <tr>
+                <td>
+                  <span class="${badgeClass}">${type}</span>
                 </td>
-                <td class="py-2 px-3">
-                  <span class="${defenseLevelClass}">${defenseLevel}</span>
+                <td>
+                  <span class="${statusClass}">${defenseLevel}</span>
                 </td>
               </tr>
             `;
           }).join('')}
         </tbody>
       </table>
+      </div>
 
       ${relevantHazards.length > 0 ? `
-        <div class="mt-4">
-          <h4 class="font-semibold text-xs mb-2 text-gray-700">Environmental Hazards</h4>
-          <table class="w-full text-xs">
+        <div class="hazards-section">
+          <h4 class="subsection-header">Environmental Hazards</h4>
+          <table>
             <thead>
-              <tr class="border-b border-gray-300">
-                <th class="text-left py-1.5 px-3 font-semibold text-gray-600 text-xs">Hazard</th>
-                <th class="text-left py-1.5 px-3 font-semibold text-gray-600 text-xs">Defense Level</th>
+              <tr>
+                <th class="table-header-left">Type</th>
+                <th class="table-header-left">Status</th>
               </tr>
             </thead>
             <tbody>
@@ -229,22 +247,21 @@ export function renderDamageTypeTable(char) {
                 const isResistant = resistances.includes(hazard);
 
                 let defenseLevel = 'Resistant';
-                let defenseLevelClass = 'text-blue-600 font-semibold';
-                let pillClass = 'bg-blue-100 text-blue-900 border-blue-300';
+                let statusClass = 'status-text';
+                let badgeClass = 'badge resistance';
 
                 if (isImmune) {
                   defenseLevel = 'Immune';
-                  defenseLevelClass = 'text-green-700 font-semibold';
-                  pillClass = 'bg-green-100 text-green-900 border-green-300';
+                  badgeClass = 'badge immune';
                 }
 
                 return `
-                  <tr class="border-b border-gray-200 hover:bg-gray-50">
-                    <td class="py-1.5 px-3">
-                      <span class="badge inline-block px-2 py-0.5 text-xs rounded-full border ${pillClass}">${hazard}</span>
+                  <tr>
+                    <td>
+                      <span class="${badgeClass}">${hazard}</span>
                     </td>
-                    <td class="py-1.5 px-3">
-                      <span class="${defenseLevelClass}">${defenseLevel}</span>
+                    <td>
+                      <span class="${statusClass}">${defenseLevel}</span>
                     </td>
                   </tr>
                 `;

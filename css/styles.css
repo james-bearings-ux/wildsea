@@ -1298,86 +1298,145 @@
   display: none;
 }
 
-/* Damage Summary Section */
-.damage-summary {
-  background: #F9FAFB;
-  border: 1px solid #E5E7EB;
+/* Damage Type Table Styles */
+.damage-type-table {
+  background: #FFFFFF;
+  border: 2px solid #E5E7EB;
   border-radius: 8px;
   padding: 16px;
   margin-top: 24px;
+  width: 250px;
 }
 
-.damage-summary h3 {
-  font-weight: 700;
-  font-size: 14px;
+.damage-type-table .section-header {
   margin-bottom: 12px;
-  color: #111827;
 }
 
-.damage-summary .label {
-  font-weight: 600;
-  font-size: 11px;
-  color: #6B7280;
-  margin-right: 8px;
+.damage-type-table .subsection-header {
+  margin-bottom: 8px;
+  margin-top: 0;
 }
 
-/* Damage Summary Badges */
-.damage-summary .badge {
+/* Damage type table badges */
+.damage-type-table .badge {
   display: inline-block;
   padding: 2px 8px;
   margin: 2px;
   font-size: 11px;
   font-weight: 500;
   border-radius: 9999px;
+  border: 1px solid;
 }
 
-.damage-summary .badge.resistance {
+.damage-type-table .badge.resistance {
   background: #DBEAFE;
   color: #1E3A8A;
-  border: 1px solid #93C5FD;
+  border-color: #93C5FD;
 }
 
-.damage-summary .badge.immune {
+.damage-type-table .badge.immune {
   background: #D1FAE5;
   color: #065F46;
-  border: 1px solid #6EE7B7;
+  border-color: #6EE7B7;
 }
 
-.damage-summary .badge.weakness {
+.damage-type-table .badge.weakness {
   background: #FEE2E2;
   color: #991B1B;
-  border: 1px solid #FCA5A5;
+  border-color: #FCA5A5;
 }
 
-.damage-summary .badge.dealing {
+.damage-type-table .badge.dealing {
   background: #F3E8FF;
   color: #6B21A8;
-  border: 1px solid #D8B4FE;
+  border-color: #D8B4FE;
 }
 
-/* Dealing Damage Summary */
-.dealing-damage-summary {
-  background: #F9FAFB;
-  border: 1px solid #E5E7EB;
-  border-radius: 8px;
-  padding: 16px;
-  margin-top: 16px;
-}
-
-.dealing-damage-summary h3 {
-  font-weight: 700;
-  font-size: 14px;
-  margin-bottom: 12px;
-  color: #111827;
-}
-
-/* Compact Summary (for sidebars) */
-.damage-summary-compact {
-  font-size: 11px;
+/* Default badge (no defense) */
+.damage-type-table .badge:not(.resistance):not(.immune):not(.weakness):not(.dealing) {
+  background: #F3F4F6;
   color: #6B7280;
+  border-color: #D1D5DB;
+}
+
+/* Status text sizing */
+.status-text {
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.status-none {
+  font-size: 9px;
+  color: #9CA3AF;
+}
+
+.damage-type-table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.damage-type-table .table-header-left {
+  text-align: left;
+  padding: 8px 6px;
+  font-weight: 600;
+  font-size: 11px;
+  color: #4B5563;
+}
+
+.damage-type-table tbody tr {
+  transition: background-color 0.15s ease;
+}
+
+.damage-type-table tbody tr:hover {
+  background-color: #F9FAFB;
+}
+
+.damage-type-table tbody td {
+  padding: 6px 6px;
+}
+
+.damage-type-table .dealing-damage-section {
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #E5E7EB;
+}
+
+.damage-type-table .dealing-damage-section .subsection-header {
+  margin-bottom: 8px;
+}
+
+.damage-type-table .resistances-section {
+  margin-bottom: 16px;
+}
+
+.damage-type-table .resistances-section .subsection-header {
+  margin-bottom: 8px;
+}
+
+.damage-type-table .hazards-section {
+  margin-top: 0;
+  padding-top: 12px;
+  border-top: 2px solid #E5E7EB;
+}
+
+.damage-type-table .range-cell {
+  padding: 6px 6px;
+  vertical-align: top;
+}
+
+.damage-type-table .range-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.damage-type-table .types-cell {
+  padding: 6px 6px;
+  vertical-align: top;
   display: flex;
-  align-items: center;
-  gap: 8px;
+  flex-direction: column;
+  gap: 3px;
+  align-items: flex-start;
 }
 
 /* Mobile Responsiveness */
@@ -1391,8 +1450,21 @@
     min-width: 200px;
   }
 
-  .damage-summary,
-  .dealing-damage-summary {
+  .damage-type-table {
     padding: 12px;
+    width: 220px;
+  }
+
+  .damage-type-table .badge {
+    font-size: 10px;
+    padding: 2px 6px;
+  }
+
+  .status-text {
+    font-size: 9px;
+  }
+
+  .status-none {
+    font-size: 8px;
   }
 }
