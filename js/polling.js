@@ -5,6 +5,9 @@
 
 import { supabase } from './supabaseClient.js';
 
+// Debug flag - only log in development mode
+const DEBUG = import.meta.env.DEV;
+
 let pollingIntervals = [];
 
 /**
@@ -26,7 +29,7 @@ async function pollSession(sessionId, lastChecked, onUpdate) {
     const updatedAt = new Date(data.updated_at).getTime();
 
     if (updatedAt > lastChecked) {
-      console.log('[POLLING] Session changed - triggering update');
+      if (DEBUG) console.log('[POLLING] Session changed - triggering update');
       onUpdate();
       return updatedAt;
     }
@@ -59,7 +62,7 @@ async function pollCharacters(sessionId, lastChecked, onUpdate) {
       const updatedAt = new Date(data[0].updated_at).getTime();
 
       if (updatedAt > lastChecked) {
-        console.log('[POLLING] Character changed - triggering update');
+        if (DEBUG) console.log('[POLLING] Character changed - triggering update');
         onUpdate();
         return updatedAt;
       }
@@ -93,7 +96,7 @@ async function pollShips(sessionId, lastChecked, onUpdate) {
       const updatedAt = new Date(data[0].updated_at).getTime();
 
       if (updatedAt > lastChecked) {
-        console.log('[POLLING] Ship changed - triggering update');
+        if (DEBUG) console.log('[POLLING] Ship changed - triggering update');
         onUpdate();
         return updatedAt;
       }
@@ -124,7 +127,7 @@ async function pollSessionCharacters(sessionId, lastChecked, onUpdate) {
 
     // Use count as the check since this table might not have updated_at
     if (lastChecked.lastCount !== undefined && count !== lastChecked.lastCount) {
-      console.log('[POLLING] Session characters changed - triggering update');
+      if (DEBUG) console.log('[POLLING] Session characters changed - triggering update');
       onUpdate();
     }
 
@@ -142,7 +145,7 @@ async function pollSessionCharacters(sessionId, lastChecked, onUpdate) {
  * @param {number} interval - Polling interval in milliseconds (default 3000ms)
  */
 export function startPolling(sessionId, onUpdate, interval = 3000) {
-  console.log('[POLLING] Starting polling for session:', sessionId);
+  if (DEBUG) console.log('[POLLING] Starting polling for session:', sessionId);
 
   // Initialize last checked timestamps
   const now = Date.now();
@@ -180,17 +183,17 @@ export function startPolling(sessionId, onUpdate, interval = 3000) {
   pollingIntervals.push(shipsInterval);
   pollingIntervals.push(sessionCharactersInterval);
 
-  console.log('[POLLING] Polling started - checking every', interval, 'ms');
+  if (DEBUG) console.log('[POLLING] Polling started - checking every', interval, 'ms');
 }
 
 /**
  * Stop all polling
  */
 export function stopPolling() {
-  console.log('[POLLING] Stopping all polling intervals...');
+  if (DEBUG) console.log('[POLLING] Stopping all polling intervals...');
 
   pollingIntervals.forEach(interval => clearInterval(interval));
   pollingIntervals = [];
 
-  console.log('[POLLING] All polling stopped');
+  if (DEBUG) console.log('[POLLING] All polling stopped');
 }
