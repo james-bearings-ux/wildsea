@@ -7,7 +7,7 @@ import { renderSkills, renderLanguages } from '../components/skills.js';
 import { renderResources } from '../components/resources.js';
 import { renderDrives, renderMires } from '../components/drives-mires.js';
 import { renderMilestones } from '../components/milestones.js';
-import { renderDamageSummary, renderDamageTypeTable } from '../components/damage-summary.js';
+import { renderDamageTypeTable } from '../components/damage-summary.js';
 import { highlightDamageTypesInDescription, renderDamageTypeWarning } from '../components/damage-type-selector.js';
 
 export function renderPlayMode(app, character, gameData) {
@@ -84,7 +84,6 @@ export function renderPlayMode(app, character, gameData) {
         </div>
         </div>
 
-        ${renderDamageSummary(character)}
         ${renderDamageTypeTable(character)}
     </div>
 
