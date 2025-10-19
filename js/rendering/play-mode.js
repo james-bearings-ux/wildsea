@@ -74,9 +74,10 @@ export function renderPlayMode(app, character, gameData) {
         </div>
         </div>
         <hr />
-        ${renderResources(character)}
-        <hr />
-        <div style="display: grid; grid-template-columns: 250px 1fr; gap: 32px; margin-bottom: 32px;">
+        <div style="display: grid; grid-template-columns: 1fr 250px 1fr; gap: 32px; margin-bottom: 32px;">
+            <div style="display: flex; flex-direction: column; gap: 24px;">
+                ${renderResources(character)}
+            </div>
             ${renderDamageTypeTable(character)}
             <div style="display: flex; flex-direction: column; gap: 32px;">
                 ${renderDrives(character)}
