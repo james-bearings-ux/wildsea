@@ -534,7 +534,14 @@
       "name": "Ancient Tar-Seals",
       "type": "Gear",
       "track": 2,
-      "description": "You're immune to the effects of crezzerin."
+      "description": "You're immune to the effects of crezzerin.",
+      "damageTypes": {
+        "category": "immunity",
+        "selectionType": "fixed",
+        "options": [
+          "crezzerin effects"
+        ]
+      }
     },
     {
       "name": "Living Workshop",
@@ -745,7 +752,14 @@
       "name": "Old Ore Piercings",
       "type": "Gear",
       "track": 1,
-      "description": "You're immune to the usual effects of crezzerin. Concentrated sources of crezzerin heal rather than harm you."
+      "description": "You're immune to the usual effects of crezzerin. Concentrated sources of crezzerin heal rather than harm you.",
+      "damageTypes": {
+        "category": "immunity",
+        "selectionType": "fixed",
+        "options": [
+          "crezzerin effects"
+        ]
+      }
     },
     {
       "name": "Oiljelly",
@@ -1047,10 +1061,10 @@
       "track": 4,
       "description": "You're weak to Blunt damage, but immune to the harmful effects of crezzerin.",
       "damageTypes": {
-        "category": "weakness",
+        "category": "immunity",
         "selectionType": "fixed",
         "options": [
-          "Blunt"
+          "crezzerin effects"
         ]
       }
     },
@@ -1536,7 +1550,14 @@
       "name": "Tarscale Armour",
       "type": "Gear",
       "track": 4,
-      "description": "Resist the hazardous effects of crezzerin exposure (searing, hallucinations, mutation)."
+      "description": "Resist the hazardous effects of crezzerin exposure (searing, hallucinations, mutation).",
+      "damageTypes": {
+        "category": "resistance",
+        "selectionType": "fixed",
+        "options": [
+          "crezzerin effects"
+        ]
+      }
     },
     {
       "name": "Springfox",
@@ -1765,7 +1786,14 @@
       "name": "Docker Threads",
       "type": "Gear",
       "track": 3,
-      "description": "Resist the hazardous effects of crezzerin exposure (searing, hallucinations, mutation)."
+      "description": "Resist the hazardous effects of crezzerin exposure (searing, hallucinations, mutation).",
+      "damageTypes": {
+        "category": "resistance",
+        "selectionType": "fixed",
+        "options": [
+          "crezzerin effects"
+        ]
+      }
     },
     {
       "name": "Brass Knucle",
@@ -1855,7 +1883,14 @@
       "name": "Baseline",
       "type": "Trait",
       "track": 3,
-      "description": "Mark to briefly ignore any positive or negative effects stemming from a temporary benefit or injury. You are always immune to the negative effects of crezzerin."
+      "description": "Mark to briefly ignore any positive or negative effects stemming from a temporary benefit or injury. You are always immune to the negative effects of crezzerin.",
+      "damageTypes": {
+        "category": "immunity",
+        "selectionType": "fixed",
+        "options": [
+          "crezzerin effects"
+        ]
+      }
     },
     {
       "name": "Heady Vapours",
@@ -2432,7 +2467,14 @@
       "name": "Seared Skin",
       "type": "Trait",
       "track": 3,
-      "description": "Resist the hazardous effects of crezzerin exposure (searing, hallucinations, mutation)."
+      "description": "Resist the hazardous effects of crezzerin exposure (searing, hallucinations, mutation).",
+      "damageTypes": {
+        "category": "resistance",
+        "selectionType": "fixed",
+        "options": [
+          "crezzerin effects"
+        ]
+      }
     },
     {
       "name": "Master Salvager",
@@ -2631,6 +2673,8 @@
         "category": "resistance",
         "selectionType": "fixed",
         "options": [
+          "crezzerin effects",
+          "bites and stings",
           "poisons"
         ]
       }

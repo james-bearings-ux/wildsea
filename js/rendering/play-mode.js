@@ -7,10 +7,12 @@ import { renderSkills, renderLanguages } from '../components/skills.js';
 import { renderResources } from '../components/resources.js';
 import { renderDrives, renderMires } from '../components/drives-mires.js';
 import { renderMilestones } from '../components/milestones.js';
+import { renderTasks } from '../components/tasks.js';
+import { renderNotes } from '../components/notes.js';
 import { renderDamageTypeTable } from '../components/damage-summary.js';
 import { highlightDamageTypesInDescription, renderDamageTypeWarning } from '../components/damage-type-selector.js';
 
-export function renderPlayMode(app, character, gameData) {
+export function renderPlayMode(app, character, gameData, showAddTaskForm = false) {
 
   app.innerHTML = `
     <div style="padding: 20px; max-width: 1400px; margin: 0 auto; padding-bottom: 80px;">
@@ -79,8 +81,13 @@ export function renderPlayMode(app, character, gameData) {
         </div>
         <hr />
         <div style="display: grid; grid-template-columns: 1fr 250px 1fr; gap: 32px; margin-bottom: 32px;">
-            <div data-section="resources" style="display: flex; flex-direction: column; gap: 24px;">
-                ${renderResources(character)}
+            <div style="display: flex; flex-direction: column; gap: 32px;">
+                <div data-section="resources" style="display: flex; flex-direction: column; gap: 24px;">
+                    ${renderResources(character)}
+                </div>
+                <div data-section="notes">
+                    ${renderNotes(character)}
+                </div>
             </div>
             <div data-section="damage-types">
               ${renderDamageTypeTable(character)}
@@ -89,6 +96,7 @@ export function renderPlayMode(app, character, gameData) {
                 <div data-section="drives">${renderDrives(character)}</div>
                 <div data-section="mires">${renderMires(character)}</div>
                 <div data-section="milestones">${renderMilestones(character)}</div>
+                <div data-section="tasks">${renderTasks(character, showAddTaskForm)}</div>
             </div>
         </div>
     </div>
