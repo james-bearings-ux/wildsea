@@ -31,6 +31,7 @@ import {
   tickTask,
   toggleTaskEditing,
   deleteTask,
+  updateNotes,
   updateDrive,
   updateMire,
   toggleMireCheckbox,
@@ -1110,6 +1111,15 @@ function setupEventDelegation() {
             scheduleRender();
             // Debounce mire saves
             debounce('mire-' + parsedParams.index, async () => {
+              await saveCharacter(character);
+            });
+            break;
+          case 'updateNotes':
+            updateNotes(target.value, character);
+            markDirtyByAction('updateNotes');
+            scheduleRender();
+            // Debounce notes saves
+            debounce('notes', async () => {
               await saveCharacter(character);
             });
             break;

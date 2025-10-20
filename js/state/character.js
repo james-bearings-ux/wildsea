@@ -44,6 +44,7 @@ export async function createCharacter(sessionId, name = 'Unnamed Character', blo
       ],
       milestones: [],
       tasks: [],
+      notes: '',
       resources: {
         charts: [],
         salvage: [],
@@ -114,6 +115,7 @@ export async function saveCharacter(character) {
       mires: character.mires,
       milestones: character.milestones,
       tasks: character.tasks,
+      notes: character.notes,
       resources: character.resources,
       updated_at: new Date().toISOString()
     })
@@ -184,6 +186,7 @@ function convertFromDB(dbChar) {
     ],
     milestones: dbChar.milestones || [],
     tasks: dbChar.tasks || [],
+    notes: dbChar.notes || '',
     resources: dbChar.resources || {
       charts: [],
       salvage: [],
@@ -620,6 +623,13 @@ export function deleteTask(id, renderCallback, char) {
     char.tasks.splice(index, 1);
     renderCallback();
   }
+}
+
+/**
+ * Notes mutation
+ */
+export function updateNotes(notes, char) {
+  char.notes = notes;
 }
 
 /**
