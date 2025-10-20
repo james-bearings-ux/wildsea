@@ -25,6 +25,12 @@ import {
   updateMilestoneScale,
   toggleMilestoneUsed,
   deleteMilestone,
+  addTask,
+  updateTaskName,
+  updateTaskMaxTicks,
+  tickTask,
+  toggleTaskEditing,
+  deleteTask,
   updateDrive,
   updateMire,
   toggleMireCheckbox,
@@ -35,7 +41,8 @@ import {
   setMode,
   generateRandomCharacter,
   customizeAspect,
-  resetAspectCustomization
+  resetAspectCustomization,
+  addAspectFromFullList
 } from './state/character.js';
 import {
   createSession,
@@ -104,6 +111,10 @@ let activeWizardStage = 'design'; // Track wizard stage: 'design' | 'fittings' |
 let showCustomizeModal = false; // Track if customization modal is open
 let selectedModalAspectId = null; // Track which aspect is selected in modal
 let modalUnsavedEdits = {}; // Track unsaved edits in customization modal { aspectId: { name, description } }
+let showSelectAspectModal = false; // Track if select aspect modal is open
+let aspectSearchQuery = ''; // Track search query for aspect selection
+let selectedAspectForAdding = null; // Track selected aspect in selection modal
+let showAddTaskForm = false; // Track if add task form is open
 let loginState = 'login'; // 'login' | 'check-email'
 let loginEmail = ''; // Store email for check-email screen
 let loginMessage = ''; // Status message for login screen
@@ -367,9 +378,9 @@ async function render(reloadSession = false) {
   if (character.mode === 'creation') {
     renderCreationMode(tempDiv, character, gameData);
   } else if (character.mode === 'play') {
-    renderPlayMode(tempDiv, character, gameData);
+    renderPlayMode(tempDiv, character, gameData, showAddTaskForm);
   } else if (character.mode === 'advancement') {
-    renderAdvancementMode(tempDiv, character, gameData, showCustomizeModal, selectedModalAspectId, modalUnsavedEdits);
+    renderAdvancementMode(tempDiv, character, gameData, showCustomizeModal, selectedModalAspectId, modalUnsavedEdits, showSelectAspectModal, aspectSearchQuery, selectedAspectForAdding);
   }
 
   // Combine navigation and content
@@ -550,6 +561,54 @@ function setupEventDelegation() {
                 if (character) {
                   deleteMilestone(parsedParams.id, noopRender, character);
                   markDirtyByAction('deleteMilestone');
+                  scheduleRender();
+                  scheduleSave();
+                }
+                break;
+              case 'openAddTaskForm':
+                showAddTaskForm = true;
+                await render();
+                break;
+              case 'cancelNewTask':
+                showAddTaskForm = false;
+                await render();
+                break;
+              case 'saveNewTask':
+                if (character) {
+                  const nameInput = document.getElementById('new-task-name');
+                  const ticksInput = document.getElementById('new-task-ticks');
+                  const name = nameInput?.value?.trim() || '';
+                  const maxTicks = parseInt(ticksInput?.value) || 4;
+
+                  if (name) {
+                    addTask(name, maxTicks, noopRender, character);
+                    showAddTaskForm = false;
+                    markDirtyByAction('addTask');
+                    scheduleRender();
+                    scheduleSave();
+                  }
+                }
+                break;
+              case 'tickTask':
+                if (character) {
+                  tickTask(parsedParams.id, noopRender, character);
+                  markDirtyByAction('tickTask');
+                  scheduleRender();
+                  scheduleSave();
+                }
+                break;
+              case 'toggleTaskEditing':
+                if (character) {
+                  toggleTaskEditing(parsedParams.id, noopRender, character);
+                  markDirtyByAction('toggleTaskEditing');
+                  scheduleRender();
+                  scheduleSave();
+                }
+                break;
+              case 'deleteTask':
+                if (character && confirm('Delete this task?')) {
+                  deleteTask(parsedParams.id, noopRender, character);
+                  markDirtyByAction('deleteTask');
                   scheduleRender();
                   scheduleSave();
                 }
@@ -803,6 +862,61 @@ function setupEventDelegation() {
                   await render();
                 }
                 break;
+              case 'openSelectAspectModal':
+                showSelectAspectModal = true;
+                aspectSearchQuery = '';
+                selectedAspectForAdding = null;
+                await render();
+                break;
+              case 'closeSelectAspectModal':
+                // Only close if clicked directly on overlay, not on modal content
+                if (e.target.classList && e.target.classList.contains('modal-overlay')) {
+                  showSelectAspectModal = false;
+                  aspectSearchQuery = '';
+                  selectedAspectForAdding = null;
+                  await render();
+                }
+                break;
+              case 'selectAspectForAdding':
+                if (character && parsedParams.aspectId) {
+                  // Find the aspect from game data
+                  const gameData = getGameData();
+                  let foundAspect = null;
+
+                  // Search through all aspects in game data
+                  for (const [source, aspects] of Object.entries(gameData.aspects)) {
+                    const aspect = aspects.find(a => {
+                      const id = source + '-' + a.name;
+                      return id === parsedParams.aspectId;
+                    });
+
+                    if (aspect) {
+                      foundAspect = {
+                        ...aspect,
+                        source: source,
+                        category: gameData.bloodlines.includes(source) ? 'Bloodline' :
+                                 gameData.origins.includes(source) ? 'Origin' :
+                                 gameData.posts.includes(source) ? 'Post' : 'Unknown'
+                      };
+                      break;
+                    }
+                  }
+
+                  selectedAspectForAdding = foundAspect;
+                  await render();
+                }
+                break;
+              case 'addSelectedAspect':
+                if (character && selectedAspectForAdding) {
+                  addAspectFromFullList(selectedAspectForAdding, noopRender, character);
+                  showSelectAspectModal = false;
+                  aspectSearchQuery = '';
+                  selectedAspectForAdding = null;
+                  markAllDirty(); // Adding aspect affects multiple sections
+                  scheduleRender();
+                  scheduleSave();
+                }
+                break;
               case 'selectAspectInModal':
                 // This is handled by change event
                 break;
@@ -1014,6 +1128,21 @@ function setupEventDelegation() {
             scheduleRender();
             scheduleSave();
             break;
+          case 'updateTaskName':
+            updateTaskName(parsedParams.id, target.value, character);
+            markDirtyByAction('updateTaskName');
+            scheduleRender();
+            // Debounce task name saves
+            debounce('task-name-' + parsedParams.id, async () => {
+              await saveCharacter(character);
+            });
+            break;
+          case 'updateTaskMaxTicks':
+            updateTaskMaxTicks(parsedParams.id, target.value, noopRender, character);
+            markDirtyByAction('updateTaskMaxTicks');
+            scheduleRender();
+            scheduleSave();
+            break;
           case 'updateResourceName':
             updateResourceName(parsedParams.type, parsedParams.id, target.value, character);
             markDirtyByAction('updateResourceName');
@@ -1034,9 +1163,19 @@ function setupEventDelegation() {
     })();
   });
 
-  // Input event delegation for live character count updates
+  // Input event delegation for live character count updates and search
   app.addEventListener('input', function (e) {
     const target = e.target;
+
+    // Handle aspect search input
+    if (target.id === 'aspect-search-input') {
+      aspectSearchQuery = target.value;
+      selectedAspectForAdding = null; // Reset selection when search changes
+      debounce('aspect-search', async () => {
+        await render();
+      }, 200); // Shorter debounce for search
+      return;
+    }
 
     // Update character count for name input
     if (target.id === 'modal-aspect-name') {

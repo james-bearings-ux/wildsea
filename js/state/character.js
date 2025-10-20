@@ -43,6 +43,7 @@ export async function createCharacter(sessionId, name = 'Unnamed Character', blo
         { text: '', checkbox1: false, checkbox2: false }
       ],
       milestones: [],
+      tasks: [],
       resources: {
         charts: [],
         salvage: [],
@@ -112,6 +113,7 @@ export async function saveCharacter(character) {
       drives: character.drives,
       mires: character.mires,
       milestones: character.milestones,
+      tasks: character.tasks,
       resources: character.resources,
       updated_at: new Date().toISOString()
     })
@@ -181,6 +183,7 @@ function convertFromDB(dbChar) {
       { text: '', checkbox1: false, checkbox2: false }
     ],
     milestones: dbChar.milestones || [],
+    tasks: dbChar.tasks || [],
     resources: dbChar.resources || {
       charts: [],
       salvage: [],
@@ -322,6 +325,38 @@ export function expandAspectTrack(aspectId, delta, renderCallback, char) {
   }
 
   aspect.trackSize = newSize;
+  renderCallback();
+}
+
+/**
+ * Add aspect from full aspects list (advancement mode only)
+ * Allows selecting aspects outside bloodline/origin/post
+ */
+export function addAspectFromFullList(aspectData, renderCallback, char) {
+  if (char.mode !== 'advancement') return;
+
+  // Check if already at max aspects
+  if (char.selectedAspects.length >= BUDGETS.maxAspectsAdvancement) {
+    return;
+  }
+
+  // Create aspect ID
+  const aspectId = aspectData.source + '-' + aspectData.name;
+
+  // Check if already selected
+  if (char.selectedAspects.find(a => a.id === aspectId)) {
+    return;
+  }
+
+  // Add the aspect
+  char.selectedAspects.push({
+    id: aspectId,
+    ...aspectData,
+    trackSize: aspectData.track,
+    damageStates: Array(aspectData.track).fill('default'),
+    selectedDamageTypes: [] // Initialize empty array for damage type selections
+  });
+
   renderCallback();
 }
 
@@ -528,6 +563,61 @@ export function deleteMilestone(id, renderCallback, char) {
   const index = char.milestones.findIndex(m => m.id === id);
   if (index >= 0) {
     char.milestones.splice(index, 1);
+    renderCallback();
+  }
+}
+
+/**
+ * Task mutations
+ */
+export function addTask(name, maxTicks, renderCallback, char) {
+  char.tasks.push({
+    id: Date.now().toString(),
+    name: name || '',
+    maxTicks: maxTicks || 4,
+    currentTicks: 0,
+    editing: false
+  });
+  renderCallback();
+}
+
+export function updateTaskName(id, name, char) {
+  const task = char.tasks.find(t => t.id === id);
+  if (task) {
+    task.name = name;
+  }
+}
+
+export function updateTaskMaxTicks(id, maxTicks, renderCallback, char) {
+  const task = char.tasks.find(t => t.id === id);
+  if (task) {
+    task.maxTicks = Math.max(1, Math.min(6, parseInt(maxTicks) || 4));
+    // Don't change currentTicks when editing
+    renderCallback();
+  }
+}
+
+export function tickTask(id, renderCallback, char) {
+  const task = char.tasks.find(t => t.id === id);
+  if (task) {
+    // Cycle: 0 -> 1 -> ... -> maxTicks -> 0
+    task.currentTicks = (task.currentTicks + 1) % (task.maxTicks + 1);
+    renderCallback();
+  }
+}
+
+export function toggleTaskEditing(id, renderCallback, char) {
+  const task = char.tasks.find(t => t.id === id);
+  if (task) {
+    task.editing = !task.editing;
+    renderCallback();
+  }
+}
+
+export function deleteTask(id, renderCallback, char) {
+  const index = char.tasks.findIndex(t => t.id === id);
+  if (index >= 0) {
+    char.tasks.splice(index, 1);
     renderCallback();
   }
 }
