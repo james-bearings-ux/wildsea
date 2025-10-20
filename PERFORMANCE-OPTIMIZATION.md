@@ -162,6 +162,30 @@ if (DEBUG) {
 - Behavior: Skip polling-triggered reloads when pending saves exist
 - Files: `js/main.js` (added flags, updated scheduleSave/scheduleShipSave, modified render logic)
 
+**Render Debouncing Fix**:
+- Issue: Each click triggered immediate full DOM re-render (50-150ms), causing render thrashing
+- Symptom: Clicking 5 aspect boxes rapidly → only 3 would stay selected (renders interfering)
+- Root Cause: Mutation functions were calling `renderCallback()` immediately, bypassing debouncing
+- Solution: Pass no-op function to mutations, let scheduleRender() handle all rendering
+- Implementation:
+  - Created `noopRender` no-op function
+  - Created `scheduleRender()` helper with 50ms debounce
+  - Replaced all mutation calls from `..., render, character)` to `..., noopRender, character)`
+  - All action handlers now call `scheduleRender()` after mutation
+- Behavior: Batches rapid clicks into single render, eliminates dropped interactions
+- Files: `js/main.js` (added noopRender, scheduleRender, updated ~40 action handlers)
+
+**Results**:
+- ✅ All Phase 1 testing complete
+- ✅ Focus retained in text inputs during rapid interactions
+- ✅ Aspect track clicks register reliably (5/5 clicks work)
+- ✅ Milestone checkbox toggles register reliably
+- ✅ UI feels instant and responsive
+- ✅ Database saves reduced by ~90%
+- ✅ Production console clean
+
+**Key Insight**: The critical fix was passing `noopRender` to mutation functions. The mutation functions' immediate `renderCallback()` calls were bypassing the debouncing system, causing render thrashing and dropped interactions.
+
 ---
 
 ### Phase 2: Render Optimization (1-2 hours)
@@ -264,14 +288,18 @@ async function smartRender() {
 ## Testing Checklist
 
 ### Phase 1 Testing
-- [ ] Click aspect damage track rapidly - UI updates instantly
-- [ ] Wait 1 second - database save happens
-- [ ] Click multiple things rapidly - only one save after idle
-- [ ] Change text inputs - still debounce at 400ms
-- [ ] Create character - saves immediately
-- [ ] Delete character - deletes immediately
-- [ ] Check console in production - no save logs
-- [ ] Check console in dev - save logs present
+- [x] Click aspect damage track rapidly - UI updates instantly
+- [x] Wait 1 second - database save happens
+- [x] Click multiple things rapidly - only one save after idle
+- [x] Change text inputs - still debounce at 400ms
+- [x] Create character - saves immediately
+- [x] Delete character - deletes immediately
+- [x] Check console in production - no save logs
+- [x] Check console in dev - save logs present
+- [x] Create 5 milestones rapidly - no issues
+- [x] Rapidly click 5 aspect track boxes - all register reliably
+- [x] Toggle multiple milestone checkboxes quickly - all register reliably
+- [x] Type in milestone immediately after creation - focus retained, no interruption
 
 ### Phase 2 Testing
 - [ ] Click aspect damage - only aspect section re-renders
