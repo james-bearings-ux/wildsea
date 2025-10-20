@@ -14,35 +14,38 @@ export function renderPlayMode(app, character, gameData) {
 
   app.innerHTML = `
     <div style="padding: 20px; max-width: 1400px; margin: 0 auto; padding-bottom: 80px;">
-        <div style="margin-bottom: 32px; padding-bottom: 24px; border-bottom: 2px solid #E5E7EB;">
-        <div style="display: flex; gap: 48px; align-items: baseline;">
-            <div>
-            <div class="char-label">Character Name</div>
-            <div class="char-name-header">${character.name}</div>
+        <div data-section="character-header">
+          <div style="margin-bottom: 32px; padding-bottom: 24px; border-bottom: 2px solid #E5E7EB;">
+            <div style="display: flex; gap: 48px; align-items: baseline;">
+              <div>
+                <div class="char-label">Character Name</div>
+                <div class="char-name-header">${character.name}</div>
+              </div>
+              <div>
+                <div class="char-label">Bloodline</div>
+                <div class="char-name-header">${character.bloodline}</div>
+              </div>
+              <div>
+                <div class="char-label">Origin</div>
+                <div class="char-name-header">${character.origin}</div>
+              </div>
+              <div>
+                <div class="char-label">Post</div>
+                <div class="char-name-header">${character.post}</div>
+              </div>
             </div>
-            <div>
-            <div class="char-label">Bloodline</div>
-            <div class="char-name-header">${character.bloodline}</div>
-            </div>
-            <div>
-            <div class="char-label">Origin</div>
-            <div class="char-name-header">${character.origin}</div>
-            </div>
-            <div>
-            <div class="char-label">Post</div>
-            <div class="char-name-header">${character.post}</div>
-            </div>
-        </div>
+          </div>
         </div>
 
         <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 3fr; gap: 32px; margin-bottom: 32px;">
-        ${renderEdges(character, gameData)}
-        ${renderSkills(character, gameData)}
-        ${renderLanguages(character, gameData)}
+        <div data-section="edges">${renderEdges(character, gameData)}</div>
+        <div data-section="skills">${renderSkills(character, gameData)}</div>
+        <div data-section="languages">${renderLanguages(character, gameData)}</div>
 
-        <div>
-            <h2 class="section-header">Aspects</h2>
-            ${character.selectedAspects.slice().sort((a, b) => a.name.localeCompare(b.name)).map(aspect => {
+        <div data-section="aspects">
+            <div>
+              <h2 class="section-header">Aspects</h2>
+              ${character.selectedAspects.slice().sort((a, b) => a.name.localeCompare(b.name)).map(aspect => {
             let trackHTML = '<div style="display: flex; gap: 8px; padding-top: 4px; flex-shrink: 0; width: 165px;">';
             for (let i = 0; i < 5; i++) {
                 if (i < aspect.trackSize) {
@@ -71,18 +74,21 @@ export function renderPlayMode(app, character, gameData) {
                 </div>
             `;
             }).join('')}
+            </div>
         </div>
         </div>
         <hr />
         <div style="display: grid; grid-template-columns: 1fr 250px 1fr; gap: 32px; margin-bottom: 32px;">
-            <div style="display: flex; flex-direction: column; gap: 24px;">
+            <div data-section="resources" style="display: flex; flex-direction: column; gap: 24px;">
                 ${renderResources(character)}
             </div>
-            ${renderDamageTypeTable(character)}
+            <div data-section="damage-types">
+              ${renderDamageTypeTable(character)}
+            </div>
             <div style="display: flex; flex-direction: column; gap: 32px;">
-                ${renderDrives(character)}
-                ${renderMires(character)}
-                ${renderMilestones(character)}
+                <div data-section="drives">${renderDrives(character)}</div>
+                <div data-section="mires">${renderMires(character)}</div>
+                <div data-section="milestones">${renderMilestones(character)}</div>
             </div>
         </div>
     </div>

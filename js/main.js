@@ -78,6 +78,7 @@ import { renderShipCreationMode } from './rendering/ship-creation-mode.js';
 import { renderShipPlayMode } from './rendering/ship-play-mode.js';
 import { renderShipUpgradeMode } from './rendering/ship-upgrade-mode.js';
 import { switchToShip, setActiveShip } from './state/session.js';
+import { renderSection, ACTION_TO_SECTIONS } from './rendering/sections.js';
 // Realtime has infrastructure issues - using polling instead
 // import { setupSubscriptions, unsubscribeAll } from './realtime.js';
 import { startPolling, stopPolling } from './polling.js';
@@ -96,6 +97,8 @@ let session = null;
 let character = null; // Cached active character
 let ship = null; // Cached active ship
 let onlineUsers = []; // List of online users in the session
+let hasPendingCharacterSave = false; // Track if character save is pending
+let hasPendingShipSave = false; // Track if ship save is pending
 let activeShipTab = 'size'; // Track active tab for ship creation mode
 let activeWizardStage = 'design'; // Track wizard stage: 'design' | 'fittings' | 'undercrew'
 let showCustomizeModal = false; // Track if customization modal is open
@@ -104,6 +107,7 @@ let modalUnsavedEdits = {}; // Track unsaved edits in customization modal { aspe
 let loginState = 'login'; // 'login' | 'check-email'
 let loginEmail = ''; // Store email for check-email screen
 let loginMessage = ''; // Status message for login screen
+let dirtySections = new Set(); // Track which sections need re-rendering
 
 // Debounce timers for text inputs
 const debounceTimers = new Map();
@@ -130,13 +134,38 @@ function debounce(key, fn, delay = 400) {
 }
 
 /**
+ * Schedule a render after brief inactivity
+ * This batches rapid UI updates to prevent render thrashing
+ * Uses smart rendering to only update changed sections
+ */
+function scheduleRender(forceFull = false) {
+  if (forceFull) {
+    markAllDirty();
+  }
+
+  debounce('render', async () => {
+    // If full render is needed, do traditional render
+    if (dirtySections.has('full-render')) {
+      dirtySections.clear();
+      await render();
+    } else if (dirtySections.size > 0) {
+      // Otherwise, do smart partial render
+      await smartRender();
+    }
+  }, 50); // Very short delay - just batch rapid clicks
+}
+
+/**
  * Schedule a save after 1 second of inactivity
  * This provides optimistic UI updates while batching database writes
  */
 function scheduleSave() {
+  hasPendingCharacterSave = true; // Mark as pending
   debounce('character-save', async () => {
     if (character) {
       await saveCharacter(character);
+      hasPendingCharacterSave = false; // Clear pending flag after save
+      await render(); // Render once after save completes
     }
   }, 1000);
 }
@@ -145,11 +174,84 @@ function scheduleSave() {
  * Schedule a ship save after 1 second of inactivity
  */
 function scheduleShipSave() {
+  hasPendingShipSave = true; // Mark as pending
   debounce('ship-save', async () => {
     if (ship) {
       await saveShip(ship);
+      hasPendingShipSave = false; // Clear pending flag after save
+      await render(); // Render once after save completes
     }
   }, 1000);
+}
+
+/**
+ * No-op render function to pass to mutation functions
+ * This prevents mutation functions from triggering immediate renders
+ * All rendering is handled by scheduleRender() for proper debouncing
+ */
+const noopRender = () => {};
+
+/**
+ * Mark a section as needing update
+ * @param {string|string[]} section - Section name(s) to mark dirty
+ */
+function markDirty(section) {
+  if (Array.isArray(section)) {
+    section.forEach(s => dirtySections.add(s));
+  } else {
+    dirtySections.add(section);
+  }
+}
+
+/**
+ * Mark sections dirty based on action name
+ * @param {string} actionName - Name of the action that was performed
+ */
+function markDirtyByAction(actionName) {
+  const sections = ACTION_TO_SECTIONS[actionName];
+  if (sections) {
+    markDirty(sections);
+  } else {
+    // Action not mapped - do full render to be safe
+    markAllDirty();
+  }
+}
+
+/**
+ * Force a full render by marking all sections dirty
+ */
+function markAllDirty() {
+  dirtySections.add('full-render');
+}
+
+/**
+ * Smart render - only updates sections marked as dirty
+ * This is much faster than full re-render and preserves scroll/focus
+ */
+async function smartRender() {
+  if (!character) {
+    // No character to render, do full render
+    dirtySections.clear();
+    await render();
+    return;
+  }
+
+  if (DEBUG) console.log('[SMART RENDER] Updating sections:', Array.from(dirtySections));
+
+  // Render each dirty section
+  for (const sectionName of dirtySections) {
+    const success = renderSection(sectionName, character);
+    if (!success && DEBUG) {
+      console.log('[SMART RENDER] Section not found, will do full render:', sectionName);
+      // Section doesn't exist in current DOM - need full render
+      dirtySections.clear();
+      await render();
+      return;
+    }
+  }
+
+  // Clear dirty sections after successful render
+  dirtySections.clear();
 }
 
 /**
@@ -179,7 +281,8 @@ async function render(reloadSession = false) {
   }
 
   // Only reload session from DB when explicitly requested (e.g., from real-time subscription)
-  if (reloadSession) {
+  // BUT skip reload if we have pending unsaved changes to avoid race conditions
+  if (reloadSession && !hasPendingCharacterSave && !hasPendingShipSave) {
     if (DEBUG) console.log('[RENDER] Reloading session from database...');
     const latestSession = await loadSession();
     if (latestSession) {
@@ -196,6 +299,8 @@ async function render(reloadSession = false) {
       if (DEBUG) console.log('[RENDER] Reloading active ship:', session.activeShipId);
       ship = await loadShip(session.activeShipId);
     }
+  } else if (reloadSession && (hasPendingCharacterSave || hasPendingShipSave)) {
+    if (DEBUG) console.log('[RENDER] Skipping reload - pending saves in progress');
   }
 
   if (!session) {
@@ -369,101 +474,115 @@ function setupEventDelegation() {
             switch (action) {
               case 'toggleAspect':
                 if (character) {
-                  toggleAspect(parsedParams.id, render, character);
-                  await render();
+                  toggleAspect(parsedParams.id, noopRender, character);
+                  markDirtyByAction('toggleAspect');
+                  scheduleRender();
                   scheduleSave();
                 }
                 break;
               case 'toggleDamageType':
                 if (character) {
-                  toggleAspectDamageType(parsedParams.aspectId, parsedParams.damageType, render, character);
-                  await render();
+                  toggleAspectDamageType(parsedParams.aspectId, parsedParams.damageType, noopRender, character);
+                  markDirtyByAction('toggleAspectDamageType');
+                  scheduleRender();
                   scheduleSave();
                 }
                 break;
               case 'toggleEdge':
                 if (character) {
-                  toggleEdge(parsedParams.name, render, character);
-                  await render();
+                  toggleEdge(parsedParams.name, noopRender, character);
+                  markDirtyByAction('toggleEdge');
+                  scheduleRender();
                   scheduleSave();
                 }
                 break;
               case 'adjustSkill':
                 if (character) {
-                  adjustSkill(parsedParams.name, parsedParams.delta, render, character);
-                  await render();
+                  adjustSkill(parsedParams.name, parsedParams.delta, noopRender, character);
+                  markDirtyByAction('adjustSkill');
+                  scheduleRender();
                   scheduleSave();
                 }
                 break;
               case 'adjustLanguage':
                 if (character) {
-                  adjustLanguage(parsedParams.name, parsedParams.delta, render, character);
-                  await render();
+                  adjustLanguage(parsedParams.name, parsedParams.delta, noopRender, character);
+                  markDirtyByAction('adjustLanguage');
+                  scheduleRender();
                   scheduleSave();
                 }
                 break;
               case 'cycleAspectDamage':
                 e.stopPropagation();
                 if (character) {
-                  cycleAspectDamage(parsedParams.id, parsedParams.index, render, character);
-                  await render();
+                  cycleAspectDamage(parsedParams.id, parsedParams.index, noopRender, character);
+                  markDirtyByAction('cycleAspectDamage');
+                  scheduleRender();
                   scheduleSave();
                 }
                 break;
               case 'expandAspectTrack':
                 e.stopPropagation();
                 if (character) {
-                  expandAspectTrack(parsedParams.id, parsedParams.delta, render, character);
-                  await render();
+                  expandAspectTrack(parsedParams.id, parsedParams.delta, noopRender, character);
+                  markDirtyByAction('expandAspectTrack');
+                  scheduleRender();
                   scheduleSave();
                 }
                 break;
               case 'addMilestone':
                 if (character) {
-                  addMilestone(render, character);
-                  await render();
+                  addMilestone(noopRender, character);
+                  markDirtyByAction('addMilestone');
+                  scheduleRender();
                   scheduleSave();
                 }
                 break;
               case 'toggleMilestoneUsed':
                 if (character) {
-                  toggleMilestoneUsed(parsedParams.id, render, character);
-                  await render();
+                  toggleMilestoneUsed(parsedParams.id, noopRender, character);
+                  markDirtyByAction('toggleMilestoneUsed');
+                  scheduleRender();
                   scheduleSave();
                 }
                 break;
               case 'deleteMilestone':
                 if (character) {
-                  deleteMilestone(parsedParams.id, render, character);
-                  await render();
+                  deleteMilestone(parsedParams.id, noopRender, character);
+                  markDirtyByAction('deleteMilestone');
+                  scheduleRender();
                   scheduleSave();
                 }
                 break;
               case 'addResource':
                 if (character) {
-                  addResource(parsedParams.type, render, character);
-                  await render();
+                  addResource(parsedParams.type, noopRender, character);
+                  markDirtyByAction('addResource');
+                  scheduleRender();
                   scheduleSave();
                 }
                 break;
               case 'removeResource':
                 if (character) {
-                  removeResource(parsedParams.type, parsedParams.id, render, character);
-                  await render();
+                  removeResource(parsedParams.type, parsedParams.id, noopRender, character);
+                  markDirtyByAction('removeResource');
+                  scheduleRender();
                   scheduleSave();
                 }
                 break;
               case 'populateDefaultResources':
                 if (character) {
-                  populateDefaultResources(render, character);
-                  await render();
+                  populateDefaultResources(noopRender, character);
+                  markDirtyByAction('populateDefaultResources');
+                  scheduleRender();
                   scheduleSave();
                 }
                 break;
               case 'generateRandomCharacter':
                 if (character) {
-                  generateRandomCharacter(render, character);
-                  await render();
+                  generateRandomCharacter(noopRender, character);
+                  markAllDirty(); // Affects everything
+                  scheduleRender();
                   scheduleSave();
                 }
                 break;
@@ -472,8 +591,9 @@ function setupEventDelegation() {
                 break;
               case 'setMode':
                 if (character) {
-                  setMode(parsedParams.mode, render, character);
-                  await render();
+                  setMode(parsedParams.mode, noopRender, character);
+                  markAllDirty(); // Mode switch affects entire layout
+                  scheduleRender();
                   scheduleSave();
                 }
                 break;
@@ -487,8 +607,9 @@ function setupEventDelegation() {
                 break;
               case 'toggleMireCheckbox':
                 if (character) {
-                  toggleMireCheckbox(parsedParams.index, parsedParams.num, render, character);
-                  await render();
+                  toggleMireCheckbox(parsedParams.index, parsedParams.num, noopRender, character);
+                  markDirtyByAction('toggleMireCheckbox');
+                  scheduleRender();
                   scheduleSave();
                 }
                 break;
@@ -541,8 +662,8 @@ function setupEventDelegation() {
                 break;
               case 'setShipMode':
                 if (ship) {
-                  setShipMode(parsedParams.mode, render, ship);
-                  await render();
+                  setShipMode(parsedParams.mode, noopRender, ship);
+                  scheduleRender();
                   scheduleShipSave();
                 }
                 break;
@@ -564,22 +685,22 @@ function setupEventDelegation() {
                 break;
               case 'selectShipPart':
                 if (ship) {
-                  selectShipPart(parsedParams.partType, parsedParams.part, render, ship);
-                  await render();
+                  selectShipPart(parsedParams.partType, parsedParams.part, noopRender, ship);
+                  scheduleRender();
                   scheduleShipSave();
                 }
                 break;
               case 'selectShipFitting':
                 if (ship) {
-                  selectShipFitting(parsedParams.fittingType, parsedParams.fitting, render, ship);
-                  await render();
+                  selectShipFitting(parsedParams.fittingType, parsedParams.fitting, noopRender, ship);
+                  scheduleRender();
                   scheduleShipSave();
                 }
                 break;
               case 'selectShipUndercrew':
                 if (ship) {
-                  selectShipUndercrew(parsedParams.undercrewType, parsedParams.undercrew, render, ship);
-                  await render();
+                  selectShipUndercrew(parsedParams.undercrewType, parsedParams.undercrew, noopRender, ship);
+                  scheduleRender();
                   scheduleShipSave();
                 }
                 break;
@@ -627,44 +748,44 @@ function setupEventDelegation() {
               case 'cycleRatingDamage':
                 e.stopPropagation();
                 if (ship) {
-                  cycleRatingDamage(parsedParams.rating, parsedParams.index, render, ship);
-                  await render();
+                  cycleRatingDamage(parsedParams.rating, parsedParams.index, noopRender, ship);
+                  scheduleRender();
                   scheduleShipSave();
                 }
                 break;
               case 'cycleUndercrewDamage':
                 e.stopPropagation();
                 if (ship) {
-                  cycleUndercrewDamage(parsedParams.undercrewName, parsedParams.index, render, ship);
-                  await render();
+                  cycleUndercrewDamage(parsedParams.undercrewName, parsedParams.index, noopRender, ship);
+                  scheduleRender();
                   scheduleShipSave();
                 }
                 break;
               case 'addCargo':
                 if (ship) {
                   addCargo(render, ship);
-                  await render();
+                  scheduleRender();
                   scheduleShipSave();
                 }
                 break;
               case 'removeCargo':
                 if (ship) {
-                  removeCargo(parsedParams.id, render, ship);
-                  await render();
+                  removeCargo(parsedParams.id, noopRender, ship);
+                  scheduleRender();
                   scheduleShipSave();
                 }
                 break;
               case 'addPassenger':
                 if (ship) {
                   addPassenger(render, ship);
-                  await render();
+                  scheduleRender();
                   scheduleShipSave();
                 }
                 break;
               case 'removePassenger':
                 if (ship) {
-                  removePassenger(parsedParams.id, render, ship);
-                  await render();
+                  removePassenger(parsedParams.id, noopRender, ship);
+                  scheduleRender();
                   scheduleShipSave();
                 }
                 break;
@@ -717,7 +838,7 @@ function setupEventDelegation() {
                   showCustomizeModal = false;
                   selectedModalAspectId = null;
                   modalUnsavedEdits = {}; // Clear unsaved edits
-                  await render();
+                  scheduleRender();
                   scheduleSave();
                 }
                 break;
@@ -729,7 +850,7 @@ function setupEventDelegation() {
                   }
                   if (confirm('Reset this aspect to its original name and description?')) {
                     resetAspectCustomization(parsedParams.id, character);
-                    await render();
+                    scheduleRender();
                     scheduleSave();
                   }
                 }
@@ -791,8 +912,8 @@ function setupEventDelegation() {
 
         if (action === 'updateAnticipatedCrewSize') {
           if (ship) {
-            updateAnticipatedCrewSize(target.value, render, ship);
-            await render();
+            updateAnticipatedCrewSize(target.value, noopRender, ship);
+            scheduleRender();
             scheduleShipSave();
           }
           return;
@@ -800,8 +921,8 @@ function setupEventDelegation() {
 
         if (action === 'updateAdditionalStakes') {
           if (ship) {
-            updateAdditionalStakes(target.value, render, ship);
-            await render();
+            updateAdditionalStakes(target.value, noopRender, ship);
+            scheduleRender();
             scheduleShipSave();
           }
           return;
@@ -835,28 +956,35 @@ function setupEventDelegation() {
         switch (action) {
           case 'onCharacterNameChange':
             onCharacterNameChange(target.value, character);
+            markDirtyByAction('onCharacterNameChange');
+            scheduleRender();
             // Debounce character name saves
             debounce('character-name', async () => {
               await saveCharacter(character);
             });
             break;
           case 'onBloodlineChange':
-            onBloodlineChange(target.value, render, character);
-            await render();
+            onBloodlineChange(target.value, noopRender, character);
+            markDirtyByAction('onBloodlineChange');
+            scheduleRender();
             scheduleSave();
             break;
           case 'onOriginChange':
-            onOriginChange(target.value, render, character);
-            await render();
+            onOriginChange(target.value, noopRender, character);
+            markDirtyByAction('onOriginChange');
+            scheduleRender();
             scheduleSave();
             break;
           case 'onPostChange':
-            onPostChange(target.value, render, character);
-            await render();
+            onPostChange(target.value, noopRender, character);
+            markDirtyByAction('onPostChange');
+            scheduleRender();
             scheduleSave();
             break;
           case 'updateDrive':
             updateDrive(parsedParams.index, target.value, character);
+            markDirtyByAction('updateDrive');
+            scheduleRender();
             // Debounce drive saves
             debounce('drive-' + parsedParams.index, async () => {
               await saveCharacter(character);
@@ -864,6 +992,8 @@ function setupEventDelegation() {
             break;
           case 'updateMire':
             updateMire(parsedParams.index, target.value, character);
+            markDirtyByAction('updateMire');
+            scheduleRender();
             // Debounce mire saves
             debounce('mire-' + parsedParams.index, async () => {
               await saveCharacter(character);
@@ -871,18 +1001,23 @@ function setupEventDelegation() {
             break;
           case 'updateMilestoneName':
             updateMilestoneName(parsedParams.id, target.value, character);
+            markDirtyByAction('updateMilestoneName');
+            scheduleRender();
             // Debounce milestone name saves
             debounce('milestone-name-' + parsedParams.id, async () => {
               await saveCharacter(character);
             });
             break;
           case 'updateMilestoneScale':
-            updateMilestoneScale(parsedParams.id, target.value, render, character);
-            await render();
+            updateMilestoneScale(parsedParams.id, target.value, noopRender, character);
+            markDirtyByAction('updateMilestoneScale');
+            scheduleRender();
             scheduleSave();
             break;
           case 'updateResourceName':
             updateResourceName(parsedParams.type, parsedParams.id, target.value, character);
+            markDirtyByAction('updateResourceName');
+            scheduleRender();
             // Debounce resource name saves
             debounce('resource-name-' + parsedParams.type + '-' + parsedParams.id, async () => {
               await saveCharacter(character);
