@@ -78,6 +78,7 @@ import { renderShipCreationMode } from './rendering/ship-creation-mode.js';
 import { renderShipPlayMode } from './rendering/ship-play-mode.js';
 import { renderShipUpgradeMode } from './rendering/ship-upgrade-mode.js';
 import { switchToShip, setActiveShip } from './state/session.js';
+import { renderSection, ACTION_TO_SECTIONS } from './rendering/sections.js';
 // Realtime has infrastructure issues - using polling instead
 // import { setupSubscriptions, unsubscribeAll } from './realtime.js';
 import { startPolling, stopPolling } from './polling.js';
@@ -106,6 +107,7 @@ let modalUnsavedEdits = {}; // Track unsaved edits in customization modal { aspe
 let loginState = 'login'; // 'login' | 'check-email'
 let loginEmail = ''; // Store email for check-email screen
 let loginMessage = ''; // Status message for login screen
+let dirtySections = new Set(); // Track which sections need re-rendering
 
 // Debounce timers for text inputs
 const debounceTimers = new Map();
@@ -134,10 +136,22 @@ function debounce(key, fn, delay = 400) {
 /**
  * Schedule a render after brief inactivity
  * This batches rapid UI updates to prevent render thrashing
+ * Uses smart rendering to only update changed sections
  */
-function scheduleRender() {
+function scheduleRender(forceFull = false) {
+  if (forceFull) {
+    markAllDirty();
+  }
+
   debounce('render', async () => {
-    await render();
+    // If full render is needed, do traditional render
+    if (dirtySections.has('full-render')) {
+      dirtySections.clear();
+      await render();
+    } else if (dirtySections.size > 0) {
+      // Otherwise, do smart partial render
+      await smartRender();
+    }
   }, 50); // Very short delay - just batch rapid clicks
 }
 
@@ -176,6 +190,69 @@ function scheduleShipSave() {
  * All rendering is handled by scheduleRender() for proper debouncing
  */
 const noopRender = () => {};
+
+/**
+ * Mark a section as needing update
+ * @param {string|string[]} section - Section name(s) to mark dirty
+ */
+function markDirty(section) {
+  if (Array.isArray(section)) {
+    section.forEach(s => dirtySections.add(s));
+  } else {
+    dirtySections.add(section);
+  }
+}
+
+/**
+ * Mark sections dirty based on action name
+ * @param {string} actionName - Name of the action that was performed
+ */
+function markDirtyByAction(actionName) {
+  const sections = ACTION_TO_SECTIONS[actionName];
+  if (sections) {
+    markDirty(sections);
+  } else {
+    // Action not mapped - do full render to be safe
+    markAllDirty();
+  }
+}
+
+/**
+ * Force a full render by marking all sections dirty
+ */
+function markAllDirty() {
+  dirtySections.add('full-render');
+}
+
+/**
+ * Smart render - only updates sections marked as dirty
+ * This is much faster than full re-render and preserves scroll/focus
+ */
+async function smartRender() {
+  if (!character) {
+    // No character to render, do full render
+    dirtySections.clear();
+    await render();
+    return;
+  }
+
+  if (DEBUG) console.log('[SMART RENDER] Updating sections:', Array.from(dirtySections));
+
+  // Render each dirty section
+  for (const sectionName of dirtySections) {
+    const success = renderSection(sectionName, character);
+    if (!success && DEBUG) {
+      console.log('[SMART RENDER] Section not found, will do full render:', sectionName);
+      // Section doesn't exist in current DOM - need full render
+      dirtySections.clear();
+      await render();
+      return;
+    }
+  }
+
+  // Clear dirty sections after successful render
+  dirtySections.clear();
+}
 
 /**
  * Render login screen
@@ -398,6 +475,7 @@ function setupEventDelegation() {
               case 'toggleAspect':
                 if (character) {
                   toggleAspect(parsedParams.id, noopRender, character);
+                  markDirtyByAction('toggleAspect');
                   scheduleRender();
                   scheduleSave();
                 }
@@ -405,6 +483,7 @@ function setupEventDelegation() {
               case 'toggleDamageType':
                 if (character) {
                   toggleAspectDamageType(parsedParams.aspectId, parsedParams.damageType, noopRender, character);
+                  markDirtyByAction('toggleAspectDamageType');
                   scheduleRender();
                   scheduleSave();
                 }
@@ -412,6 +491,7 @@ function setupEventDelegation() {
               case 'toggleEdge':
                 if (character) {
                   toggleEdge(parsedParams.name, noopRender, character);
+                  markDirtyByAction('toggleEdge');
                   scheduleRender();
                   scheduleSave();
                 }
@@ -419,6 +499,7 @@ function setupEventDelegation() {
               case 'adjustSkill':
                 if (character) {
                   adjustSkill(parsedParams.name, parsedParams.delta, noopRender, character);
+                  markDirtyByAction('adjustSkill');
                   scheduleRender();
                   scheduleSave();
                 }
@@ -426,6 +507,7 @@ function setupEventDelegation() {
               case 'adjustLanguage':
                 if (character) {
                   adjustLanguage(parsedParams.name, parsedParams.delta, noopRender, character);
+                  markDirtyByAction('adjustLanguage');
                   scheduleRender();
                   scheduleSave();
                 }
@@ -434,6 +516,7 @@ function setupEventDelegation() {
                 e.stopPropagation();
                 if (character) {
                   cycleAspectDamage(parsedParams.id, parsedParams.index, noopRender, character);
+                  markDirtyByAction('cycleAspectDamage');
                   scheduleRender();
                   scheduleSave();
                 }
@@ -442,13 +525,15 @@ function setupEventDelegation() {
                 e.stopPropagation();
                 if (character) {
                   expandAspectTrack(parsedParams.id, parsedParams.delta, noopRender, character);
+                  markDirtyByAction('expandAspectTrack');
                   scheduleRender();
                   scheduleSave();
                 }
                 break;
               case 'addMilestone':
                 if (character) {
-                  addMilestone(render, character);
+                  addMilestone(noopRender, character);
+                  markDirtyByAction('addMilestone');
                   scheduleRender();
                   scheduleSave();
                 }
@@ -456,6 +541,7 @@ function setupEventDelegation() {
               case 'toggleMilestoneUsed':
                 if (character) {
                   toggleMilestoneUsed(parsedParams.id, noopRender, character);
+                  markDirtyByAction('toggleMilestoneUsed');
                   scheduleRender();
                   scheduleSave();
                 }
@@ -463,6 +549,7 @@ function setupEventDelegation() {
               case 'deleteMilestone':
                 if (character) {
                   deleteMilestone(parsedParams.id, noopRender, character);
+                  markDirtyByAction('deleteMilestone');
                   scheduleRender();
                   scheduleSave();
                 }
@@ -470,6 +557,7 @@ function setupEventDelegation() {
               case 'addResource':
                 if (character) {
                   addResource(parsedParams.type, noopRender, character);
+                  markDirtyByAction('addResource');
                   scheduleRender();
                   scheduleSave();
                 }
@@ -477,20 +565,23 @@ function setupEventDelegation() {
               case 'removeResource':
                 if (character) {
                   removeResource(parsedParams.type, parsedParams.id, noopRender, character);
+                  markDirtyByAction('removeResource');
                   scheduleRender();
                   scheduleSave();
                 }
                 break;
               case 'populateDefaultResources':
                 if (character) {
-                  populateDefaultResources(render, character);
+                  populateDefaultResources(noopRender, character);
+                  markDirtyByAction('populateDefaultResources');
                   scheduleRender();
                   scheduleSave();
                 }
                 break;
               case 'generateRandomCharacter':
                 if (character) {
-                  generateRandomCharacter(render, character);
+                  generateRandomCharacter(noopRender, character);
+                  markAllDirty(); // Affects everything
                   scheduleRender();
                   scheduleSave();
                 }
@@ -501,6 +592,7 @@ function setupEventDelegation() {
               case 'setMode':
                 if (character) {
                   setMode(parsedParams.mode, noopRender, character);
+                  markAllDirty(); // Mode switch affects entire layout
                   scheduleRender();
                   scheduleSave();
                 }
@@ -516,6 +608,7 @@ function setupEventDelegation() {
               case 'toggleMireCheckbox':
                 if (character) {
                   toggleMireCheckbox(parsedParams.index, parsedParams.num, noopRender, character);
+                  markDirtyByAction('toggleMireCheckbox');
                   scheduleRender();
                   scheduleSave();
                 }
@@ -863,6 +956,8 @@ function setupEventDelegation() {
         switch (action) {
           case 'onCharacterNameChange':
             onCharacterNameChange(target.value, character);
+            markDirtyByAction('onCharacterNameChange');
+            scheduleRender();
             // Debounce character name saves
             debounce('character-name', async () => {
               await saveCharacter(character);
@@ -870,21 +965,26 @@ function setupEventDelegation() {
             break;
           case 'onBloodlineChange':
             onBloodlineChange(target.value, noopRender, character);
+            markDirtyByAction('onBloodlineChange');
             scheduleRender();
             scheduleSave();
             break;
           case 'onOriginChange':
             onOriginChange(target.value, noopRender, character);
+            markDirtyByAction('onOriginChange');
             scheduleRender();
             scheduleSave();
             break;
           case 'onPostChange':
             onPostChange(target.value, noopRender, character);
+            markDirtyByAction('onPostChange');
             scheduleRender();
             scheduleSave();
             break;
           case 'updateDrive':
             updateDrive(parsedParams.index, target.value, character);
+            markDirtyByAction('updateDrive');
+            scheduleRender();
             // Debounce drive saves
             debounce('drive-' + parsedParams.index, async () => {
               await saveCharacter(character);
@@ -892,6 +992,8 @@ function setupEventDelegation() {
             break;
           case 'updateMire':
             updateMire(parsedParams.index, target.value, character);
+            markDirtyByAction('updateMire');
+            scheduleRender();
             // Debounce mire saves
             debounce('mire-' + parsedParams.index, async () => {
               await saveCharacter(character);
@@ -899,6 +1001,8 @@ function setupEventDelegation() {
             break;
           case 'updateMilestoneName':
             updateMilestoneName(parsedParams.id, target.value, character);
+            markDirtyByAction('updateMilestoneName');
+            scheduleRender();
             // Debounce milestone name saves
             debounce('milestone-name-' + parsedParams.id, async () => {
               await saveCharacter(character);
@@ -906,11 +1010,14 @@ function setupEventDelegation() {
             break;
           case 'updateMilestoneScale':
             updateMilestoneScale(parsedParams.id, target.value, noopRender, character);
+            markDirtyByAction('updateMilestoneScale');
             scheduleRender();
             scheduleSave();
             break;
           case 'updateResourceName':
             updateResourceName(parsedParams.type, parsedParams.id, target.value, character);
+            markDirtyByAction('updateResourceName');
+            scheduleRender();
             // Debounce resource name saves
             debounce('resource-name-' + parsedParams.type + '-' + parsedParams.id, async () => {
               await saveCharacter(character);
