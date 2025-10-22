@@ -409,6 +409,66 @@ If Phase 1 causes issues:
 
 ---
 
+### Phase 2.5: Text Input Focus Fix (15 minutes)
+**Status**: Complete
+**Date**: 2025-10-22
+
+**Problem**:
+Text inputs in play mode were experiencing interaction issues:
+- Inputs losing focus immediately when selected
+- Text resetting mid-sentence while typing
+- Pasted content getting erased if user didn't hit enter quickly
+
+**Root Cause**:
+Text input change handlers were calling `scheduleRender()` on every keystroke, which triggered a partial re-render 50ms later. Even though it was only partial rendering, it still destroyed and recreated the input elements, causing focus loss and value resets.
+
+**Solution (Part 1 - Initial Fix)**:
+Removed `scheduleRender()` and `markDirtyByAction()` calls from all text input change handlers:
+- `onCharacterNameChange`
+- `updateDrive`
+- `updateMire`
+- `updateNotes`
+- `updateMilestoneName`
+- `updateTaskName`
+- `updateResourceName`
+
+**Solution (Part 2 - Complete Fix)**:
+After initial fix, users still experienced unpredictable focus loss. Root cause analysis revealed two additional render triggers:
+
+1. **Post-save renders** (lines 180, 194): After button click saves completed (1000ms later), they called `await render()`, which was redundant since `scheduleRender()` already updated the UI after 50ms.
+
+2. **Polling renders** (line 320): Every 3 seconds, polling called `render(true)`. Even when it skipped the database reload due to pending button saves, it continued to render the UI, interrupting text input.
+
+**Complete Solution**:
+1. Removed redundant `await render()` calls from `scheduleSave()` and `scheduleShipSave()` (lines 203, 217)
+2. Created `hasActiveTextInputEdits()` helper function to detect if user is actively typing (lines 174-191)
+3. Modified `render()` to skip polling renders entirely when text inputs are active (line 320-323)
+
+**Rationale**:
+- Text inputs don't need to trigger re-renders because the user is already seeing their changes
+- Button click renders (via scheduleRender) happen immediately, so post-save renders are redundant
+- Polling renders should never interrupt active user input
+
+**Files Modified**:
+- `js/main.js`:
+  - Lines 174-191: Added `hasActiveTextInputEdits()` helper
+  - Lines 197-220: Removed render() calls from scheduleSave/scheduleShipSave
+  - Lines 320-323: Skip polling renders when user is typing
+  - Lines 1072-1157: Removed scheduleRender() from text input handlers (Part 1)
+
+**Benefits**:
+- ✅ Text inputs maintain focus during typing
+- ✅ No interruption from polling (every 3 seconds)
+- ✅ No interruption from post-save renders (1 second after button clicks)
+- ✅ Paste operations work reliably
+- ✅ Reduced unnecessary re-renders
+- ✅ Eliminated all sources of unpredictable focus loss
+- ✅ Better user experience for all text fields
+
+**Key Insight**: Not all state changes require UI re-renders. For text inputs where the user is directly manipulating the DOM element, the state update should be silent (no render), with only the database save being debounced. Additionally, all background processes (polling, post-save renders) must respect active user input and defer their operations.
+
+---
+
 ## Notes
 
 - Current architecture (event delegation, full re-renders) is simple and maintainable

@@ -1155,13 +1155,18 @@
       "type": "Trait",
       "track": 1,
       "description": "Your grip on the world is tentative, but that does come with certain benefits. You are weak to salt and volt damage, but immune to blunt, keen and spike.",
-      "damageTypes": {
-        "category": "immunity",
-        "selectionType": "fixed",
-        "options": [
-          "Blunt"
-        ]
-      }
+      "damageTypes": [
+        {
+          "category": "weakness",
+          "selectionType": "fixed",
+          "options": ["Salt", "Volt"]
+        },
+        {
+          "category": "immunity",
+          "selectionType": "fixed",
+          "options": ["Blunt", "Keen", "Spike"]
+        }
+      ]
     },
     {
       "name": "Spectral Variance",
@@ -1198,21 +1203,6 @@
       "type": "Gear",
       "track": 3,
       "description": "Some anchored prefer to hide their face, letting the memories of their time among the living fade. Treat conflicts as triumphs when attempting to unnerve or unsettle."
-    },
-    {
-      "name": "Matching Death Mask Set",
-      "type": "Gear",
-      "track": 1,
-      "description": "Some anchored prefer to hide their face, letting the memories of their time among the living fade. Treat conflicts as triumphs when attempting to unnerve or unsettle. Now with a matching sawnana blade tongue attachment weapon, dealing CQ Volt or Salt damage. Haunter and Salt Lick.",
-      "damageTypes": {
-        "category": "dealing",
-        "selectionType": "fixed",
-        "options": [
-          "Volt",
-          "Salt"
-        ],
-        "range": "CQ"
-      }
     },
     {
       "name": "Siphoning Fork",

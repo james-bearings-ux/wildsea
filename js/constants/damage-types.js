@@ -170,10 +170,13 @@ export function normalizeDamageType(type) {
 /**
  * Parse damage types from a description string
  * Looks for patterns like "chosen from the following list: X, Y, Z"
+ * Returns all matches found (aspect can have multiple categories)
  * @param {string} description - The aspect description
- * @returns {Object|null} - Parsed damage type info or null
+ * @returns {Array|null} - Array of parsed damage type objects, or null if none found
  */
 export function parseDamageTypesFromDescription(description) {
+  const matches = [];
+
   // Pattern: "resistant to X damage types, chosen from the following list: A, B, C"
   const choosePattern = /resistant to (\w+) damage types?,\s*chosen from the following list:\s*([^.]+)/i;
   const chooseMatch = description.match(choosePattern);
@@ -189,12 +192,31 @@ export function parseDamageTypesFromDescription(description) {
       .map(normalizeDamageType)
       .filter(t => t.length > 0);
 
-    return {
+    matches.push({
       category: DAMAGE_CATEGORIES.RESISTANCE,
       selectionType: SELECTION_TYPES.CHOOSE,
       chooseCount,
       options: typeList
-    };
+    });
+  }
+
+  // Pattern: "resistant/resistance to <damage type> damage" (fixed, no choice)
+  const resistancePattern = /resistan(?:t|ce) to ([a-z]+(?:\s+(?:and|or)\s+[a-z]+)*)\s+damage/i;
+  const resistanceMatch = description.match(resistancePattern);
+
+  if (resistanceMatch) {
+    const typeString = resistanceMatch[1];
+
+    // Handle multiple types with "and" or "or"
+    const types = typeString
+      .split(/\s+(?:and|or)\s+/)
+      .map(normalizeDamageType);
+
+    matches.push({
+      category: DAMAGE_CATEGORIES.RESISTANCE,
+      selectionType: SELECTION_TYPES.FIXED,
+      options: types
+    });
   }
 
   // Pattern: "deals CQ/LR/UR <damage type> damage"
@@ -212,38 +234,54 @@ export function parseDamageTypesFromDescription(description) {
       .split(/\s+(?:and|or)\s+/)
       .map(normalizeDamageType);
 
-    return {
+    matches.push({
       category: DAMAGE_CATEGORIES.DEALING,
       selectionType: SELECTION_TYPES.FIXED,
       chooseCount: null,
       options: types,
       range
-    };
+    });
   }
 
-  // Pattern: "weakness to <damage type>"
-  const weaknessPattern = /weakness to ([a-z]+) damage/i;
+  // Pattern: "weakness/weak to <damage type(s)>" - handles comma-separated lists
+  const weaknessPattern = /weak(?:ness)? to ([a-z]+(?:(?:,\s*| and | or )[a-z]+)*)(?: damage)?/i;
   const weaknessMatch = description.match(weaknessPattern);
 
   if (weaknessMatch) {
-    return {
+    const typeString = weaknessMatch[1];
+
+    // Handle comma-separated lists and "and"/"or"
+    const types = typeString
+      .split(/(?:,\s*| and | or )+/)
+      .map(normalizeDamageType)
+      .filter(t => t.length > 0);
+
+    matches.push({
       category: DAMAGE_CATEGORIES.WEAKNESS,
       selectionType: SELECTION_TYPES.FIXED,
-      options: [normalizeDamageType(weaknessMatch[1])]
-    };
+      options: types
+    });
   }
 
-  // Pattern: "immune to <damage type>"
-  const immunityPattern = /immune to ([a-z]+) damage/i;
+  // Pattern: "immune to <damage type(s)>" - handles comma-separated lists
+  const immunityPattern = /immune to ([a-z]+(?:(?:,\s*| and | or )[a-z]+)*)(?: damage)?/i;
   const immunityMatch = description.match(immunityPattern);
 
   if (immunityMatch) {
-    return {
+    const typeString = immunityMatch[1];
+
+    // Handle comma-separated lists and "and"/"or"
+    const types = typeString
+      .split(/(?:,\s*| and | or )+/)
+      .map(normalizeDamageType)
+      .filter(t => t.length > 0);
+
+    matches.push({
       category: DAMAGE_CATEGORIES.IMMUNITY,
       selectionType: SELECTION_TYPES.FIXED,
-      options: [normalizeDamageType(immunityMatch[1])]
-    };
+      options: types
+    });
   }
 
-  return null;
+  return matches.length > 0 ? matches : null;
 }
