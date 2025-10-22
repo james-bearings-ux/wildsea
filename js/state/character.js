@@ -167,6 +167,37 @@ export async function getAllCharacters(sessionId) {
  * Convert database column names to app property names
  */
 function convertFromDB(dbChar) {
+  // Migrate old selectedDamageTypes array format to new object format
+  const selectedAspects = (dbChar.selected_aspects || []).map(aspect => {
+    // If selectedDamageTypes is an array (old format), convert to object keyed by category
+    if (aspect.selectedDamageTypes && Array.isArray(aspect.selectedDamageTypes)) {
+      const oldSelections = aspect.selectedDamageTypes;
+
+      // Handle both old and new damageTypes format
+      const damageTypesArray = Array.isArray(aspect.damageTypes)
+        ? aspect.damageTypes
+        : (aspect.damageTypes ? [aspect.damageTypes] : []);
+
+      // Find the category with "choose" type (that's where the selections belong)
+      const chooseCategory = damageTypesArray.find(dt => dt.selectionType === 'choose');
+
+      if (chooseCategory && oldSelections.length > 0) {
+        // Migrate array to object with category key
+        aspect.selectedDamageTypes = {
+          [chooseCategory.category]: oldSelections
+        };
+      } else {
+        // No valid category found, reset to empty object
+        aspect.selectedDamageTypes = {};
+      }
+    } else if (!aspect.selectedDamageTypes) {
+      // Initialize if missing
+      aspect.selectedDamageTypes = {};
+    }
+
+    return aspect;
+  });
+
   return {
     id: dbChar.id,
     mode: dbChar.mode,
@@ -174,7 +205,7 @@ function convertFromDB(dbChar) {
     bloodline: dbChar.bloodline,
     origin: dbChar.origin,
     post: dbChar.post,
-    selectedAspects: dbChar.selected_aspects || [],
+    selectedAspects,
     selectedEdges: dbChar.selected_edges || [],
     skills: dbChar.skills || {},
     languages: dbChar.languages || { 'Low Sour': 3 },
