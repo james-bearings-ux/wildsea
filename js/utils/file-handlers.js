@@ -111,6 +111,9 @@ export async function importCharacter(session, renderCallback) {
           };
         }
 
+        // Copy journey role
+        newCharacter.journeyRole = importedData.journeyRole || '';
+
         // Save the updated character data
         await saveCharacter(newCharacter);
 
@@ -238,6 +241,22 @@ export async function importShip(session, renderCallback) {
           }));
         } else {
           newShip.passengers = [];
+        }
+
+        // Copy journey data
+        if (importedData.journey) {
+          newShip.journey = importedData.journey;
+        } else {
+          newShip.journey = {
+            active: false,
+            name: '',
+            clocks: {
+              progress: { max: 6, filled: 0 },
+              risk: { max: 6, filled: 0 },
+              pathfinding: { max: 6, filled: 0 },
+              riot: { max: 6, filled: 0 }
+            }
+          };
         }
 
         // Save the updated ship data

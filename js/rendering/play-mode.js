@@ -11,8 +11,9 @@ import { renderTasks } from '../components/tasks.js';
 import { renderNotes } from '../components/notes.js';
 import { renderDamageTypeTable } from '../components/damage-summary.js';
 import { highlightDamageTypesInDescription, renderDamageTypeWarning } from '../components/damage-type-selector.js';
+import { renderRoleSelector } from '../components/journey-role.js';
 
-export function renderPlayMode(app, character, gameData, showAddTaskForm = false) {
+export function renderPlayMode(app, character, gameData, showAddTaskForm = false, ship = null) {
 
   app.innerHTML = `
     <div style="padding: 20px; max-width: 1400px; margin: 0 auto; padding-bottom: 80px;">
@@ -101,12 +102,17 @@ export function renderPlayMode(app, character, gameData, showAddTaskForm = false
         </div>
     </div>
 
-    <div class="sticky-action-bar split">
+    <div class="sticky-action-bar" style="display: flex; justify-content: space-between; align-items: center;">
         <div style="display: flex; gap: 8px;">
             <button data-action="removeCharacter" data-params='{"characterId":"${character.id}"}' style="background-color: #A91D3A; color: #fff;">Delete</button>
             <button data-action="exportCharacter">Export</button>
         </div>
-        <button data-action="setMode" data-params='{"mode":"advancement"}'>Advancement</button>
+        <div style="flex: 1; display: flex; justify-content: center;">
+            ${ship && ship.journey && ship.journey.active ? renderRoleSelector(character.journeyRole, ship.journey.active) : ''}
+        </div>
+        <div>
+            <button data-action="setMode" data-params='{"mode":"advancement"}'>Advancement</button>
+        </div>
     </div>
     `;
 }

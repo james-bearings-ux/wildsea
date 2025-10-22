@@ -56,7 +56,17 @@ export async function createShip(sessionId, name = 'New Ship') {
       },
       undercrew_damage: {},
       cargo: [],
-      passengers: []
+      passengers: [],
+      journey: {
+        active: false,
+        name: '',
+        clocks: {
+          progress: { max: 6, filled: 0 },
+          risk: { max: 6, filled: 0 },
+          pathfinding: { max: 6, filled: 0 },
+          riot: { max: 6, filled: 0 }
+        }
+      }
     }])
     .select()
     .single();
@@ -126,6 +136,7 @@ export async function saveShip(ship) {
       undercrew_damage: ship.undercrewDamage,
       cargo: ship.cargo,
       passengers: ship.passengers,
+      journey: ship.journey,
       updated_at: new Date().toISOString()
     })
     .eq('id', ship.id);
@@ -207,7 +218,17 @@ function convertFromDB(dbShip) {
     },
     undercrewDamage: dbShip.undercrew_damage || {},
     cargo: dbShip.cargo || [],
-    passengers: dbShip.passengers || []
+    passengers: dbShip.passengers || [],
+    journey: dbShip.journey || {
+      active: false,
+      name: '',
+      clocks: {
+        progress: { max: 6, filled: 0 },
+        risk: { max: 6, filled: 0 },
+        pathfinding: { max: 6, filled: 0 },
+        riot: { max: 6, filled: 0 }
+      }
+    }
   };
 }
 
@@ -604,4 +625,95 @@ export function removePassenger(id, renderCallback, ship) {
     ship.passengers.splice(index, 1);
     renderCallback();
   }
+}
+
+/**
+ * Journey mutations
+ */
+
+/**
+ * Toggle journey active state
+ */
+export function toggleJourney(renderCallback, ship) {
+  if (!ship.journey) {
+    ship.journey = {
+      active: false,
+      name: '',
+      clocks: {
+        progress: { max: 6, filled: 0 },
+        risk: { max: 6, filled: 0 },
+        pathfinding: { max: 6, filled: 0 },
+        riot: { max: 6, filled: 0 }
+      }
+    };
+  }
+  ship.journey.active = !ship.journey.active;
+  if (renderCallback) renderCallback();
+}
+
+/**
+ * Set journey name
+ */
+export function setJourneyName(name, ship) {
+  if (!ship.journey) {
+    ship.journey = {
+      active: false,
+      name: '',
+      clocks: {
+        progress: { max: 6, filled: 0 },
+        risk: { max: 6, filled: 0 },
+        pathfinding: { max: 6, filled: 0 },
+        riot: { max: 6, filled: 0 }
+      }
+    };
+  }
+  ship.journey.name = name;
+}
+
+/**
+ * Update clock filled ticks
+ */
+export function updateClock(clockType, filled, renderCallback, ship) {
+  if (!ship.journey || !ship.journey.clocks[clockType]) {
+    return;
+  }
+  ship.journey.clocks[clockType].filled = Math.max(0, Math.min(filled, ship.journey.clocks[clockType].max));
+  if (renderCallback) renderCallback();
+}
+
+/**
+ * Set clock max ticks
+ */
+export function setClockMax(clockType, max, renderCallback, ship) {
+  if (!ship.journey || !ship.journey.clocks[clockType]) {
+    return;
+  }
+  ship.journey.clocks[clockType].max = Math.max(1, Math.min(6, max));
+  // Ensure filled doesn't exceed new max
+  ship.journey.clocks[clockType].filled = Math.min(
+    ship.journey.clocks[clockType].filled,
+    max
+  );
+  if (renderCallback) renderCallback();
+}
+
+/**
+ * Toggle a specific tick in a clock (for clicking individual ticks)
+ */
+export function toggleClockTick(clockType, tickIndex, renderCallback, ship) {
+  if (!ship.journey || !ship.journey.clocks[clockType]) {
+    return;
+  }
+
+  const clock = ship.journey.clocks[clockType];
+
+  // If clicking on or before the current filled position, unfill to that point
+  // If clicking after, fill to that point
+  if (tickIndex < clock.filled) {
+    clock.filled = tickIndex;
+  } else {
+    clock.filled = tickIndex + 1;
+  }
+
+  if (renderCallback) renderCallback();
 }

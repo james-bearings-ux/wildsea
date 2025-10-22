@@ -50,7 +50,8 @@ export async function createCharacter(sessionId, name = 'Unnamed Character', blo
         salvage: [],
         specimens: [],
         whispers: []
-      }
+      },
+      journey_role: ''
     }])
     .select()
     .single();
@@ -117,6 +118,7 @@ export async function saveCharacter(character) {
       tasks: character.tasks,
       notes: character.notes,
       resources: character.resources,
+      journey_role: character.journeyRole,
       updated_at: new Date().toISOString()
     })
     .eq('id', character.id);
@@ -223,7 +225,8 @@ function convertFromDB(dbChar) {
       salvage: [],
       specimens: [],
       whispers: []
-    }
+    },
+    journeyRole: dbChar.journey_role || ''
   };
 }
 
@@ -1011,4 +1014,15 @@ export function getCharacterDefenses(char) {
     immunities: result.immunity,
     weaknesses: result.weakness
   };
+}
+
+/**
+ * Set character's journey role
+ * @param {string} role - Role name
+ * @param {function} renderCallback - Callback to trigger re-render
+ * @param {object} char - Character object
+ */
+export function setJourneyRole(role, renderCallback, char) {
+  char.journeyRole = role;
+  if (renderCallback) renderCallback();
 }

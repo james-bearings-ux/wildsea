@@ -43,7 +43,8 @@ import {
   generateRandomCharacter,
   customizeAspect,
   resetAspectCustomization,
-  addAspectFromFullList
+  addAspectFromFullList,
+  setJourneyRole
 } from './state/character.js';
 import {
   createSession,
@@ -62,6 +63,7 @@ import { renderAdvancementMode } from './rendering/advancement-mode.js';
 import { renderSkills, renderLanguages } from './components/skills.js';
 import { renderEdgesSkillsLanguagesRow } from './components/edges.js';
 import { renderNavigation } from './components/navigation.js';
+import { renderRoleTooltip } from './components/journey-role.js';
 import {
   createShip,
   loadShip,
@@ -80,7 +82,12 @@ import {
   removeCargo,
   addPassenger,
   updatePassengerName,
-  removePassenger
+  removePassenger,
+  toggleJourney,
+  setJourneyName,
+  updateClock,
+  setClockMax,
+  toggleClockTick
 } from './state/ship.js';
 import { renderShipCreationMode } from './rendering/ship-creation-mode.js';
 import { renderShipPlayMode } from './rendering/ship-play-mode.js';
@@ -109,6 +116,8 @@ let hasPendingCharacterSave = false; // Track if character save is pending
 let hasPendingShipSave = false; // Track if ship save is pending
 let activeShipTab = 'size'; // Track active tab for ship creation mode
 let activeWizardStage = 'design'; // Track wizard stage: 'design' | 'fittings' | 'undercrew'
+let journeyEditMode = false; // Track if journey controls are in edit mode
+let showRoleTooltip = null; // Track which role tooltip to show (role name or null)
 let showCustomizeModal = false; // Track if customization modal is open
 let selectedModalAspectId = null; // Track which aspect is selected in modal
 let modalUnsavedEdits = {}; // Track unsaved edits in customization modal { aspectId: { name, description } }
@@ -372,7 +381,7 @@ async function render(reloadSession = false) {
     if (ship.mode === 'creation') {
       renderShipCreationMode(tempDiv, ship, gameData, activeShipTab, activeWizardStage);
     } else if (ship.mode === 'play') {
-      renderShipPlayMode(tempDiv, ship, gameData);
+      renderShipPlayMode(tempDiv, ship, gameData, journeyEditMode);
     } else if (ship.mode === 'upgrade') {
       renderShipUpgradeMode(tempDiv, ship, gameData);
     }
@@ -405,13 +414,18 @@ async function render(reloadSession = false) {
   if (character.mode === 'creation') {
     renderCreationMode(tempDiv, character, gameData);
   } else if (character.mode === 'play') {
-    renderPlayMode(tempDiv, character, gameData, showAddTaskForm);
+    renderPlayMode(tempDiv, character, gameData, showAddTaskForm, ship);
   } else if (character.mode === 'advancement') {
     renderAdvancementMode(tempDiv, character, gameData, showCustomizeModal, selectedModalAspectId, modalUnsavedEdits, showSelectAspectModal, aspectSearchQuery, selectedAspectForAdding);
   }
 
   // Combine navigation and content
   app.innerHTML = presenceBarHtml + navHtml + tempDiv.innerHTML;
+
+  // Add role tooltip if needed
+  if (showRoleTooltip) {
+    app.innerHTML += renderRoleTooltip(showRoleTooltip);
+  }
 }
 
 /**
@@ -875,6 +889,52 @@ function setupEventDelegation() {
                   scheduleShipSave();
                 }
                 break;
+              // Journey-related actions
+              case 'toggleJourney':
+                if (ship) {
+                  toggleJourney(noopRender, ship);
+                  scheduleRender();
+                  scheduleShipSave();
+                }
+                break;
+              case 'editJourney':
+                journeyEditMode = true;
+                await render();
+                break;
+              case 'saveJourney':
+                journeyEditMode = false;
+                await render();
+                break;
+              case 'updateJourneyName':
+                if (ship) {
+                  setJourneyName(e.target.value, ship);
+                  scheduleShipSave();
+                }
+                break;
+              case 'setClockMax':
+                if (ship) {
+                  setClockMax(parsedParams.clockType, parseInt(e.target.value), noopRender, ship);
+                  scheduleRender();
+                  scheduleShipSave();
+                }
+                break;
+              case 'toggleClockTick':
+                if (ship) {
+                  toggleClockTick(parsedParams.clockType, parsedParams.tickIndex, noopRender, ship);
+                  scheduleRender();
+                  scheduleShipSave();
+                }
+                break;
+              case 'showRoleTooltip':
+                if (parsedParams.role) {
+                  showRoleTooltip = parsedParams.role;
+                  await render();
+                }
+                break;
+              case 'closeTooltip':
+                showRoleTooltip = null;
+                await render();
+                break;
               case 'openCustomizeModal':
                 showCustomizeModal = true;
                 selectedModalAspectId = null; // Default to first aspect
@@ -1087,6 +1147,26 @@ function setupEventDelegation() {
             debounce('passenger-name-' + parsedParams.id, async () => {
               await saveShip(ship);
             });
+          }
+          return;
+        }
+
+        if (action === 'updateJourneyName') {
+          if (ship) {
+            setJourneyName(target.value, ship);
+            // Debounce journey name saves
+            debounce('journey-name', async () => {
+              await saveShip(ship);
+            });
+          }
+          return;
+        }
+
+        if (action === 'setJourneyRole') {
+          if (character) {
+            setJourneyRole(target.value, noopRender, character);
+            await render(); // Immediate render for snappy nav bar update
+            scheduleSave();
           }
           return;
         }

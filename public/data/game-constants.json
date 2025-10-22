@@ -29,5 +29,31 @@
       "Stealth": 1,
       "Tilt": 1
     }
-  }
+  },
+  "journeyRoles": [
+    {
+      "name": "At the helm",
+      "instructions": "Navigate the ship through the wilds.\n• Make Cut rolls to steer through obstacles\n• Respond to hazards ahead with quick decisions\n• Keep the ship on course toward your destination"
+    },
+    {
+      "name": "On watch",
+      "instructions": "Keep an eye out for danger and opportunities.\n• Make Sense rolls to spot threats and landmarks\n• Alert the crew to approaching hazards\n• Maintain situational awareness of surroundings"
+    },
+    {
+      "name": "Cartographising",
+      "instructions": "Map the journey and chart the surrounding wilds.\n• Make Study rolls to accurately chart your course\n• Record landmarks, discoveries, and safe routes\n• Improve future navigation through the same area"
+    },
+    {
+      "name": "Tending the engine",
+      "instructions": "Maintain the ship's propulsion systems.\n• Make Build rolls to keep the engine running smoothly\n• Respond quickly to mechanical failures\n• Optimize speed and fuel efficiency"
+    },
+    {
+      "name": "Watch the weather",
+      "instructions": "Monitor environmental conditions and patterns.\n• Make Sense rolls to predict weather changes\n• Warn the crew of incoming storms or phenomena\n• Help the crew adapt to changing conditions"
+    },
+    {
+      "name": "Tending the garden",
+      "instructions": "Manage the ship's food production and provisions.\n• Make Flourish rolls for successful cultivation\n• Maintain crew morale through good food\n• Prevent spoilage and manage shortages"
+    }
+  ]
 }
