@@ -141,7 +141,7 @@
       right: 0;
       background: white;
       border-top: 2px solid #E5E7EB;
-      padding: 16px 20px;
+      padding: 8px 20px;
       display: flex;
       gap: 12px;
       z-index: 100;
@@ -1557,5 +1557,208 @@
 
   .status-none {
     font-size: 8px;
+  }
+}
+
+/* ========================================
+   Journey Feature Styles
+   ======================================== */
+
+/* Journey Controls Container */
+.journey-controls {
+  background-color: #ef5c00;
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-radius: 16px;
+  margin: 24px 40px 0;
+}
+
+.journey-header {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+}
+
+.journey-name-container {
+  display:flex;
+  gap: 8px;
+}
+
+.journey-clocks {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* Journey Toggle and Labels */
+.journey-toggle {
+  cursor: pointer;
+}
+
+.journey-header span,
+.clock h4 {
+  color: white;
+  margin: 0;
+  padding: 0;
+}
+
+/* Journey Clock Ticks */
+.clock {
+  display: flex;
+  justify-content: start;
+  gap: 12px;
+  align-items: center;
+}
+.clock h4 {
+  width: 5.5em;
+}
+
+.clock-ticks{
+  display: flex;
+  gap: 2px;
+}
+.clock-tick {
+  width: 24px;
+  height: 24px;
+  border: 2px solid white;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.2s;
+  background-color: transparent;
+}
+
+.clock-tick:hover {
+  transform: scale(1.1);
+  box-shadow: 0 2px 4px rgba(40, 40, 40, 0.3);
+}
+
+.clock-tick.filled {
+  background-color: black;
+}
+
+/* Clock Max Select Dropdown */
+.clock-max-select {
+  cursor: pointer;
+}
+
+/* Role Selector */
+.role-selector {
+  background-color: #ef5c00;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: 24px;
+  padding: 2px 4px 2px 16px;
+
+  label {
+    color: white;
+  }
+}
+
+.role-dropdown {
+  cursor: pointer;
+  background: transparent;
+}
+
+.info-icon {
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: bold;
+  transition: opacity 0.2s;
+  border: none;
+  border-radius: 24px;
+  background: transparent;
+}
+
+/* Role Tooltip/Modal */
+.role-tooltip-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+}
+
+.role-tooltip {
+  background-color: white;
+  border: 3px solid #FF8C42;
+  border-radius: 8px;
+  padding: 24px;
+  max-width: 28rem;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+/* Nav Bar Journey Styling */
+.nav-journey-subtitle {
+  font-size: 0.65rem;
+  color: #FF8C42;
+  margin-top: 2px;
+}
+
+.nav-role-subtitle {
+  font-size: 0.65rem;
+  color: #FF8C42;
+  margin-top: 2px;
+}
+
+/* Journey Name Display/Edit */
+.journey-name {
+  min-width: 200px;
+  font-family: 'Faustina', serif;
+  font-weight: 400;
+  font-size: 64px;
+}
+
+.journey-name-input {
+  min-width: 200px;
+  font-family: 
+}
+
+/* Edit/Save Buttons */
+.edit-btn,
+.save-btn {
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.edit-btn:hover,
+.save-btn:hover {
+  opacity: 0.75;
+}
+
+.journey-edit-btn {
+  border: none;
+  color: white;
+  background: transparent;
+}
+
+/* Mobile Responsiveness for Journey Features */
+@media (max-width: 640px) {
+  .clock-tick {
+    width: 20px;
+    height: 20px;
+  }
+
+  .role-tooltip {
+    max-width: 90%;
+    padding: 16px;
+  }
+
+  .journey-name,
+  .journey-name-input {
+    min-width: 120px;
+    font-size: 14px;
+  }
+
+  .clock h4 {
+    width: 100px;
+    font-size: 14px;
   }
 }

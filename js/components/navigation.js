@@ -20,8 +20,14 @@ export async function renderNavigation(session) {
     const ship = await loadShip(session.activeShipId);
     const isActive = session.activeView === 'ship';
     const activeClass = isActive ? 'nav-button-active' : 'nav-button-inactive';
-    html += '<button data-action="switchToShip" class="nav-button ' + activeClass + '">';
-    html += ship ? (ship.name || 'Ship') : 'Ship';
+    const journeyActive = ship && ship.journey && ship.journey.active;
+    const journeyName = ship && ship.journey ? ship.journey.name : '';
+
+    html += '<button data-action="switchToShip" class="nav-button ' + activeClass + '" style="display: flex; flex-direction: column; align-items: center;">';
+    html += '<div>' + (ship ? (ship.name || 'Ship') : 'Ship') + '</div>';
+    if (journeyActive && journeyName) {
+      html += '<div class="nav-journey-subtitle">' + journeyName + '</div>';
+    }
     html += '</button>';
   } else {
     html += '<button data-action="createNewShip" class="nav-button nav-button-inactive">+ New Ship</button>';
@@ -34,6 +40,10 @@ export async function renderNavigation(session) {
 
   // Character buttons
   if (session.activeCharacterIds.length > 0) {
+    // Load ship to check journey status
+    const ship = session.activeShipId ? await loadShip(session.activeShipId) : null;
+    const journeyActive = ship && ship.journey && ship.journey.active;
+
     for (let i = 0; i < session.activeCharacterIds.length; i++) {
       const charId = session.activeCharacterIds[i];
       const character = await loadCharacter(charId);
@@ -42,9 +52,16 @@ export async function renderNavigation(session) {
 
       if (character) {
         const activeClass = isActive ? 'nav-button-active' : 'nav-button-inactive';
+        const roleDisplay = character.journeyRole
+          ? character.journeyRole.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')
+          : '';
+
         html += '<button data-action="switchCharacter" data-params=\'{"characterId":"' + charId + '"}\' ';
-        html += 'class="nav-button ' + activeClass + '">';
-        html += character.name || 'Unnamed Character';
+        html += 'class="nav-button ' + activeClass + '" style="display: flex; flex-direction: column; align-items: center;">';
+        html += '<div>' + (character.name || 'Unnamed Character') + '</div>';
+        if (journeyActive && roleDisplay) {
+          html += '<div class="nav-role-subtitle">' + roleDisplay + '</div>';
+        }
         html += '</button>';
       }
     }
