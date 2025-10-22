@@ -71,13 +71,13 @@ export function renderJourneyControls(journeyData, editMode = false) {
     <div class="journey-controls p-8 mb-4">
       <!-- Journey Header -->
       <div class="journey-header">
-        <label class="flex items-center gap-2">
+        <label class="journey-toggle-label">
           <input
             type="checkbox"
             ${active ? 'checked' : ''}
             data-action="toggleJourney"
             class="journey-toggle">
-          <span style="color: white;" class="font-semibold">Journey</span>
+          <span class="journey-toggle-text">Journey</span>
         </label>
 
         ${editMode ? `
@@ -86,24 +86,21 @@ export function renderJourneyControls(journeyData, editMode = false) {
               type="text"
               value="${name || ''}"
               data-action="updateJourneyName"
-              class="journey-name-input border rounded px-2 py-1 flex-grow"
+              class="journey-name-input"
               placeholder="Journey name">
             <button
               data-action="saveJourney"
-              class="save-btn px-3 py-1 text-white rounded"
-              style="background-color: white; hover:opacity-90;">
+              class="journey-save-btn">
               Save
             </button>
           </div>
         ` : `
-          
           ${active ? `
             <div class="journey-name-container">
               <span class="journey-name">${name || 'Unnamed Journey'}</span>
               <button
-                data-action="editJourney" 
-                class="journey-edit-btn hover:opacity-75" 
-                style="padding: 8px 12px;">
+                data-action="editJourney"
+                class="journey-edit-btn">
                 Edit
               </button>
             </div>

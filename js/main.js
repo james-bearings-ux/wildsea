@@ -925,14 +925,6 @@ function setupEventDelegation() {
                   scheduleShipSave();
                 }
                 break;
-              case 'setJourneyRole':
-                if (character) {
-                  const role = e.target.value;
-                  setJourneyRole(role, noopRender, character);
-                  scheduleRender();
-                  scheduleSave();
-                }
-                break;
               case 'showRoleTooltip':
                 if (parsedParams.role) {
                   showRoleTooltip = parsedParams.role;
@@ -1173,7 +1165,7 @@ function setupEventDelegation() {
         if (action === 'setJourneyRole') {
           if (character) {
             setJourneyRole(target.value, noopRender, character);
-            scheduleRender();
+            await render(); // Immediate render for snappy nav bar update
             scheduleSave();
           }
           return;

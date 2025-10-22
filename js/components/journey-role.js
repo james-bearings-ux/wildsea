@@ -23,19 +23,18 @@ export function renderRoleSelector(currentRole, journeyActive) {
   }).join('');
 
   return `
-    <div class="role-selector flex items-center gap-2">
-      <label class="font-semibold mg-0">Role:</label>
+    <div class="role-selector">
+      <label class="role-label">Role:</label>
       <select
         data-action="setJourneyRole"
-        class="role-dropdown border rounded px-2 py-1 bg-white">
+        class="role-dropdown">
         <option value="">Select a role</option>
         ${roleOptions}
       </select>
       <button
         data-action="showRoleTooltip"
         data-params='${JSON.stringify({ role: currentRole })}'
-        class="info-icon hover:opacity-75"
-        style="color: white;"
+        class="info-icon"
         aria-label="Role information">
         ⓘ
       </button>
@@ -66,18 +65,16 @@ export function renderRoleTooltip(roleName) {
 
   return `
     <div
-      class="role-tooltip-overlay fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+      class="role-tooltip-overlay"
       data-action="closeTooltip">
       <div
-        class="role-tooltip bg-white rounded-lg p-6 shadow-xl max-w-md"
-        style="border: 3px solid #FF8C42;"
+        class="role-tooltip"
         onclick="event.stopPropagation()">
-        <h3 style="color: #FF8C42;" class="font-bold text-xl mb-3">${roleData.name}</h3>
-        <p class="whitespace-pre-line text-sm text-gray-700 mb-4">${roleData.instructions}</p>
+        <h3 class="role-tooltip-title">${roleData.name}</h3>
+        <p class="role-tooltip-text">${roleData.instructions}</p>
         <button
           data-action="closeTooltip"
-          class="px-4 py-2 text-white rounded hover:opacity-90"
-          style="background-color: #FF8C42;">
+          class="role-tooltip-close-btn">
           Close
         </button>
       </div>

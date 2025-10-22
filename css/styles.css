@@ -1597,6 +1597,31 @@
   cursor: pointer;
 }
 
+.journey-toggle-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.journey-toggle-text {
+  color: white;
+  font-weight: 600;
+}
+
+.journey-save-btn {
+  padding: 8px 16px;
+  background-color: white;
+  color: black;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.journey-save-btn:hover {
+  opacity: 0.9;
+}
+
 .journey-header span,
 .clock h4 {
   color: white;
@@ -1651,15 +1676,20 @@
   gap: 8px;
   border-radius: 24px;
   padding: 2px 4px 2px 16px;
+}
 
-  label {
-    color: white;
-  }
+.role-label {
+  color: white;
+  font-weight: 600;
+  margin: 0;
 }
 
 .role-dropdown {
   cursor: pointer;
-  background: transparent;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 4px 8px;
 }
 
 .info-icon {
@@ -1670,6 +1700,11 @@
   border: none;
   border-radius: 24px;
   background: transparent;
+  color: white;
+}
+
+.info-icon:hover {
+  opacity: 0.75;
 }
 
 /* Role Tooltip/Modal */
@@ -1693,6 +1728,34 @@
   padding: 24px;
   max-width: 28rem;
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.role-tooltip-title {
+  color: #FF8C42;
+  font-weight: bold;
+  font-size: 1.25rem;
+  margin-bottom: 12px;
+}
+
+.role-tooltip-text {
+  white-space: pre-line;
+  font-size: 0.875rem;
+  color: #374151;
+  margin-bottom: 16px;
+}
+
+.role-tooltip-close-btn {
+  padding: 8px 16px;
+  background-color: #FF8C42;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.role-tooltip-close-btn:hover {
+  opacity: 0.9;
 }
 
 /* Nav Bar Journey Styling */
