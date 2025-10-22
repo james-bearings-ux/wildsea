@@ -168,6 +168,29 @@ function scheduleRender(forceFull = false) {
 }
 
 /**
+ * Check if user is actively editing text inputs
+ * Returns true if any text input save is pending (debounced)
+ */
+function hasActiveTextInputEdits() {
+  for (const key of debounceTimers.keys()) {
+    // Check for text input debounce keys (not render/save debounces)
+    if (key.startsWith('character-name') ||
+        key.startsWith('drive-') ||
+        key.startsWith('mire-') ||
+        key === 'notes' ||
+        key.startsWith('milestone-name-') ||
+        key.startsWith('task-name-') ||
+        key.startsWith('resource-name-') ||
+        key.startsWith('ship-name') ||
+        key.startsWith('cargo-name-') ||
+        key.startsWith('passenger-name-')) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
  * Schedule a save after 1 second of inactivity
  * This provides optimistic UI updates while batching database writes
  */
@@ -177,7 +200,7 @@ function scheduleSave() {
     if (character) {
       await saveCharacter(character);
       hasPendingCharacterSave = false; // Clear pending flag after save
-      await render(); // Render once after save completes
+      // No render needed - UI already updated via scheduleRender()
     }
   }, 1000);
 }
@@ -191,7 +214,7 @@ function scheduleShipSave() {
     if (ship) {
       await saveShip(ship);
       hasPendingShipSave = false; // Clear pending flag after save
-      await render(); // Render once after save completes
+      // No render needed - UI already updated via scheduleRender()
     }
   }, 1000);
 }
@@ -294,7 +317,12 @@ async function render(reloadSession = false) {
 
   // Only reload session from DB when explicitly requested (e.g., from real-time subscription)
   // BUT skip reload if we have pending unsaved changes to avoid race conditions
-  if (reloadSession && !hasPendingCharacterSave && !hasPendingShipSave) {
+  if (reloadSession && (hasPendingCharacterSave || hasPendingShipSave || hasActiveTextInputEdits())) {
+    if (DEBUG) console.log('[RENDER] Skipping render - pending saves or active text input edits');
+    return; // Skip entire render to avoid interrupting user
+  }
+
+  if (reloadSession) {
     if (DEBUG) console.log('[RENDER] Reloading session from database...');
     const latestSession = await loadSession();
     if (latestSession) {
@@ -311,8 +339,6 @@ async function render(reloadSession = false) {
       if (DEBUG) console.log('[RENDER] Reloading active ship:', session.activeShipId);
       ship = await loadShip(session.activeShipId);
     }
-  } else if (reloadSession && (hasPendingCharacterSave || hasPendingShipSave)) {
-    if (DEBUG) console.log('[RENDER] Skipping reload - pending saves in progress');
   }
 
   if (!session) {
@@ -494,7 +520,7 @@ function setupEventDelegation() {
                 break;
               case 'toggleDamageType':
                 if (character) {
-                  toggleAspectDamageType(parsedParams.aspectId, parsedParams.damageType, noopRender, character);
+                  toggleAspectDamageType(parsedParams.aspectId, parsedParams.category, parsedParams.damageType, noopRender, character);
                   markDirtyByAction('toggleAspectDamageType');
                   scheduleRender();
                   scheduleSave();
@@ -1071,8 +1097,7 @@ function setupEventDelegation() {
         switch (action) {
           case 'onCharacterNameChange':
             onCharacterNameChange(target.value, character);
-            markDirtyByAction('onCharacterNameChange');
-            scheduleRender();
+            // No render needed - input already shows user's changes
             // Debounce character name saves
             debounce('character-name', async () => {
               await saveCharacter(character);
@@ -1098,8 +1123,7 @@ function setupEventDelegation() {
             break;
           case 'updateDrive':
             updateDrive(parsedParams.index, target.value, character);
-            markDirtyByAction('updateDrive');
-            scheduleRender();
+            // No render needed - input already shows user's changes
             // Debounce drive saves
             debounce('drive-' + parsedParams.index, async () => {
               await saveCharacter(character);
@@ -1107,8 +1131,7 @@ function setupEventDelegation() {
             break;
           case 'updateMire':
             updateMire(parsedParams.index, target.value, character);
-            markDirtyByAction('updateMire');
-            scheduleRender();
+            // No render needed - input already shows user's changes
             // Debounce mire saves
             debounce('mire-' + parsedParams.index, async () => {
               await saveCharacter(character);
@@ -1116,8 +1139,7 @@ function setupEventDelegation() {
             break;
           case 'updateNotes':
             updateNotes(target.value, character);
-            markDirtyByAction('updateNotes');
-            scheduleRender();
+            // No render needed - input already shows user's changes
             // Debounce notes saves
             debounce('notes', async () => {
               await saveCharacter(character);
@@ -1125,8 +1147,7 @@ function setupEventDelegation() {
             break;
           case 'updateMilestoneName':
             updateMilestoneName(parsedParams.id, target.value, character);
-            markDirtyByAction('updateMilestoneName');
-            scheduleRender();
+            // No render needed - input already shows user's changes
             // Debounce milestone name saves
             debounce('milestone-name-' + parsedParams.id, async () => {
               await saveCharacter(character);
@@ -1140,8 +1161,7 @@ function setupEventDelegation() {
             break;
           case 'updateTaskName':
             updateTaskName(parsedParams.id, target.value, character);
-            markDirtyByAction('updateTaskName');
-            scheduleRender();
+            // No render needed - input already shows user's changes
             // Debounce task name saves
             debounce('task-name-' + parsedParams.id, async () => {
               await saveCharacter(character);
@@ -1155,8 +1175,7 @@ function setupEventDelegation() {
             break;
           case 'updateResourceName':
             updateResourceName(parsedParams.type, parsedParams.id, target.value, character);
-            markDirtyByAction('updateResourceName');
-            scheduleRender();
+            // No render needed - input already shows user's changes
             // Debounce resource name saves
             debounce('resource-name-' + parsedParams.type + '-' + parsedParams.id, async () => {
               await saveCharacter(character);

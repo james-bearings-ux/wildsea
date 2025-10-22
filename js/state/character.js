@@ -289,7 +289,7 @@ export function toggleAspect(aspectId, renderCallback, char) {
         ...aspect,
         trackSize: aspect.track,
         damageStates: Array(aspect.track).fill('default'),
-        selectedDamageTypes: [] // Initialize empty array for damage type selections
+        selectedDamageTypes: {} // Initialize empty object for damage type selections (keyed by category)
       });
     }
   }
@@ -374,27 +374,36 @@ export function customizeAspect(aspectId, name, description, char) {
   aspect.description = description;
   aspect.customized = true;
 
-  // Reparse damage types from the new description
+  // Reparse damage types from the new description (returns array or null)
   const newDamageTypes = parseDamageTypesFromDescription(description);
 
   if (newDamageTypes) {
     // New description has damage types - update metadata
     aspect.damageTypes = newDamageTypes;
 
-    // Handle selected damage types - keep only selections that are still valid
-    if (aspect.selectedDamageTypes && aspect.selectedDamageTypes.length > 0) {
-      const validSelections = aspect.selectedDamageTypes.filter(type =>
-        newDamageTypes.options && newDamageTypes.options.includes(type)
-      );
-      aspect.selectedDamageTypes = validSelections;
-    } else {
-      // Initialize if needed for new "choose" type
-      aspect.selectedDamageTypes = aspect.selectedDamageTypes || [];
+    // Handle selected damage types - preserve valid selections by category
+    const oldSelections = aspect.selectedDamageTypes || {};
+    const newSelections = {};
+
+    // For each new damage type category, check if we have valid old selections
+    for (const dt of newDamageTypes) {
+      const category = dt.category;
+      const oldCategorySelections = oldSelections[category] || [];
+
+      // Keep only selections that are still valid in the new options
+      if (oldCategorySelections.length > 0 && dt.options) {
+        const validSelections = oldCategorySelections.filter(type => dt.options.includes(type));
+        if (validSelections.length > 0) {
+          newSelections[category] = validSelections;
+        }
+      }
     }
+
+    aspect.selectedDamageTypes = newSelections;
   } else {
     // New description has no damage types - clear metadata and selections
     delete aspect.damageTypes;
-    aspect.selectedDamageTypes = [];
+    aspect.selectedDamageTypes = {};
   }
 }
 
@@ -792,17 +801,25 @@ export function generateRandomCharacter(renderCallback, char) {
  * @param {function} renderCallback - Callback to trigger re-render
  * @param {object} char - Character object
  */
-export function toggleAspectDamageType(aspectId, damageType, renderCallback, char) {
+export function toggleAspectDamageType(aspectId, category, damageType, renderCallback, char) {
   const aspect = char.selectedAspects.find(a => a.id === aspectId);
   if (!aspect || !aspect.damageTypes) return;
 
+  // Find the damage type metadata for this category
+  const damageTypeMetadata = Array.isArray(aspect.damageTypes)
+    ? aspect.damageTypes.find(dt => dt.category === category)
+    : (aspect.damageTypes.category === category ? aspect.damageTypes : null); // Backwards compat
+
+  if (!damageTypeMetadata) return;
+
   // Can't modify fixed selections
-  if (aspect.damageTypes.selectionType === 'fixed') return;
+  if (damageTypeMetadata.selectionType === 'fixed') return;
 
   // In play mode, only allow selection if incomplete (failsafe for backwards compatibility)
   if (char.mode === 'play') {
-    const maxCount = aspect.damageTypes.chooseCount || 1;
-    if (aspect.selectedDamageTypes && aspect.selectedDamageTypes.length >= maxCount) {
+    const maxCount = damageTypeMetadata.chooseCount || 1;
+    const selected = aspect.selectedDamageTypes[category] || [];
+    if (selected.length >= maxCount) {
       return; // Already complete, don't allow changes in play mode
     }
   }
@@ -810,15 +827,20 @@ export function toggleAspectDamageType(aspectId, damageType, renderCallback, cha
   // Can only modify in creation and advancement modes (or play mode failsafe above)
   if (char.mode !== 'creation' && char.mode !== 'advancement' && char.mode !== 'play') return;
 
-  const selected = aspect.selectedDamageTypes || [];
-  const maxCount = aspect.damageTypes.chooseCount || 1;
+  // Initialize selectedDamageTypes for this category if needed
+  if (!aspect.selectedDamageTypes[category]) {
+    aspect.selectedDamageTypes[category] = [];
+  }
+
+  const selected = aspect.selectedDamageTypes[category];
+  const maxCount = damageTypeMetadata.chooseCount || 1;
 
   if (selected.includes(damageType)) {
     // Deselect
-    aspect.selectedDamageTypes = selected.filter(t => t !== damageType);
+    aspect.selectedDamageTypes[category] = selected.filter(t => t !== damageType);
   } else if (selected.length < maxCount) {
     // Select
-    aspect.selectedDamageTypes = [...selected, damageType];
+    aspect.selectedDamageTypes[category] = [...selected, damageType];
   }
 
   renderCallback();
@@ -831,12 +853,22 @@ export function toggleAspectDamageType(aspectId, damageType, renderCallback, cha
  */
 export function aspectNeedsDamageTypeSelection(aspect) {
   if (!aspect.damageTypes) return false;
-  if (aspect.damageTypes.selectionType !== 'choose') return false;
 
-  const selected = aspect.selectedDamageTypes || [];
-  const required = aspect.damageTypes.chooseCount || 1;
+  // Handle both array (new) and object (old) formats
+  const damageTypesArray = Array.isArray(aspect.damageTypes) ? aspect.damageTypes : [aspect.damageTypes];
 
-  return selected.length < required;
+  // Check if any category needs selection
+  for (const dt of damageTypesArray) {
+    if (dt.selectionType === 'choose') {
+      const selected = (aspect.selectedDamageTypes && aspect.selectedDamageTypes[dt.category]) || [];
+      const required = dt.chooseCount || 1;
+      if (selected.length < required) {
+        return true;
+      }
+    }
+  }
+
+  return false;
 }
 
 /**
@@ -867,43 +899,49 @@ export function getCharacterDamageTypes(char) {
   char.selectedAspects.forEach(aspect => {
     if (!aspect.damageTypes) return;
 
-    // Determine which types apply
-    let types = [];
-    if (aspect.damageTypes.selectionType === 'fixed') {
-      // Fixed types - use options directly
-      types = aspect.damageTypes.options || [];
-    } else if (aspect.damageTypes.selectionType === 'choose') {
-      // Chosen types - use player selections
-      types = aspect.selectedDamageTypes || [];
-    }
+    // Handle both array (new) and object (old) formats
+    const damageTypesArray = Array.isArray(aspect.damageTypes) ? aspect.damageTypes : [aspect.damageTypes];
 
-    // Skip if no types available
-    if (types.length === 0) return;
-
-    // Categorize by damage type category
-    const category = aspect.damageTypes.category;
-    const range = aspect.damageTypes.range;
-
-    if (category === 'dealing' && range) {
-      // Handle dual-range weapons like "CQ/LR"
-      if (range.includes('/')) {
-        const ranges = range.split('/');
-        ranges.forEach(r => {
-          types.forEach(type => dealing[r.trim()]?.add(type));
-        });
-      } else {
-        types.forEach(type => dealing[range]?.add(type));
+    // Process each damage type category
+    damageTypesArray.forEach(dt => {
+      // Determine which types apply
+      let types = [];
+      if (dt.selectionType === 'fixed') {
+        // Fixed types - use options directly
+        types = dt.options || [];
+      } else if (dt.selectionType === 'choose') {
+        // Chosen types - use player selections for this category
+        types = (aspect.selectedDamageTypes && aspect.selectedDamageTypes[dt.category]) || [];
       }
-    } else if (category === 'resistance') {
-      // Count each resistance occurrence
-      types.forEach(type => {
-        resistanceCounts.set(type, (resistanceCounts.get(type) || 0) + 1);
-      });
-    } else if (category === 'immunity') {
-      types.forEach(type => immunity.add(type));
-    } else if (category === 'weakness') {
-      types.forEach(type => weakness.add(type));
-    }
+
+      // Skip if no types available
+      if (types.length === 0) return;
+
+      // Categorize by damage type category
+      const category = dt.category;
+      const range = dt.range;
+
+      if (category === 'dealing' && range) {
+        // Handle dual-range weapons like "CQ/LR"
+        if (range.includes('/')) {
+          const ranges = range.split('/');
+          ranges.forEach(r => {
+            types.forEach(type => dealing[r.trim()]?.add(type));
+          });
+        } else {
+          types.forEach(type => dealing[range]?.add(type));
+        }
+      } else if (category === 'resistance') {
+        // Count each resistance occurrence
+        types.forEach(type => {
+          resistanceCounts.set(type, (resistanceCounts.get(type) || 0) + 1);
+        });
+      } else if (category === 'immunity') {
+        types.forEach(type => immunity.add(type));
+      } else if (category === 'weakness') {
+        types.forEach(type => weakness.add(type));
+      }
+    });
   });
 
   // Apply double-resistance-to-immunity rule
