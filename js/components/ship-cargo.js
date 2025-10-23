@@ -29,7 +29,7 @@ export function renderShipCargo(ship) {
     html += 'class="cargo-input">';
     html += '<button data-action="removeCargo" ';
     html += 'data-params=\'{"id":"' + item.id + '"}\' ';
-    html += 'class="btn-icon-only">✕</button>';
+    html += 'class="btn-tertiary">✕</button>';
     html += '</div>';
   }
 

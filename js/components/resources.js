@@ -53,7 +53,7 @@ export function renderResources(character) {
       html += 'data-action="updateResourceName" ';
       html += 'data-params=\'{"type":"' + type.key + '","id":"' + item.id + '"}\'>';
       html += '<button data-action="removeResource" ';
-      html += 'class="btn-icon-only" ';
+      html += 'class="btn-tertiary" ';
       html += 'data-params=\'{"type":"' + type.key + '","id":"' + item.id + '"}\'>✕</button>';
       html += '</div>';
     }

@@ -108,15 +108,13 @@ button.primary:hover:not(:disabled) {
 }
 
 /* Secondary button - black background for emphasis */
-.btn-secondary,
-button.bg-black {
+.btn-secondary {
 	background: #000000;
 	color: white;
 	border-color: #6B7280;
 }
 
-.btn-secondary:hover:not(:disabled),
-button.bg-black:hover:not(:disabled) {
+.btn-secondary:hover:not(:disabled) {
 	background: #1F2937;
 }
 
@@ -172,23 +170,6 @@ button.ghost:hover:not(:disabled) {
 	opacity: 0.7;
 }
 
-/* Icon-only button - small delete/close buttons */
-.btn-icon-only {
-	padding: 3px 4px;
-	background: transparent;
-	border: none;
-	cursor: pointer;
-	font-size: 14px;
-	line-height: 1;
-	font-weight: 600;
-	border-radius: 16px;
-	color: #000;
-}
-
-.btn-icon-only:hover:not(:disabled) {
-	color: white;
-	background-color: #8B1730;
-}
     
 /* ===========================
    INPUT & SELECT STYLES
@@ -796,22 +777,6 @@ hr {
       background: #A91D3A;
     }
 
-    .icon-button {
-      padding: 4px 8px;
-      background: transparent;
-      border: 1px solid #D1D5DB;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 14px;
-      color: #6B7280;
-      transition: all 0.15s ease;
-    }
-
-    .icon-button:hover {
-      background: #F3F4F6;
-      border-color: #9CA3AF;
-      color: #111827;
-    }
 
     .text-input {
       border: none;
@@ -878,7 +843,7 @@ hr {
       border-bottom: 1px solid #E5E7EB;
     }
 
-/* Remove button - alias for btn-icon-only */
+/* Remove button - legacy delete button style */
 .remove {
   background: transparent;
   color: #000;

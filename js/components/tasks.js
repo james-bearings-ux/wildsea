@@ -65,9 +65,9 @@ export function renderTasks(character, showAddForm = false) {
       html += renderClock(task, true);
       html += `<div class="task-progress">${task.currentTicks}/${task.maxTicks}</div>`;
       html += '</div>';
-      html += '<div style="display: flex; gap: 8px;">';
-      html += `<button class="icon-button" data-action="toggleTaskEditing" data-params='{"id":"${task.id}"}' title="Edit">✎</button>`;
-      html += `<button class="icon-button" data-action="deleteTask" data-params='{"id":"${task.id}"}' title="Delete">✕</button>`;
+      html += '<div class="flex-gap-md">';
+      html += `<button class="btn-tertiary" data-action="toggleTaskEditing" data-params='{"id":"${task.id}"}' title="Edit">✎</button>`;
+      html += `<button class="btn-tertiary" data-action="deleteTask" data-params='{"id":"${task.id}"}' title="Delete">✕</button>`;
       html += '</div>';
       html += '</div>';
     }
@@ -80,8 +80,8 @@ export function renderTasks(character, showAddForm = false) {
 
   // Add new task button (only show if form is not open)
   if (!showAddForm) {
-    const marginTop = char.tasks.length > 0 ? '12' : '0';
-    html += `<button class="ghost" data-action="openAddTaskForm" style="width: 100%; margin-top: ${marginTop}px;">+ New Task</button>`;
+    const marginClass = char.tasks.length > 0 ? 'mt-lg' : '';
+    html += `<button class="btn-subtle ${marginClass}" data-action="openAddTaskForm">+ New Task</button>`;
   }
 
   html += '</div>';
@@ -102,8 +102,10 @@ export function renderAddTaskForm() {
   }
   html += '</select>';
 
-  html += '<button data-action="saveNewTask" style="padding: 4px 12px; margin-right: 4px;">✓</button>';
-  html += '<button data-action="cancelNewTask" style="padding: 4px 12px;">✕</button>';
+  html += '<div class="flex-gap-md">';
+  html += '<button data-action="saveNewTask"  class="btn-tertiary">✓</button>';
+  html += '<button data-action="cancelNewTask"  class="btn-tertiary">✕</button>';
+  html += '</div>';
   html += '</div>';
 
   return html;
