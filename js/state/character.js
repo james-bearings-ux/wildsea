@@ -681,7 +681,8 @@ export function updateNotes(notes, char) {
 export function addResource(type, renderCallback, char) {
   char.resources[type].push({
     id: Date.now().toString(),
-    name: ''
+    name: '',
+    used: false
   });
   renderCallback();
 }
@@ -697,6 +698,14 @@ export function removeResource(type, id, renderCallback, char) {
   const index = char.resources[type].findIndex(r => r.id === id);
   if (index >= 0) {
     char.resources[type].splice(index, 1);
+    renderCallback();
+  }
+}
+
+export function toggleResourceUsed(type, id, renderCallback, char) {
+  const resource = char.resources[type].find(r => r.id === id);
+  if (resource) {
+    resource.used = !resource.used;
     renderCallback();
   }
 }
@@ -741,7 +750,8 @@ export function populateDefaultResources(renderCallback, char) {
               seenResources[type].add(itemName);
               char.resources[type].push({
                 id: Date.now().toString() + '-' + type + '-' + k + '-' + i,
-                name: itemName
+                name: itemName,
+                used: false
               });
             }
           }

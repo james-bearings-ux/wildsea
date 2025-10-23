@@ -11,6 +11,7 @@ export function renderMilestones(character) {
     html += '<h3 class="subsection-header">Used</h3>';
     html += '<h3 class="subsection-header">Name</h3>';
     html += '<h3 class="subsection-header">Scale</h3>';
+    html += '<div></div>';
     html += '</div>';
   }
 
@@ -18,11 +19,10 @@ export function renderMilestones(character) {
     const milestone = char.milestones[i];
 
     html += '<div class="grid-milestone mb-md">';
-    html += '<div class="flex items-center gap-md">';
-    html += '<div style="width: 34px;"></div>';
+    html += '<div class="flex">';
     html += '<input type="checkbox" ';
     if (milestone.used) html += 'checked ';
-    html += 'data-action="toggleMilestoneUsed" ';
+    html += 'data-action="toggleMilestoneUsed" title="used"';
     html += 'data-params=\'{"id":"' + milestone.id + '"}\'>';
     html += '</div>';
     html += '<input type="text" ';
@@ -42,6 +42,9 @@ export function renderMilestones(character) {
     if (milestone.scale === 'Major') html += ' selected';
     html += '>Major</option>';
     html += '</select>';
+    html += '<button class="btn-tertiary" ';
+    html += 'data-action="deleteMilestone" ';
+    html += 'data-params=\'{"id":"' + milestone.id + '"}\'>✕</button>';
     html += '</div>';
   }
 

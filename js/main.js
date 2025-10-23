@@ -38,6 +38,7 @@ import {
   addResource,
   updateResourceName,
   removeResource,
+  toggleResourceUsed,
   populateDefaultResources,
   setMode,
   generateRandomCharacter,
@@ -666,6 +667,14 @@ function setupEventDelegation() {
                 if (character) {
                   removeResource(parsedParams.type, parsedParams.id, noopRender, character);
                   markDirtyByAction('removeResource');
+                  scheduleRender();
+                  scheduleSave();
+                }
+                break;
+              case 'toggleResourceUsed':
+                if (character) {
+                  toggleResourceUsed(parsedParams.type, parsedParams.id, noopRender, character);
+                  markDirtyByAction('toggleResourceUsed');
                   scheduleRender();
                   scheduleSave();
                 }
