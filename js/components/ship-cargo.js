@@ -15,26 +15,26 @@ export function renderShipCargo(ship) {
 
   html += '<h2 class="section-header">Cargo</h2>';
 
-  html += '<div style="display: flex; flex-direction: column; gap: 12px;">';
+  html += '<div class="flex-col-gap">';
 
   // Render each cargo item
   for (let i = 0; i < cargo.length; i++) {
     const item = cargo[i];
-    html += '<div class="ship-cargo-item">';
+    html += '<div class="cargo-row">';
     html += '<input type="text" ';
     html += 'value="' + item.name + '" ';
     html += 'placeholder="Name your cargo..." ';
     html += 'data-action="updateCargoName" ';
     html += 'data-params=\'{"id":"' + item.id + '"}\' ';
-    html += 'class="ship-cargo-input">';
+    html += 'class="cargo-input">';
     html += '<button data-action="removeCargo" ';
     html += 'data-params=\'{"id":"' + item.id + '"}\' ';
-    html += 'class="remove">✕</button>';
+    html += 'class="btn-icon-only">✕</button>';
     html += '</div>';
   }
 
   // Add new cargo button
-  html += '<button class="ship-add-button" data-action="addCargo" style="width: 100%;">+ New Cargo</button>';
+  html += '<button class="btn-subtle" data-action="addCargo">+ New Cargo</button>';
 
   html += '</div>';
   html += '</div>';

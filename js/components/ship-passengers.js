@@ -15,26 +15,26 @@ export function renderShipPassengers(ship) {
 
   html += '<h2 class="section-header">Passengers</h2>';
 
-  html += '<div style="display: flex; flex-direction: column; gap: 12px;">';
+  html += '<div class="flex-col-gap">';
 
   // Render each passenger item
   for (let i = 0; i < passengers.length; i++) {
     const item = passengers[i];
-    html += '<div class="ship-cargo-item">';
+    html += '<div class="passenger-row">';
     html += '<input type="text" ';
     html += 'value="' + item.name + '" ';
     html += 'placeholder="Name your passenger..." ';
     html += 'data-action="updatePassengerName" ';
     html += 'data-params=\'{"id":"' + item.id + '"}\' ';
-    html += 'class="ship-cargo-input">';
+    html += 'class="passenger-input">';
     html += '<button data-action="removePassenger" ';
     html += 'data-params=\'{"id":"' + item.id + '"}\' ';
-    html += 'class="ship-cargo-remove">✕</button>';
+    html += 'class="btn-icon-only">✕</button>';
     html += '</div>';
   }
 
   // Add new passenger button
-  html += '<button class="ship-add-button" data-action="addPassenger" style="width: 100%;">+ New Passenger</button>';
+  html += '<button class="btn-subtle" data-action="addPassenger">+ New Passenger</button>';
 
   html += '</div>';
   html += '</div>';
