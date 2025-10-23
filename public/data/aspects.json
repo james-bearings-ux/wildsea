@@ -23,13 +23,17 @@
       "type": "Trait",
       "track": 4,
       "description": "You are immune to hallucinations, mesmerics and mental compulsions.",
-      "damageTypes": {
-        "category": "immunity",
-        "selectionType": "fixed",
-        "options": [
-          "hallucinations"
-        ]
-      }
+      "damageTypes": [
+        {
+          "category": "immunity",
+          "selectionType": "fixed",
+          "options": [
+            "Hallucinations",
+            "Mesmerics",
+            "Mental compulsions"
+          ]
+        }
+      ]
     },
     {
       "name": "Guide My Hands",
@@ -1159,12 +1163,19 @@
         {
           "category": "weakness",
           "selectionType": "fixed",
-          "options": ["Salt", "Volt"]
+          "options": [
+            "Salt",
+            "Volt"
+          ]
         },
         {
           "category": "immunity",
           "selectionType": "fixed",
-          "options": ["Blunt", "Keen", "Spike"]
+          "options": [
+            "Blunt",
+            "Keen",
+            "Spike"
+          ]
         }
       ]
     },
@@ -3962,7 +3973,18 @@
       "name": "Oathbound",
       "type": "Trait",
       "track": 4,
-      "description": "You're immune to chemical, arconautic, and mesmeric effects designed to draw information from you."
+      "description": "You're immune to chemical, arconautic, and mesmeric effects designed to draw information from you.",
+      "damageTypes": [
+        {
+          "category": "immunity",
+          "selectionType": "fixed",
+          "options": [
+            "Chemical",
+            "Arconautic",
+            "Mesmeric"
+          ]
+        }
+      ]
     },
     {
       "name": "Weatherbeaten",

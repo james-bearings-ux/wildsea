@@ -89,13 +89,16 @@ export const DAMAGE_TYPE_DESCRIPTIONS = {
  * Non-damage conditions and hazards that can be resisted or grant immunity
  */
 export const HAZARD_CONDITIONS = [
+  'arconautic',      // Arconautic effects (e.g., Oathbound)
   'bad air',
   'airborne spores',
   'bites and stings',
+  'chemical',        // Chemical effects (e.g., Oathbound)
   'crezzerin effects',
   'diseases',
   'hallucinations',
   'infections',
+  'mesmeric',        // Mesmeric effects (similar to mesmerics)
   'mesmerics',
   'mental compulsions',
   'poisons',
@@ -178,6 +181,7 @@ export function parseDamageTypesFromDescription(description) {
   const matches = [];
 
   // Pattern: "resistant to X damage types, chosen from the following list: A, B, C"
+  // This pattern takes priority and should prevent other resistance patterns from matching
   const choosePattern = /resistant to (\w+) damage types?,\s*chosen from the following list:\s*([^.]+)/i;
   const chooseMatch = description.match(choosePattern);
 
@@ -198,10 +202,14 @@ export function parseDamageTypesFromDescription(description) {
       chooseCount,
       options: typeList
     });
+
+    // Early return to avoid double-matching with the fixed resistance pattern
+    return matches.length > 0 ? matches : null;
   }
 
   // Pattern: "resistant/resistance to <damage type> damage" (fixed, no choice)
-  const resistancePattern = /resistan(?:t|ce) to ([a-z]+(?:\s+(?:and|or)\s+[a-z]+)*)\s+damage/i;
+  // Handles multi-word damage types
+  const resistancePattern = /resistan(?:t|ce) to ((?:[a-z]+(?:\s+[a-z]+)*(?:\s+(?:and|or)\s+)?)+)\s+damage/i;
   const resistanceMatch = description.match(resistancePattern);
 
   if (resistanceMatch) {
@@ -209,8 +217,10 @@ export function parseDamageTypesFromDescription(description) {
 
     // Handle multiple types with "and" or "or"
     const types = typeString
-      .split(/\s+(?:and|or)\s+/)
-      .map(normalizeDamageType);
+      .split(/,?\s+(?:and|or)\s+|,\s*/)
+      .map(t => t.trim())
+      .map(normalizeDamageType)
+      .filter(t => t.length > 0);
 
     matches.push({
       category: DAMAGE_CATEGORIES.RESISTANCE,
@@ -219,8 +229,8 @@ export function parseDamageTypesFromDescription(description) {
     });
   }
 
-  // Pattern: "deals CQ/LR/UR <damage type> damage"
-  const dealsPattern = /deals\s+(CQ|LR|UR)\s+([a-z]+(?:\s+(?:and|or)\s+[a-z]+)*)\s+damage/i;
+  // Pattern: "deals CQ/LR/UR <damage type> damage" - handles single or dual ranges like "CQ/LR"
+  const dealsPattern = /deals\s+(CQ(?:\/LR)?|LR(?:\/UR)?|UR)\s+([a-z]+(?:\s+(?:and|or)\s+[a-z]+)*)\s+damage/i;
   const dealsMatch = description.match(dealsPattern);
 
   if (dealsMatch) {
@@ -231,8 +241,10 @@ export function parseDamageTypesFromDescription(description) {
     // "or" means the player can choose which to use during play, but both are inherent to the aspect
     // Only aspects with explicit "choose" language require permanent selection
     const types = typeString
-      .split(/\s+(?:and|or)\s+/)
-      .map(normalizeDamageType);
+      .split(/,?\s+(?:and|or)\s+|,\s*/)
+      .map(t => t.trim())
+      .map(normalizeDamageType)
+      .filter(t => t.length > 0);
 
     matches.push({
       category: DAMAGE_CATEGORIES.DEALING,
@@ -243,16 +255,17 @@ export function parseDamageTypesFromDescription(description) {
     });
   }
 
-  // Pattern: "weakness/weak to <damage type(s)>" - handles comma-separated lists
-  const weaknessPattern = /weak(?:ness)? to ([a-z]+(?:(?:,\s*| and | or )[a-z]+)*)(?: damage)?/i;
+  // Pattern: "weakness/weak to <damage type(s)>" - handles multi-word types and comma-separated lists
+  const weaknessPattern = /weak(?:ness)? to ((?:[a-z]+(?:\s+[a-z]+)*(?:,\s*| and | or )?)+?)(?: damage|\s*\.|$)/i;
   const weaknessMatch = description.match(weaknessPattern);
 
   if (weaknessMatch) {
     const typeString = weaknessMatch[1];
 
-    // Handle comma-separated lists and "and"/"or"
+    // Handle comma-separated lists and "and"/"or" (including ", and" combinations)
     const types = typeString
-      .split(/(?:,\s*| and | or )+/)
+      .split(/,?\s+(?:and|or)\s+|,\s*/)
+      .map(t => t.trim())
       .map(normalizeDamageType)
       .filter(t => t.length > 0);
 
@@ -263,16 +276,42 @@ export function parseDamageTypesFromDescription(description) {
     });
   }
 
-  // Pattern: "immune to <damage type(s)>" - handles comma-separated lists
-  const immunityPattern = /immune to ([a-z]+(?:(?:,\s*| and | or )[a-z]+)*)(?: damage)?/i;
+  // Pattern: "immune to (the )(harmful )?effects of X" - specific pattern for "effects of"
+  const immunityEffectsPattern = /immune to (?:the )?(?:harmful )?(?:usual )?effects of ((?:[a-z]+(?:\s+[a-z]+)*(?:,\s*| and | or )?)+?)(?:\.|$|,)/i;
+  const immunityEffectsMatch = description.match(immunityEffectsPattern);
+
+  if (immunityEffectsMatch) {
+    const typeString = immunityEffectsMatch[1];
+
+    // Handle comma-separated lists and "and"/"or" (including ", and" combinations)
+    const types = typeString
+      .split(/,?\s+(?:and|or)\s+|,\s*/)
+      .map(t => t.trim())
+      .map(normalizeDamageType)
+      .filter(t => t.length > 0);
+
+    matches.push({
+      category: DAMAGE_CATEGORIES.IMMUNITY,
+      selectionType: SELECTION_TYPES.FIXED,
+      options: types
+    });
+
+    // Early return to avoid double-matching
+    return matches.length > 0 ? matches : null;
+  }
+
+  // Pattern: "immune to <damage type(s)>" - handles multi-word hazards and comma-separated lists
+  // Stops at "damage", "effects", or end of sentence to avoid capturing extra text
+  const immunityPattern = /immune to ((?:(?!effects|damage|designed)[a-z]+(?:\s+(?!effects|damage|designed)[a-z]+)*(?:,\s*| and | or )?)+?)(?:\s+(?:damage|effects)|\s*\.|$)/i;
   const immunityMatch = description.match(immunityPattern);
 
   if (immunityMatch) {
     const typeString = immunityMatch[1];
 
-    // Handle comma-separated lists and "and"/"or"
+    // Handle comma-separated lists and "and"/"or" (including ", and" combinations)
     const types = typeString
-      .split(/(?:,\s*| and | or )+/)
+      .split(/,?\s+(?:and|or)\s+|,\s*/)
+      .map(t => t.trim())
       .map(normalizeDamageType)
       .filter(t => t.length > 0);
 

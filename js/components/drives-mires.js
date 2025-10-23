@@ -5,15 +5,15 @@
 export function renderDrives(character) {
   const char = character;
   let html = '<div><h2 class="section-header">Drives</h2>';
-  html += '<div style="display: flex; flex-direction: column; gap: 8px;">';
+  html += '<div class="flex-col gap-md">';
 
   for (let i = 0; i < char.drives.length; i++) {
     html += '<input type="text" ';
+    html += 'class="drive-input" ';
     html += 'value="' + char.drives[i] + '" ';
     html += 'placeholder="Enter a drive..." ';
     html += 'data-action="updateDrive" ';
-    html += 'data-params=\'{"index":' + i + '}\' ';
-    html += 'style="width: 100%;">';
+    html += 'data-params=\'{"index":' + i + '}\'>';
   }
 
   html += '</div></div>';
@@ -25,13 +25,13 @@ export function renderMires(character) {
   const showCheckboxes = char.mode === 'play';
 
   let html = '<div><h2 class="section-header">Mires</h2>';
-  html += '<div style="display: flex; flex-direction: column; gap: 8px;">';
+  html += '<div class="flex-col gap-md">';
 
   for (let i = 0; i < char.mires.length; i++) {
     const mire = char.mires[i];
 
     if (showCheckboxes) {
-      html += '<div style="display: flex; gap: 8px; align-items: center;">';
+      html += '<div class="mire-row">';
 
       // First track box
       const state1 = mire.checkbox1 ? 'marked' : '';
@@ -50,19 +50,19 @@ export function renderMires(character) {
       html += 'style="cursor: pointer;">' + stateChar2 + '</div>';
 
       html += '<input type="text" ';
+      html += 'class="mire-input" ';
       html += 'value="' + mire.text + '" ';
       html += 'placeholder="Enter a mire..." ';
       html += 'data-action="updateMire" ';
-      html += 'data-params=\'{"index":' + i + '}\' ';
-      html += 'style="width: 100%;">';
+      html += 'data-params=\'{"index":' + i + '}\'>';
       html += '</div>';
     } else {
       html += '<input type="text" ';
+      html += 'class="mire-input" ';
       html += 'value="' + mire.text + '" ';
       html += 'placeholder="Enter a mire..." ';
       html += 'data-action="updateMire" ';
-      html += 'data-params=\'{"index":' + i + '}\' ';
-      html += 'style="width: 100%;">';
+      html += 'data-params=\'{"index":' + i + '}\'>';
     }
   }
 

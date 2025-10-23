@@ -12,7 +12,7 @@ import { calculateShipRatings } from '../state/ship.js';
 export function renderShipRatings(ship) {
   const ratings = calculateShipRatings(ship);
 
-  let html = '<div class="ship-ratings-column" style="gap: 8px;">';
+  let html = '<div class="ship-ratings-column">';
 
   // Ratings heading
   html += '<div class="ship-ratings-heading">Ratings</div>';
@@ -21,9 +21,9 @@ export function renderShipRatings(ship) {
 
   ratingNames.forEach(ratingName => {
     const value = ratings[ratingName];
-    html += '<div style="display: flex; justify-content: space-between; align-items: center; padding: 4px 8px; background: white; border-radius: 4px;">';
+    html += '<div class="rating-display-row">';
     html += `<span class="ship-rating-name">${ratingName}</span>`;
-    html += `<span style="font-size: 14px; font-weight: 700; color: #1F2937;">${value}</span>`;
+    html += `<span class="rating-value">${value}</span>`;
     html += '</div>';
   });
 

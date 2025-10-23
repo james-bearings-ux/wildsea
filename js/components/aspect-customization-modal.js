@@ -100,7 +100,7 @@ export function renderAspectCustomizationModal(character, selectedAspectId = nul
   html += '      </div>';
   html += '      <div class="modal-footer-right">';
   html += '        <button data-action="closeCustomizeModal">Cancel</button>';
-  html += '        <button class="bg-black" data-action="saveAspectCustomization" ';
+  html += '        <button data-action="saveAspectCustomization" ';
   html += `                data-params='{"id":"${escapedId}"}'>`;
   html += '          Save';
   html += '        </button>';

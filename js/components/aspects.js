@@ -6,7 +6,7 @@
  * Render small track boxes (used in Creation and Advancement for unselected)
  */
 export function renderSmallTrack(trackSize) {
-  let html = '<div style="display: flex; gap: 4px; padding-top: 4px; margin-bottom: 4px;">';
+  let html = '<div class="flex gap-sm" style="padding-top: 4px; margin-bottom: 4px;">';
   for (let i = 0; i < trackSize; i++) {
     html += '<div class="track-box small"></div>';
   }
@@ -18,10 +18,10 @@ export function renderSmallTrack(trackSize) {
  * Render interactive track (used in Advancement for selected)
  */
 export function renderInteractiveTrack(aspect, escapedId) {
-  let html = '<div style="display: flex; gap: 8px; align-items: center; padding-top: 4px; margin-bottom: 4px;">';
+  let html = '<div class="flex gap-md items-center" style="padding-top: 4px; margin-bottom: 4px;">';
   html += '<button data-action="expandAspectTrack" data-params=\'{"id":"' + escapedId + '","delta":-1}\' ';
   html += (aspect.trackSize <= 1 ? 'disabled ' : '');
-  html += 'style="flex-shrink: 0; padding: 2px 8px; font-size: 14px;" class="bg-black">−</button>';
+  html += 'style="flex-shrink: 0; padding: 2px 8px; font-size: 14px;">−</button>';
 
   for (let i = 0; i < aspect.trackSize; i++) {
     const isNew = i >= aspect.track;
@@ -30,7 +30,7 @@ export function renderInteractiveTrack(aspect, escapedId) {
 
   html += '<button data-action="expandAspectTrack" data-params=\'{"id":"' + escapedId + '","delta":1}\' ';
   html += (aspect.trackSize >= 5 ? 'disabled ' : '');
-  html += 'style="flex-shrink: 0; padding: 2px 8px; font-size: 14px;" class="bg-black">+</button>';
+  html += 'style="flex-shrink: 0; padding: 2px 8px; font-size: 14px;">+</button>';
   html += '</div>';
   return html;
 }

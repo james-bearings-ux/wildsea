@@ -199,7 +199,7 @@ export function renderAspectSelectionModal(character, gameData, searchQuery = ''
     const escapedId = aspectId.replace(/'/g, "\\'");
     const alreadyAdded = character.selectedAspects.some(a => a.id === aspectId);
 
-    html += '        <button class="bg-black" ';
+    html += '        <button ';
     html += `                data-action="addSelectedAspect" `;
     html += `                data-params='{"aspectId":"${escapedId}"}' `;
     html += (alreadyAdded ? ' disabled' : '');
