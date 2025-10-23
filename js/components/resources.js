@@ -47,9 +47,14 @@ export function renderResources(character) {
     for (let j = 0; j < items.length; j++) {
       const item = items[j];
       html += '<div class="resource-item-row">';
+      html += '<input type="checkbox" ';
+      if (item.used) html += 'checked ';
+      html += 'data-action="toggleResourceUsed" title="used" ';
+      html += 'data-params=\'{"type":"' + type.key + '","id":"' + item.id + '"}\'>';
       html += '<input type="text" ';
       html += 'value="' + item.name + '" ';
       html += 'placeholder="' + type.placeholder + '" ';
+      if (item.used) html += 'disabled ';
       html += 'data-action="updateResourceName" ';
       html += 'data-params=\'{"type":"' + type.key + '","id":"' + item.id + '"}\'>';
       html += '<button data-action="removeResource" ';
