@@ -61,8 +61,8 @@ export function renderAdvancementMode(app, character, gameData, showCustomizeMod
         <div class="flex-between" style="margin-bottom: 12px;">
             <h2 class="section-header" style="margin: 0;">Aspects</h2>
             <div style="display: flex; gap: 12px;">
-                <button data-action="openCustomizeModal" style="padding: 8px 12px;">Customize an Aspect</button>
-                <button data-action="openSelectAspectModal" style="padding: 8px 12px;" ${aspectsSelected >= BUDGETS.maxAspectsAdvancement ? 'disabled' : ''}>Select More Aspects</button>
+                <button data-action="openCustomizeModal" class="medium">Customize an Aspect</button>
+                <button data-action="openSelectAspectModal" class="medium" ${aspectsSelected >= BUDGETS.maxAspectsAdvancement ? 'disabled' : ''}>Select More Aspects</button>
             </div>
         </div>
         <div class="grid-3col">
