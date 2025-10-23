@@ -90,6 +90,10 @@ button:disabled {
 	cursor: not-allowed;
 }
 
+button.medium {
+  padding: 8px 12px;
+}
+
 /* Primary button - main action buttons (save, create, etc.) */
 .btn-primary,
 button.primary {

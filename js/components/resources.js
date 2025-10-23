@@ -21,7 +21,7 @@ export function renderResources(character) {
     html += '<div class="mb-xl">';
     html += '<div class="flex-between mb-lg">';
     html += '<h2 class="section-header">Resources</h2>';
-    html += '<p>A new character may have up to 6 starting resources.</p> <button data-action="populateDefaultResources">Load Suggested Resources</button>';
+    html += '<p>A new character may have up to 6 starting resources.</p> <button class="medium" data-action="populateDefaultResources">Load Suggested Resources</button>';
     html += '</div>';
   } else if (isPlayMode) {
     // Add header for play mode too
