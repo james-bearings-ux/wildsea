@@ -8,7 +8,12 @@
       "Bash(node -e \"const fs = require(''fs''); const data = JSON.parse(fs.readFileSync(''public/data/aspects.json'', ''utf8'')); const aspect = data.Hacker.find(a => a.name === ''Petalcrusher''); console.log(JSON.stringify(aspect, null, 2));\")",
       "Bash(timeout /t 3 /nobreak)",
       "Bash(node -e \"const fs = require(''fs''); const data = JSON.parse(fs.readFileSync(''public/data/aspects.json'', ''utf8'')); const aspect = data.Ektus.find(a => a.name === ''Old Ore Piercings''); console.log(JSON.stringify(aspect, null, 2));\")",
-      "Bash(node -e \"const fs = require(''fs''); const data = JSON.parse(fs.readFileSync(''public/data/aspects.json'', ''utf8'')); const aspect = data.Ketra.find(a => a.name === ''Old Ore Piercings''); console.log(JSON.stringify(aspect, null, 2));\")"
+      "Bash(node -e \"const fs = require(''fs''); const data = JSON.parse(fs.readFileSync(''public/data/aspects.json'', ''utf8'')); const aspect = data.Ketra.find(a => a.name === ''Old Ore Piercings''); console.log(JSON.stringify(aspect, null, 2));\")",
+      "Bash(node -e:*)",
+      "Bash(node test-immunity-pattern.js:*)",
+      "Bash(node test-parsing-updated.js:*)",
+      "Bash(node regenerate-damage-types.js)",
+      "Bash(git checkout:*)"
     ],
     "deny": [],
     "ask": []

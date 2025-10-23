@@ -173,8 +173,11 @@ export function renderDamageTypeTable(char) {
   const { resistances, immunities, weaknesses } = getCharacterDefenses(char);
 
   // Filter hazards to only show ones with resistance/immunity
+  // Use case-insensitive comparison
+  const resistancesLower = resistances.map(r => r.toLowerCase());
+  const immunitiesLower = immunities.map(i => i.toLowerCase());
   const relevantHazards = HAZARD_CONDITIONS.filter(hazard =>
-    resistances.includes(hazard) || immunities.includes(hazard)
+    resistancesLower.includes(hazard.toLowerCase()) || immunitiesLower.includes(hazard.toLowerCase())
   );
 
   return `
@@ -243,8 +246,13 @@ export function renderDamageTypeTable(char) {
             </thead>
             <tbody>
               ${relevantHazards.map(hazard => {
-                const isImmune = immunities.includes(hazard);
-                const isResistant = resistances.includes(hazard);
+                // Find the actual capitalized version from character's immunities/resistances
+                const actualImmunity = immunities.find(i => i.toLowerCase() === hazard.toLowerCase());
+                const actualResistance = resistances.find(r => r.toLowerCase() === hazard.toLowerCase());
+                const displayName = actualImmunity || actualResistance || hazard;
+
+                const isImmune = !!actualImmunity;
+                const isResistant = !!actualResistance;
 
                 let defenseLevel = 'Resistant';
                 let statusClass = 'status-text';
@@ -258,7 +266,7 @@ export function renderDamageTypeTable(char) {
                 return `
                   <tr>
                     <td>
-                      <span class="${badgeClass}">${hazard}</span>
+                      <span class="${badgeClass}">${displayName}</span>
                     </td>
                     <td>
                       <span class="${statusClass}">${defenseLevel}</span>
