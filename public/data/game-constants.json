@@ -12,13 +12,37 @@
     { "name": "Veils", "tagline": "An edge of stealth, deception, & subterfuge" }
   ],
   "skills": [
-    "Brace", "Break", "Concoct", "Cook", "Delve", "Flourish", "Hack",
-    "Harvest", "Hunt", "Outwit", "Rattle", "Scavenge", "Sense",
-    "Study", "Sway", "Tend", "Vault", "Wavewalk"
+    { "name": "Brace", "tagline": "A skill of defence, hard-headedness, and immobility. Use Brace to weather the ravages of weather, exhaustion, and those that want to see you fall." },
+    { "name": "Break", "tagline": "A skill of fragments, shockwaves, and hammer-blows. Use Break to smash through stone, metal, and machinery, working against the efforts of civilization." },
+    { "name": "Concoct", "tagline": "A skill of reactions, essences, and deeper understanding. Use Concoct to collect or distill chemicals, and to unpick the mysteries surrounding the mutative potential of crezzerin." },
+    { "name": "Cook", "tagline": "A skill of spices and speculation, meats and fruits and heat. Use Cook to prepare meals, brew herbal drinks or alcohol, and render specimens into their most valuable parts." },
+    { "name": "Delve", "tagline": "A skill of dust, remnants, and forgotten ways. Use Delve to explore the ruins of the old world, traversing barriers and unearthing secrets." },
+    { "name": "Flourish", "tagline": "A skill of showmanship, rhythm, and performance. Use Flourish to enchant, impress, or dazzle those around you, worming your way into their heart with words and deeds." },
+    { "name": "Hack", "tagline": "A skill of sweat, sap, and serrated blades. Use Hack to carve a path right through the wilderness of the rustling waves, imposing order on chaotic growth." },
+    { "name": "Harvest", "tagline": "A skill of reaping, gleaning, and culling. Use Harvest to gather fruits, flowers, and other edibles from the wild waves, and to understand the flow and cycles of nature." },
+    { "name": "Hunt", "tagline": "A skill of observation, marksmanship, and precise action. Use Hunt to turn the tables on the sea's many predators, and pick the best of their trophies." },
+    { "name": "Outwit", "tagline": "A skill of shadows and secrets well-kept. Use Outwit to avoid threats, or to move them right to where you want them." },
+    { "name": "Rattle", "tagline": "A skill of mending, maintenance, and adaptation. Use Rattle to weave oddments and salvage into workable equipment in a pinch, or to tinker with gear and objects." },
+    { "name": "Scavenge", "tagline": "A skill of searching, spit, and polish. Use Scavenge to root out valuable salvage from dross, to pick treasure from trash." },
+    { "name": "Sense", "tagline": "A skill of glances, insight, and intuition. Use Sense to push your awareness of the world past its usual limits, both in terms of environmental awareness and social understanding." },
+    { "name": "Study", "tagline": "A skill of meticulous recording and focused investigation. Use Study to learn the import of details others would miss, make connections, and sort information." },
+    { "name": "Sway", "tagline": "A skill of convincing, arguing, and capitulating with aplomb. Use Sway to convince others to act or hold back from acting, or to change hearts and minds to suit your purposes." },
+    { "name": "Tend", "tagline": "A skill of healing, sustenance, and recovery. Use Tend to heal injuries to the crew, nurture plants, and soothe the minds of both beasts and your fellow crewmates." },
+    { "name": "Vault", "tagline": "A skill of dizzying heights and impressive acrobatics. Use Vault to climb, leap, and tumble your way through an environment at speed." },
+    { "name": "Wavewalk", "tagline": "A skill of seared soles, brachiation, and animalistic elegance. Use Wavewalk to personally navigate the wilds without the use of a ship, despite the danger." }
   ],
   "languages": [
-    "Low Sour", "Raka Spit", "Chthonic", "Lyre-Bite",
-    "Saprekk", "Old Hand", "Gaudimm", "Signaling", "Knock", "Highvin", "Brasstongue"
+    { "name": "Low Sour", "tagline": "Mongrel common tongue spoken across the waves by sailors from shattered cultures." },
+    { "name": "Raka Spit", "tagline": "Rapid hunting-family patter with incredible descriptive depth for beasts and leviathans." },
+    { "name": "Chthonic", "tagline": "Ancient human language reunifying from thousands of dialects, rich in spirit-knowledge and ardent lore." },
+    { "name": "Lyre-Bite", "tagline": "Lilting poetic tongue suited for performances, songs, and understanding ancient whispers." },
+    { "name": "Saprekk", "tagline": "Thick, unchanged ektus tongue; learning it earns great respect from desert peoples." },
+    { "name": "Old Hand", "tagline": "Entirely gestural pre-Verdancy language for the quiet, preserving knowledge of lost relics." },
+    { "name": "Gaudimm", "tagline": "Chemical gau language using twitches, clicks, and pheromones for complex cave-dwelling concepts." },
+    { "name": "Signaling", "tagline": "Visual flag-and-flare code known by travelers, military, and smugglers for ship communication." },
+    { "name": "Knock", "tagline": "Hissing tzelicrae hive-mind speech; outsiders speak simplified versions with gestures and insect wisdom." },
+    { "name": "Highvin", "tagline": "Exceedingly difficult written language from pre-verdant ruins, deciphered by scholars and treasure-hunters." },
+    { "name": "Brasstongue", "tagline": "Clipped trader language adapted from ancient punch-cards, favored by merchants and grifters." }
   ],
   "shipDefaults": {
     "baseRatings": {

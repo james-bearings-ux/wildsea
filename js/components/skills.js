@@ -16,10 +16,12 @@ export function renderSkills(character, gameData = null) {
 
     for (let i = 0; i < GAME_DATA.skills.length; i++) {
       const skill = GAME_DATA.skills[i];
-      const rank = char.skills[skill] || 0;
+      const skillName = skill.name || skill;
+      const tagline = skill.tagline || '';
+      const rank = char.skills[skillName] || 0;
 
-      html += '<div class="skill-row">';
-      html += '<div class="skill-name">' + skill + '</div>';
+      html += '<div class="skill-row" data-tooltip="' + tagline + '">';
+      html += '<div class="skill-name">' + skillName + '</div>';
       html += '<div style="display: flex; gap: 4px;">';
 
       for (let j = 0; j < 3; j++) {
@@ -45,12 +47,13 @@ export function renderSkills(character, gameData = null) {
 
     for (let i = 0; i < GAME_DATA.skills.length; i++) {
       const skill = GAME_DATA.skills[i];
-      const rank = char.skills[skill] || 0;
+      const skillName = skill.name || skill;
+      const rank = char.skills[skillName] || 0;
       const canIncrease = rank < 2 && totalPoints < BUDGETS.skillPoints;
-      const escapedSkill = skill.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+      const escapedSkill = skillName.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
 
       html += '<div class="flex-between" style="margin-bottom: 8px;">';
-      html += '<div class="skill-name">' + skill + '</div>';
+      html += '<div class="skill-name">' + skillName + '</div>';
       html += '<div style="display: flex; gap: 8px; align-items: center;">';
       html += '<button data-action="adjustSkill" data-params="{&quot;name&quot;:&quot;' + escapedSkill + '&quot;,&quot;delta&quot;:-1}"';
       if (rank === 0) html += ' disabled';
@@ -75,11 +78,12 @@ export function renderSkills(character, gameData = null) {
 
     for (let i = 0; i < GAME_DATA.skills.length; i++) {
       const skill = GAME_DATA.skills[i];
-      const rank = char.skills[skill] || 0;
-      const escapedSkill = skill.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+      const skillName = skill.name || skill;
+      const rank = char.skills[skillName] || 0;
+      const escapedSkill = skillName.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
 
       html += '<div class="flex-between" style="margin-bottom: 8px;">';
-      html += '<div class="skill-name">' + skill + '</div>';
+      html += '<div class="skill-name">' + skillName + '</div>';
       html += '<div style="display: flex; gap: 8px; align-items: center;">';
       html += '<button data-action="adjustSkill" data-params="{&quot;name&quot;:&quot;' + escapedSkill + '&quot;,&quot;delta&quot;:-1}"';
       if (rank === 0) html += ' disabled';
@@ -113,10 +117,12 @@ export function renderLanguages(character, gameData = null) {
 
     for (let i = 0; i < GAME_DATA.languages.length; i++) {
       const lang = GAME_DATA.languages[i];
-      const rank = char.languages[lang] || 0;
+      const langName = lang.name || lang;
+      const tagline = lang.tagline || '';
+      const rank = char.languages[langName] || 0;
 
-      html += '<div class="skill-row">';
-      html += '<div class="skill-name">' + lang + '</div>';
+      html += '<div class="skill-row" data-tooltip="' + tagline + '">';
+      html += '<div class="skill-name">' + langName + '</div>';
       html += '<div style="display: flex; gap: 4px;">';
 
       for (let j = 0; j < 3; j++) {
@@ -142,14 +148,15 @@ export function renderLanguages(character, gameData = null) {
 
     for (let i = 0; i < GAME_DATA.languages.length; i++) {
       const lang = GAME_DATA.languages[i];
-      const rank = char.languages[lang] || 0;
-      const isLowSour = lang === 'Low Sour';
+      const langName = lang.name || lang;
+      const rank = char.languages[langName] || 0;
+      const isLowSour = langName === 'Low Sour';
       const canIncrease = !isLowSour && rank < 2 && totalPoints < BUDGETS.skillPoints;
       const canDecrease = !isLowSour && rank > 0;
-      const escapedLang = lang.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+      const escapedLang = langName.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
 
       html += '<div class="flex-between" style="margin-bottom: 8px;">';
-      html += '<div class="skill-name">' + lang + '</div>';
+      html += '<div class="skill-name">' + langName + '</div>';
       html += '<div style="display: flex; gap: 8px; align-items: center;">';
       html += '<button data-action="adjustLanguage" data-params="{&quot;name&quot;:&quot;' + escapedLang + '&quot;,&quot;delta&quot;:-1}"';
       if (!canDecrease) html += ' disabled';
@@ -174,14 +181,15 @@ export function renderLanguages(character, gameData = null) {
 
     for (let i = 0; i < GAME_DATA.languages.length; i++) {
       const lang = GAME_DATA.languages[i];
-      const rank = char.languages[lang] || 0;
-      const escapedLang = lang.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+      const langName = lang.name || lang;
+      const rank = char.languages[langName] || 0;
+      const escapedLang = langName.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
 
       html += '<div class="flex-between" style="margin-bottom: 8px;">';
-      html += '<div class="skill-name">' + lang + '</div>';
+      html += '<div class="skill-name">' + langName + '</div>';
       html += '<div style="display: flex; gap: 8px; align-items: center;">';
       html += '<button data-action="adjustLanguage" data-params="{&quot;name&quot;:&quot;' + escapedLang + '&quot;,&quot;delta&quot;:-1}"';
-      if (rank === 0 || lang === 'Low Sour') html += ' disabled';
+      if (rank === 0 || langName === 'Low Sour') html += ' disabled';
       html += '>−</button>';
 
       for (let j = 0; j < 3; j++) {
