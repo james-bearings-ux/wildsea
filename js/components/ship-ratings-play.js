@@ -30,7 +30,7 @@ export function renderShipRatingsPlay(ship) {
     html += '<div class="ship-rating-track">';
     for (let i = 0; i < value; i++) {
       const state = damageArray[i] === 'burned' ? 'burned' : 'default';
-      const stateChar = state === 'burned' ? 'X' : '';
+      const stateChar = state === 'burned' ? '✕' : '';
       html += `<div class="track-box ${state}" data-action="cycleRatingDamage" data-params='{"rating":"${ratingName}","index":${i}}' style="cursor: pointer;">${stateChar}</div>`;
     }
     html += '</div>';

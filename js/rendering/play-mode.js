@@ -53,7 +53,7 @@ export function renderPlayMode(app, character, gameData, showAddTaskForm = false
             for (let i = 0; i < 5; i++) {
                 if (i < aspect.trackSize) {
                 const state = aspect.damageStates[i];
-                const stateChar = state === 'marked' ? '/' : state === 'burned' ? 'X' : '';
+                const stateChar = state === 'marked' ? '/' : state === 'burned' ? '✕' : '';
                 trackHTML += '<div class="track-box ' + state + '" data-action="cycleAspectDamage" data-params=\'{"id":"' + aspect.id + '","index":' + i + '}\' style="cursor: pointer;">' + stateChar + '</div>';
                 } else {
                 trackHTML += '<div class="track-spacer"></div>';

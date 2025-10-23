@@ -68,7 +68,7 @@
       "instructions": "Map the journey and chart the surrounding wilds.\n• Make Study rolls to accurately chart your course\n• Record landmarks, discoveries, and safe routes\n• Improve future navigation through the same area"
     },
     {
-      "name": "Tending the engine",
+      "name": "Tend the engine",
       "instructions": "Maintain the ship's propulsion systems.\n• Make Build rolls to keep the engine running smoothly\n• Respond quickly to mechanical failures\n• Optimize speed and fuel efficiency"
     },
     {
@@ -76,7 +76,7 @@
       "instructions": "Monitor environmental conditions and patterns.\n• Make Sense rolls to predict weather changes\n• Warn the crew of incoming storms or phenomena\n• Help the crew adapt to changing conditions"
     },
     {
-      "name": "Tending the garden",
+      "name": "Tend the Garden",
       "instructions": "Manage the ship's food production and provisions.\n• Make Flourish rolls for successful cultivation\n• Maintain crew morale through good food\n• Prevent spoilage and manage shortages"
     }
   ]

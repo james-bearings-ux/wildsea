@@ -24,7 +24,7 @@ function renderPartCard(part, isUndercrew = false, ship = null) {
     html += '<div class="ship-rating-track" style="margin-bottom: 12px;">';
     for (let i = 0; i < trackSize; i++) {
       const state = damageArray[i] === 'burned' ? 'burned' : 'default';
-      const stateChar = state === 'burned' ? 'X' : '';
+      const stateChar = state === 'burned' ? '✕' : '';
       // Escape the name for JSON
       const escapedName = part.name.replace(/"/g, '&quot;');
       html += `<div class="track-box ${state}" data-action="cycleUndercrewDamage" data-params='{"undercrewName":"${escapedName}","index":${i}}' style="cursor: pointer;">${stateChar}</div>`;
