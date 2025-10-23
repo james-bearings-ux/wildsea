@@ -71,14 +71,18 @@ export function renderJourneyControls(journeyData, editMode = false) {
     <div class="journey-controls p-8 mb-4">
       <!-- Journey Header -->
       <div class="journey-header">
-        <label class="journey-toggle-label">
-          <input
-            type="checkbox"
-            ${active ? 'checked' : ''}
-            data-action="toggleJourney"
-            class="journey-toggle">
+        <div class="journey-toggle-container">
           <span class="journey-toggle-text">Journey</span>
-        </label>
+          <button
+            data-action="toggleJourney"
+            class="journey-toggle ${active ? 'active' : ''}"
+            aria-pressed="${active ? 'true' : 'false'}"
+            type="button">
+            <span class="toggle-label off">OFF</span>
+            <span class="toggle-slider"></span>
+            <span class="toggle-label on">ON</span>
+          </button>
+        </div>
 
         ${editMode ? `
           <div class="journey-name-container">
