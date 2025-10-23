@@ -2172,24 +2172,23 @@ hr {
   opacity: 0.9;
 }
 
-.journey-header span,
-.clock h4 {
+.journey-header span {
   color: white;
-  margin: 0;
-  padding: 0;
 }
 
 /* Journey Clock Ticks */
 .clock {
   display: flex;
   justify-content: start;
-  gap: 12px;
+  gap: 20px;
   align-items: center;
 }
 .clock h4 {
-  width: 5.5em;
+  width: 6em;
   color: black;
   font-weight: 600;
+  margin: 0;
+  padding: 0;
 }
 
 .clock-ticks{
@@ -2197,8 +2196,8 @@ hr {
   gap: 2px;
 }
 .clock-tick {
-  width: 24px;
-  height: 24px;
+  width: 20px;
+  height: 20px;
   border: 2px solid black;
   border-radius: 50%;
   cursor: pointer;
