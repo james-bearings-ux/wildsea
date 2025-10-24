@@ -79,6 +79,7 @@ button {
 	transition: all 0.2s;
 	font-size: 14px;
 	font-weight: 600;
+  color: #111827;
 }
 
 button:hover:not(:disabled) {
@@ -185,6 +186,7 @@ select,
 	border-radius: 2px;
 	cursor: pointer;
 	font-size: 14px;
+  color: #111827;
 }
 
 /* Base input - text inputs with bottom border */
@@ -979,7 +981,7 @@ hr {
 .nav-button-minor {
   font-size: 16px;
   letter-spacing: 0.5px;
-  padding: 2px 8px;
+  padding: 4px 8px 2px;
   border-radius: 4px;
   color: white;
   background: #353535;
@@ -1149,6 +1151,7 @@ hr {
   border-radius: 8px;
   background: white;
   cursor: pointer;
+  break-inside: avoid-column;
 }
 
 .ship-card-selected {
@@ -1211,24 +1214,21 @@ hr {
 
 /* Ship Layout */
 .ship-main-container {
-  display: flex;
-  flex-direction: column;
-  height: calc(100vh - 110px);
+  margin-bottom: 54px;
 }
 
 .ship-content-row {
   display: flex;
   flex: 1;
-  overflow: hidden;
 }
 
 .ship-ratings-column {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 4px;
   padding: 16px;
-  margin: 56px 0 24px;
-  border-width: 2px 2px 2px 0;
+  margin: 16px 0 0;
+  /* border-width: 2px 2px 2px 0; */
   border-color: #000;
   border-style: solid;
   min-width: 180px;
@@ -1239,11 +1239,10 @@ hr {
 .ship-ratings-heading {
   font-family: 'Teko', sans-serif;
   font-weight: 600;
-  font-size: 20px;
+  font-size: 26px;
   color: #000000;
   letter-spacing: 0.5px;
   margin-bottom: 8px;
-  padding-bottom: 4px;
 }
 
 .ship-rating-item {
@@ -1264,7 +1263,6 @@ hr {
 }
 
 .ship-stakes-section {
-  margin-top: 24px;
   padding-top: 16px;
 }
 
@@ -1366,9 +1364,13 @@ hr {
 }
 
 .ship-fittings-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
+  display: flow;
+  column-count: 2;
+  column-gap: 12px;
+}
+
+.ship-fittings-grid .ship-card {
+  margin-bottom: 12px;
 }
 
 .ship-separator {
@@ -2051,18 +2053,22 @@ hr {
   justify-content: space-between;
   padding: 12px 16px;
   border-radius: 16px;
-  margin: 24px 40px 0;
+  margin: 16px 20px 0;
 }
 
 .journey-header {
     display: flex;
-    flex-direction: column;
     justify-content: space-between;
+    gap: 0;
+    flex-direction: column;
 }
 
 .journey-name-container {
   display:flex;
   gap: 8px;
+  position: relative;
+  bottom: -1em;
+  align-items: start;
 }
 
 .journey-clocks {
@@ -2076,6 +2082,7 @@ hr {
   display: flex;
   align-items: center;
   gap: 12px;
+  align-self: flex-start;
 }
 
 .journey-toggle-text {
@@ -2193,11 +2200,15 @@ hr {
   align-items: center;
 }
 .clock h4 {
-  width: 6em;
+  width: 4em;
   color: black;
-  font-weight: 600;
+  font-weight: 400;
   margin: 0;
   padding: 0;
+  font-family: 'Teko', sans-serif;
+  font-size: 24px;
+  line-height: 1;
+  text-align: right;
 }
 
 .clock-ticks{
