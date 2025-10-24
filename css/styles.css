@@ -79,6 +79,7 @@ button {
 	transition: all 0.2s;
 	font-size: 14px;
 	font-weight: 600;
+  color: #111827;
 }
 
 button:hover:not(:disabled) {
@@ -185,6 +186,7 @@ select,
 	border-radius: 2px;
 	cursor: pointer;
 	font-size: 14px;
+  color: #111827;
 }
 
 /* Base input - text inputs with bottom border */
