@@ -36,7 +36,7 @@ export async function renderNavigation(session) {
   html += '</div>';
 
   // Right side: Character buttons and actions
-  html += '<div style="display: flex; gap: 16px; align-items: center;">';
+  html += '<div style="display: flex; gap: 4px; align-items: center;">';
 
   // Character buttons
   if (session.activeCharacterIds.length > 0) {
