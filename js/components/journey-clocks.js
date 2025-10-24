@@ -68,7 +68,7 @@ export function renderJourneyControls(journeyData, editMode = false) {
   const { active, name, clocks } = journeyData;
 
   return `
-    <div class="journey-controls p-8 mb-4">
+    <div class="journey-controls">
       <!-- Journey Header -->
       <div class="journey-header">
         <div class="journey-toggle-container">

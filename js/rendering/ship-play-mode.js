@@ -16,15 +16,18 @@ import { renderJourneyControls } from '../components/journey-clocks.js';
 export function renderShipPlayMode(container, ship, gameData, journeyEditMode = false) {
   let html = '<div class="ship-main-container" style="height: calc(100vh - 60px);">';
 
+  // Main content area with ratings and inventory (inventory includes cargo)
+  html += '<div class="ship-content-row">';
+  html += renderShipRatingsPlay(ship);
+  html += '<div class="ship-main">';
+
   // Journey controls at the top
   if (ship.journey) {
     html += renderJourneyControls(ship.journey, journeyEditMode);
   }
 
-  // Main content area with ratings and inventory (inventory includes cargo)
-  html += '<div class="ship-content-row">';
-  html += renderShipRatingsPlay(ship);
   html += renderShipInventoryPlay(ship);
+  html += '</div>';
   html += '</div>';
 
   // Bottom action bar
