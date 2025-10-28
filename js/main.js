@@ -423,9 +423,9 @@ async function render(reloadSession = false) {
   // Combine navigation and content
   app.innerHTML = presenceBarHtml + navHtml + tempDiv.innerHTML;
 
-  // Add role tooltip if needed
-  if (showRoleTooltip) {
-    app.innerHTML += renderRoleTooltip(showRoleTooltip);
+  // Add role tooltip if needed (only if not already in DOM)
+  if (showRoleTooltip && !document.querySelector('.role-tooltip-overlay')) {
+    app.insertAdjacentHTML('beforeend', renderRoleTooltip(showRoleTooltip));
   }
 }
 
@@ -937,12 +937,20 @@ function setupEventDelegation() {
               case 'showRoleTooltip':
                 if (parsedParams.role) {
                   showRoleTooltip = parsedParams.role;
-                  await render();
+                  // Render modal immediately without full render
+                  const modalHtml = renderRoleTooltip(showRoleTooltip);
+                  if (modalHtml) {
+                    app.insertAdjacentHTML('beforeend', modalHtml);
+                  }
                 }
                 break;
               case 'closeTooltip':
                 showRoleTooltip = null;
-                await render();
+                // Remove modal immediately
+                const modalOverlay = document.querySelector('.role-tooltip-overlay');
+                if (modalOverlay) {
+                  modalOverlay.remove();
+                }
                 break;
               case 'openCustomizeModal':
                 showCustomizeModal = true;
