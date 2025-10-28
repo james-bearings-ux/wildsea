@@ -57,27 +57,27 @@
   "journeyRoles": [
     {
       "name": "At the helm",
-      "instructions": "Navigate the ship through the wilds.\n• Make Cut rolls to steer through obstacles\n• Respond to hazards ahead with quick decisions\n• Keep the ship on course toward your destination"
+      "instructions": "Choose to 'Cut a Path' (1 progress box), or \n 'Forge Ahead' (2 boxes), or\n 'Drop Anchor' (resource gathering montage)."
     },
     {
       "name": "On watch",
-      "instructions": "Keep an eye out for danger and opportunities.\n• Make Sense rolls to spot threats and landmarks\n• Alert the crew to approaching hazards\n• Maintain situational awareness of surroundings"
+      "instructions": "Choose to make a 'Watch Roll' (1d6 unmodified), or \n Spend a whisper and a chart to 'Make a Discovery'. \n If you have a chart, the Firefly's secret 'Threat Roll' is at advantage."
     },
     {
       "name": "Cartographising",
-      "instructions": "Map the journey and chart the surrounding wilds.\n• Make Study rolls to accurately chart your course\n• Record landmarks, discoveries, and safe routes\n• Improve future navigation through the same area"
+      "instructions": "Fill a secret 'Pathfinding' track to make a new chart by spotting landmark across successive journey turns."
     },
     {
       "name": "Tend the engine",
-      "instructions": "Maintain the ship's propulsion systems.\n• Make Build rolls to keep the engine running smoothly\n• Respond quickly to mechanical failures\n• Optimize speed and fuel efficiency"
+      "instructions": "Based on Helm action, choose to 'Tend to the Engine' (neutral), or \n 'Overload the Engine' (make +1 progress, or increase impact on speed), or \n 'Muffle the Engine' (increase impact on stealth)."
     },
     {
       "name": "Watch the weather",
-      "instructions": "Monitor environmental conditions and patterns.\n• Make Sense rolls to predict weather changes\n• Warn the crew of incoming storms or phenomena\n• Help the crew adapt to changing conditions"
+      "instructions": "Roll 1d6 every watch: \n 6 Clear skies; \n 5-4 Weather continues as-is; \n 3-2-1 Change for the worse. \n You have time to react."
     },
     {
       "name": "Tend the Garden",
-      "instructions": "Manage the ship's food production and provisions.\n• Make Flourish rolls for successful cultivation\n• Maintain crew morale through good food\n• Prevent spoilage and manage shortages"
+      "instructions": "Roll a skill check: \n 6 Triumph - mark 2 boxes on one plants track \n 5-4 Conflict - mark one box \n 3-2-1 Disaster - Clear a mark! \n Doubles: Twist - Another member of the crew adds a tag to the plant, usually based on the roll. \n Harvest when the track is full (Separate roll rules)."
     }
   ]
 }

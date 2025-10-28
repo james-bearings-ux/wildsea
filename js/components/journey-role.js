@@ -32,9 +32,11 @@ export function renderRoleSelector(currentRole, journeyActive) {
         ${roleOptions}
       </select>
       <button
+        type="button"
         data-action="showRoleTooltip"
         data-params='${JSON.stringify({ role: currentRole })}'
         class="info-icon"
+        ${!currentRole ? 'disabled' : ''}
         aria-label="Role information">
         ⓘ
       </button>
@@ -53,26 +55,27 @@ export function renderRoleTooltip(roleName) {
   const GAME_DATA = getGameData();
   const roles = GAME_DATA.journeyRoles || [];
 
-  // Convert kebab-case to title case for lookup
-  const roleTitle = roleName
-    .split('-')
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(' ');
+  // Find role by converting kebab-case back to match the original name
+  // Do case-insensitive comparison since we don't know the exact casing
+  const roleData = roles.find(r => {
+    const kebabName = r.name.toLowerCase().replace(/ /g, '-');
+    return kebabName === roleName;
+  });
 
-  const roleData = roles.find(r => r.name === roleTitle);
-
-  if (!roleData) return '';
+  if (!roleData) {
+    console.warn('Role not found:', roleName);
+    return '';
+  }
 
   return `
     <div
       class="role-tooltip-overlay"
       data-action="closeTooltip">
-      <div
-        class="role-tooltip"
-        onclick="event.stopPropagation()">
+      <div class="role-tooltip">
         <h3 class="role-tooltip-title">${roleData.name}</h3>
         <p class="role-tooltip-text">${roleData.instructions}</p>
         <button
+          type="button"
           data-action="closeTooltip"
           class="role-tooltip-close-btn">
           Close
