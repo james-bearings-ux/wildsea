@@ -949,6 +949,7 @@ hr {
 .drive-input,
 .mire-input {
 	width: 100%;
+  font-size: 14px;
 }
 
 /* Navigation Bar */
@@ -2452,5 +2453,193 @@ hr {
   .clock h4 {
     width: 100px;
     font-size: 14px;
+  }
+}
+
+/* ===========================
+   DM SCREEN STYLES
+   =========================== */
+
+.dm-screen-container {
+  padding: 40px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.dm-screen-container .section-header {
+  color: #6B7280;
+}
+
+.dm-screen-title {
+  font-family: 'Teko', sans-serif;
+  font-size: 48px;
+  font-weight: 600;
+  margin-bottom: 24px;
+  color: #000000;
+}
+
+.dm-row {
+  background: #FFFFFF;
+  border-bottom: 2px solid #000000;
+  border-radius: 0;
+  overflow: hidden;
+}
+
+.dm-row-ship {
+  border-color: #6B7280;
+}
+
+.dm-row-character {
+  border-color: #000000;
+}
+
+.dm-row-empty {
+  padding: 20px;
+  text-align: center;
+  color: #6B7280;
+  font-style: italic;
+}
+
+.dm-ship-static {
+  border-bottom: 2px solid #000;
+  border-radius: 0;
+  padding: 14px 0 16px 32px;
+}
+
+.dm-ship-static .dm-header-content {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.dm-accordion-header {
+  width: 100%;
+  padding: 16px 0;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  font-size: 16px;
+  transition: background 0.2s;
+}
+
+.dm-accordion-header:hover {
+  background: #E5E7EB;
+}
+
+.dm-header-content {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.dm-accordion-icon {
+  font-size: 14px;
+  color: #000;
+  min-width: 16px;
+}
+
+.dm-name-section {
+  flex: 1;
+  min-width: 0;
+}
+
+.dm-name {
+  font-family: 'Teko', sans-serif;
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 1;
+  color: #000000;
+}
+
+.dm-subtext {
+  font-size: 14px;
+  color: #6B7280;
+  margin-top: 4px;
+}
+
+.dm-health {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: 'Teko', sans-serif;
+  font-size: 24px;
+  white-space: nowrap;
+}
+
+.dm-health-bar-container {
+  width: 100px;
+  height: 24px;
+  border: 3px solid #000000;
+  background: #FFFFFF;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.dm-health-bar-fill {
+  height: 100%;
+  background: #000000;
+  transition: width 0.3s ease;
+}
+
+.dm-health-value {
+  color: #000000;
+  font-weight: 600;
+  min-width: 60px;
+}
+
+.dm-accordion-body {
+  padding: 20px 0 20px 32px;
+  background: #FFFFFF;
+  border-top: 1px solid #E5E7EB;
+}
+
+.dm-placeholder {
+  color: #9CA3AF;
+  font-style: italic;
+  text-align: center;
+  padding: 20px;
+}
+
+.dm-character-columns {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.dm-character-column {
+  min-width: 0;
+}
+
+/* Mobile responsiveness for DM screen */
+@media (max-width: 768px) {
+  .dm-screen-container {
+    padding: 20px;
+  }
+
+  .dm-screen-title {
+    font-size: 36px;
+  }
+
+  .dm-header-content {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .dm-name {
+    font-size: 24px;
+  }
+
+  .dm-health {
+    font-size: 20px;
+  }
+
+  .dm-accordion-header {
+    padding: 12px 16px;
+  }
+
+  .dm-character-columns {
+    grid-template-columns: 1fr;
+    gap: 16px;
   }
 }

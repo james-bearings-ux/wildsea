@@ -13,8 +13,13 @@ import { loadShip } from '../state/ship.js';
 export async function renderNavigation(session) {
   let html = '<div class="nav-bar split">';
 
-  // Left side: Ship button
-  html += '<div style="display: flex; gap: 16px; align-items: center;">';
+  // Left side: DM and Ship buttons
+  html += '<div style="display: flex; gap: 16px; align-items: stretch;">';
+
+  // DM Screen button
+  const isDMActive = session.activeView === 'dm-screen';
+  const dmActiveClass = isDMActive ? 'nav-button-active' : 'nav-button-inactive';
+  html += '<button data-action="switchToDMScreen" class="nav-button ' + dmActiveClass + '">DM</button>';
 
   if (session.activeShipId) {
     const ship = await loadShip(session.activeShipId);
@@ -36,7 +41,7 @@ export async function renderNavigation(session) {
   html += '</div>';
 
   // Right side: Character buttons and actions
-  html += '<div style="display: flex; gap: 4px; align-items: center;">';
+  html += '<div style="display: flex; gap: 4px; align-items: stretch;">';
 
   // Character buttons
   if (session.activeCharacterIds.length > 0) {
