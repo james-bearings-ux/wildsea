@@ -957,7 +957,7 @@ hr {
   display: flex;
   background: #000000;
   color: white;
-  padding: 0 20px;
+  padding: 0 20px 0 0;
 }
 
 .nav-button {
@@ -997,6 +997,7 @@ hr {
   letter-spacing: 0.5px;
   padding: 4px 8px 2px;
   border-radius: 4px;
+  margin: 8px 0;
   color: white;
   background: #353535;
 

@@ -14,7 +14,7 @@ export async function renderNavigation(session) {
   let html = '<div class="nav-bar split">';
 
   // Left side: DM and Ship buttons
-  html += '<div style="display: flex; gap: 16px; align-items: stretch;">';
+  html += '<div style="display: flex; gap: 4px; align-items: stretch;">';
 
   // DM Screen button
   const isDMActive = session.activeView === 'dm-screen';
