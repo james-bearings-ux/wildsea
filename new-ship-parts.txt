@@ -1,0 +1,62 @@
+DESIGN ELEMENTS
+
+Husk-Scale 2-Stake Hull
+A flexible, organic hull material made from alchemically altered fruits and mushrooms.
+· Seals +1
+· Damage to a ship's Armour and Seals ratings can be repaired using garden-grown specimens, rather than the usual salvage required.
+
+Parasite Planking 3-Stake Hull
+Wood carefully cut from long-used parasite farm branches, treated to resist incoming damage but natural enough that plants can still take root.
+· Armour +1
+· Gain two plots on your ship named 'planking rootbeds'. Parasite seeds sown within these plots don't gain the usual extra box on their Grow tracks.
+
+Threshing Combine 2-Stake Bite
+Rotating blades at the font of the ship, with netting and gathering equipment at their rear.
+· Saws +1
+· Whenever you Cut a Path, roll a d6. On a 6, you gain a Wild or Rampant seed specimen appropriate for the waves you're passing through.
+
+Press Piping 1-Stake Engine
+Hardly the most powerful engine around, but one that's extremely easy to fuel for a diligent crew.
+· Tilt +1
+· Speed +1
+· Saws -1
+· Fuelled with fruit rinds and vegetable skins.
+
+FITTINGS
+
+Irrigation Array 1-Stake Addition
+The observant might suggest that this is little more than a series of buckets and pipes jumbled together with leaf-rubber seals. And they'd be right.
+· Arid conditions don't negatively affect plant growth within the ship-garden (unless they last for multiple journeys in a row without access to water).
+
+Windvane Rabir 2-Stake Addition
+Tailor-made to spin with the winds, producing a musical drone that keeps all but the most unusual garden pests at bay.
+· All plants within your plots have a resistance to insect predation and insect-borne diseases.
+
+Deckside Shed 1-Stake Room
+Even more cluttered than the average workshop, sheds come stocked with a variety of simple tools used for the maintenance and preparation of ship-garden plots.
+
+Internal Seed Bank 2-Stake Room
+A room not only dedicated to safely storing seeds, but to leeching them of crezzerin contamination through painfully slow but reliable methods used by generations of parasite farmers.
+· At the beginning of a journey, choose a single set of seeds with the Wild or Rampant tag. At the end of the journey, those seeds lose their original tag and gain the Parasite tag instead.
+
+Crezzercannon 2-Stake Armament
+Trying to grow things the old fashioned way? May as well get some use out of all that excess crezzerin...
+· Deals massive LR Toxin damage
+
+UNDERCREW
+
+Howling Scarecrow [3-Track] 2-Stake Officer
+It's amazing what you can do with old clothes, a stick, and some stuffing. And terrifying what you can achieve by adding a hungry whisper to the mix.
+· All of your plots have resistance to predation from beasts.
+
+Greenthumbs [3-Track] 2-Stake Gang
+Apprentice agronauts taking their first steps on a journey of ship-based farming. They're not quite ready for more advanced methods, but they're a dab hand at planting.
+· Adding seeds to a ship-garden plot doesn't use a task.
+
+Golden Ladybugs [3-Track] 2-Stake Pack
+Many years of trial and error have taught these hungry little things to target new-grown weeds above all else.
+· All of your plots have resistance to weeds.
+
+Kleptothermic Dromats [3-Track] 2-Stake Pack
+A horde of thumb-sized bats with incredible control over their own body temperature, and the ability to store and expel water to keep their environment suitably stable for their young. Trained to nest within plots.
+· All of your plots have resistance to weather hazards.

@@ -13,7 +13,9 @@
       "Bash(node test-immunity-pattern.js:*)",
       "Bash(node test-parsing-updated.js:*)",
       "Bash(node regenerate-damage-types.js)",
-      "Bash(git checkout:*)"
+      "Bash(git checkout:*)",
+      "Bash(move:*)",
+      "Bash(node parse-aspects.cjs:*)"
     ],
     "deny": [],
     "ask": []

@@ -4177,5 +4177,97 @@
       "track": 4,
       "description": "Spectral, flickering, barely there at all. When one of your crewmates uses a whisper, mark to gain a twisted copy of that whisper as a resource (supplied by the Firefly)."
     }
+  ],
+  "Agronaut": [
+    {
+      "name": "Dawn to Dusk to Dawn",
+      "type": "Trait",
+      "track": 2,
+      "description": "Immediately mark the first box on the Grow track of anything you plant under sunlight or moonlight (choose one when you take this trait)."
+    },
+    {
+      "name": "Constant Gardener",
+      "type": "Trait",
+      "track": 3,
+      "description": "When a plot would be damaged or destroyed (or otherwise negatively affected by the environment), burn to avoid this effect."
+    },
+    {
+      "name": "Perfectly Ripe",
+      "type": "Trait",
+      "track": 2,
+      "description": "Crewmates treat disasters as conflicts when using specimens you've grown as part of a creation."
+    },
+    {
+      "name": "Soothing Harvester",
+      "type": "Trait",
+      "track": 3,
+      "description": "Plants grown aboard your ship (or body) are immune to blight and sickness. Mark to improve the rarity of any plant-based specimen you acquire from plots."
+    },
+    {
+      "name": "Delicate Step",
+      "type": "Trait",
+      "track": 2,
+      "description": "You disturb no leaves and leave no footprints. You gain resistance to the hazardous effects of crezzerin, and increase impact on actions taken to move through densely forested areas."
+    },
+    {
+      "name": "Green Mile",
+      "type": "Trait",
+      "track": 3,
+      "description": "Once per journey, replace the results of a watch roll with the Peace outcome. If you finish a journey without using this option, remove a negative tag from any one plant growing on your ship."
+    },
+    {
+      "name": "Paradox Slug-Box",
+      "type": "Gear",
+      "track": 3,
+      "description": "These slugs exude crezzer-neutralizing slime and resist all forms of alchemical experimentation. All plots you own are resistant to crezzerin-based damage or effects. Use a task to create a resource, Paradox Slime."
+    },
+    {
+      "name": "Sumptuous Seed-Bag",
+      "type": "Gear",
+      "track": 3,
+      "description": "For a combination of hard graft and showing off. Use a task to create a seed-based specimen based on any plant currently growing within a plot (on your ship or person)."
+    },
+    {
+      "name": "Misting Coppercan",
+      "type": "Gear",
+      "track": 2,
+      "description": "You are almost impossible to detect for predatory plants of all kinds. In addition, whenever you would gain a plant specimen with a negative tag, you may mark mire to remove that tag entirely."
+    },
+    {
+      "name": "Vespin Almanac",
+      "type": "Gear",
+      "track": 4,
+      "description": "Filled with scrawlings on wildfruit theories and hazardous farming techniques. Consume a whisper to add a positive tag to a growing plant, or voluntarily clear three boxes on a Grow track to gain a related whisper."
+    },
+    {
+      "name": "Portable Plot",
+      "type": "Gear",
+      "track": 3,
+      "description": "You just have too many ideas for one deck to handle. You gain an extra plot, always attached to you, with 4/4 spaces for growing plants. You must add a growing medium to this plot for it to be effective."
+    },
+    {
+      "name": "Brute-Shovel",
+      "type": "Gear",
+      "track": 2,
+      "description": "Deals CQ Hewing damage, and allows you to treat conflicts as triumphs when gathering plant-based specimens."
+    },
+    {
+      "name": "Ireful Pitchfork",
+      "type": "Gear",
+      "track": 2,
+      "description": "Deals CQ Spike damage, and increases impact on actions taken to defend against or fend off hazards that would threaten the integrity of ship-borne plants."
+    },
+    {
+      "name": "Sabre-Nosed Bat",
+      "type": "Companion",
+      "track": 2,
+      "description": "A voracious leather-winged protector, eager to defend your growing-plots. Deals LR Keen damage, and all plots you own are resistant to insect-based damage or effects."
+    },
+    {
+      "name": "Amblecotta Pot",
+      "type": "Companion",
+      "track": 2,
+      "description": "A tottering, stylized pot filled with simple soil. You gain an extra plot, always nearby to you, with 4/4 spaces for growing plants. This companion counts as a full solution, both plot and medium combined."
+    }
   ]
 }

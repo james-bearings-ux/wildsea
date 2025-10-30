@@ -1,0 +1,47 @@
+
+
+Dawn to Dusk to Dawn 2-Track Trait
+Immediately mark the first box on the Grow track of anything you plant under sunlight or moonlight (choose one when you take this trait).
+
+Constant Gardener 3-Track Trait
+When a plot would be damaged or destroyed (or otherwise negatively affected by the environment), burn to avoid this effect.
+
+Perfectly Ripe 2-Track Trait
+Crewmates treat disasters as conflicts when using specimens you've grown as part of a creation.
+
+Soothing Harvester 3-Track Trait
+Plants grown aboard your ship (or body) are immune to blight and sickness. Mark to improve the rarity of any plant-based specimen you acquire from plots.
+
+Delicate Step 2-Track Trait
+You disturb no leaves and leave no footprints. You gain resistance to the hazardous effects of crezzerin, and increase impact on actions taken to move through densely forested areas.
+
+Green Mile 3-Track Trait
+Once per journey, replace the results of a watch roll with the Peace outcome. If you finish a journey without using this option, remove a negative tag from any one plant growing on your ship.
+
+Paradox Slug-Box 3-Track Gear
+These slugs exude crezzer-neutralizing slime and resist all forms of alchemical experimentation. All plots you own are resistant to crezzerin-based damage or effects. Use a task to create a resource, Paradox Slime.
+
+Sumptuous Seed-Bag 3-Track Gear
+For a combination of hard graft and showing off. Use a task to create a seed-based specimen based on any plant currently growing within a plot (on your ship or person).
+
+Misting Coppercan 2-Track Gear
+You are almost impossible to detect for predatory plants of all kinds. In addition, whenever you would gain a plant specimen with a negative tag, you may mark mire to remove that tag entirely.
+
+Vespin Almanac 4-Track Gear
+Filled with scrawlings on wildfruit theories and hazardous farming techniques. Consume a whisper to add a positive tag to a growing plant, or voluntarily clear three boxes on a Grow track to gain a related whisper.
+
+Portable Plot 3-Track Gear
+You just have too many ideas for one deck to handle. You gain an extra plot, always attached to you, with 4/4 spaces for growing plants. You must add a growing medium to this plot for it to be effective.
+
+Brute-Shovel 2-Track Gear
+Deals CQ Hewing damage, and allows you to treat conflicts as triumphs when gathering plant-based specimens.
+
+Ireful Pitchfork 2-Track Gear
+Deals CQ Spike damage, and increases impact on actions taken to defend against or fend off hazards that would threaten the integrity of ship-borne plants.
+
+Sabre-Nosed Bat 2-Track Companion
+A voracious leather-winged protector, eager to defend your growing-plots. Deals LR Keen damage, and all plots you own are resistant to insect-based damage or effects.
+
+Amblecotta Pot 2-Track Companion
+A tottering, stylized pot filled with simple soil. You gain an extra plot, always nearby to you, with 4/4 spaces for growing plants. This companion counts as a full solution, both plot and medium combined.
+
