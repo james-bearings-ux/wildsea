@@ -284,6 +284,14 @@ export async function switchToShip(session) {
 }
 
 /**
+ * Switch to DM screen view
+ */
+export async function switchToDMScreen(session) {
+  session.activeView = 'dm-screen';
+  await saveSession(session);
+}
+
+/**
  * Set the active character
  */
 export async function setActiveCharacter(session, characterId) {

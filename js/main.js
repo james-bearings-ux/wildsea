@@ -93,7 +93,8 @@ import {
 import { renderShipCreationMode } from './rendering/ship-creation-mode.js';
 import { renderShipPlayMode } from './rendering/ship-play-mode.js';
 import { renderShipUpgradeMode } from './rendering/ship-upgrade-mode.js';
-import { switchToShip, setActiveShip } from './state/session.js';
+import { renderDMScreen } from './rendering/dm-screen-mode.js';
+import { switchToShip, switchToDMScreen, setActiveShip } from './state/session.js';
 import { renderSection, ACTION_TO_SECTIONS } from './rendering/sections.js';
 // Realtime has infrastructure issues - using polling instead
 // import { setupSubscriptions, unsubscribeAll } from './realtime.js';
@@ -130,6 +131,7 @@ let loginState = 'login'; // 'login' | 'check-email'
 let loginEmail = ''; // Store email for check-email screen
 let loginMessage = ''; // Status message for login screen
 let dirtySections = new Set(); // Track which sections need re-rendering
+let expandedDMAccordion = null; // Track which DM screen accordion is expanded (ship id or character id or null)
 
 // Debounce timers for text inputs
 const debounceTimers = new Map();
@@ -362,6 +364,13 @@ async function render(reloadSession = false) {
   // Render presence bar and navigation
   const presenceBarHtml = renderPresenceBar(onlineUsers);
   const navHtml = await renderNavigation(session);
+
+  // Check if we're viewing the DM screen
+  if (session.activeView === 'dm-screen') {
+    const dmScreenHtml = await renderDMScreen(session, expandedDMAccordion);
+    app.innerHTML = presenceBarHtml + navHtml + dmScreenHtml;
+    return;
+  }
 
   // Check if we're viewing the ship
   if (session.activeView === 'ship' && session.activeShipId) {
@@ -766,6 +775,19 @@ function setupEventDelegation() {
               case 'switchToShip':
                 if (session) {
                   await switchToShip(session);
+                  await render();
+                }
+                break;
+              case 'switchToDMScreen':
+                if (session) {
+                  await switchToDMScreen(session);
+                  await render();
+                }
+                break;
+              case 'toggleDMAccordion':
+                if (parsedParams && parsedParams.id) {
+                  // Toggle accordion: if already expanded, collapse it; otherwise expand it
+                  expandedDMAccordion = expandedDMAccordion === parsedParams.id ? null : parsedParams.id;
                   await render();
                 }
                 break;
