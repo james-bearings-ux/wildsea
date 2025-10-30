@@ -1,7 +1,7 @@
 {
   "bloodlines": ["Ardent", "Ektus", "Gau", "Ironbound", "Ketra", "Mothryn", "Tzelicrae"],
   "origins": ["Amberclad", "Anchored", "Ridgeback", "Rootless", "Shankling", "Spit-Born"],
-  "posts": ["Alchemist", "Char", "Corsair", "Crash", "Dredger", "Hacker", "Horizoneer", "Hunter", "Mesmer", "Navigator", "Rattlehand", "Screw", "Slinger", "Steep", "Surgeon", "Tempest", "Wordbearer"],
+  "posts": ["Agronaut", "Alchemist", "Char", "Corsair", "Crash", "Dredger", "Hacker", "Horizoneer", "Hunter", "Mesmer", "Navigator", "Rattlehand", "Screw", "Slinger", "Steep", "Surgeon", "Tempest", "Wordbearer"],
   "edges": [
     { "name": "Grace", "tagline": "An edge of elegance, precision, & agility" },
     { "name": "Iron", "tagline": "An edge of strength, endurance, & fortitude" },
