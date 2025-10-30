@@ -1188,6 +1188,11 @@
       "specials": [
         "All plants within your plots have a resistance to insect predation and insect-borne diseases."
       ]
+    },
+    {
+      "name": "Catapault Track",
+      "stakes": 1,
+      "description": "A spring-loaded section of deck used for catapulting outriders onto the waves at speed. Great for taking other ships by surprise, but the logistics of reloading an outrider for another launch are... tricky."
     }
   ],
   "bounteousAdditions": [
@@ -1483,6 +1488,17 @@
       "description": "Trying to grow things the old fashioned way? May as well get some use out of all that excess crezzerin...",
       "specials": [
         "Deals massive LR Toxin damage"
+      ]
+    },
+    {
+      "name": "Badass Outrider",
+      "stakes": 3,
+      "description": "A workhorse with overburner and weapon housing. ",
+      "specials": [
+        "Ratings: Armor 2, Seals 1, Speed 4, Saws 2, Stealth 3, Tilt 2.",
+        "Deals Massive LR Spike damage.",
+        "A chemical battery for adding extra power to the engines. Used, hopefully, with great caution.",
+        "Two personal modifications via workhorse (improved stealth, speed, and tilt)."
       ]
     }
   ],
