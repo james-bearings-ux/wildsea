@@ -20,7 +20,7 @@ function renderDrivesReadOnly(character) {
   for (let i = 0; i < character.drives.length; i++) {
     const drive = character.drives[i];
     const displayText = drive || '<span style="color: #9CA3AF; font-style: italic;">No drive set</span>';
-    html += '<div class="drive-input" style="border: 1px solid #E5E7EB; background: #F9FAFB; cursor: default;">';
+    html += '<div class="drive-input" style="cursor: default;">';
     html += displayText;
     html += '</div>';
   }
@@ -55,7 +55,7 @@ function renderMiresReadOnly(character) {
 
     // Mire text
     const displayText = mire.text || '<span style="color: #9CA3AF; font-style: italic;">No mire set</span>';
-    html += '<div class="mire-input" style="border: 1px solid #E5E7EB; background: #F9FAFB; cursor: default;">';
+    html += '<div class="mire-input" style="cursor: default;">';
     html += displayText;
     html += '</div>';
     html += '</div>';

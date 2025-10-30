@@ -949,6 +949,7 @@ hr {
 .drive-input,
 .mire-input {
 	width: 100%;
+  font-size: 14px;
 }
 
 /* Navigation Bar */
@@ -2465,6 +2466,10 @@ hr {
   margin: 0 auto;
 }
 
+.dm-screen-container .section-header {
+  color: #6B7280;
+}
+
 .dm-screen-title {
   font-family: 'Teko', sans-serif;
   font-size: 48px;
@@ -2475,9 +2480,8 @@ hr {
 
 .dm-row {
   background: #FFFFFF;
-  border: 2px solid #000000;
-  margin-bottom: 12px;
-  border-radius: 4px;
+  border-bottom: 2px solid #000000;
+  border-radius: 0;
   overflow: hidden;
 }
 
@@ -2497,11 +2501,9 @@ hr {
 }
 
 .dm-ship-static {
-  background: #F3F4F6;
-  border: 2px solid #6B7280;
-  margin-bottom: 12px;
-  border-radius: 4px;
-  padding: 16px 20px;
+  border-bottom: 2px solid #000;
+  border-radius: 0;
+  padding: 14px 0 16px 32px;
 }
 
 .dm-ship-static .dm-header-content {
@@ -2512,8 +2514,8 @@ hr {
 
 .dm-accordion-header {
   width: 100%;
-  padding: 16px 20px;
-  background: #F3F4F6;
+  padding: 16px 0;
+  background: transparent;
   border: none;
   cursor: pointer;
   text-align: left;
@@ -2533,7 +2535,7 @@ hr {
 
 .dm-accordion-icon {
   font-size: 14px;
-  color: #6B7280;
+  color: #000;
   min-width: 16px;
 }
 
@@ -2587,7 +2589,7 @@ hr {
 }
 
 .dm-accordion-body {
-  padding: 20px;
+  padding: 20px 0 20px 32px;
   background: #FFFFFF;
   border-top: 1px solid #E5E7EB;
 }
