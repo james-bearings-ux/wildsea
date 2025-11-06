@@ -980,6 +980,67 @@ hr {
   }
 }
 
+/* Navigation Dropdown */
+.nav-dropdown-container {
+  position: relative;
+  display: flex;
+}
+
+.nav-dropdown-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: #000000;
+  border: 2px solid #424242;
+  min-width: 160px;
+  z-index: 1000;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+.nav-dropdown-item {
+  width: 100%;
+  padding: 8px 16px;
+  border: none;
+  border-bottom: 1px solid #424242;
+  background: #000000;
+  color: white;
+  cursor: pointer;
+  font-family: 'Teko', sans-serif;
+  font-size: 18px;
+  font-weight: 400;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.nav-dropdown-item:last-child {
+  border-bottom: none;
+}
+
+.nav-dropdown-item:hover {
+  background: #424242;
+}
+
+.nav-dropdown-item.active {
+  background: #FFFFFF;
+  color: #000000;
+  font-weight: 600;
+}
+
+.nav-dropdown-item.active:hover {
+  background: #E5E7EB;
+}
+
+.nav-dropdown-role {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  color: #0c9c5e;
+  margin-top: 2px;
+  line-height: 1;
+}
+
 .nav-button-active {
   background: #FFFFFF;
   color: #000000;

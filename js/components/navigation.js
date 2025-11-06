@@ -49,8 +49,13 @@ export async function renderNavigation(session) {
     const ship = session.activeShipId ? await loadShip(session.activeShipId) : null;
     const journeyActive = ship && ship.journey && ship.journey.active;
 
-    for (let i = 0; i < session.activeCharacterIds.length; i++) {
-      const charId = session.activeCharacterIds[i];
+    const MAX_VISIBLE_CHARS = 5;
+    const visibleCharIds = session.activeCharacterIds.slice(0, MAX_VISIBLE_CHARS);
+    const hiddenCharIds = session.activeCharacterIds.slice(MAX_VISIBLE_CHARS);
+
+    // Render first 5 characters as buttons
+    for (let i = 0; i < visibleCharIds.length; i++) {
+      const charId = visibleCharIds[i];
       const character = await loadCharacter(charId);
       // Character is only active if we're in character view AND it's the active character
       const isActive = session.activeView === 'character' && charId === session.activeCharacterId;
@@ -69,6 +74,40 @@ export async function renderNavigation(session) {
         }
         html += '</button>';
       }
+    }
+
+    // Add "More" dropdown if there are more than 5 characters
+    if (hiddenCharIds.length > 0) {
+      // Check if any hidden character is active
+      const isAnyHiddenActive = hiddenCharIds.includes(session.activeCharacterId) && session.activeView === 'character';
+      const moreActiveClass = isAnyHiddenActive ? 'nav-button-active' : 'nav-button-inactive';
+
+      html += '<div class="nav-dropdown-container">';
+      html += '<button data-action="toggleCharacterDropdown" class="nav-button ' + moreActiveClass + '">More ▾</button>';
+      html += '<div class="nav-dropdown-menu" id="characterDropdown" style="display: none;">';
+
+      for (let i = 0; i < hiddenCharIds.length; i++) {
+        const charId = hiddenCharIds[i];
+        const character = await loadCharacter(charId);
+        const isActive = session.activeView === 'character' && charId === session.activeCharacterId;
+
+        if (character) {
+          const roleDisplay = character.journeyRole
+            ? character.journeyRole.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')
+            : '';
+
+          html += '<button data-action="switchCharacter" data-params=\'{"characterId":"' + charId + '"}\' ';
+          html += 'class="nav-dropdown-item' + (isActive ? ' active' : '') + '">';
+          html += '<div>' + (character.name || 'Unnamed Character') + '</div>';
+          if (journeyActive && roleDisplay) {
+            html += '<div class="nav-dropdown-role">' + roleDisplay + '</div>';
+          }
+          html += '</button>';
+        }
+      }
+
+      html += '</div>';
+      html += '</div>';
     }
   }
 
