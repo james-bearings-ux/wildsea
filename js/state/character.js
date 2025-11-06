@@ -231,10 +231,25 @@ function convertFromDB(dbChar) {
 }
 
 /**
+ * Cache for available aspects to avoid expensive array operations
+ * Key format: "bloodline-origin-post"
+ */
+const availableAspectsCache = new Map();
+
+/**
  * Get all available aspects based on character selections
+ * Results are cached to avoid expensive recomputation
  * @param {Object} char - Character object
  */
 export function getAvailableAspects(char) {
+  const cacheKey = `${char.bloodline}-${char.origin}-${char.post}`;
+
+  // Return cached result if available
+  if (availableAspectsCache.has(cacheKey)) {
+    return availableAspectsCache.get(cacheKey);
+  }
+
+  // Compute available aspects
   const GAME_DATA = getGameData();
   const available = [];
 
@@ -265,6 +280,8 @@ export function getAvailableAspects(char) {
     });
   });
 
+  // Cache and return
+  availableAspectsCache.set(cacheKey, available);
   return available;
 }
 

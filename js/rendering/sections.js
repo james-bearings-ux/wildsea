@@ -3,7 +3,7 @@
  * This module handles re-rendering individual sections without full page refresh
  */
 
-import { renderEdges } from '../components/edges.js';
+import { renderEdges, renderEdgesSkillsLanguagesRow } from '../components/edges.js';
 import { renderSkills, renderLanguages } from '../components/skills.js';
 import { renderResources } from '../components/resources.js';
 import { renderDrives, renderMires } from '../components/drives-mires.js';
@@ -11,6 +11,13 @@ import { renderMilestones } from '../components/milestones.js';
 import { renderDamageTypeTable } from '../components/damage-summary.js';
 import { getGameData } from '../data/loader.js';
 import { highlightDamageTypesInDescription, renderDamageTypeWarning } from '../components/damage-type-selector.js';
+import {
+  renderAdvancementCharacterHeader,
+  renderBloodlineAspectsSection,
+  renderOriginAspectsSection,
+  renderPostAspectsSection,
+  renderMoreAspectsSection
+} from './advancement-mode.js';
 
 /**
  * Render the character header section
@@ -85,6 +92,7 @@ export function renderAspectsSection(character) {
  * Each function takes (character, gameData) and returns HTML string
  */
 export const SECTION_RENDERERS = {
+  // Play mode sections
   'character-header': (char) => renderCharacterHeader(char),
   'aspects': (char) => renderAspectsSection(char),
   'edges': (char, gameData) => renderEdges(char, gameData),
@@ -94,11 +102,26 @@ export const SECTION_RENDERERS = {
   'damage-types': (char) => renderDamageTypeTable(char),
   'drives': (char) => renderDrives(char),
   'mires': (char) => renderMires(char),
-  'milestones': (char) => renderMilestones(char)
+  'milestones': (char) => renderMilestones(char),
+
+  // Advancement mode sections
+  'character-header-advancement': (char) => renderAdvancementCharacterHeader(char),
+  'aspects-bloodline-advancement': (char) => renderBloodlineAspectsSection(char),
+  'aspects-origin-advancement': (char) => renderOriginAspectsSection(char),
+  'aspects-post-advancement': (char) => renderPostAspectsSection(char),
+  'aspects-more-advancement': (char) => renderMoreAspectsSection(char),
+  'edges-skills-languages-advancement': (char, gameData) => renderEdgesSkillsLanguagesRow(renderSkills, renderLanguages, char, gameData),
+  'milestones-advancement': (char) => renderMilestones(char),
+
+  // Creation mode sections
+  'edges-skills-languages-creation': (char, gameData) => renderEdgesSkillsLanguagesRow(renderSkills, renderLanguages, char, gameData),
+  'resources-creation': (char) => renderResources(char),
+  'drives-creation': (char) => renderDrives(char),
+  'mires-creation': (char) => renderMires(char)
 };
 
 /**
- * Map actions to the sections they affect
+ * Map actions to the sections they affect in play/creation mode
  * This allows smart rendering to know which sections to update
  */
 export const ACTION_TO_SECTIONS = {
@@ -136,6 +159,57 @@ export const ACTION_TO_SECTIONS = {
   'onBloodlineChange': ['character-header'],
   'onOriginChange': ['character-header'],
   'onPostChange': ['character-header']
+};
+
+/**
+ * Map actions to sections for creation mode
+ * In creation mode, some sections have different names
+ */
+export const ACTION_TO_SECTIONS_CREATION = {
+  // Edge/Skill/Language actions - all in same section in creation mode
+  'toggleEdge': ['edges-skills-languages-creation'],
+  'adjustSkill': ['edges-skills-languages-creation'],
+  'adjustLanguage': ['edges-skills-languages-creation'],
+
+  // Resource actions
+  'addResource': ['resources-creation'],
+  'removeResource': ['resources-creation'],
+  'updateResourceName': ['resources-creation'],
+  'populateDefaultResources': ['resources-creation'],
+
+  // Drive/Mire actions
+  'updateDrive': ['drives-creation'],
+  'updateMire': ['mires-creation'],
+  'toggleMireCheckbox': ['mires-creation']
+};
+
+/**
+ * Map actions to sections for advancement mode
+ * In advancement mode, some sections have different names
+ */
+export const ACTION_TO_SECTIONS_ADVANCEMENT = {
+  // Aspect actions - update all aspect sections in advancement mode
+  'toggleAspect': ['aspects-bloodline-advancement', 'aspects-origin-advancement', 'aspects-post-advancement', 'aspects-more-advancement'],
+  'toggleAspectDamageType': ['aspects-bloodline-advancement', 'aspects-origin-advancement', 'aspects-post-advancement', 'aspects-more-advancement'],
+  'expandAspectTrack': ['aspects-bloodline-advancement', 'aspects-origin-advancement', 'aspects-post-advancement'],
+
+  // Edge/Skill/Language actions - all in same section in advancement mode
+  'toggleEdge': ['edges-skills-languages-advancement'],
+  'adjustSkill': ['edges-skills-languages-advancement'],
+  'adjustLanguage': ['edges-skills-languages-advancement'],
+
+  // Milestone actions
+  'addMilestone': ['milestones-advancement'],
+  'toggleMilestoneUsed': ['milestones-advancement'],
+  'deleteMilestone': ['milestones-advancement'],
+  'updateMilestoneName': ['milestones-advancement'],
+  'updateMilestoneScale': ['milestones-advancement'],
+
+  // Character header actions
+  'onCharacterNameChange': ['character-header-advancement'],
+  'onBloodlineChange': ['character-header-advancement'],
+  'onOriginChange': ['character-header-advancement'],
+  'onPostChange': ['character-header-advancement']
 };
 
 /**
