@@ -1193,6 +1193,14 @@
       "name": "Catapault Track",
       "stakes": 1,
       "description": "A spring-loaded section of deck used for catapulting outriders onto the waves at speed. Great for taking other ships by surprise, but the logistics of reloading an outrider for another launch are... tricky."
+    },
+    {
+      "name": "Wicker Baskets",
+      "stakes": 1,
+      "description": "Free-swinging containers that always seem to survive whatever might damage the rest of the ship.",
+      "specials": [
+        "All plants grown within the wicker baskets are immune to damage taken by the wider ship (but can still suffer negative effects aimed directly at them)."
+      ]
     }
   ],
   "bounteousAdditions": [
