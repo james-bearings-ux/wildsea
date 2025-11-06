@@ -127,6 +127,9 @@ let hasPendingCharacterSave = false; // Track if character save is pending
 let hasPendingShipSave = false; // Track if ship save is pending
 let isPollingActive = false; // Track if polling is currently running
 let presenceCheckInterval = null; // Interval for checking user presence
+let lastActivityTime = Date.now(); // Track last user interaction
+let inactivityCheckInterval = null; // Interval for checking inactivity
+const INACTIVITY_THRESHOLD = 5 * 60 * 1000; // 5 minutes of inactivity
 let activeShipTab = 'size'; // Track active tab for ship creation mode
 let activeWizardStage = 'design'; // Track wizard stage: 'design' | 'fittings' | 'undercrew'
 let journeyEditMode = false; // Track if journey controls are in edit mode
@@ -211,6 +214,51 @@ function hasActiveTextInputEdits() {
     }
   }
   return false;
+}
+
+/**
+ * Mark user as active (reset inactivity timer)
+ */
+function markUserActive() {
+  lastActivityTime = Date.now();
+}
+
+/**
+ * Check if user has been inactive and pause polling/presence if needed
+ */
+function checkInactivity() {
+  const timeSinceActivity = Date.now() - lastActivityTime;
+  const isInactive = timeSinceActivity > INACTIVITY_THRESHOLD;
+
+  if (isInactive) {
+    // User inactive for 5+ minutes - pause background activity
+    if (isPollingActive) {
+      console.log('[INACTIVITY] User idle for 5 minutes - pausing polling and presence to save bandwidth');
+      stopPolling();
+      stopPresenceHeartbeat();
+      isPollingActive = false;
+    }
+  }
+}
+
+/**
+ * Resume activity after user returns from inactivity
+ */
+async function resumeAfterInactivity() {
+  const timeSinceActivity = Date.now() - lastActivityTime;
+  const wasInactive = timeSinceActivity > INACTIVITY_THRESHOLD;
+
+  if (wasInactive) {
+    console.log('[INACTIVITY] User returned - resuming activity');
+
+    // Restart presence heartbeat
+    if (session && currentUser) {
+      startPresenceHeartbeat(session.id, currentUser.email);
+    }
+
+    // Check if polling should resume
+    await managePollingBasedOnPresence();
+  }
 }
 
 /**
@@ -1172,6 +1220,12 @@ function setupEventDelegation() {
                     presenceCheckInterval = null;
                   }
 
+                  // Stop inactivity check interval
+                  if (inactivityCheckInterval) {
+                    clearInterval(inactivityCheckInterval);
+                    inactivityCheckInterval = null;
+                  }
+
                   // Clear all caches on sign out
                   clearAllCaches();
 
@@ -1497,6 +1551,20 @@ async function loadApp() {
       await managePollingBasedOnPresence();
     }, 30000); // Check every 30 seconds
 
+    // Check for user inactivity every 60 seconds
+    inactivityCheckInterval = setInterval(() => {
+      checkInactivity();
+    }, 60000); // Check every minute
+
+    // Track user activity to detect when they return
+    const activityEvents = ['click', 'keydown', 'mousemove', 'touchstart', 'scroll'];
+    activityEvents.forEach(eventType => {
+      document.addEventListener(eventType, () => {
+        resumeAfterInactivity();
+        markUserActive();
+      }, { passive: true });
+    });
+
     console.log('Rendering...');
     await render();
     console.log('App loaded successfully!');
@@ -1545,6 +1613,12 @@ async function init() {
           presenceCheckInterval = null;
         }
 
+        // Stop inactivity check interval
+        if (inactivityCheckInterval) {
+          clearInterval(inactivityCheckInterval);
+          inactivityCheckInterval = null;
+        }
+
         session = null;
         character = null;
         ship = null;
@@ -1587,6 +1661,12 @@ async function init() {
       if (presenceCheckInterval) {
         clearInterval(presenceCheckInterval);
         presenceCheckInterval = null;
+      }
+
+      // Stop inactivity check interval
+      if (inactivityCheckInterval) {
+        clearInterval(inactivityCheckInterval);
+        inactivityCheckInterval = null;
       }
 
       // Try to remove presence (may not complete due to page unload)
