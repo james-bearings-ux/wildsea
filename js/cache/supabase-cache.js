@@ -6,12 +6,15 @@
 import { supabase } from '../supabaseClient.js';
 
 // In-memory caches
-const characterCache = new Map(); // characterId -> { data, updated_at }
-const shipCache = new Map();      // shipId -> { data, updated_at }
-const sessionCache = new Map();   // sessionId -> { data, updated_at }
+const characterCache = new Map(); // characterId -> { data, updated_at, cached_at }
+const shipCache = new Map();      // shipId -> { data, updated_at, cached_at }
+const sessionCache = new Map();   // sessionId -> { data, updated_at, cached_at }
 
 // Debug flag
 const DEBUG = import.meta.env.DEV;
+
+// Cache freshness threshold - don't check timestamp if cached within this time
+const CACHE_FRESHNESS_MS = 3000; // 3 seconds
 
 /**
  * Load a character with caching
@@ -22,7 +25,16 @@ const DEBUG = import.meta.env.DEV;
  */
 export async function loadCharacterCached(characterId, loadCharacterFn) {
   try {
-    // First check timestamp (tiny query)
+    const cached = characterCache.get(characterId);
+    const now = Date.now();
+
+    // If cache is fresh (less than 3 seconds old), return immediately without timestamp check
+    if (cached && cached.cached_at && (now - cached.cached_at < CACHE_FRESHNESS_MS)) {
+      if (DEBUG) console.log('[CACHE] ⚡ Character cache fresh:', characterId);
+      return cached.data;
+    }
+
+    // Check timestamp (tiny query)
     const { data: meta, error: metaError } = await supabase
       .from('characters')
       .select('updated_at')
@@ -35,11 +47,12 @@ export async function loadCharacterCached(characterId, loadCharacterFn) {
     }
 
     const serverUpdatedAt = new Date(meta.updated_at).getTime();
-    const cached = characterCache.get(characterId);
 
     // Return cached if timestamps match
     if (cached && cached.updated_at >= serverUpdatedAt) {
       if (DEBUG) console.log('[CACHE] ✅ Character cache hit:', characterId);
+      // Update cached_at to refresh staleness timer
+      cached.cached_at = now;
       return cached.data;
     }
 
@@ -58,7 +71,8 @@ export async function loadCharacterCached(characterId, loadCharacterFn) {
       // Update cache
       characterCache.set(characterId, {
         data: character,
-        updated_at: serverUpdatedAt
+        updated_at: serverUpdatedAt,
+        cached_at: now
       });
     }
 
@@ -78,7 +92,16 @@ export async function loadCharacterCached(characterId, loadCharacterFn) {
  */
 export async function loadShipCached(shipId, loadShipFn) {
   try {
-    // First check timestamp (tiny query)
+    const cached = shipCache.get(shipId);
+    const now = Date.now();
+
+    // If cache is fresh (less than 3 seconds old), return immediately without timestamp check
+    if (cached && cached.cached_at && (now - cached.cached_at < CACHE_FRESHNESS_MS)) {
+      if (DEBUG) console.log('[CACHE] ⚡ Ship cache fresh:', shipId);
+      return cached.data;
+    }
+
+    // Check timestamp (tiny query)
     const { data: meta, error: metaError } = await supabase
       .from('ships')
       .select('updated_at')
@@ -91,11 +114,12 @@ export async function loadShipCached(shipId, loadShipFn) {
     }
 
     const serverUpdatedAt = new Date(meta.updated_at).getTime();
-    const cached = shipCache.get(shipId);
 
     // Return cached if timestamps match
     if (cached && cached.updated_at >= serverUpdatedAt) {
       if (DEBUG) console.log('[CACHE] ✅ Ship cache hit:', shipId);
+      // Update cached_at to refresh staleness timer
+      cached.cached_at = now;
       return cached.data;
     }
 
@@ -114,7 +138,8 @@ export async function loadShipCached(shipId, loadShipFn) {
       // Update cache
       shipCache.set(shipId, {
         data: ship,
-        updated_at: serverUpdatedAt
+        updated_at: serverUpdatedAt,
+        cached_at: now
       });
     }
 
@@ -134,7 +159,16 @@ export async function loadShipCached(shipId, loadShipFn) {
  */
 export async function loadSessionCached(sessionId, loadSessionFn) {
   try {
-    // First check timestamp (tiny query)
+    const cached = sessionCache.get(sessionId);
+    const now = Date.now();
+
+    // If cache is fresh (less than 3 seconds old), return immediately without timestamp check
+    if (cached && cached.cached_at && (now - cached.cached_at < CACHE_FRESHNESS_MS)) {
+      if (DEBUG) console.log('[CACHE] ⚡ Session cache fresh:', sessionId);
+      return cached.data;
+    }
+
+    // Check timestamp (tiny query)
     const { data: meta, error: metaError } = await supabase
       .from('sessions')
       .select('updated_at')
@@ -147,11 +181,12 @@ export async function loadSessionCached(sessionId, loadSessionFn) {
     }
 
     const serverUpdatedAt = new Date(meta.updated_at).getTime();
-    const cached = sessionCache.get(sessionId);
 
     // Return cached if timestamps match
     if (cached && cached.updated_at >= serverUpdatedAt) {
       if (DEBUG) console.log('[CACHE] ✅ Session cache hit:', sessionId);
+      // Update cached_at to refresh staleness timer
+      cached.cached_at = now;
       return cached.data;
     }
 
@@ -170,7 +205,8 @@ export async function loadSessionCached(sessionId, loadSessionFn) {
       // Update cache
       sessionCache.set(sessionId, {
         data: session,
-        updated_at: serverUpdatedAt
+        updated_at: serverUpdatedAt,
+        cached_at: now
       });
     }
 
@@ -188,10 +224,12 @@ export async function loadSessionCached(sessionId, loadSessionFn) {
  * @param {Object} character - New character data
  */
 export function invalidateCharacterCache(characterId, character) {
+  const now = Date.now();
   if (character) {
     characterCache.set(characterId, {
       data: character,
-      updated_at: Date.now()
+      updated_at: now,
+      cached_at: now
     });
     if (DEBUG) console.log('[CACHE] Character cache updated:', characterId);
   } else {
@@ -207,10 +245,12 @@ export function invalidateCharacterCache(characterId, character) {
  * @param {Object} ship - New ship data
  */
 export function invalidateShipCache(shipId, ship) {
+  const now = Date.now();
   if (ship) {
     shipCache.set(shipId, {
       data: ship,
-      updated_at: Date.now()
+      updated_at: now,
+      cached_at: now
     });
     if (DEBUG) console.log('[CACHE] Ship cache updated:', shipId);
   } else {
@@ -226,10 +266,12 @@ export function invalidateShipCache(shipId, ship) {
  * @param {Object} session - New session data
  */
 export function invalidateSessionCache(sessionId, session) {
+  const now = Date.now();
   if (session) {
     sessionCache.set(sessionId, {
       data: session,
-      updated_at: Date.now()
+      updated_at: now,
+      cached_at: now
     });
     if (DEBUG) console.log('[CACHE] Session cache updated:', sessionId);
   } else {

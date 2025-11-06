@@ -507,7 +507,7 @@ async function render(reloadSession = false) {
 
   // Load character if not cached or if active character changed
   if (!character || character.id !== session.activeCharacterId) {
-    character = await loadCharacter(session.activeCharacterId);
+    character = await loadCharacterCached(session.activeCharacterId, loadCharacter);
   }
 
   if (!character) {
@@ -839,7 +839,7 @@ function setupEventDelegation() {
                 if (session && parsedParams.characterId) {
                   await setActiveCharacter(session, parsedParams.characterId);
                   // Load the new character into cache
-                  character = await loadCharacter(parsedParams.characterId);
+                  character = await loadCharacterCached(parsedParams.characterId, loadCharacter);
                   await render();
                 }
                 break;
@@ -1518,11 +1518,11 @@ async function loadApp() {
     // Cache initial character and ship
     if (session.activeCharacterId) {
       console.log('Loading active character...');
-      character = await loadCharacter(session.activeCharacterId);
+      character = await loadCharacterCached(session.activeCharacterId, loadCharacter);
     }
     if (session.activeShipId) {
       console.log('Loading active ship...');
-      ship = await loadShip(session.activeShipId);
+      ship = await loadShipCached(session.activeShipId, loadShip);
     }
 
     console.log('Setting up polling-based sync...');

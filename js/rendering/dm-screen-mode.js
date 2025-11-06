@@ -6,6 +6,7 @@
 import { calculateShipHealth, calculateCharacterHealth } from '../utils/health-calculations.js';
 import { loadShip } from '../state/ship.js';
 import { loadCharacter } from '../state/character.js';
+import { loadCharacterCached, loadShipCached } from '../cache/supabase-cache.js';
 
 /**
  * Render read-only drives for DM screen
@@ -115,7 +116,7 @@ export async function renderDMScreen(session, expandedAccordion = null) {
 
   // Ship summary row
   if (session.activeShipId) {
-    const ship = await loadShip(session.activeShipId);
+    const ship = await loadShipCached(session.activeShipId, loadShip);
     if (ship) {
       html += renderShipSummary(ship);
     }
@@ -128,7 +129,7 @@ export async function renderDMScreen(session, expandedAccordion = null) {
   // Character summary rows
   if (session.activeCharacterIds && session.activeCharacterIds.length > 0) {
     for (const charId of session.activeCharacterIds) {
-      const character = await loadCharacter(charId);
+      const character = await loadCharacterCached(charId, loadCharacter);
       if (character) {
         html += renderCharacterSummary(character, expandedAccordion === charId);
       }
