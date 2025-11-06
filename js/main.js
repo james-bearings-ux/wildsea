@@ -731,6 +731,12 @@ function setupEventDelegation() {
                   scheduleSave();
                 }
                 break;
+              case 'toggleCharacterDropdown':
+                const dropdown = document.getElementById('characterDropdown');
+                if (dropdown) {
+                  dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
+                }
+                break;
               case 'switchCharacter':
                 if (session && parsedParams.characterId) {
                   await setActiveCharacter(session, parsedParams.characterId);
@@ -1459,6 +1465,16 @@ async function init() {
         character = null;
         ship = null;
         await render();
+      }
+    });
+
+    // Close character dropdown when clicking outside
+    document.addEventListener('click', function (e) {
+      const dropdown = document.getElementById('characterDropdown');
+      const dropdownContainer = e.target.closest('.nav-dropdown-container');
+
+      if (dropdown && dropdown.style.display === 'block' && !dropdownContainer) {
+        dropdown.style.display = 'none';
       }
     });
 
