@@ -95,11 +95,20 @@ import { renderShipPlayMode } from './rendering/ship-play-mode.js';
 import { renderShipUpgradeMode } from './rendering/ship-upgrade-mode.js';
 import { renderDMScreen } from './rendering/dm-screen-mode.js';
 import { switchToShip, switchToDMScreen, setActiveShip } from './state/session.js';
-import { renderSection, ACTION_TO_SECTIONS } from './rendering/sections.js';
+import { renderSection, ACTION_TO_SECTIONS, ACTION_TO_SECTIONS_CREATION, ACTION_TO_SECTIONS_ADVANCEMENT } from './rendering/sections.js';
 // Realtime has infrastructure issues - using polling instead
 // import { setupSubscriptions, unsubscribeAll } from './realtime.js';
 import { startPolling, stopPolling } from './polling.js';
 import { getCurrentUser, onAuthStateChange, sendMagicLink, signOut } from './auth.js';
+import {
+  loadCharacterCached,
+  loadShipCached,
+  loadSessionCached,
+  invalidateCharacterCache,
+  invalidateShipCache,
+  invalidateSessionCache,
+  clearAllCaches
+} from './cache/supabase-cache.js';
 import { renderLoginScreen, renderCheckEmailScreen } from './components/login.js';
 import { supabase } from './supabaseClient.js';
 import { startPresenceHeartbeat, stopPresenceHeartbeat, getOnlineUsers, removePresence } from './presence.js';
@@ -116,6 +125,11 @@ let ship = null; // Cached active ship
 let onlineUsers = []; // List of online users in the session
 let hasPendingCharacterSave = false; // Track if character save is pending
 let hasPendingShipSave = false; // Track if ship save is pending
+let isPollingActive = false; // Track if polling is currently running
+let presenceCheckInterval = null; // Interval for checking user presence
+let lastActivityTime = Date.now(); // Track last user interaction
+let inactivityCheckInterval = null; // Interval for checking inactivity
+const INACTIVITY_THRESHOLD = 5 * 60 * 1000; // 5 minutes of inactivity
 let activeShipTab = 'size'; // Track active tab for ship creation mode
 let activeWizardStage = 'design'; // Track wizard stage: 'design' | 'fittings' | 'undercrew'
 let journeyEditMode = false; // Track if journey controls are in edit mode
@@ -203,6 +217,74 @@ function hasActiveTextInputEdits() {
 }
 
 /**
+ * Mark user as active (reset inactivity timer)
+ */
+function markUserActive() {
+  lastActivityTime = Date.now();
+}
+
+/**
+ * Check if user has been inactive and pause polling/presence if needed
+ */
+function checkInactivity() {
+  const timeSinceActivity = Date.now() - lastActivityTime;
+  const isInactive = timeSinceActivity > INACTIVITY_THRESHOLD;
+
+  if (isInactive) {
+    // User inactive for 5+ minutes - pause background activity
+    if (isPollingActive) {
+      console.log('[INACTIVITY] User idle for 5 minutes - pausing polling and presence to save bandwidth');
+      stopPolling();
+      stopPresenceHeartbeat();
+      isPollingActive = false;
+    }
+  }
+}
+
+/**
+ * Resume activity after user returns from inactivity
+ */
+async function resumeAfterInactivity() {
+  const timeSinceActivity = Date.now() - lastActivityTime;
+  const wasInactive = timeSinceActivity > INACTIVITY_THRESHOLD;
+
+  if (wasInactive) {
+    console.log('[INACTIVITY] User returned - resuming activity');
+
+    // Restart presence heartbeat
+    if (session && currentUser) {
+      startPresenceHeartbeat(session.id, currentUser.email);
+    }
+
+    // Check if polling should resume
+    await managePollingBasedOnPresence();
+  }
+}
+
+/**
+ * Manage polling based on user presence
+ * Starts polling when multiple users are online, stops when solo
+ */
+async function managePollingBasedOnPresence() {
+  if (!session) return;
+
+  const users = await getOnlineUsers(session.id);
+  const shouldPoll = users.length > 1;
+
+  if (shouldPoll && !isPollingActive) {
+    // Multiple users detected - start polling
+    console.log(`[POLLING] Another user joined - starting polling (${users.length} users online)`);
+    startPolling(session.id, () => render(true), 5000);
+    isPollingActive = true;
+  } else if (!shouldPoll && isPollingActive) {
+    // Back to solo - stop polling
+    console.log('[POLLING] Back to solo play - stopping polling to save bandwidth');
+    stopPolling();
+    isPollingActive = false;
+  }
+}
+
+/**
  * Schedule a save after 1 second of inactivity
  * This provides optimistic UI updates while batching database writes
  */
@@ -211,6 +293,7 @@ function scheduleSave() {
   debounce('character-save', async () => {
     if (character) {
       await saveCharacter(character);
+      invalidateCharacterCache(character.id, character); // Update cache with latest data
       hasPendingCharacterSave = false; // Clear pending flag after save
       // No render needed - UI already updated via scheduleRender()
     }
@@ -225,6 +308,7 @@ function scheduleShipSave() {
   debounce('ship-save', async () => {
     if (ship) {
       await saveShip(ship);
+      invalidateShipCache(ship.id, ship); // Update cache with latest data
       hasPendingShipSave = false; // Clear pending flag after save
       // No render needed - UI already updated via scheduleRender()
     }
@@ -255,7 +339,18 @@ function markDirty(section) {
  * @param {string} actionName - Name of the action that was performed
  */
 function markDirtyByAction(actionName) {
-  const sections = ACTION_TO_SECTIONS[actionName];
+  // Choose the right action-to-sections map based on character mode
+  let actionMap = ACTION_TO_SECTIONS; // Default to play mode
+
+  if (character) {
+    if (character.mode === 'advancement') {
+      actionMap = ACTION_TO_SECTIONS_ADVANCEMENT;
+    } else if (character.mode === 'creation') {
+      actionMap = ACTION_TO_SECTIONS_CREATION;
+    }
+  }
+
+  const sections = actionMap[actionName];
   if (sections) {
     markDirty(sections);
   } else {
@@ -336,20 +431,23 @@ async function render(reloadSession = false) {
 
   if (reloadSession) {
     if (DEBUG) console.log('[RENDER] Reloading session from database...');
-    const latestSession = await loadSession();
-    if (latestSession) {
-      if (DEBUG) console.log('[RENDER] Session reloaded. Character IDs:', latestSession.activeCharacterIds);
-      session = latestSession;
+    const sessionId = localStorage.getItem('wildsea-current-session-id');
+    if (sessionId) {
+      const latestSession = await loadSessionCached(sessionId, loadSession);
+      if (latestSession) {
+        if (DEBUG) console.log('[RENDER] Session reloaded. Character IDs:', latestSession.activeCharacterIds);
+        session = latestSession;
+      }
     }
 
     // Also reload character and ship when session reloads (from real-time updates)
     if (session && session.activeCharacterId) {
       if (DEBUG) console.log('[RENDER] Reloading active character:', session.activeCharacterId);
-      character = await loadCharacter(session.activeCharacterId);
+      character = await loadCharacterCached(session.activeCharacterId, loadCharacter);
     }
     if (session && session.activeShipId) {
       if (DEBUG) console.log('[RENDER] Reloading active ship:', session.activeShipId);
-      ship = await loadShip(session.activeShipId);
+      ship = await loadShipCached(session.activeShipId, loadShip);
     }
   }
 
@@ -376,7 +474,7 @@ async function render(reloadSession = false) {
   if (session.activeView === 'ship' && session.activeShipId) {
     // Load ship if not cached or if active ship changed
     if (!ship || ship.id !== session.activeShipId) {
-      ship = await loadShip(session.activeShipId);
+      ship = await loadShipCached(session.activeShipId, loadShip);
     }
 
     if (!ship) {
@@ -409,7 +507,7 @@ async function render(reloadSession = false) {
 
   // Load character if not cached or if active character changed
   if (!character || character.id !== session.activeCharacterId) {
-    character = await loadCharacter(session.activeCharacterId);
+    character = await loadCharacterCached(session.activeCharacterId, loadCharacter);
   }
 
   if (!character) {
@@ -741,7 +839,7 @@ function setupEventDelegation() {
                 if (session && parsedParams.characterId) {
                   await setActiveCharacter(session, parsedParams.characterId);
                   // Load the new character into cache
-                  character = await loadCharacter(parsedParams.characterId);
+                  character = await loadCharacterCached(parsedParams.characterId, loadCharacter);
                   await render();
                 }
                 break;
@@ -1114,6 +1212,22 @@ function setupEventDelegation() {
                     await removePresence(session.id);
                   }
                   stopPresenceHeartbeat();
+                  stopPolling();
+
+                  // Stop presence check interval
+                  if (presenceCheckInterval) {
+                    clearInterval(presenceCheckInterval);
+                    presenceCheckInterval = null;
+                  }
+
+                  // Stop inactivity check interval
+                  if (inactivityCheckInterval) {
+                    clearInterval(inactivityCheckInterval);
+                    inactivityCheckInterval = null;
+                  }
+
+                  // Clear all caches on sign out
+                  clearAllCaches();
 
                   await signOut();
                   // Auth state change will handle the rest
@@ -1404,21 +1518,52 @@ async function loadApp() {
     // Cache initial character and ship
     if (session.activeCharacterId) {
       console.log('Loading active character...');
-      character = await loadCharacter(session.activeCharacterId);
+      character = await loadCharacterCached(session.activeCharacterId, loadCharacter);
     }
     if (session.activeShipId) {
       console.log('Loading active ship...');
-      ship = await loadShip(session.activeShipId);
+      ship = await loadShipCached(session.activeShipId, loadShip);
     }
 
     console.log('Setting up polling-based sync...');
 
-    // Start polling for changes (check every 3 seconds)
-    startPolling(session.id, () => render(true));
+    // Check how many users are online to optimize polling
+    const initialOnlineUsers = await getOnlineUsers(session.id);
+
+    if (initialOnlineUsers.length > 1) {
+      // Multiple users online - start polling for multiplayer sync
+      console.log(`[POLLING] Starting polling - ${initialOnlineUsers.length} users online`);
+      startPolling(session.id, () => render(true), 5000);
+      isPollingActive = true;
+    } else {
+      // Solo play - skip polling to save egress
+      console.log('[POLLING] Solo play detected - polling disabled to save bandwidth');
+      console.log('[POLLING] Polling will auto-start if another user joins');
+      isPollingActive = false;
+    }
 
     // Start presence heartbeat
     console.log('Starting presence heartbeat...');
     startPresenceHeartbeat(session.id, currentUser.email);
+
+    // Check presence every 30 seconds to dynamically manage polling
+    presenceCheckInterval = setInterval(async () => {
+      await managePollingBasedOnPresence();
+    }, 30000); // Check every 30 seconds
+
+    // Check for user inactivity every 60 seconds
+    inactivityCheckInterval = setInterval(() => {
+      checkInactivity();
+    }, 60000); // Check every minute
+
+    // Track user activity to detect when they return
+    const activityEvents = ['click', 'keydown', 'mousemove', 'touchstart', 'scroll'];
+    activityEvents.forEach(eventType => {
+      document.addEventListener(eventType, () => {
+        resumeAfterInactivity();
+        markUserActive();
+      }, { passive: true });
+    });
 
     console.log('Rendering...');
     await render();
@@ -1461,6 +1606,19 @@ async function init() {
         // User signed out - clear state and show login
         stopPolling();
         stopPresenceHeartbeat();
+
+        // Stop presence check interval
+        if (presenceCheckInterval) {
+          clearInterval(presenceCheckInterval);
+          presenceCheckInterval = null;
+        }
+
+        // Stop inactivity check interval
+        if (inactivityCheckInterval) {
+          clearInterval(inactivityCheckInterval);
+          inactivityCheckInterval = null;
+        }
+
         session = null;
         character = null;
         ship = null;
@@ -1478,10 +1636,39 @@ async function init() {
       }
     });
 
+    // Handle tab visibility changes - pause polling when tab is hidden
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+        // Tab hidden - stop polling to save bandwidth
+        if (isPollingActive) {
+          console.log('[POLLING] Tab hidden - pausing polling');
+          stopPolling();
+          isPollingActive = false; // Mark as stopped so it can resume later
+        }
+      } else {
+        // Tab visible again - resume polling if needed
+        console.log('[POLLING] Tab visible - checking if polling should resume');
+        managePollingBasedOnPresence();
+      }
+    });
+
     // Cleanup polling and presence when page unloads
     window.addEventListener('beforeunload', () => {
       stopPolling();
       stopPresenceHeartbeat();
+
+      // Stop presence check interval
+      if (presenceCheckInterval) {
+        clearInterval(presenceCheckInterval);
+        presenceCheckInterval = null;
+      }
+
+      // Stop inactivity check interval
+      if (inactivityCheckInterval) {
+        clearInterval(inactivityCheckInterval);
+        inactivityCheckInterval = null;
+      }
+
       // Try to remove presence (may not complete due to page unload)
       if (session) {
         removePresence(session.id);

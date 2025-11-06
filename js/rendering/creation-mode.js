@@ -141,16 +141,24 @@ export function renderCreationMode(app, character, gameData) {
         </div>
         <hr />
 
+        <div data-section="edges-skills-languages-creation">
         ${renderEdgesSkillsLanguagesRow(renderSkills, renderLanguages, character, gameData)}
+        </div>
         <hr />
 
+        <div data-section="resources-creation">
         ${renderResources(character)}
+        </div>
         <hr />
 
         <div class="section-spacing-lg">
         <div class="grid-2col gap-xxl">
+            <div data-section="drives-creation">
             ${renderDrives(character)}
+            </div>
+            <div data-section="mires-creation">
             ${renderMires(character)}
+            </div>
         </div>
         </div>
     </div>

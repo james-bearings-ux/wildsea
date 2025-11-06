@@ -4,6 +4,7 @@
 
 import { loadCharacter } from '../state/character.js';
 import { loadShip } from '../state/ship.js';
+import { loadCharacterCached, loadShipCached } from '../cache/supabase-cache.js';
 
 /**
  * Render the navigation bar
@@ -22,7 +23,7 @@ export async function renderNavigation(session) {
   html += '<button data-action="switchToDMScreen" class="nav-button ' + dmActiveClass + '">DM</button>';
 
   if (session.activeShipId) {
-    const ship = await loadShip(session.activeShipId);
+    const ship = await loadShipCached(session.activeShipId, loadShip);
     const isActive = session.activeView === 'ship';
     const activeClass = isActive ? 'nav-button-active' : 'nav-button-inactive';
     const journeyActive = ship && ship.journey && ship.journey.active;
@@ -46,7 +47,7 @@ export async function renderNavigation(session) {
   // Character buttons
   if (session.activeCharacterIds.length > 0) {
     // Load ship to check journey status
-    const ship = session.activeShipId ? await loadShip(session.activeShipId) : null;
+    const ship = session.activeShipId ? await loadShipCached(session.activeShipId, loadShip) : null;
     const journeyActive = ship && ship.journey && ship.journey.active;
 
     const MAX_VISIBLE_CHARS = 5;
@@ -56,7 +57,7 @@ export async function renderNavigation(session) {
     // Render first 5 characters as buttons
     for (let i = 0; i < visibleCharIds.length; i++) {
       const charId = visibleCharIds[i];
-      const character = await loadCharacter(charId);
+      const character = await loadCharacterCached(charId, loadCharacter);
       // Character is only active if we're in character view AND it's the active character
       const isActive = session.activeView === 'character' && charId === session.activeCharacterId;
 
@@ -88,7 +89,7 @@ export async function renderNavigation(session) {
 
       for (let i = 0; i < hiddenCharIds.length; i++) {
         const charId = hiddenCharIds[i];
-        const character = await loadCharacter(charId);
+        const character = await loadCharacterCached(charId, loadCharacter);
         const isActive = session.activeView === 'character' && charId === session.activeCharacterId;
 
         if (character) {

@@ -15,7 +15,9 @@
       "Bash(node regenerate-damage-types.js)",
       "Bash(git checkout:*)",
       "Bash(move:*)",
-      "Bash(node parse-aspects.cjs:*)"
+      "Bash(node parse-aspects.cjs:*)",
+      "Bash(powershell:*)",
+      "Bash(dir:*)"
     ],
     "deny": [],
     "ask": []
