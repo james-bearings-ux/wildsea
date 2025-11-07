@@ -1018,7 +1018,7 @@ hr {
   border-bottom: none;
 }
 
-.nav-dropdown-item:hover {
+.nav-dropdown-item:hover:not(:disabled) {
   background: #424242;
 }
 
