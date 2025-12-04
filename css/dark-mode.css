@@ -1,0 +1,236 @@
+/* ===========================
+   DARK MODE COLOR SCHEME
+   =========================== */
+
+:root[data-theme="dark"] {
+  /* Base colors */
+  --bg-primary: #222222;
+  --bg-secondary: #2A2A2A;
+  --bg-tertiary: #333333;
+  --bg-hover: #3A3A3A;
+  --bg-accent: #444444;
+
+  /* Text colors */
+  --text-primary: #E5E5E5;
+  --text-secondary: #D1D1D1;
+  --text-tertiary: #B8B8B8;
+  --text-muted: #999999;
+  --text-disabled: #666666;
+  --text-placeholder: #777777;
+
+  /* Border colors */
+  --border-primary: #555555;
+  --border-secondary: #444444;
+  --border-tertiary: #3A3A3A;
+  --border-subtle: #4A4A4A;
+  --border-hover: #666666;
+
+  /* Button colors */
+  --btn-primary-bg: #006e1c;
+  --btn-primary-hover: #008a24;
+  --btn-secondary-bg: #3A3A3A;
+  --btn-secondary-hover: #4A4A4A;
+  --btn-tertiary-text: #E5E5E5;
+  --btn-ghost-hover: rgba(255, 255, 255, 0.1);
+
+  /* Status colors */
+  --success-bg: #065F46;
+  --success-border: #047857;
+  --success-text: #D1FAE5;
+  --error-bg: #7F1D1D;
+  --error-border: #991B1B;
+  --error-text: #FEE2E2;
+  --warning-bg: #78350F;
+  --warning-border: #92400E;
+  --warning-text: #FEF3C7;
+
+  /* Component specific */
+  --card-bg: #2A2A2A;
+  --card-border: #444444;
+  --card-selected-border: #777777;
+
+  /* Checkbox */
+  --checkbox-border: #666666;
+  --checkbox-checked-bg: #888888;
+  --checkbox-checked-border: #888888;
+  --checkbox-hover-bg: #3A3A3A;
+  --checkbox-hover-border: #888888;
+
+  /* Track boxes */
+  --track-box-bg: #2A2A2A;
+  --track-box-border: #666666;
+  --track-box-hover-bg: #3A3A3A;
+  --track-box-hover-border: #888888;
+  --track-box-active-bg: #888888;
+  --track-box-marked-bg: #DC2626;
+  --track-box-marked-border: #DC2626;
+  --track-box-burned-bg: #7F1D1D;
+  --track-box-burned-border: #7F1D1D;
+  --track-box-new-bg: #84CC16;
+  --track-box-new-border: #4D7C0F;
+
+  /* Edge cards */
+  --edge-card-bg: #2A2A2A;
+  --edge-card-border: #666666;
+  --edge-card-selected-bg: #4A4A4A;
+  --edge-card-selected-border: #888888;
+  --edge-card-selected-text: #E5E5E5;
+  --edge-tagline-text: #999999;
+
+  /* Budget indicator */
+  --budget-bg: #4A4A4A;
+  --budget-text: #E5E5E5;
+
+  /* Section headers */
+  --section-header-text: #E5E5E5;
+  --subsection-header-text: #999999;
+
+  /* Task styles */
+  --task-bg: #2A2A2A;
+  --task-border: #444444;
+  --task-editing-bg: #333333;
+  --task-text: #E5E5E5;
+  --task-progress-text: #999999;
+  --clock-tick-border: #888888;
+  --clock-tick-bg: #2A2A2A;
+  --clock-tick-filled-bg: #888888;
+  --clock-tick-hover-border: #A91D3A;
+  --clock-tick-filled-hover-bg: #A91D3A;
+
+  /* Input styles */
+  --input-bg: #2A2A2A;
+  --input-border: #666666;
+  --input-disabled-border: #444444;
+  --input-disabled-text: #666666;
+  --textarea-border: #666666;
+  --select-bg: #2A2A2A;
+  --select-border: #666666;
+  --select-text: #E5E5E5;
+
+  /* Navigation */
+  --nav-bg: #1A1A1A;
+  --nav-text: #E5E5E5;
+  --nav-hover-bg: #2A2A2A;
+  --nav-active-bg: #4A4A4A;
+  --nav-active-text: #E5E5E5;
+  --nav-dropdown-bg: #1A1A1A;
+  --nav-dropdown-border: #333333;
+  --nav-dropdown-item-border: #333333;
+  --nav-dropdown-hover-bg: #2A2A2A;
+  --nav-role-text: #10b574;
+  --nav-minor-bg: #2A2A2A;
+  --nav-minor-hover-bg: #006e1c;
+
+  /* Ship styles */
+  --ship-top-bar-bg: #2A2A2A;
+  --ship-top-bar-text: #E5E5E5;
+  --ship-wizard-border: transparent;
+  --ship-wizard-active-border: #888888;
+  --ship-tab-bg: #333333;
+  --ship-tab-inactive-text: #777777;
+  --ship-tab-border: #444444;
+  --ship-card-bg: #2A2A2A;
+  --ship-card-border: #444444;
+  --ship-card-selected-border: #888888;
+  --ship-ratings-bg: #2A2A2A;
+  --ship-ratings-border: #666666;
+  --ship-separator: #666666;
+  --ship-bonus-bg: #1E3A8A;
+  --ship-bonus-text: #BFDBFE;
+  --ship-special-text: #34D399;
+
+  /* Modal */
+  --modal-bg: #2A2A2A;
+  --modal-border: #666666;
+  --modal-overlay: rgba(0, 0, 0, 0.85);
+  --modal-header-border: #444444;
+  --modal-footer-border: #444444;
+
+  /* Login screen */
+  --login-bg: #111111;
+  --login-card-bg: #222222;
+  --login-card-border: #444444;
+  --login-title-text: #E5E5E5;
+  --login-subtitle-text: #999999;
+  --login-input-bg: #333333;
+  --login-input-border: #555555;
+  --login-input-text: #E5E5E5;
+  --login-input-focus-outline: #991B1B;
+  --login-button-bg: #991B1B;
+  --login-button-hover: #7F1D1D;
+  --login-footer-text: #777777;
+  --login-back-button-text: #F87171;
+  --login-back-button-hover: #EF4444;
+
+  /* Damage types */
+  --dt-chip-bg: #2A2A2A;
+  --dt-chip-border: #555555;
+  --dt-chip-text: #D1D1D1;
+  --dt-chip-hover-bg: #333333;
+  --dt-chip-hover-border: #666666;
+  --dt-chip-selected-bg: #1E3A8A;
+  --dt-chip-selected-border: #3B82F6;
+  --dt-chip-selected-text: #BFDBFE;
+  --dt-chip-disabled-bg: #222222;
+  --dt-selector-bg: #333333;
+  --dt-selector-border: #444444;
+  --dt-badge-bg: #333333;
+  --dt-badge-text: #B8B8B8;
+  --dt-badge-border: #555555;
+  --dt-resistance-bg: #1E3A8A;
+  --dt-resistance-text: #BFDBFE;
+  --dt-resistance-border: #3B82F6;
+  --dt-immune-bg: #065F46;
+  --dt-immune-text: #6EE7B7;
+  --dt-immune-border: #047857;
+  --dt-weakness-bg: #7F1D1D;
+  --dt-weakness-text: #FCA5A5;
+  --dt-weakness-border: #991B1B;
+  --dt-dealing-bg: #5B21B6;
+  --dt-dealing-text: #D8B4FE;
+  --dt-dealing-border: #7C3AED;
+
+  /* Journey */
+  --journey-bg: linear-gradient(45deg, #0d2219, #2b5a75);
+  --journey-text: #E5E5E5;
+  --journey-toggle-bg: rgba(0, 0, 0, 0.5);
+  --journey-toggle-border: rgba(255, 255, 255, 0.2);
+  --journey-toggle-active-bg: rgba(255, 255, 255, 0.15);
+  --journey-toggle-active-border: rgba(255, 255, 255, 0.3);
+  --journey-slider-bg: linear-gradient(135deg, #888888 0%, #666666 100%);
+  --journey-slider-shadow: 0 2px 8px rgba(0, 0, 0, 0.5), 0 1px 3px rgba(0, 0, 0, 0.3);
+  --journey-clock-text: #E5E5E5;
+  --journey-clock-border: #888888;
+  --journey-clock-filled: #888888;
+  --role-selector-bg: #0c9c5e;
+  --role-dropdown-bg: #2A2A2A;
+
+  /* DM Screen */
+  --dm-bg: #2A2A2A;
+  --dm-border: #666666;
+  --dm-ship-border: #555555;
+  --dm-header-hover-bg: #333333;
+  --dm-placeholder-text: #777777;
+  --dm-health-bar-bg: #2A2A2A;
+  --dm-health-bar-border: #888888;
+  --dm-health-bar-fill: #888888;
+
+  /* Presence bar */
+  --presence-bg: #1A1A1A;
+  --presence-border: #333333;
+  --presence-text: #E5E5E5;
+  --presence-muted: #999999;
+  --presence-button-border: #666666;
+  --presence-button-hover: #A91D3A;
+
+  /* Misc */
+  --danger-bg: #A91D3A;
+  --danger-hover: #8B1730;
+  --hr-border: #444444;
+  --skill-row-hover-bg: #333333;
+  --remove-hover-bg: #8B1730;
+  --ship-add-button-text: #999999;
+  --ship-add-button-border: #555555;
+  --ship-add-button-hover-bg: #333333;
+  --ship-add-button-hover-border: #666666;
+}

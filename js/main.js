@@ -1205,6 +1205,15 @@ function setupEventDelegation() {
                 loginMessage = '';
                 renderLogin();
                 break;
+              case 'toggleTheme':
+                // Toggle between light and dark mode
+                const currentTheme = localStorage.getItem('theme') || 'light';
+                const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+                localStorage.setItem('theme', newTheme);
+                document.documentElement.setAttribute('data-theme', newTheme);
+                // Re-render to update the toggle button icon
+                render();
+                break;
               case 'signOut':
                 if (confirm('Are you sure you want to sign out?')) {
                   // Clean up presence
@@ -1585,6 +1594,10 @@ async function init() {
 
   try {
     console.log('Starting initialization...');
+
+    // Initialize theme from localStorage
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    document.documentElement.setAttribute('data-theme', savedTheme);
 
     // Set up event delegation first (works for both login and app)
     console.log('Setting up event delegation...');
