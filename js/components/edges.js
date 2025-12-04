@@ -30,9 +30,7 @@ export function renderEdges(character, gameData = null) {
       if (isDisabled) html += ' disabled';
       html += '" data-action="toggleEdge" data-params="{&quot;name&quot;:&quot;' + escapedName + '&quot;}">';
       html += '<div class="edge-name" style="margin-bottom: 4px;">' + edge.name + '</div>';
-      html += '<div class="edge-tagline" style="font-size: 12px; color: ';
-      html += isSelected ? '#9CA3AF' : '#6B7280';
-      html += ';">' + edge.tagline + '</div>';
+      html += '<div class="edge-tagline" style="font-size: 12px;">' + edge.tagline + '</div>';
       html += '</div>';
     }
 
@@ -46,7 +44,7 @@ export function renderEdges(character, gameData = null) {
       const edge = GAME_DATA.edges.find(e => e.name === edgeName);
       const tagline = edge ? edge.tagline : '';
 
-      html += '<div class="edge-name" style="color: #111827; margin-bottom: 4px;" data-tooltip="' + tagline + '">';
+      html += '<div class="edge-name" style="margin-bottom: 4px;" data-tooltip="' + tagline + '">';
       html += edgeName;
       html += '</div>';
     }

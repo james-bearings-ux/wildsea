@@ -1,0 +1,236 @@
+/* ===========================
+   LIGHT MODE COLOR SCHEME
+   =========================== */
+
+:root[data-theme="light"] {
+  /* Base colors */
+  --bg-primary: #FFFFFF;
+  --bg-secondary: #F3F4F6;
+  --bg-tertiary: #F9FAFB;
+  --bg-hover: #E5E7EB;
+  --bg-accent: #ECECEC;
+
+  /* Text colors */
+  --text-primary: #111827;
+  --text-secondary: #374151;
+  --text-tertiary: #4B5563;
+  --text-muted: #6B7280;
+  --text-disabled: #D1D5DB;
+  --text-placeholder: #9CA3AF;
+
+  /* Border colors */
+  --border-primary: #000000;
+  --border-secondary: #6B7280;
+  --border-tertiary: #E5E7EB;
+  --border-subtle: #D1D5DB;
+  --border-hover: #9CA3AF;
+
+  /* Button colors */
+  --btn-primary-bg: #004d13;
+  --btn-primary-hover: #006e1c;
+  --btn-secondary-bg: #000000;
+  --btn-secondary-hover: #1F2937;
+  --btn-tertiary-text: #000;
+  --btn-ghost-hover: rgba(0, 0, 0, 0.7);
+
+  /* Status colors */
+  --success-bg: #065F46;
+  --success-border: #047857;
+  --success-text: #D1FAE5;
+  --error-bg: #7F1D1D;
+  --error-border: #991B1B;
+  --error-text: #FEE2E2;
+  --warning-bg: #FEF3C7;
+  --warning-border: #FCD34D;
+  --warning-text: #92400E;
+
+  /* Component specific */
+  --card-bg: #FFFFFF;
+  --card-border: #E5E7EB;
+  --card-selected-border: #000;
+
+  /* Checkbox */
+  --checkbox-border: #6B7280;
+  --checkbox-checked-bg: #000000;
+  --checkbox-checked-border: #000000;
+  --checkbox-hover-bg: #ececec;
+  --checkbox-hover-border: #000;
+
+  /* Track boxes */
+  --track-box-bg: #FFFFFF;
+  --track-box-border: #6B7280;
+  --track-box-hover-bg: #ececec;
+  --track-box-hover-border: #000;
+  --track-box-active-bg: #000000;
+  --track-box-marked-bg: #DC2626;
+  --track-box-marked-border: #DC2626;
+  --track-box-burned-bg: #7F1D1D;
+  --track-box-burned-border: #7F1D1D;
+  --track-box-new-bg: #84CC16;
+  --track-box-new-border: #4D7C0F;
+
+  /* Edge cards */
+  --edge-card-bg: #FFFFFF;
+  --edge-card-border: #6B7280;
+  --edge-card-selected-bg: #000000;
+  --edge-card-selected-border: #0F172A;
+  --edge-card-selected-text: white;
+  --edge-tagline-text: #9CA3AF;
+
+  /* Budget indicator */
+  --budget-bg: #000000;
+  --budget-text: white;
+
+  /* Section headers */
+  --section-header-text: #000000;
+  --subsection-header-text: #9CA3AF;
+
+  /* Task styles */
+  --task-bg: #FFFFFF;
+  --task-border: #E5E7EB;
+  --task-editing-bg: #F9FAFB;
+  --task-text: #111827;
+  --task-progress-text: #6B7280;
+  --clock-tick-border: #000000;
+  --clock-tick-bg: #FFFFFF;
+  --clock-tick-filled-bg: #000000;
+  --clock-tick-hover-border: #A91D3A;
+  --clock-tick-filled-hover-bg: #A91D3A;
+
+  /* Input styles */
+  --input-bg: #FFFFFF;
+  --input-border: #000000;
+  --input-disabled-border: #E5E7EB;
+  --input-disabled-text: #D1D5DB;
+  --textarea-border: #6B7280;
+  --select-bg: #FFFFFF;
+  --select-border: #6B7280;
+  --select-text: #111827;
+
+  /* Navigation */
+  --nav-bg: #000000;
+  --nav-text: #FFFFFF;
+  --nav-hover-bg: #424242;
+  --nav-active-bg: #FFFFFF;
+  --nav-active-text: #000000;
+  --nav-dropdown-bg: #000000;
+  --nav-dropdown-border: #424242;
+  --nav-dropdown-item-border: #424242;
+  --nav-dropdown-hover-bg: #424242;
+  --nav-role-text: #0c9c5e;
+  --nav-minor-bg: #353535;
+  --nav-minor-hover-bg: #004d13;
+
+  /* Ship styles */
+  --ship-top-bar-bg: #FFFFFF;
+  --ship-top-bar-text: #000000;
+  --ship-wizard-border: transparent;
+  --ship-wizard-active-border: #000;
+  --ship-tab-bg: #F3F4F6;
+  --ship-tab-inactive-text: #868686;
+  --ship-tab-border: #e5e7eb;
+  --ship-card-bg: #FFFFFF;
+  --ship-card-border: #E5E7EB;
+  --ship-card-selected-border: #000;
+  --ship-ratings-bg: #FFFFFF;
+  --ship-ratings-border: #000;
+  --ship-separator: #000000;
+  --ship-bonus-bg: #DBEAFE;
+  --ship-bonus-text: #1E40AF;
+  --ship-special-text: #059669;
+
+  /* Modal */
+  --modal-bg: #FFFFFF;
+  --modal-border: #000000;
+  --modal-overlay: rgba(0, 0, 0, 0.75);
+  --modal-header-border: #E5E7EB;
+  --modal-footer-border: #E5E7EB;
+
+  /* Login screen */
+  --login-bg: #111827;
+  --login-card-bg: #1F2937;
+  --login-card-border: #374151;
+  --login-title-text: white;
+  --login-subtitle-text: #9CA3AF;
+  --login-input-bg: #374151;
+  --login-input-border: #4B5563;
+  --login-input-text: white;
+  --login-input-focus-outline: #991B1B;
+  --login-button-bg: #991B1B;
+  --login-button-hover: #7F1D1D;
+  --login-footer-text: #6B7280;
+  --login-back-button-text: #F87171;
+  --login-back-button-hover: #EF4444;
+
+  /* Damage types */
+  --dt-chip-bg: #FFFFFF;
+  --dt-chip-border: #D1D5DB;
+  --dt-chip-text: #374151;
+  --dt-chip-hover-bg: #F3F4F6;
+  --dt-chip-hover-border: #9CA3AF;
+  --dt-chip-selected-bg: #DBEAFE;
+  --dt-chip-selected-border: #3B82F6;
+  --dt-chip-selected-text: #1E3A8A;
+  --dt-chip-disabled-bg: #F9FAFB;
+  --dt-selector-bg: #F9FAFB;
+  --dt-selector-border: #E5E7EB;
+  --dt-badge-bg: #F3F4F6;
+  --dt-badge-text: #4B5563;
+  --dt-badge-border: #D1D5DB;
+  --dt-resistance-bg: #DBEAFE;
+  --dt-resistance-text: #1E3A8A;
+  --dt-resistance-border: #93C5FD;
+  --dt-immune-bg: #D1FAE5;
+  --dt-immune-text: #065F46;
+  --dt-immune-border: #6EE7B7;
+  --dt-weakness-bg: #FEE2E2;
+  --dt-weakness-text: #991B1B;
+  --dt-weakness-border: #FCA5A5;
+  --dt-dealing-bg: #F3E8FF;
+  --dt-dealing-text: #6B21A8;
+  --dt-dealing-border: #D8B4FE;
+
+  /* Journey */
+  --journey-bg: linear-gradient(45deg, #173327, #cce4f7);
+  --journey-text: white;
+  --journey-toggle-bg: rgba(0, 0, 0, 0.3);
+  --journey-toggle-border: rgba(0, 0, 0, 0.4);
+  --journey-toggle-active-bg: rgba(255, 255, 255, 0.25);
+  --journey-toggle-active-border: rgba(255, 255, 255, 0.4);
+  --journey-slider-bg: linear-gradient(135deg, #ffffff 0%, #f3f4f6 100%);
+  --journey-slider-shadow: 0 2px 8px rgba(0, 0, 0, 0.3), 0 1px 3px rgba(0, 0, 0, 0.2);
+  --journey-clock-text: black;
+  --journey-clock-border: black;
+  --journey-clock-filled: black;
+  --role-selector-bg: #0c9c5e;
+  --role-dropdown-bg: white;
+
+  /* DM Screen */
+  --dm-bg: #FFFFFF;
+  --dm-border: #000000;
+  --dm-ship-border: #6B7280;
+  --dm-header-hover-bg: #E5E7EB;
+  --dm-placeholder-text: #9CA3AF;
+  --dm-health-bar-bg: #FFFFFF;
+  --dm-health-bar-border: #000000;
+  --dm-health-bar-fill: #000000;
+
+  /* Presence bar */
+  --presence-bg: #151515;
+  --presence-border: #333;
+  --presence-text: white;
+  --presence-muted: #888;
+  --presence-button-border: #666;
+  --presence-button-hover: #A91D3A;
+
+  /* Misc */
+  --danger-bg: #A91D3A;
+  --danger-hover: #8B1730;
+  --hr-border: #E5E7EB;
+  --skill-row-hover-bg: #F9FAFB;
+  --remove-hover-bg: #8B1730;
+  --ship-add-button-text: #6B7280;
+  --ship-add-button-border: #D1D5DB;
+  --ship-add-button-hover-bg: #F9FAFB;
+  --ship-add-button-hover-border: #9CA3AF;
+}
