@@ -2,6 +2,15 @@
  * Milestones rendering component
  */
 
+/**
+ * Render the milestones tracking component
+ * Displays a grid of milestones with columns: Used checkbox | Name input | Scale dropdown | Delete button
+ * When marked as used, the name and scale inputs are disabled
+ * Available scales: Minor, Major
+ * @param {Object} character - Character object with milestones array
+ * @param {Array} character.milestones - Array of milestone objects with id, name, scale, and used properties
+ * @returns {string} HTML string for the milestones component with add button
+ */
 export function renderMilestones(character) {
   const char = character;
   let html = '<div><h2 class="section-header">Milestones</h2>';

@@ -5,6 +5,14 @@
 import { getGameData } from '../data/loader.js';
 import { BUDGETS } from '../state/character.js';
 
+/**
+ * Render the edges selection/display component
+ * In creation mode: Shows all edges as selectable cards with budget tracking (3/7)
+ * In play/advancement mode: Shows only selected edges with tooltips
+ * @param {Object} character - Character object with mode and selectedEdges array
+ * @param {Object|null} gameData - Optional game data object (fetched if not provided)
+ * @returns {string} HTML string for the edges component
+ */
 export function renderEdges(character, gameData = null) {
   const GAME_DATA = gameData || getGameData();
   const char = character;
@@ -54,6 +62,17 @@ export function renderEdges(character, gameData = null) {
   }
 }
 
+/**
+ * Render the combined edges, skills, and languages layout row
+ * Layout changes based on character mode:
+ * - Creation mode: Grid with edges (1 col) | skills & languages (2 cols) with shared budget indicator
+ * - Play/advancement mode: Three equal columns (edges | skills | languages)
+ * @param {Function} renderSkills - Skills rendering function
+ * @param {Function} renderLanguages - Languages rendering function
+ * @param {Object} character - Character object with mode, skills, languages
+ * @param {Object|null} gameData - Optional game data object (fetched if not provided)
+ * @returns {string} HTML string for the complete row layout
+ */
 export function renderEdgesSkillsLanguagesRow(renderSkills, renderLanguages, character, gameData = null) {
   const char = character;
   const GAME_DATA = gameData || getGameData();

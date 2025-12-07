@@ -25,6 +25,7 @@ export function renderCreationMode(app, character, gameData) {
 
   app.innerHTML = `
     <div class="content-wrapper">
+        <!-- Character Name Input -->
         <div class="section-spacing-sm">
         <label class="form-label">Character Name</label>
         <input type="text" value="${character.name}"
@@ -33,6 +34,7 @@ export function renderCreationMode(app, character, gameData) {
                 style="width: 300px; font-size: 16px;">
         </div>
 
+        <!-- Core Elements Section: Bloodline, Origin, Post dropdowns in 3-column grid -->
         <div class="section-spacing">
         <h2 class="section-header">Core Elements</h2>
         <div class="grid-3col gap-lg">
@@ -57,6 +59,8 @@ export function renderCreationMode(app, character, gameData) {
         </div>
         </div>
 
+        <!-- Aspects Section: 3-column grid (Bloodline | Origin | Post) with budget tracking (4 aspects max) -->
+        <!-- Selected aspects show damage type selectors, disabled aspects are grayed out when budget is full -->
         <div class="section-spacing">
         <div class="aspect-header">
             <h2 class="section-header">Aspects</h2>
@@ -141,16 +145,23 @@ export function renderCreationMode(app, character, gameData) {
         </div>
         <hr />
 
+        <!-- Edges, Skills, Languages Section: Custom layout from renderEdgesSkillsLanguagesRow -->
+        <!-- Creation mode: Grid with edges (1 col) | skills & languages (2 cols) with shared 8-point budget -->
         <div data-section="edges-skills-languages-creation">
         ${renderEdgesSkillsLanguagesRow(renderSkills, renderLanguages, character, gameData)}
         </div>
         <hr />
 
+        <!-- Resources Section: 4-column grid (charts, salvage, specimens, whispers) -->
+        <!-- Max 6 starting resources with "Load Suggested Resources" button -->
         <div data-section="resources-creation">
         ${renderResources(character)}
         </div>
         <hr />
 
+        <!-- Drives & Mires Section: 2-column grid -->
+        <!-- Drives: 3 text inputs for character motivations -->
+        <!-- Mires: 3 text inputs for character problems/complications -->
         <div class="section-spacing-lg">
         <div class="grid-2col gap-xxl">
             <div data-section="drives-creation">
@@ -163,6 +174,7 @@ export function renderCreationMode(app, character, gameData) {
         </div>
     </div>
 
+    <!-- Sticky Action Bar: Import/Random buttons on left, Create/Cancel buttons on right -->
     <div class="sticky-action-bar split">
         <div class="flex-gap-md">
             <button data-action="importCharacter">Import</button>
