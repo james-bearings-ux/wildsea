@@ -618,6 +618,7 @@ hr {
     }
 
     .aspect-card.selected {
+      background: var(--card-selected-bg);
       border-color: var(--card-selected-border);
     }
 
