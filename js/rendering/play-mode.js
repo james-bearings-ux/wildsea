@@ -17,6 +17,7 @@ export function renderPlayMode(app, character, gameData, showAddTaskForm = false
 
   app.innerHTML = `
     <div class="content-wrapper">
+        <!-- Character Header: Read-only display of name, bloodline, origin, post in horizontal row -->
         <div data-section="character-header">
           <div class="char-header">
             <div class="char-header-row">
@@ -40,6 +41,8 @@ export function renderPlayMode(app, character, gameData, showAddTaskForm = false
           </div>
         </div>
 
+        <!-- Main Play Grid: 3 columns for edges/skills/languages, 1 row spanning all columns for aspects -->
+        <!-- Aspects show interactive damage tracking (clickable boxes: default → marked → burned) -->
         <div class="grid-play-main">
         <div data-section="edges">${renderEdges(character, gameData)}</div>
         <div data-section="skills">${renderSkills(character, gameData)}</div>
@@ -50,7 +53,9 @@ export function renderPlayMode(app, character, gameData, showAddTaskForm = false
               <h2 class="section-header">Aspects</h2>
               ${character.selectedAspects.slice().sort((a, b) => a.name.localeCompare(b.name)).map(aspect => {
             let trackHTML = '<div class="aspect-play-track">';
-            for (let i = 0; i < 5; i++) {
+            // Show all boxes up to maximum track size (8), using spacers for unused slots
+            const maxDisplayBoxes = 8;
+            for (let i = 0; i < maxDisplayBoxes; i++) {
                 if (i < aspect.trackSize) {
                 const state = aspect.damageStates[i];
                 const stateChar = state === 'marked' ? '/' : state === 'burned' ? '✕' : '';
@@ -79,6 +84,10 @@ export function renderPlayMode(app, character, gameData, showAddTaskForm = false
         </div>
         </div>
         <hr />
+        <!-- Secondary Play Grid: 3 columns for additional character features -->
+        <!-- Column 1: Resources (stacked) and Notes -->
+        <!-- Column 2: Damage Type Summary Table -->
+        <!-- Column 3: Drives, Mires, Milestones, and Tasks (with progress clocks) -->
         <div class="grid-play-secondary">
             <div class="section-group">
                 <div data-section="resources" class="section-group-sm">

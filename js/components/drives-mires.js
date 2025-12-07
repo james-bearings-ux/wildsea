@@ -2,6 +2,14 @@
  * Drives and Mires rendering components
  */
 
+/**
+ * Render the drives component
+ * Displays 3 text inputs for character drives (motivations/goals)
+ * Behavior is consistent across all modes
+ * @param {Object} character - Character object with drives array
+ * @param {Array<string>} character.drives - Array of 3 drive strings
+ * @returns {string} HTML string for the drives component
+ */
 export function renderDrives(character) {
   const char = character;
   let html = '<div><h2 class="section-header">Drives</h2>';
@@ -20,6 +28,15 @@ export function renderDrives(character) {
   return html;
 }
 
+/**
+ * Render the mires component
+ * Displays 3 mires (problems/complications) with mode-specific behavior
+ * - Creation/advancement mode: Text inputs only
+ * - Play mode: Two track boxes (checkboxes) + text input per mire
+ * @param {Object} character - Character object with mode and mires array
+ * @param {Array<Object>} character.mires - Array of 3 mire objects with text, checkbox1, and checkbox2 properties
+ * @returns {string} HTML string for the mires component
+ */
 export function renderMires(character) {
   const char = character;
   const showCheckboxes = char.mode === 'play';

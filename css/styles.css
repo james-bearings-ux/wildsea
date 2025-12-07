@@ -548,10 +548,11 @@ hr {
 
 .aspect-play-track {
 	display: flex;
+	flex-wrap: wrap;
 	gap: 8px;
 	padding-top: 4px;
 	flex-shrink: 0;
-	width: 165px;
+	width: 165px; /* Width fits exactly 5 boxes (26px each) + 4 gaps (8px each) = 162px */
 }
 
 .track-spacer {

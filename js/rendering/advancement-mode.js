@@ -171,10 +171,13 @@ export function renderAdvancementMode(app, character, gameData, showCustomizeMod
 
   app.innerHTML = `
     <div style="padding: 20px; max-width: 1400px; margin: 0 auto; padding-bottom: 80px;">
+        <!-- Character Header: Editable name + read-only bloodline/origin/post -->
         <div style="margin-bottom: 32px; padding-bottom: 24px; border-bottom: 2px solid #E5E7EB;" data-section="character-header-advancement">
         ${renderAdvancementCharacterHeader(character)}
         </div>
 
+        <!-- Aspects Section: 3-column grid + "More" section for extra aspects -->
+        <!-- Interactive track expansion with +/- buttons, customization and selection modals -->
         <div style="margin-bottom: 40px;">
         <div class="flex-between" style="margin-bottom: 12px;">
             <h2 class="section-header" style="margin: 0;">Aspects</h2>
@@ -183,6 +186,7 @@ export function renderAdvancementMode(app, character, gameData, showCustomizeMod
                 <button data-action="openSelectAspectModal" class="medium" ${aspectsSelected >= BUDGETS.maxAspectsAdvancement ? 'disabled' : ''}>Select More Aspects</button>
             </div>
         </div>
+        <!-- 3-column grid for Bloodline, Origin, and Post aspects -->
         <div class="grid-3col">
             <div data-section="aspects-bloodline-advancement">
             ${renderBloodlineAspectsSection(character)}
@@ -197,27 +201,33 @@ export function renderAdvancementMode(app, character, gameData, showCustomizeMod
             </div>
         </div>
 
+        <!-- Additional aspects beyond bloodline/origin/post (e.g., aspects from other sources) -->
         <div data-section="aspects-more-advancement">
         ${renderMoreAspectsSection(character)}
         </div>
         </div>
         <hr />
 
+        <!-- Edges, Skills, Languages Section -->
+        <!-- Advancement mode: 3 equal columns with interactive controls, max rank 3 -->
         <div data-section="edges-skills-languages-advancement">
         ${renderEdgesSkillsLanguagesRow(renderSkills, renderLanguages, character, gameData)}
         </div>
         <hr />
 
+        <!-- Milestones Section: Track character achievements and progression -->
         <div style="margin-bottom: 32px;" data-section="milestones-advancement">
         ${renderMilestones(character)}
         </div>
     </div>
 
+    <!-- Sticky Action Bar: Save or cancel changes and return to play mode -->
     <div class="sticky-action-bar" style="display: flex; justify-content: flex-end;">
         <button data-action="setMode" data-params='{"mode":"play"}' class="primary">Save Changes</button>
         <button data-action="setMode" data-params='{"mode":"play"}'>Cancel</button>
     </div>
 
+    <!-- Conditional Modals: Only rendered when showCustomizeModal or showSelectAspectModal is true -->
     ${showCustomizeModal ? renderAspectCustomizationModal(character, selectedModalAspectId, modalUnsavedEdits) : ''}
     ${showSelectAspectModal ? renderAspectSelectionModal(character, gameData, searchQuery, selectedAspectForAdding) : ''}
     `;

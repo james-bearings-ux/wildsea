@@ -5,6 +5,15 @@
 import { getGameData } from '../data/loader.js';
 import { BUDGETS } from '../state/character.js';
 
+/**
+ * Render the skills component with mode-specific behavior
+ * - Creation mode: Interactive controls with +/- buttons, max rank 2, shared 8-point budget with languages
+ * - Play mode: Read-only display with rank indicators (0-3 boxes)
+ * - Advancement mode: Interactive controls with +/- buttons, max rank 3
+ * @param {Object} character - Character object with mode and skills object (name -> rank mapping)
+ * @param {Object|null} gameData - Optional game data object containing skills array (fetched if not provided)
+ * @returns {string} HTML string for the skills component
+ */
 export function renderSkills(character, gameData = null) {
   const GAME_DATA = gameData || getGameData();
   const char = character;
@@ -108,6 +117,16 @@ export function renderSkills(character, gameData = null) {
   }
 }
 
+/**
+ * Render the languages component with mode-specific behavior
+ * - Creation mode: Interactive controls with +/- buttons, max rank 2, shared 8-point budget with skills
+ *   Note: Low Sour is locked at rank 3 and cannot be modified in creation mode
+ * - Play mode: Read-only display with rank indicators (0-3 boxes)
+ * - Advancement mode: Interactive controls with +/- buttons, max rank 3, Low Sour can be decreased
+ * @param {Object} character - Character object with mode and languages object (name -> rank mapping)
+ * @param {Object|null} gameData - Optional game data object containing languages array (fetched if not provided)
+ * @returns {string} HTML string for the languages component
+ */
 export function renderLanguages(character, gameData = null) {
   const GAME_DATA = gameData || getGameData();
   const char = character;

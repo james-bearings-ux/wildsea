@@ -630,9 +630,14 @@ function setupEventDelegation() {
         // Handle async actions
         (async () => {
           try {
-            // Route to appropriate function
+            // Route action to appropriate handler function
+            // Each case handles a specific user interaction via data-action attributes
             switch (action) {
+              // === ASPECT ACTIONS ===
+
               case 'toggleAspect':
+                // Toggle aspect selection in creation/advancement mode
+                // Params: { id: "Bloodline-AspectName" }
                 if (character) {
                   toggleAspect(parsedParams.id, noopRender, character);
                   markDirtyByAction('toggleAspect');
@@ -640,7 +645,10 @@ function setupEventDelegation() {
                   scheduleSave();
                 }
                 break;
+
               case 'toggleDamageType':
+                // Toggle damage type selection for aspect (weakness, resistance, immunity)
+                // Params: { aspectId, category, damageType }
                 if (character) {
                   toggleAspectDamageType(parsedParams.aspectId, parsedParams.category, parsedParams.damageType, noopRender, character);
                   markDirtyByAction('toggleAspectDamageType');
@@ -648,7 +656,12 @@ function setupEventDelegation() {
                   scheduleSave();
                 }
                 break;
+
+              // === EDGE ACTIONS ===
+
               case 'toggleEdge':
+                // Toggle edge selection in creation mode (3/7 budget)
+                // Params: { name: "Edge Name" }
                 if (character) {
                   toggleEdge(parsedParams.name, noopRender, character);
                   markDirtyByAction('toggleEdge');
@@ -656,7 +669,12 @@ function setupEventDelegation() {
                   scheduleSave();
                 }
                 break;
+
+              // === SKILL & LANGUAGE ACTIONS ===
+
               case 'adjustSkill':
+                // Increase or decrease skill rank by delta (+1 or -1)
+                // Params: { name: "Skill Name", delta: 1 or -1 }
                 if (character) {
                   adjustSkill(parsedParams.name, parsedParams.delta, noopRender, character);
                   markDirtyByAction('adjustSkill');
@@ -664,7 +682,11 @@ function setupEventDelegation() {
                   scheduleSave();
                 }
                 break;
+
               case 'adjustLanguage':
+                // Increase or decrease language rank by delta (+1 or -1)
+                // Note: Low Sour is locked at rank 3 in creation mode
+                // Params: { name: "Language Name", delta: 1 or -1 }
                 if (character) {
                   adjustLanguage(parsedParams.name, parsedParams.delta, noopRender, character);
                   markDirtyByAction('adjustLanguage');
@@ -672,7 +694,13 @@ function setupEventDelegation() {
                   scheduleSave();
                 }
                 break;
+
+              // === ASPECT DAMAGE TRACKING (PLAY MODE) ===
+
               case 'cycleAspectDamage':
+                // Cycle aspect track box through states: default → marked → burned
+                // Used in play mode for damage tracking
+                // Params: { id: "Aspect-ID", index: boxNumber }
                 e.stopPropagation();
                 if (character) {
                   cycleAspectDamage(parsedParams.id, parsedParams.index, noopRender, character);
@@ -681,16 +709,27 @@ function setupEventDelegation() {
                   scheduleSave();
                 }
                 break;
+
               case 'expandAspectTrack':
+                // Expand/contract aspect track size in advancement mode
+                // Track size can range from base value to maximum of 8 (TRACK_CONSTRAINTS.maxExpansion)
+                // Params: { id: "Aspect-ID", delta: 1 or -1 }
                 e.stopPropagation();
                 if (character) {
                   expandAspectTrack(parsedParams.id, parsedParams.delta, noopRender, character);
                   markDirtyByAction('expandAspectTrack');
-                  scheduleRender();
+                  // If customization modal is open, force full render to update the modal
+                  // Modal is not part of section system, so smart render won't update it
+                  scheduleRender(showCustomizeModal);
                   scheduleSave();
                 }
                 break;
+
+              // === MILESTONE ACTIONS ===
+
               case 'addMilestone':
+                // Add a new milestone to character (Minor or Major)
+                // No params needed
                 if (character) {
                   addMilestone(noopRender, character);
                   markDirtyByAction('addMilestone');
@@ -698,7 +737,11 @@ function setupEventDelegation() {
                   scheduleSave();
                 }
                 break;
+
               case 'toggleMilestoneUsed':
+                // Toggle milestone used/unused state
+                // When used, milestone becomes read-only
+                // Params: { id: milestoneId }
                 if (character) {
                   toggleMilestoneUsed(parsedParams.id, noopRender, character);
                   markDirtyByAction('toggleMilestoneUsed');
@@ -706,7 +749,10 @@ function setupEventDelegation() {
                   scheduleSave();
                 }
                 break;
+
               case 'deleteMilestone':
+                // Delete a milestone from the character
+                // Params: { id: milestoneId }
                 if (character) {
                   deleteMilestone(parsedParams.id, noopRender, character);
                   markDirtyByAction('deleteMilestone');
@@ -714,15 +760,27 @@ function setupEventDelegation() {
                   scheduleSave();
                 }
                 break;
+
+              // === TASK ACTIONS (PLAY MODE) ===
+
               case 'openAddTaskForm':
+                // Show the "Add Task" form in play mode
+                // No params needed
                 showAddTaskForm = true;
                 await render();
                 break;
+
               case 'cancelNewTask':
+                // Cancel adding a new task and hide the form
+                // No params needed
                 showAddTaskForm = false;
                 await render();
                 break;
+
               case 'saveNewTask':
+                // Save a new task with name and max ticks
+                // Reads values from form inputs
+                // No params needed (reads from DOM)
                 if (character) {
                   const nameInput = document.getElementById('new-task-name');
                   const ticksInput = document.getElementById('new-task-ticks');
@@ -738,7 +796,10 @@ function setupEventDelegation() {
                   }
                 }
                 break;
+
               case 'tickTask':
+                // Click a task's progress clock to advance it
+                // Params: { id: taskId }
                 if (character) {
                   tickTask(parsedParams.id, noopRender, character);
                   markDirtyByAction('tickTask');
@@ -746,7 +807,10 @@ function setupEventDelegation() {
                   scheduleSave();
                 }
                 break;
+
               case 'toggleTaskEditing':
+                // Toggle task editing mode (enables name/ticks editing)
+                // Params: { id: taskId }
                 if (character) {
                   toggleTaskEditing(parsedParams.id, noopRender, character);
                   markDirtyByAction('toggleTaskEditing');
@@ -754,7 +818,10 @@ function setupEventDelegation() {
                   scheduleSave();
                 }
                 break;
+
               case 'deleteTask':
+                // Delete a task with confirmation
+                // Params: { id: taskId }
                 if (character && confirm('Delete this task?')) {
                   deleteTask(parsedParams.id, noopRender, character);
                   markDirtyByAction('deleteTask');
@@ -762,7 +829,12 @@ function setupEventDelegation() {
                   scheduleSave();
                 }
                 break;
+
+              // === RESOURCE ACTIONS ===
+
               case 'addResource':
+                // Add a new resource of specified type (charts, salvage, specimens, whispers)
+                // Params: { type: resourceType }
                 if (character) {
                   addResource(parsedParams.type, noopRender, character);
                   markDirtyByAction('addResource');
@@ -770,7 +842,10 @@ function setupEventDelegation() {
                   scheduleSave();
                 }
                 break;
+
               case 'removeResource':
+                // Delete a resource item
+                // Params: { type: resourceType, id: resourceId }
                 if (character) {
                   removeResource(parsedParams.type, parsedParams.id, noopRender, character);
                   markDirtyByAction('removeResource');
@@ -778,7 +853,10 @@ function setupEventDelegation() {
                   scheduleSave();
                 }
                 break;
+
               case 'toggleResourceUsed':
+                // Toggle resource used/unused state (checkbox)
+                // Params: { type: resourceType, id: resourceId }
                 if (character) {
                   toggleResourceUsed(parsedParams.type, parsedParams.id, noopRender, character);
                   markDirtyByAction('toggleResourceUsed');
@@ -786,7 +864,10 @@ function setupEventDelegation() {
                   scheduleSave();
                 }
                 break;
+
               case 'populateDefaultResources':
+                // Load suggested starting resources in creation mode
+                // No params needed
                 if (character) {
                   populateDefaultResources(noopRender, character);
                   markDirtyByAction('populateDefaultResources');
@@ -794,7 +875,12 @@ function setupEventDelegation() {
                   scheduleSave();
                 }
                 break;
+
+              // === CHARACTER ACTIONS ===
+
               case 'generateRandomCharacter':
+                // Generate random character in creation mode (bloodline, origin, post, aspects)
+                // No params needed
                 if (character) {
                   generateRandomCharacter(noopRender, character);
                   markAllDirty(); // Affects everything
@@ -802,10 +888,16 @@ function setupEventDelegation() {
                   scheduleSave();
                 }
                 break;
+
               case 'createCharacter':
+                // Validate and transition character from creation → play mode
+                // No params needed
                 await handleCreateCharacter();
                 break;
+
               case 'setMode':
+                // Change character mode (creation, play, advancement)
+                // Params: { mode: "creation" | "play" | "advancement" }
                 if (character) {
                   setMode(parsedParams.mode, noopRender, character);
                   markAllDirty(); // Mode switch affects entire layout
@@ -813,15 +905,26 @@ function setupEventDelegation() {
                   scheduleSave();
                 }
                 break;
+
               case 'exportCharacter':
+                // Download character as JSON file
+                // No params needed
                 if (character) {
                   exportCharacter(character);
                 }
                 break;
+
               case 'importCharacter':
+                // Open file dialog to import character from JSON
+                // No params needed
                 await importCharacter(session, render);
                 break;
+
+              // === DRIVES & MIRES ===
+
               case 'toggleMireCheckbox':
+                // Toggle mire checkbox state in play mode (2 checkboxes per mire)
+                // Params: { index: mireIndex, num: 1 or 2 }
                 if (character) {
                   toggleMireCheckbox(parsedParams.index, parsedParams.num, noopRender, character);
                   markDirtyByAction('toggleMireCheckbox');
@@ -829,13 +932,21 @@ function setupEventDelegation() {
                   scheduleSave();
                 }
                 break;
+
+              // === NAVIGATION & SESSION ACTIONS ===
+
               case 'toggleCharacterDropdown':
+                // Show/hide character selection dropdown in navigation
+                // No params needed
                 const dropdown = document.getElementById('characterDropdown');
                 if (dropdown) {
                   dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
                 }
                 break;
+
               case 'switchCharacter':
+                // Switch to viewing a different character in the crew
+                // Params: { characterId: string }
                 if (session && parsedParams.characterId) {
                   await setActiveCharacter(session, parsedParams.characterId);
                   // Load the new character into cache
@@ -843,7 +954,10 @@ function setupEventDelegation() {
                   await render();
                 }
                 break;
+
               case 'removeCharacter':
+                // Remove character from crew and delete (with confirmation)
+                // Params: { characterId: string }
                 if (session && parsedParams.characterId) {
                   if (confirm('Remove this character from the crew? The character data will be deleted.')) {
                     await removeCharacterFromSession(session, parsedParams.characterId);
@@ -856,7 +970,10 @@ function setupEventDelegation() {
                   }
                 }
                 break;
+
               case 'createNewCharacter':
+                // Create a new character and add to crew
+                // No params needed
                 if (session) {
                   const newCharacter = await createCharacter(session.id);
                   await addCharacterToSession(session, newCharacter.id);
@@ -866,7 +983,12 @@ function setupEventDelegation() {
                   await render();
                 }
                 break;
+
+              // === SHIP ACTIONS ===
+
               case 'createNewShip':
+                // Create a new ship and switch to ship view
+                // No params needed
                 if (session) {
                   const newShip = await createShip(session.id);
                   await setActiveShip(session, newShip.id);
@@ -876,37 +998,55 @@ function setupEventDelegation() {
                   await render();
                 }
                 break;
+
               case 'switchToShip':
+                // Switch active view to ship (from character view)
+                // No params needed
                 if (session) {
                   await switchToShip(session);
                   await render();
                 }
                 break;
+
               case 'switchToDMScreen':
+                // Switch to DM screen view (shows all characters + ship)
+                // No params needed
                 if (session) {
                   await switchToDMScreen(session);
                   await render();
                 }
                 break;
+
               case 'toggleDMAccordion':
+                // Expand/collapse character or ship accordion in DM screen
+                // Params: { id: characterId or shipId }
                 if (parsedParams && parsedParams.id) {
                   // Toggle accordion: if already expanded, collapse it; otherwise expand it
                   expandedDMAccordion = expandedDMAccordion === parsedParams.id ? null : parsedParams.id;
                   await render();
                 }
                 break;
+
               case 'setShipMode':
+                // Change ship mode (creation, play, upgrade)
+                // Params: { mode: "creation" | "play" | "upgrade" }
                 if (ship) {
                   setShipMode(parsedParams.mode, noopRender, ship);
                   scheduleRender();
                   scheduleShipSave();
                 }
                 break;
+
               case 'switchShipTab':
+                // Switch active tab in ship creation mode (size, frame, hull, etc.)
+                // Params: { tab: tabName }
                 activeShipTab = parsedParams.tab;
                 await render();
                 break;
+
               case 'switchWizardStage':
+                // Switch wizard stage in ship creation (design, fittings, undercrew)
+                // Params: { stage: "design" | "fittings" | "undercrew" }
                 activeWizardStage = parsedParams.stage;
                 // Reset to default tab when switching stages
                 if (activeWizardStage === 'design') {
@@ -918,38 +1058,57 @@ function setupEventDelegation() {
                 }
                 await render();
                 break;
+
               case 'selectShipPart':
+                // Select ship design element (size, frame, hull, bite, engine)
+                // Params: { partType: string, part: object }
                 if (ship) {
                   selectShipPart(parsedParams.partType, parsedParams.part, noopRender, ship);
                   scheduleRender();
                   scheduleShipSave();
                 }
                 break;
+
               case 'selectShipFitting':
+                // Select ship fitting (motif, outfit, armament)
+                // Params: { fittingType: string, fitting: object }
                 if (ship) {
                   selectShipFitting(parsedParams.fittingType, parsedParams.fitting, noopRender, ship);
                   scheduleRender();
                   scheduleShipSave();
                 }
                 break;
+
               case 'selectShipUndercrew':
+                // Select undercrew member (officer, crew, specimen)
+                // Params: { undercrewType: string, undercrew: object }
                 if (ship) {
                   selectShipUndercrew(parsedParams.undercrewType, parsedParams.undercrew, noopRender, ship);
                   scheduleRender();
                   scheduleShipSave();
                 }
                 break;
+
               case 'importShip':
+                // Open file dialog to import ship from JSON
+                // No params needed
                 if (session) {
                   await importShip(session, render);
                 }
                 break;
+
               case 'exportShip':
+                // Download ship as JSON file
+                // No params needed
                 if (ship) {
                   exportShip(ship);
                 }
                 break;
+
               case 'createShip':
+                // Validate and transition ship from creation → play mode
+                // Requires: size, frame, hull, bite, engine
+                // No params needed
                 if (ship) {
                   // Validate required elements
                   const hasAllRequired = ship.size && ship.frame &&
@@ -970,7 +1129,10 @@ function setupEventDelegation() {
                   await render();
                 }
                 break;
+
               case 'saveShipUpgrade':
+                // Save ship upgrades and return to play mode
+                // No params needed
                 if (ship) {
                   // Set mode and save to localStorage (mode is per-user, not saved to DB)
                   ship.mode = 'play';
@@ -980,7 +1142,11 @@ function setupEventDelegation() {
                   await render();
                 }
                 break;
+
               case 'cycleRatingDamage':
+                // Cycle ship rating damage (Bite, Engine, Hull, Seals)
+                // Cycles through: default → marked → burned
+                // Params: { rating: string, index: number }
                 e.stopPropagation();
                 if (ship) {
                   cycleRatingDamage(parsedParams.rating, parsedParams.index, noopRender, ship);
@@ -988,7 +1154,11 @@ function setupEventDelegation() {
                   scheduleShipSave();
                 }
                 break;
+
               case 'cycleUndercrewDamage':
+                // Cycle undercrew track damage (officers, crew, specimens)
+                // Cycles through: default → marked → burned
+                // Params: { undercrewName: string, index: number }
                 e.stopPropagation();
                 if (ship) {
                   cycleUndercrewDamage(parsedParams.undercrewName, parsedParams.index, noopRender, ship);
@@ -996,71 +1166,109 @@ function setupEventDelegation() {
                   scheduleShipSave();
                 }
                 break;
+
               case 'addCargo':
+                // Add a new cargo item to ship
+                // No params needed
                 if (ship) {
                   addCargo(render, ship);
                   scheduleRender();
                   scheduleShipSave();
                 }
                 break;
+
               case 'removeCargo':
+                // Remove cargo item from ship
+                // Params: { id: cargoId }
                 if (ship) {
                   removeCargo(parsedParams.id, noopRender, ship);
                   scheduleRender();
                   scheduleShipSave();
                 }
                 break;
+
               case 'addPassenger':
+                // Add a new passenger to ship
+                // No params needed
                 if (ship) {
                   addPassenger(render, ship);
                   scheduleRender();
                   scheduleShipSave();
                 }
                 break;
+
               case 'removePassenger':
+                // Remove passenger from ship
+                // Params: { id: passengerId }
                 if (ship) {
                   removePassenger(parsedParams.id, noopRender, ship);
                   scheduleRender();
                   scheduleShipSave();
                 }
                 break;
-              // Journey-related actions
+
+              // === JOURNEY ACTIONS ===
+
               case 'toggleJourney':
+                // Start or end a journey (shows/hides journey UI)
+                // No params needed
                 if (ship) {
                   toggleJourney(noopRender, ship);
                   scheduleRender();
                   scheduleShipSave();
                 }
                 break;
+
               case 'editJourney':
+                // Enter journey edit mode (allows changing name and clocks)
+                // No params needed
                 journeyEditMode = true;
                 await render();
                 break;
+
               case 'saveJourney':
+                // Exit journey edit mode and save changes
+                // No params needed
                 journeyEditMode = false;
                 await render();
                 break;
+
               case 'updateJourneyName':
+                // Update journey name (only fires in edit mode)
+                // Value read from e.target.value
+                // No params needed
                 if (ship) {
                   setJourneyName(e.target.value, ship);
                   scheduleShipSave();
                 }
                 break;
+
               case 'setClockMax':
+                // Set maximum ticks for journey clock (range or danger)
+                // Value read from e.target.value
+                // Params: { clockType: "range" | "danger" }
                 if (ship) {
                   setClockMax(parsedParams.clockType, parseInt(e.target.value), noopRender, ship);
                   scheduleRender();
                   scheduleShipSave();
                 }
                 break;
+
               case 'toggleClockTick':
+                // Toggle individual tick on journey clock
+                // Params: { clockType: "range" | "danger", tickIndex: number }
                 if (ship) {
                   toggleClockTick(parsedParams.clockType, parsedParams.tickIndex, noopRender, ship);
                   scheduleRender();
                   scheduleShipSave();
                 }
                 break;
+
+              // === JOURNEY ROLE TOOLTIPS ===
+
               case 'showRoleTooltip':
+                // Show journey role description tooltip
+                // Params: { role: roleName }
                 if (parsedParams.role) {
                   showRoleTooltip = parsedParams.role;
                   // Render modal immediately without full render
@@ -1070,7 +1278,10 @@ function setupEventDelegation() {
                   }
                 }
                 break;
+
               case 'closeTooltip':
+                // Close journey role tooltip
+                // No params needed
                 showRoleTooltip = null;
                 // Remove modal immediately
                 const modalOverlay = document.querySelector('.role-tooltip-overlay');
@@ -1078,36 +1289,58 @@ function setupEventDelegation() {
                   modalOverlay.remove();
                 }
                 break;
+
+              // === ASPECT CUSTOMIZATION MODAL (ADVANCEMENT MODE) ===
+
               case 'openCustomizeModal':
+                // Open modal to customize aspect names and descriptions
+                // No params needed
                 showCustomizeModal = true;
                 selectedModalAspectId = null; // Default to first aspect
                 await render();
                 break;
+
               case 'closeCustomizeModal':
-                // Only close if clicked directly on overlay, not on modal content
-                if (e.target.classList && e.target.classList.contains('modal-overlay')) {
+                // Close customization modal (clicking overlay or Cancel button)
+                // Discards unsaved edits
+                // No params needed
+                // Close if clicking overlay, OR if clicking element with this specific action (Cancel button)
+                const isOverlayClick = e.target.classList && e.target.classList.contains('modal-overlay');
+                const isCancelButton = e.target.dataset && e.target.dataset.action === 'closeCustomizeModal';
+                if (isOverlayClick || isCancelButton) {
                   showCustomizeModal = false;
                   selectedModalAspectId = null;
                   modalUnsavedEdits = {}; // Clear unsaved edits
                   await render();
                 }
                 break;
+
               case 'openSelectAspectModal':
+                // Open modal to add aspect from full list (advancement mode)
+                // No params needed
                 showSelectAspectModal = true;
                 aspectSearchQuery = '';
                 selectedAspectForAdding = null;
                 await render();
                 break;
+
               case 'closeSelectAspectModal':
-                // Only close if clicked directly on overlay, not on modal content
-                if (e.target.classList && e.target.classList.contains('modal-overlay')) {
+                // Close aspect selection modal (clicking overlay or Cancel button)
+                // No params needed
+                // Close if clicking overlay, OR if clicking element with this specific action (Cancel button)
+                const isOverlayClickSelect = e.target.classList && e.target.classList.contains('modal-overlay');
+                const isCancelButtonSelect = e.target.dataset && e.target.dataset.action === 'closeSelectAspectModal';
+                if (isOverlayClickSelect || isCancelButtonSelect) {
                   showSelectAspectModal = false;
                   aspectSearchQuery = '';
                   selectedAspectForAdding = null;
                   await render();
                 }
                 break;
+
               case 'selectAspectForAdding':
+                // Select an aspect from the list for preview before adding
+                // Params: { aspectId: "Source-AspectName" }
                 if (character && parsedParams.aspectId) {
                   // Find the aspect from game data
                   const gameData = getGameData();
@@ -1136,7 +1369,10 @@ function setupEventDelegation() {
                   await render();
                 }
                 break;
+
               case 'addSelectedAspect':
+                // Add the selected aspect to character and close modal
+                // No params needed (uses selectedAspectForAdding state)
                 if (character && selectedAspectForAdding) {
                   addAspectFromFullList(selectedAspectForAdding, noopRender, character);
                   showSelectAspectModal = false;
@@ -1147,10 +1383,16 @@ function setupEventDelegation() {
                   scheduleSave();
                 }
                 break;
+
               case 'selectAspectInModal':
-                // This is handled by change event
+                // Select which aspect to customize in modal (handled by change event)
+                // See change event handler
                 break;
+
               case 'saveAspectCustomization':
+                // Save customized aspect name and description
+                // Validates length limits (name: 250, description: 800)
+                // Params: { id: aspectId }
                 if (character) {
                   const nameInput = document.getElementById('modal-aspect-name');
                   const descInput = document.getElementById('modal-aspect-description');
@@ -1186,7 +1428,10 @@ function setupEventDelegation() {
                   scheduleSave();
                 }
                 break;
+
               case 'resetAspectCustomization':
+                // Reset aspect to original name/description with confirmation
+                // Params: { id: aspectId }
                 if (character && parsedParams.id) {
                   // Clear unsaved edits for this aspect
                   if (modalUnsavedEdits[parsedParams.id]) {
@@ -1199,13 +1444,21 @@ function setupEventDelegation() {
                   }
                 }
                 break;
+
+              // === AUTHENTICATION ACTIONS ===
+
               case 'backToLogin':
+                // Return to login screen from "check email" screen
+                // No params needed
                 loginState = 'login';
                 loginEmail = '';
                 loginMessage = '';
                 renderLogin();
                 break;
+
               case 'toggleTheme':
+                // Toggle between light and dark theme
+                // No params needed
                 // Toggle between light and dark mode
                 const currentTheme = localStorage.getItem('theme') || 'light';
                 const newTheme = currentTheme === 'light' ? 'dark' : 'light';
@@ -1214,7 +1467,11 @@ function setupEventDelegation() {
                 // Re-render to update the toggle button icon
                 render();
                 break;
+
               case 'signOut':
+                // Sign out user and clean up (presence, polling, caches)
+                // Shows confirmation dialog
+                // No params needed
                 if (confirm('Are you sure you want to sign out?')) {
                   // Clean up presence
                   if (session) {
@@ -1267,8 +1524,13 @@ function setupEventDelegation() {
     // Handle async operations
     (async () => {
       try {
-        // Handle ship-related change events
+        // === SHIP-RELATED CHANGE EVENTS ===
+        // These handle text input changes for ship properties
+        // Most are debounced to reduce database writes
+
         if (action === 'updateShipName') {
+          // Update ship name from text input
+          // No params needed (value from target.value)
           if (ship) {
             updateShipName(target.value, ship);
             // Debounce ship name saves
@@ -1280,6 +1542,8 @@ function setupEventDelegation() {
         }
 
         if (action === 'updateAnticipatedCrewSize') {
+          // Update anticipated crew size number input
+          // No params needed (value from target.value)
           if (ship) {
             updateAnticipatedCrewSize(target.value, noopRender, ship);
             scheduleRender();
@@ -1289,6 +1553,8 @@ function setupEventDelegation() {
         }
 
         if (action === 'updateAdditionalStakes') {
+          // Update additional stakes text input
+          // No params needed (value from target.value)
           if (ship) {
             updateAdditionalStakes(target.value, noopRender, ship);
             scheduleRender();
@@ -1298,6 +1564,8 @@ function setupEventDelegation() {
         }
 
         if (action === 'updateCargoName') {
+          // Update cargo item name text input
+          // Params: { id: cargoId }
           if (ship) {
             updateCargoName(parsedParams.id, target.value, ship);
             // Debounce cargo name saves
@@ -1309,6 +1577,8 @@ function setupEventDelegation() {
         }
 
         if (action === 'updatePassengerName') {
+          // Update passenger name text input
+          // Params: { id: passengerId }
           if (ship) {
             updatePassengerName(parsedParams.id, target.value, ship);
             // Debounce passenger name saves
@@ -1320,6 +1590,8 @@ function setupEventDelegation() {
         }
 
         if (action === 'updateJourneyName') {
+          // Update journey name text input
+          // No params needed (value from target.value)
           if (ship) {
             setJourneyName(target.value, ship);
             // Debounce journey name saves
@@ -1331,6 +1603,8 @@ function setupEventDelegation() {
         }
 
         if (action === 'setJourneyRole') {
+          // Set character's role on the current journey
+          // No params needed (value from target.value - role name)
           if (character) {
             setJourneyRole(target.value, noopRender, character);
             await render(); // Immediate render for snappy nav bar update
@@ -1342,8 +1616,12 @@ function setupEventDelegation() {
         // Handle character-related change events (use cached character)
         if (!character) return;
 
+        // Route change events to appropriate handler functions
+        // Text inputs are debounced to reduce database writes
         switch (action) {
           case 'onCharacterNameChange':
+            // Update character name from text input in creation mode
+            // No params needed (value from target.value)
             onCharacterNameChange(target.value, character);
             // No render needed - input already shows user's changes
             // Debounce character name saves
@@ -1351,25 +1629,37 @@ function setupEventDelegation() {
               await saveCharacter(character);
             });
             break;
+
           case 'onBloodlineChange':
+            // Change character bloodline in creation mode (affects available aspects)
+            // No params needed (value from target.value)
             onBloodlineChange(target.value, noopRender, character);
             markDirtyByAction('onBloodlineChange');
             scheduleRender();
             scheduleSave();
             break;
+
           case 'onOriginChange':
+            // Change character origin in creation mode (affects available aspects)
+            // No params needed (value from target.value)
             onOriginChange(target.value, noopRender, character);
             markDirtyByAction('onOriginChange');
             scheduleRender();
             scheduleSave();
             break;
+
           case 'onPostChange':
+            // Change character post in creation mode (affects available aspects)
+            // No params needed (value from target.value)
             onPostChange(target.value, noopRender, character);
             markDirtyByAction('onPostChange');
             scheduleRender();
             scheduleSave();
             break;
+
           case 'updateDrive':
+            // Update drive text at specified index (0-2)
+            // Params: { index: 0-2 }
             updateDrive(parsedParams.index, target.value, character);
             // No render needed - input already shows user's changes
             // Debounce drive saves
@@ -1377,7 +1667,10 @@ function setupEventDelegation() {
               await saveCharacter(character);
             });
             break;
+
           case 'updateMire':
+            // Update mire text at specified index (0-2)
+            // Params: { index: 0-2 }
             updateMire(parsedParams.index, target.value, character);
             // No render needed - input already shows user's changes
             // Debounce mire saves
@@ -1385,7 +1678,10 @@ function setupEventDelegation() {
               await saveCharacter(character);
             });
             break;
+
           case 'updateNotes':
+            // Update character notes textarea
+            // No params needed (value from target.value)
             updateNotes(target.value, character);
             // No render needed - input already shows user's changes
             // Debounce notes saves
@@ -1393,7 +1689,10 @@ function setupEventDelegation() {
               await saveCharacter(character);
             });
             break;
+
           case 'updateMilestoneName':
+            // Update milestone name text input
+            // Params: { id: milestoneId }
             updateMilestoneName(parsedParams.id, target.value, character);
             // No render needed - input already shows user's changes
             // Debounce milestone name saves
@@ -1401,13 +1700,19 @@ function setupEventDelegation() {
               await saveCharacter(character);
             });
             break;
+
           case 'updateMilestoneScale':
+            // Change milestone scale dropdown (Minor/Major)
+            // Params: { id: milestoneId }
             updateMilestoneScale(parsedParams.id, target.value, noopRender, character);
             markDirtyByAction('updateMilestoneScale');
             scheduleRender();
             scheduleSave();
             break;
+
           case 'updateTaskName':
+            // Update task name while in edit mode
+            // Params: { id: taskId }
             updateTaskName(parsedParams.id, target.value, character);
             // No render needed - input already shows user's changes
             // Debounce task name saves
@@ -1415,13 +1720,19 @@ function setupEventDelegation() {
               await saveCharacter(character);
             });
             break;
+
           case 'updateTaskMaxTicks':
+            // Update task max ticks (progress clock size)
+            // Params: { id: taskId }
             updateTaskMaxTicks(parsedParams.id, target.value, noopRender, character);
             markDirtyByAction('updateTaskMaxTicks');
             scheduleRender();
             scheduleSave();
             break;
+
           case 'updateResourceName':
+            // Update resource name text input
+            // Params: { type: resourceType, id: resourceId }
             updateResourceName(parsedParams.type, parsedParams.id, target.value, character);
             // No render needed - input already shows user's changes
             // Debounce resource name saves
@@ -1429,7 +1740,10 @@ function setupEventDelegation() {
               await saveCharacter(character);
             });
             break;
+
           case 'selectAspectInModal':
+            // Select aspect from dropdown in aspect addition modal
+            // No params needed (value from target.value)
             selectedModalAspectId = target.value;
             await render();
             break;
