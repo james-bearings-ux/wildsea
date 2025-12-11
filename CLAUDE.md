@@ -154,7 +154,8 @@ The application uses **event delegation** for all user interactions:
 │   │   └── drives-mires.js       # Drives and mires
 │   ├── utils/
 │   │   ├── validation.js         # Validation logic
-│   │   └── file-handlers.js      # Import/export
+│   │   ├── file-handlers.js      # Import/export
+│   │   └── escaping.js           # HTML/XSS escaping utilities
 │   └── character-sheet.js        # LEGACY - kept for reference
 ├── css/
 │   └── styles.css                # Custom styles
@@ -196,7 +197,7 @@ The aspects.json file is very large (3091 lines). When working with aspects:
 - Component functions are in `js/components/` (renderEdges, renderSkills, etc.)
 - Mode-specific behavior is in `js/rendering/` (creation, play, advancement)
 - Components check `character.mode` for conditional rendering
-- Remember to escape single quotes in dynamic IDs for onclick handlers
+- **IMPORTANT:** Always use escaping utilities from `js/utils/escaping.js` when rendering user input (see Character Escaping section below)
 
 **Working with game data:**
 - Import `getGameData()` from `js/data/loader.js` where needed
@@ -209,3 +210,133 @@ The aspects.json file is very large (3091 lines). When working with aspects:
 - Import only what you need from each module
 - Avoid circular dependencies (pass functions as parameters if needed)
 - Components return HTML strings, state modules mutate data
+
+## Character Escaping and XSS Prevention
+
+The application uses a comprehensive character escaping system to prevent XSS vulnerabilities and HTML injection issues. All user-provided text must be properly escaped when rendering to HTML.
+
+### Escaping Utilities
+
+Located in `js/utils/escaping.js`, the module provides functions for safe HTML rendering:
+
+**Problematic Characters:**
+- `"` and `'` (quotes) - Break HTML attributes
+- `&` `<` `>` - HTML special characters (XSS risk)
+- `\` (backslash) - Escape character in JSON/JavaScript
+- `\n` `\r` `\t` (whitespace) - Break HTML attributes
+- `` ` `` (backtick) - Can break template literals
+
+### Core Functions
+
+**`escapeHtmlAttr(text)`**
+- Use for HTML attribute values: `value="..."`, `placeholder="..."`
+- Converts special characters to HTML entities (`&quot;`, `&#39;`, etc.)
+- Example: `<input value="${escapeHtmlAttr(character.name)}">`
+
+**`escapeHtmlContent(text)`**
+- Use for text content between HTML tags
+- Escapes `&`, `<`, `>` only (quotes don't need escaping in content)
+- Example: `<div class="name">${escapeHtmlContent(character.name)}</div>`
+
+**`createDataParams(params)`**
+- Use for all `data-params` attributes
+- Handles JSON encoding and proper escaping automatically
+- Returns complete attribute string
+- Example: `<button ${createDataParams({ id: milestone.id })}>Delete</button>`
+- **Never** manually construct `data-params` - always use this function
+
+**`createSafeInput(options)`** (Optional helper)
+- Creates complete input elements with all escaping handled
+- Useful for common input patterns
+- See `js/utils/escaping.js` for full API
+
+### Usage Rules
+
+**CRITICAL:** User data is stored unchanged in character state. Only escape when rendering to HTML.
+
+```javascript
+// ❌ WRONG - Never escape when storing
+character.name = escapeHtmlAttr(userInput); // NO!
+
+// ✅ CORRECT - Escape only when rendering
+html += `<input value="${escapeHtmlAttr(character.name)}">`;
+```
+
+**When rendering user input, always:**
+1. Import the escaping utilities at the top of your component file:
+   ```javascript
+   import { escapeHtmlAttr, escapeHtmlContent, createDataParams } from '../utils/escaping.js';
+   ```
+
+2. Use `escapeHtmlAttr()` for all HTML attribute values:
+   ```javascript
+   // Input values
+   html += `<input value="${escapeHtmlAttr(milestone.name)}" placeholder="...">`;
+
+   // Textarea content
+   html += `<textarea>${escapeHtmlContent(character.notes)}</textarea>`;
+   ```
+
+3. Use `createDataParams()` for all `data-params` attributes:
+   ```javascript
+   // OLD (unsafe):
+   html += 'data-params=\'{"id":"' + id + '"}\'';
+
+   // NEW (safe):
+   html += createDataParams({ id: id });
+
+   // With multiple properties:
+   html += createDataParams({ type: 'resource', id: item.id });
+   ```
+
+4. Use `escapeHtmlContent()` for display-only text between tags:
+   ```javascript
+   html += `<div class="char-name-header">${escapeHtmlContent(character.name)}</div>`;
+   ```
+
+### Fields That Require Escaping
+
+All user-editable text fields must be escaped when rendering:
+- Character name
+- Drives (3 text inputs)
+- Mires (3 text inputs)
+- Milestone names
+- Resource names (charts, salvage, specimens, whispers)
+- Ship cargo names
+- Ship passenger names
+- Task names
+- Notes (textarea)
+- Any other user-provided text
+
+### Examples
+
+**Milestone rendering (js/components/milestones.js):**
+```javascript
+import { escapeHtmlAttr, createDataParams } from '../utils/escaping.js';
+
+// Name input with proper escaping
+html += '<input type="text" ';
+html += `value="${escapeHtmlAttr(milestone.name)}" `;
+html += 'placeholder="Enter milestone name..." ';
+html += 'data-action="updateMilestoneName" ';
+html += createDataParams({ id: milestone.id }) + '>';
+```
+
+**Character name display (js/rendering/play-mode.js):**
+```javascript
+import { escapeHtmlContent } from '../utils/escaping.js';
+
+html += `<div class="char-name-header">${escapeHtmlContent(character.name)}</div>`;
+```
+
+### Testing for Escaping Issues
+
+To verify escaping is working correctly, test with these problematic inputs:
+- `Test "double quotes" here`
+- `Test 'single quotes' here`
+- `Test <script>alert('xss')</script>`
+- `Test & ampersand`
+- `Test \ backslash`
+- Multi-line text with `\n` characters
+
+All of these should render correctly without breaking the UI or causing XSS vulnerabilities.
