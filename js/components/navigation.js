@@ -5,6 +5,7 @@
 import { loadCharacter } from '../state/character.js';
 import { loadShip } from '../state/ship.js';
 import { loadCharacterCached, loadShipCached } from '../cache/supabase-cache.js';
+import { escapeHtmlContent } from '../utils/escaping.js';
 
 /**
  * Render the navigation bar
@@ -69,9 +70,9 @@ export async function renderNavigation(session) {
 
         html += '<button data-action="switchCharacter" data-params=\'{"characterId":"' + charId + '"}\' ';
         html += 'class="nav-button ' + activeClass + '" style="display: flex; flex-direction: column; align-items: center;">';
-        html += '<div>' + (character.name || 'Unnamed Character') + '</div>';
+        html += '<div>' + escapeHtmlContent(character.name || 'Unnamed Character') + '</div>';
         if (journeyActive && roleDisplay) {
-          html += '<div class="nav-role-subtitle">' + roleDisplay + '</div>';
+          html += '<div class="nav-role-subtitle">' + escapeHtmlContent(roleDisplay) + '</div>';
         }
         html += '</button>';
       }
@@ -99,9 +100,9 @@ export async function renderNavigation(session) {
 
           html += '<button data-action="switchCharacter" data-params=\'{"characterId":"' + charId + '"}\' ';
           html += 'class="nav-dropdown-item' + (isActive ? ' active' : '') + '">';
-          html += '<div>' + (character.name || 'Unnamed Character') + '</div>';
+          html += '<div>' + escapeHtmlContent(character.name || 'Unnamed Character') + '</div>';
           if (journeyActive && roleDisplay) {
-            html += '<div class="nav-dropdown-role">' + roleDisplay + '</div>';
+            html += '<div class="nav-dropdown-role">' + escapeHtmlContent(roleDisplay) + '</div>';
           }
           html += '</button>';
         }

@@ -25,43 +25,45 @@ Characters are built by selecting aspects, edges, skills, languages, drives, mir
 
 ### Creation Scenarios
 
-The Wildsea TTRPG provides two different character creation scenarios with different starting budgets. These scenarios apply **only during character creation** - once characters enter play mode, all characters use the same advancement rules regardless of their starting scenario.
+The Wildsea TTRPG provides two different character creation scenarios with vastly different starting budgets. These scenarios apply **only during character creation** - once characters enter play mode, all characters use the same advancement rules regardless of their starting scenario.
 
 #### Old Dog (Experienced Character)
 
-**Rule**: The default creation scenario for seasoned characters.
+**Rule**: The default creation scenario for seasoned, experienced characters ready for dangerous adventures.
 
 **Budgets**:
-- **4 Aspects** (from bloodline, origin, post)
+- **6 Aspects** (from bloodline, origin, post)
 - **3 Edges** (from 7 available)
-- **8 Skill/Language Points** (Low Sour doesn't count)
+- **15 Skill/Language Points** (Low Sour doesn't count)
 - **6 Resources** (charts, salvage, specimens, whispers)
 - **3 Drives**
 - **3 Mires**
 
-**Rationale**: Represents a character with more experience and equipment, ready for challenging adventures.
+**Rationale**: Represents a veteran character with extensive experience, advanced skills, and accumulated gear. Old Dogs start significantly stronger and are ready for challenging adventures from the outset.
 
 #### Young Gun (Inexperienced Character)
 
-**Rule**: An alternative scenario for less experienced characters starting their journey.
+**Rule**: An alternative scenario for inexperienced characters just starting their journey.
 
 **Budgets**:
-- **4 Aspects** (from bloodline, origin, post)
+- **4 Aspects** (from bloodline, origin, post) - **2 fewer than Old Dog**
 - **3 Edges** (from 7 available)
-- **8 Skill/Language Points** (Low Sour doesn't count)
+- **8 Skill/Language Points** (Low Sour doesn't count) - **7 fewer than Old Dog**
 - **4 Resources** (charts, salvage, specimens, whispers) - **2 fewer than Old Dog**
 - **3 Drives**
 - **3 Mires**
 
-**Rationale**: Represents a younger or less prepared character with fewer resources but the same core capabilities. The reduced resource count reflects less accumulated gear and connections.
+**Rationale**: Represents a younger or less prepared character with significantly fewer capabilities. Young Guns have less experience, fewer skills, and minimal equipment, but have more room to grow and develop their character through play.
 
 **Important**: These scenarios only affect initial character creation. Once a character transitions to play mode, both Old Dog and Young Gun characters follow identical advancement rules and have the same opportunities for growth.
 
 ---
 
-### Aspects (4 Required)
+### Aspects (Scenario-Dependent)
 
-**Rule**: Characters must select exactly **4 aspects** during creation.
+**Rule**: Characters must select aspects during creation based on their chosen scenario:
+- **Old Dog**: Exactly **6 aspects**
+- **Young Gun**: Exactly **4 aspects**
 
 **Selection Sources**:
 - At least 1 from **Bloodline** (e.g., Tzelicrae, Mottled, Ardent)
@@ -70,7 +72,8 @@ The Wildsea TTRPG provides two different character creation scenarios with diffe
 
 **Rationale**:
 - Defines core character identity and capabilities
-- Ensures characters are competent but not overpowered
+- Old Dogs have more aspects to reflect their experience
+- Young Guns have fewer aspects but more room to grow
 - Forces meaningful choices about character concept
 
 **Track Sizes**:
@@ -114,9 +117,11 @@ The Wildsea TTRPG provides two different character creation scenarios with diffe
 
 ---
 
-### Skills & Languages (8 Points Shared)
+### Skills & Languages (Scenario-Dependent Shared Points)
 
-**Rule**: Distribute **8 points total** between skills and languages.
+**Rule**: Distribute points between skills and languages based on chosen scenario:
+- **Old Dog**: **15 points total**
+- **Young Gun**: **8 points total**
 
 **Skills** (17 available):
 - Break, Build, Cook, Delve, Develop, Flourish, Hack, Harvest, Hunt, Rattle, Rattlestack, Scavenge, Sense, Study, Tend, Tornash, Vault
@@ -132,26 +137,34 @@ The Wildsea TTRPG provides two different character creation scenarios with diffe
 - **Default trade language** of the Wildsea
 - All characters start with **rank 3** in Low Sour
 - **Cannot be modified** during creation (locked at 3)
-- **Does not count** toward the 8-point budget
+- **Does not count** toward the point budget
 - **Can be decreased** in play/advancement mode if desired
 
 **Rationale**:
 - Forces meaningful specialization choices
-- Prevents jack-of-all-trades characters
+- Old Dogs can be more skilled/multilingual to reflect experience
+- Young Guns must choose carefully with limited points
 - Low Sour ensures all characters can communicate
 - Rank limits prevent overpowered starting characters
 
-**Point Distribution Examples**:
+**Point Distribution Examples (Young Gun - 8 points)**:
 - 4 skills at rank 2 = 8 points ✅
 - 2 skills at rank 2, 2 languages at rank 2 = 8 points ✅
 - 8 skills at rank 1 = 8 points ✅
 - 1 skill at rank 2, 6 languages at rank 1 = 8 points ✅
 
+**Point Distribution Examples (Old Dog - 15 points)**:
+- 7 skills at rank 2, 1 skill at rank 1 = 15 points ✅
+- 5 skills at rank 2, 5 languages at rank 1 = 15 points ✅
+- 4 skills at rank 2, 3 languages at rank 2, 1 language at rank 1 = 15 points ✅
+
 ---
 
-### Resources (6 Maximum)
+### Resources (Scenario-Dependent Maximum)
 
-**Rule**: Maximum **6 starting resources**.
+**Rule**: Maximum starting resources based on chosen scenario:
+- **Old Dog**: **6 starting resources**
+- **Young Gun**: **4 starting resources**
 
 **Resource Types**:
 - **Charts**: Maps, navigation tools, geographic knowledge
@@ -161,11 +174,13 @@ The Wildsea TTRPG provides two different character creation scenarios with diffe
 
 **Selection**:
 - Each bloodline, origin, and post provides suggested resources
-- Player can select up to 6 total from the combined suggestions
+- Player can select up to their scenario's maximum from the combined suggestions
 - **Deduplication**: If the same resource appears in multiple sources, it only counts once
 
 **Rationale**:
 - Provides starting equipment and narrative hooks
+- Old Dogs have more accumulated gear and connections
+- Young Guns start with minimal equipment
 - Limits prevent characters from being too well-equipped
 - Suggestions tie resources to character background
 
@@ -532,9 +547,9 @@ Total: 1 + 2 + 1 - 1 = 3 Speed
 
 **Requirements** (all must be met):
 - ✅ Name provided (not "Unnamed Character")
-- ✅ Exactly 4 aspects selected
+- ✅ Aspects selected based on scenario (4 for Young Gun, 6 for Old Dog)
 - ✅ Exactly 3 edges selected
-- ✅ Skills + languages ≤ 8 points (excluding Low Sour)
+- ✅ Skills + languages points allocated based on scenario (8 for Young Gun, 15 for Old Dog, excluding Low Sour)
 - ✅ All "choose" damage types selected
 
 **Validation UI**:
@@ -680,11 +695,11 @@ Total: 1 + 2 + 1 - 1 = 3 Speed
 
 **Skills/Languages**:
 - Tracked in real-time
-- Prevents spending beyond 8 points
+- Prevents spending beyond scenario budget (8 for Young Gun, 15 for Old Dog)
 - Increase buttons disabled when budget exhausted
 
 **Aspects**:
-- Add buttons disabled when budget full
+- Add buttons disabled when budget full (4 for Young Gun, 6 for Old Dog)
 - Unselected aspects grayed out when budget full
 - Clear visual indication of selected count vs. limit
 
@@ -766,10 +781,12 @@ Total: 1 + 2 + 1 - 1 = 3 Speed
 
 | Constant | Value | Rule | Source |
 |----------|-------|------|--------|
-| Aspects (creation) | 4 | Exactly 4 required | Rulebook |
+| Aspects (Old Dog) | 6 | Required for experienced characters | Rulebook |
+| Aspects (Young Gun) | 4 | Required for inexperienced characters | Rulebook |
 | Aspects (max) | 7 | Maximum after advancement | Rulebook |
 | Edges | 3 of 7 | Choose 3 from 7 available (permanent) | Rulebook |
-| Skill points | 8 | Shared budget for skills + languages (creation only) | Rulebook |
+| Skill points (Old Dog) | 15 | Shared budget for skills + languages (experienced) | Rulebook |
+| Skill points (Young Gun) | 8 | Shared budget for skills + languages (inexperienced) | Rulebook |
 | Skill rank (creation) | 2 | Maximum rank during creation | Rulebook |
 | Skill rank (play) | 3 | Maximum rank after advancement | Rulebook |
 | Low Sour rank | 3 | Default language, locked in creation | Rulebook |

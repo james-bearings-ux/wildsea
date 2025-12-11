@@ -47,6 +47,7 @@
   /* Component specific */
   --card-bg: #FFFFFF;
   --card-border: #E5E7EB;
+  --card-selected-bg: #F3F4F6;
   --card-selected-border: #000;
 
   /* Checkbox */

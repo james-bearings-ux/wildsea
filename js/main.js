@@ -45,7 +45,8 @@ import {
   customizeAspect,
   resetAspectCustomization,
   addAspectFromFullList,
-  setJourneyRole
+  setJourneyRole,
+  setScenario
 } from './state/character.js';
 import {
   createSession,
@@ -138,6 +139,7 @@ let showCustomizeModal = false; // Track if customization modal is open
 let selectedModalAspectId = null; // Track which aspect is selected in modal
 let modalUnsavedEdits = {}; // Track unsaved edits in customization modal { aspectId: { name, description } }
 let showSelectAspectModal = false; // Track if select aspect modal is open
+let showScenarioModal = false; // Track if scenario selection modal is open
 let aspectSearchQuery = ''; // Track search query for aspect selection
 let selectedAspectForAdding = null; // Track selected aspect in selection modal
 let showAddTaskForm = false; // Track if add task form is open
@@ -520,7 +522,7 @@ async function render(reloadSession = false) {
   const gameData = getGameData();
 
   if (character.mode === 'creation') {
-    renderCreationMode(tempDiv, character, gameData);
+    renderCreationMode(tempDiv, character, gameData, showScenarioModal);
   } else if (character.mode === 'play') {
     renderPlayMode(tempDiv, character, gameData, showAddTaskForm, ship);
   } else if (character.mode === 'advancement') {
@@ -608,6 +610,15 @@ function setupEventDelegation() {
 
   // Click event delegation
   app.addEventListener('click', function (e) {
+    // Handle modal overlay clicks (close modal when clicking on overlay itself, not its children)
+    if (e.target.id === 'scenario-modal-overlay') {
+      (async () => {
+        showScenarioModal = false;
+        await render();
+      })();
+      return;
+    }
+
     // Find the closest element with data-action (bubble up the DOM)
     let target = e.target;
     while (target && target !== app) {
@@ -902,6 +913,33 @@ function setupEventDelegation() {
                   setMode(parsedParams.mode, noopRender, character);
                   markAllDirty(); // Mode switch affects entire layout
                   scheduleRender();
+                  scheduleSave();
+                }
+                break;
+
+              // === SCENARIO SELECTION ===
+
+              case 'openScenarioModal':
+                // Open scenario selection modal (old dog vs young gun)
+                // No params needed
+                showScenarioModal = true;
+                await render();
+                break;
+
+              case 'closeScenarioModal':
+                // Close scenario selection modal
+                // No params needed
+                showScenarioModal = false;
+                await render();
+                break;
+
+              case 'selectScenario':
+                // Select a scenario (old dog or young gun) and close modal
+                // Params: { scenario: "old dog" | "young gun" }
+                if (character && parsedParams.scenario) {
+                  setScenario(parsedParams.scenario, noopRender, character);
+                  showScenarioModal = false;
+                  await render(); // Immediate render to close modal and update UI
                   scheduleSave();
                 }
                 break;

@@ -3,11 +3,11 @@
  */
 
 import { getGameData } from '../data/loader.js';
-import { BUDGETS } from '../state/character.js';
+import { getBudgets } from '../state/character.js';
 
 /**
  * Render the skills component with mode-specific behavior
- * - Creation mode: Interactive controls with +/- buttons, max rank 2, shared 8-point budget with languages
+ * - Creation mode: Interactive controls with +/- buttons, max rank 2, scenario-based budget with languages
  * - Play mode: Read-only display with rank indicators (0-3 boxes)
  * - Advancement mode: Interactive controls with +/- buttons, max rank 3
  * @param {Object} character - Character object with mode and skills object (name -> rank mapping)
@@ -17,6 +17,7 @@ import { BUDGETS } from '../state/character.js';
 export function renderSkills(character, gameData = null) {
   const GAME_DATA = gameData || getGameData();
   const char = character;
+  const budgets = getBudgets(char);
   const isCreationMode = char.mode === 'creation';
   const isPlayMode = char.mode === 'play';
 
@@ -59,7 +60,7 @@ export function renderSkills(character, gameData = null) {
       const skillName = skill.name || skill;
       const tagline = skill.tagline || '';
       const rank = char.skills[skillName] || 0;
-      const canIncrease = rank < 2 && totalPoints < BUDGETS.skillPoints;
+      const canIncrease = rank < 2 && totalPoints < budgets.skillPoints;
       const escapedSkill = skillName.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
 
       html += '<div class="flex-between" style="margin-bottom: 8px;" data-tooltip="' + tagline + '">';
@@ -130,6 +131,7 @@ export function renderSkills(character, gameData = null) {
 export function renderLanguages(character, gameData = null) {
   const GAME_DATA = gameData || getGameData();
   const char = character;
+  const budgets = getBudgets(char);
   const isCreationMode = char.mode === 'creation';
   const isPlayMode = char.mode === 'play';
 
@@ -173,7 +175,7 @@ export function renderLanguages(character, gameData = null) {
       const tagline = lang.tagline || '';
       const rank = char.languages[langName] || 0;
       const isLowSour = langName === 'Low Sour';
-      const canIncrease = !isLowSour && rank < 2 && totalPoints < BUDGETS.skillPoints;
+      const canIncrease = !isLowSour && rank < 2 && totalPoints < budgets.skillPoints;
       const canDecrease = !isLowSour && rank > 0;
       const escapedLang = langName.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
 

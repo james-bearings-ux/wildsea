@@ -3,7 +3,7 @@
  */
 
 import { getGameData } from '../data/loader.js';
-import { BUDGETS } from '../state/character.js';
+import { getBudgets } from '../state/character.js';
 
 /**
  * Render the edges selection/display component
@@ -16,6 +16,7 @@ import { BUDGETS } from '../state/character.js';
 export function renderEdges(character, gameData = null) {
   const GAME_DATA = gameData || getGameData();
   const char = character;
+  const budgets = getBudgets(char);
   const isCreationMode = char.mode === 'creation';
   const edgesSelected = char.selectedEdges.length;
 
@@ -23,14 +24,14 @@ export function renderEdges(character, gameData = null) {
     let html = '<div>';
     html += '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">';
     html += '<h2 class="section-header" style="margin: 0;">Edges</h2>';
-    html += '<div class="budget-indicator">' + edgesSelected + '/' + BUDGETS.edges + '</div>';
+    html += '<div class="budget-indicator">' + edgesSelected + '/' + budgets.edges + '</div>';
     html += '</div>';
     html += '<div style="display: flex; flex-direction: column; gap: 12px;">';
 
     for (let i = 0; i < GAME_DATA.edges.length; i++) {
       const edge = GAME_DATA.edges[i];
       const isSelected = char.selectedEdges.includes(edge.name);
-      const isDisabled = !isSelected && edgesSelected >= BUDGETS.edges;
+      const isDisabled = !isSelected && edgesSelected >= budgets.edges;
       const escapedName = edge.name.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
 
       html += '<div class="edge-card';
@@ -76,6 +77,7 @@ export function renderEdges(character, gameData = null) {
 export function renderEdgesSkillsLanguagesRow(renderSkills, renderLanguages, character, gameData = null) {
   const char = character;
   const GAME_DATA = gameData || getGameData();
+  const budgets = getBudgets(char);
   const isCreationMode = char.mode === 'creation';
 
   if (isCreationMode) {
@@ -90,7 +92,7 @@ export function renderEdgesSkillsLanguagesRow(renderSkills, renderLanguages, cha
     html += '<div>';
     html += '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">';
     html += '<h2 class="section-header" style="margin: 0;">Skills & Languages</h2>';
-    html += '<div class="budget-indicator">' + totalPoints + '/' + BUDGETS.skillPoints + '</div>';
+    html += '<div class="budget-indicator">' + totalPoints + '/' + budgets.skillPoints + '</div>';
     html += '</div>';
     html += '<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 32px;">';
     html += renderSkills(char, GAME_DATA);

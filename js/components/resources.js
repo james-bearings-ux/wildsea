@@ -2,10 +2,13 @@
  * Resources rendering component
  */
 
+import { SCENARIO_BUDGETS } from '../state/character.js';
+import { escapeHtmlAttr, createDataParams } from '../utils/escaping.js';
+
 /**
  * Render the resources management component for all 4 resource types
  * Displays charts, salvage, specimens, and whispers with interactive controls
- * - Creation mode: 4-column grid layout with suggested resources button (max 6 starting resources)
+ * - Creation mode: 4-column grid layout with suggested resources button (max varies by scenario)
  * - Play mode: Single column stacked layout
  * Each resource item has: checkbox (used/unused), text input (name), and delete button
  * @param {Object} character - Character object with mode and resources object
@@ -27,6 +30,10 @@ export function renderResources(character) {
   const isCreationMode = char.mode === 'creation';
   const isPlayMode = char.mode === 'play';
 
+  // Get resource budget based on scenario
+  const scenario = char.scenario || 'old dog';
+  const resourceBudget = SCENARIO_BUDGETS[scenario].resources;
+
   let html = '';
 
   // Add header based on mode
@@ -34,7 +41,7 @@ export function renderResources(character) {
     html += '<div class="mb-xl">';
     html += '<div class="flex-between mb-lg">';
     html += '<h2 class="section-header">Resources</h2>';
-    html += '<p>A new character may have up to 6 starting resources.</p> <button class="medium" data-action="populateDefaultResources">Load Suggested Resources</button>';
+    html += '<p>A new character may have up to ' + resourceBudget + ' starting resources.</p> <button class="medium" data-action="populateDefaultResources">Load Suggested Resources</button>';
     html += '</div>';
   } else if (isPlayMode) {
     // Add header for play mode too
@@ -63,20 +70,21 @@ export function renderResources(character) {
       html += '<input type="checkbox" ';
       if (item.used) html += 'checked ';
       html += 'data-action="toggleResourceUsed" title="used" ';
-      html += 'data-params=\'{"type":"' + type.key + '","id":"' + item.id + '"}\'>';
+      html += createDataParams({ type: type.key, id: item.id }) + '>';
       html += '<input type="text" ';
-      html += 'value="' + item.name + '" ';
-      html += 'placeholder="' + type.placeholder + '" ';
+      html += `value="${escapeHtmlAttr(item.name)}" `;
+      html += `placeholder="${escapeHtmlAttr(type.placeholder)}" `;
       if (item.used) html += 'disabled ';
       html += 'data-action="updateResourceName" ';
-      html += 'data-params=\'{"type":"' + type.key + '","id":"' + item.id + '"}\'>';
+      html += createDataParams({ type: type.key, id: item.id }) + '>';
       html += '<button data-action="removeResource" ';
       html += 'class="btn-tertiary" ';
-      html += 'data-params=\'{"type":"' + type.key + '","id":"' + item.id + '"}\'>✕</button>';
+      html += createDataParams({ type: type.key, id: item.id }) + '>✕</button>';
       html += '</div>';
     }
 
-    html += '<button class="btn-subtle" data-action="addResource" data-params=\'{"type":"' + type.key + '"}\'>+ New ' + type.singular + '</button>';
+    html += '<button class="btn-subtle" data-action="addResource" ';
+    html += createDataParams({ type: type.key }) + '>+ New ' + type.singular + '</button>';
     html += '</div>';
     html += '</div>';
   }

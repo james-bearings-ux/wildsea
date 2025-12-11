@@ -3,6 +3,8 @@
  * Parallel to cargo management
  */
 
+import { escapeHtmlAttr, createDataParams } from '../utils/escaping.js';
+
 /**
  * Render passengers management interface
  * @param {Object} ship - Ship object
@@ -22,13 +24,13 @@ export function renderShipPassengers(ship) {
     const item = passengers[i];
     html += '<div class="passenger-row">';
     html += '<input type="text" ';
-    html += 'value="' + item.name + '" ';
+    html += `value="${escapeHtmlAttr(item.name)}" `;
     html += 'placeholder="Name your passenger..." ';
     html += 'data-action="updatePassengerName" ';
-    html += 'data-params=\'{"id":"' + item.id + '"}\' ';
+    html += createDataParams({ id: item.id }) + ' ';
     html += 'class="passenger-input">';
     html += '<button data-action="removePassenger" ';
-    html += 'data-params=\'{"id":"' + item.id + '"}\' ';
+    html += createDataParams({ id: item.id }) + ' ';
     html += 'class="btn-tertiary">✕</button>';
     html += '</div>';
   }
