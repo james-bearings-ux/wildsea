@@ -3,6 +3,8 @@
  * Displays tasks with progress clocks (1-6 ticks)
  */
 
+import { escapeHtmlAttr, escapeHtmlContent, createDataParams } from '../utils/escaping.js';
+
 /**
  * Render a progress clock for a task
  * @param {object} task - Task object with id, currentTicks, maxTicks
@@ -14,7 +16,7 @@ function renderClock(task, interactive = true) {
 
   for (let i = 0; i < task.maxTicks; i++) {
     const filled = i < task.currentTicks;
-    const action = interactive ? ` data-action="tickTask" data-params='{"id":"${task.id}"}'` : '';
+    const action = interactive ? ` data-action="tickTask" ${createDataParams({ id: task.id })}` : '';
     html += `<div class="clock-tick ${filled ? 'filled' : ''}"${action}></div>`;
   }
 
@@ -40,34 +42,34 @@ export function renderTasks(character, showAddForm = false) {
       // Editing mode
       html += '<div class="task-row editing" style="margin-bottom: 8px;">';
       html += '<input type="text" ';
-      html += `value="${task.name}" `;
+      html += `value="${escapeHtmlAttr(task.name)}" `;
       html += 'placeholder="Task name..." ';
       html += `data-action="updateTaskName" `;
-      html += `data-params='{"id":"${task.id}"}' `;
+      html += createDataParams({ id: task.id }) + ' ';
       html += 'style="flex: 1; margin-right: 8px;">';
 
       html += '<select ';
       html += `data-action="updateTaskMaxTicks" `;
-      html += `data-params='{"id":"${task.id}"}' `;
+      html += createDataParams({ id: task.id }) + ' ';
       html += 'style="margin-right: 8px;">';
       for (let ticks = 1; ticks <= 6; ticks++) {
         html += `<option value="${ticks}"${task.maxTicks === ticks ? ' selected' : ''}>${ticks} ticks</option>`;
       }
       html += '</select>';
 
-      html += `<button data-action="toggleTaskEditing" data-params='{"id":"${task.id}"}' style="padding: 4px 12px;">✓</button>`;
+      html += `<button data-action="toggleTaskEditing" ${createDataParams({ id: task.id })} style="padding: 4px 12px;">✓</button>`;
       html += '</div>';
     } else {
       // Display mode
       html += '<div class="task-row" style="margin-bottom: 8px;">';
       html += '<div style="flex: 1; display: flex; align-items: center; gap: 12px;">';
-      html += `<div class="task-name">${task.name || 'Unnamed Task'}</div>`;
+      html += `<div class="task-name">${escapeHtmlContent(task.name || 'Unnamed Task')}</div>`;
       html += renderClock(task, true);
       html += `<div class="task-progress">${task.currentTicks}/${task.maxTicks}</div>`;
       html += '</div>';
       html += '<div class="flex-gap-md">';
-      html += `<button class="btn-tertiary" data-action="toggleTaskEditing" data-params='{"id":"${task.id}"}' title="Edit">✎</button>`;
-      html += `<button class="btn-tertiary" data-action="deleteTask" data-params='{"id":"${task.id}"}' title="Delete">✕</button>`;
+      html += `<button class="btn-tertiary" data-action="toggleTaskEditing" ${createDataParams({ id: task.id })} title="Edit">✎</button>`;
+      html += `<button class="btn-tertiary" data-action="deleteTask" ${createDataParams({ id: task.id })} title="Delete">✕</button>`;
       html += '</div>';
       html += '</div>';
     }

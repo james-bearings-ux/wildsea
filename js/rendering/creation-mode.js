@@ -2,7 +2,7 @@
  * Creation mode rendering
  */
 
-import { getAvailableAspects, BUDGETS } from '../state/character.js';
+import { getAvailableAspects, getBudgets } from '../state/character.js';
 import { renderSmallTrack } from '../components/aspects.js';
 import { renderEdgesSkillsLanguagesRow } from '../components/edges.js';
 import { renderSkills, renderLanguages } from '../components/skills.js';
@@ -14,8 +14,11 @@ import {
   renderSelectedDamageTypes,
   highlightDamageTypesInDescription
 } from '../components/damage-type-selector.js';
+import { renderScenarioIndicator, renderScenarioModal } from '../components/scenario-selector.js';
+import { escapeHtmlAttr, escapeHtmlContent } from '../utils/escaping.js';
 
-export function renderCreationMode(app, character, gameData) {
+export function renderCreationMode(app, character, gameData, showScenarioModal = false) {
+  const budgets = getBudgets(character);
   const allAspects = getAvailableAspects(character);
   const bloodlineAspects = allAspects.filter(a => a.category === 'Bloodline').sort((a, b) => a.name.localeCompare(b.name));
   const originAspects = allAspects.filter(a => a.category === 'Origin').sort((a, b) => a.name.localeCompare(b.name));
@@ -25,13 +28,16 @@ export function renderCreationMode(app, character, gameData) {
 
   app.innerHTML = `
     <div class="content-wrapper">
-        <!-- Character Name Input -->
+        <!-- Character Name Input with Scenario Indicator -->
         <div class="section-spacing-sm">
         <label class="form-label">Character Name</label>
-        <input type="text" value="${character.name}"
-            data-action="onCharacterNameChange"
-                placeholder="Enter name..."
-                style="width: 300px; font-size: 16px;">
+        <div style="display: flex; align-items: center;">
+          <input type="text" value="${escapeHtmlAttr(character.name)}"
+              data-action="onCharacterNameChange"
+              placeholder="Enter name..."
+              style="width: 300px; font-size: 16px;">
+          ${renderScenarioIndicator(character)}
+        </div>
         </div>
 
         <!-- Core Elements Section: Bloodline, Origin, Post dropdowns in 3-column grid -->
@@ -59,12 +65,12 @@ export function renderCreationMode(app, character, gameData) {
         </div>
         </div>
 
-        <!-- Aspects Section: 3-column grid (Bloodline | Origin | Post) with budget tracking (4 aspects max) -->
+        <!-- Aspects Section: 3-column grid (Bloodline | Origin | Post) with budget tracking (scenario-based) -->
         <!-- Selected aspects show damage type selectors, disabled aspects are grayed out when budget is full -->
         <div class="section-spacing">
         <div class="aspect-header">
             <h2 class="section-header">Aspects</h2>
-            <div class="budget-indicator">${aspectsSelected}/${BUDGETS.aspects}</div>
+            <div class="budget-indicator">${aspectsSelected}/${budgets.aspects}</div>
         </div>
         <div class="grid-3col">
             <div class="flex-col-gap">
@@ -73,7 +79,7 @@ export function renderCreationMode(app, character, gameData) {
                 const id = aspect.source + '-' + aspect.name;
                 const escapedId = id.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
                 const isSelected = character.selectedAspects.some(a => a.id === id);
-                const isDisabled = !isSelected && aspectsSelected >= BUDGETS.aspects;
+                const isDisabled = !isSelected && aspectsSelected >= budgets.aspects;
                 const selectedAspect = character.selectedAspects.find(a => a.id === id);
                 return `
                 <div class="aspect-card ${isSelected ? 'selected' : ''} ${isDisabled ? 'disabled' : ''}"
@@ -98,7 +104,7 @@ export function renderCreationMode(app, character, gameData) {
                 const id = aspect.source + '-' + aspect.name;
                 const escapedId = id.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
                 const isSelected = character.selectedAspects.some(a => a.id === id);
-                const isDisabled = !isSelected && aspectsSelected >= BUDGETS.aspects;
+                const isDisabled = !isSelected && aspectsSelected >= budgets.aspects;
                 const selectedAspect = character.selectedAspects.find(a => a.id === id);
                 return `
                 <div class="aspect-card ${isSelected ? 'selected' : ''} ${isDisabled ? 'disabled' : ''}"
@@ -123,7 +129,7 @@ export function renderCreationMode(app, character, gameData) {
                 const id = aspect.source + '-' + aspect.name;
                 const escapedId = id.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
                 const isSelected = character.selectedAspects.some(a => a.id === id);
-                const isDisabled = !isSelected && aspectsSelected >= BUDGETS.aspects;
+                const isDisabled = !isSelected && aspectsSelected >= budgets.aspects;
                 const selectedAspect = character.selectedAspects.find(a => a.id === id);
                 return `
                 <div class="aspect-card ${isSelected ? 'selected' : ''} ${isDisabled ? 'disabled' : ''}"
@@ -185,5 +191,8 @@ export function renderCreationMode(app, character, gameData) {
             <button data-action="removeCharacter" data-params='{"characterId":"${character.id}"}'>Cancel</button>
         </div>
     </div>
+
+    <!-- Scenario Selection Modal -->
+    ${showScenarioModal ? renderScenarioModal(character) : ''}
     `;
 }

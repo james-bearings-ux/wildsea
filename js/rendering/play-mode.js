@@ -12,6 +12,7 @@ import { renderNotes } from '../components/notes.js';
 import { renderDamageTypeTable } from '../components/damage-summary.js';
 import { highlightDamageTypesInDescription, renderDamageTypeWarning } from '../components/damage-type-selector.js';
 import { renderRoleSelector } from '../components/journey-role.js';
+import { escapeHtmlContent } from '../utils/escaping.js';
 
 export function renderPlayMode(app, character, gameData, showAddTaskForm = false, ship = null) {
 
@@ -23,19 +24,19 @@ export function renderPlayMode(app, character, gameData, showAddTaskForm = false
             <div class="char-header-row">
               <div>
                 <div class="char-label">Character Name</div>
-                <div class="char-name-header">${character.name}</div>
+                <div class="char-name-header">${escapeHtmlContent(character.name)}</div>
               </div>
               <div>
                 <div class="char-label">Bloodline</div>
-                <div class="char-name-header">${character.bloodline}</div>
+                <div class="char-name-header">${escapeHtmlContent(character.bloodline)}</div>
               </div>
               <div>
                 <div class="char-label">Origin</div>
-                <div class="char-name-header">${character.origin}</div>
+                <div class="char-name-header">${escapeHtmlContent(character.origin)}</div>
               </div>
               <div>
                 <div class="char-label">Post</div>
-                <div class="char-name-header">${character.post}</div>
+                <div class="char-name-header">${escapeHtmlContent(character.post)}</div>
               </div>
             </div>
           </div>

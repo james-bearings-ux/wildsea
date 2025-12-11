@@ -11,6 +11,9 @@ Run these SQL migrations in your Supabase SQL Editor in order:
 5. **005_enable_realtime.sql** - Enables real-time subscriptions on all tables (IMPORTANT!)
 6. **006_grant_realtime_permissions.sql** - Grants SELECT permissions for realtime
 7. **008_set_replica_identity.sql** - Sets replica identity to FULL (CRITICAL for realtime!)
+8. **012_add_tasks_to_characters.sql** - Adds tasks column to characters table
+9. **013_add_notes_to_characters.sql** - Adds notes column to characters table
+10. **014_add_scenario_to_characters.sql** - Adds scenario column to characters table (NEW!)
 
 ## Configuring Magic Link Auth
 

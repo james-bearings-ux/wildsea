@@ -2,6 +2,8 @@
  * Drives and Mires rendering components
  */
 
+import { escapeHtmlAttr, createDataParams } from '../utils/escaping.js';
+
 /**
  * Render the drives component
  * Displays 3 text inputs for character drives (motivations/goals)
@@ -18,10 +20,10 @@ export function renderDrives(character) {
   for (let i = 0; i < char.drives.length; i++) {
     html += '<input type="text" ';
     html += 'class="drive-input" ';
-    html += 'value="' + char.drives[i] + '" ';
+    html += `value="${escapeHtmlAttr(char.drives[i])}" `;
     html += 'placeholder="Enter a drive..." ';
     html += 'data-action="updateDrive" ';
-    html += 'data-params=\'{"index":' + i + '}\'>';
+    html += createDataParams({ index: i }) + '>';
   }
 
   html += '</div></div>';
@@ -55,7 +57,7 @@ export function renderMires(character) {
       const stateChar1 = mire.checkbox1 ? '/' : '';
       html += '<div class="track-box ' + state1 + '" ';
       html += 'data-action="toggleMireCheckbox" ';
-      html += 'data-params=\'{"index":' + i + ',"num":1}\' ';
+      html += createDataParams({ index: i, num: 1 }) + ' ';
       html += 'style="cursor: pointer;">' + stateChar1 + '</div>';
 
       // Second track box
@@ -63,23 +65,23 @@ export function renderMires(character) {
       const stateChar2 = mire.checkbox2 ? '/' : '';
       html += '<div class="track-box ' + state2 + '" ';
       html += 'data-action="toggleMireCheckbox" ';
-      html += 'data-params=\'{"index":' + i + ',"num":2}\' ';
+      html += createDataParams({ index: i, num: 2 }) + ' ';
       html += 'style="cursor: pointer;">' + stateChar2 + '</div>';
 
       html += '<input type="text" ';
       html += 'class="mire-input" ';
-      html += 'value="' + mire.text + '" ';
+      html += `value="${escapeHtmlAttr(mire.text)}" `;
       html += 'placeholder="Enter a mire..." ';
       html += 'data-action="updateMire" ';
-      html += 'data-params=\'{"index":' + i + '}\'>';
+      html += createDataParams({ index: i }) + '>';
       html += '</div>';
     } else {
       html += '<input type="text" ';
       html += 'class="mire-input" ';
-      html += 'value="' + mire.text + '" ';
+      html += `value="${escapeHtmlAttr(mire.text)}" `;
       html += 'placeholder="Enter a mire..." ';
       html += 'data-action="updateMire" ';
-      html += 'data-params=\'{"index":' + i + '}\'>';
+      html += createDataParams({ index: i }) + '>';
     }
   }
 

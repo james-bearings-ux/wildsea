@@ -3,6 +3,8 @@
  * Simple textarea for character notes
  */
 
+import { escapeHtmlContent } from '../utils/escaping.js';
+
 export function renderNotes(character) {
   return `
     <div>
@@ -11,7 +13,7 @@ export function renderNotes(character) {
         class="notes-textarea"
         data-action="updateNotes"
         placeholder="Add notes about your character..."
-      >${character.notes}</textarea>
+      >${escapeHtmlContent(character.notes)}</textarea>
     </div>
   `;
 }

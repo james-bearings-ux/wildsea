@@ -15,6 +15,7 @@ import {
   renderSelectedDamageTypes,
   highlightDamageTypesInDescription
 } from '../components/damage-type-selector.js';
+import { escapeHtmlAttr, escapeHtmlContent } from '../utils/escaping.js';
 
 /**
  * Render character header for advancement mode
@@ -24,22 +25,22 @@ export function renderAdvancementCharacterHeader(character) {
     <div style="display: flex; gap: 48px; align-items: baseline;">
       <div>
         <label style="display: block; margin-bottom: 8px; font-weight: 600;">Character Name</label>
-        <input type="text" value="${character.name}"
+        <input type="text" value="${escapeHtmlAttr(character.name)}"
                 data-action="onCharacterNameChange"
                 placeholder="Enter name..."
                 style="width: 300px; font-size: 16px;">
       </div>
       <div>
         <div class="char-label">Bloodline</div>
-        <div class="char-name-header">${character.bloodline}</div>
+        <div class="char-name-header">${escapeHtmlContent(character.bloodline)}</div>
       </div>
       <div>
         <div class="char-label">Origin</div>
-        <div class="char-name-header">${character.origin}</div>
+        <div class="char-name-header">${escapeHtmlContent(character.origin)}</div>
       </div>
       <div>
         <div class="char-label">Post</div>
-        <div class="char-name-header">${character.post}</div>
+        <div class="char-name-header">${escapeHtmlContent(character.post)}</div>
       </div>
     </div>
   `;

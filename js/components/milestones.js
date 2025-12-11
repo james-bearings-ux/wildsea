@@ -2,6 +2,8 @@
  * Milestones rendering component
  */
 
+import { escapeHtmlAttr, createDataParams } from '../utils/escaping.js';
+
 /**
  * Render the milestones tracking component
  * Displays a grid of milestones with columns: Used checkbox | Name input | Scale dropdown | Delete button
@@ -31,19 +33,19 @@ export function renderMilestones(character) {
     html += '<div class="flex">';
     html += '<input type="checkbox" ';
     if (milestone.used) html += 'checked ';
-    html += 'data-action="toggleMilestoneUsed" title="used"';
-    html += 'data-params=\'{"id":"' + milestone.id + '"}\'>';
+    html += 'data-action="toggleMilestoneUsed" title="used" ';
+    html += createDataParams({ id: milestone.id }) + '>';
     html += '</div>';
     html += '<input type="text" ';
-    html += 'value="' + milestone.name + '" ';
+    html += `value="${escapeHtmlAttr(milestone.name)}" `;
     html += 'placeholder="Enter milestone name..." ';
     if (milestone.used) html += 'disabled ';
     html += 'data-action="updateMilestoneName" ';
-    html += 'data-params=\'{"id":"' + milestone.id + '"}\'>';
+    html += createDataParams({ id: milestone.id }) + '>';
     html += '<select ';
     if (milestone.used) html += 'disabled ';
     html += 'data-action="updateMilestoneScale" ';
-    html += 'data-params=\'{"id":"' + milestone.id + '"}\'>';
+    html += createDataParams({ id: milestone.id }) + '>';
     html += '<option value="Minor"';
     if (milestone.scale === 'Minor') html += ' selected';
     html += '>Minor</option>';
@@ -53,7 +55,7 @@ export function renderMilestones(character) {
     html += '</select>';
     html += '<button class="btn-tertiary" ';
     html += 'data-action="deleteMilestone" ';
-    html += 'data-params=\'{"id":"' + milestone.id + '"}\'>✕</button>';
+    html += createDataParams({ id: milestone.id }) + '>✕</button>';
     html += '</div>';
   }
 

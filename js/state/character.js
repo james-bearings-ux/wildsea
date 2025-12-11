@@ -15,30 +15,64 @@ const DEBUG = import.meta.env.DEV;
 /**
  * Character creation budgets and limits
  *
- * These values define the core constraints for character creation and advancement.
+ * These values define the core constraints that don't vary by scenario.
  * See GAME-RULES.md § "Character Creation" for detailed rationale.
  *
  * @constant
  * @type {Object}
- * @property {number} aspects - Maximum aspects in creation mode (4)
- *   Ensures characters are competent but not overpowered. See GAME-RULES.md § "Aspects"
  * @property {number} edges - Maximum edges to select (3 from 7 available)
  *   Forces meaningful choices about character specialization. See GAME-RULES.md § "Edges"
- * @property {number} skillPoints - Total points to distribute between skills and languages (8)
- *   Note: Low Sour language starts at rank 3 and doesn't count toward budget.
- *   See GAME-RULES.md § "Skills & Languages"
- * @property {number} resources - Maximum starting resources in creation mode (6)
- *   Prevents resource hoarding at character creation. See GAME-RULES.md § "Resources"
  * @property {number} maxAspectsAdvancement - Maximum aspects in advancement mode (7)
  *   Allows growth beyond creation limits while maintaining balance. See GAME-RULES.md § "Advancement"
  */
 export const BUDGETS = {
-  aspects: 4,
   edges: 3,
-  skillPoints: 8,
-  resources: 6,
   maxAspectsAdvancement: 7
 };
+
+/**
+ * Scenario-specific budgets for character creation
+ *
+ * The Wildsea offers two creation scenarios with vastly different starting capabilities.
+ * See GAME-RULES.md § "Creation Scenarios" for detailed rationale.
+ *
+ * @constant
+ * @type {Object}
+ */
+export const SCENARIO_BUDGETS = {
+  'old dog': {
+    name: 'Old Dog',
+    description: 'Experienced character ready for dangerous adventures',
+    aspects: 6,
+    skillPoints: 15,
+    resources: 6
+  },
+  'young gun': {
+    name: 'Young Gun',
+    description: 'Inexperienced character just starting their journey',
+    aspects: 4,
+    skillPoints: 8,
+    resources: 4
+  }
+};
+
+/**
+ * Get the budget limits for a character based on their scenario
+ * @param {Object} character - Character object with scenario property
+ * @returns {Object} Budget object with aspects, skillPoints, edges, resources, maxAspectsAdvancement
+ */
+export function getBudgets(character) {
+  const scenario = character.scenario || 'old dog';
+  const scenarioBudgets = SCENARIO_BUDGETS[scenario];
+
+  return {
+    aspects: scenarioBudgets.aspects,
+    skillPoints: scenarioBudgets.skillPoints,
+    edges: BUDGETS.edges,
+    resources: scenarioBudgets.resources,
+    maxAspectsAdvancement: BUDGETS.maxAspectsAdvancement
+  };
+}
 
 /**
  * Create a new character with default values and save to Supabase
@@ -59,6 +93,7 @@ export async function createCharacter(sessionId, name = 'Unnamed Character', blo
       session_id: sessionId,
       name,
       mode: 'creation',
+      scenario: 'old dog', // Default to Old Dog scenario
       bloodline,
       origin,
       post,
@@ -162,6 +197,7 @@ export async function saveCharacter(character) {
       // Identity fields (same in DB and app)
       name: character.name,
       mode: character.mode,                          // Save canonical mode (creation/play)
+      scenario: character.scenario,                  // Save scenario (old dog/young gun)
       bloodline: character.bloodline,
       origin: character.origin,
       post: character.post,
@@ -318,6 +354,7 @@ function convertFromDB(dbChar) {
     // Identity fields (no defaults needed, always present)
     id: dbChar.id,
     mode: dbChar.mode,
+    scenario: dbChar.scenario || 'old dog',            // Default to old dog for backwards compatibility
     name: dbChar.name,
     bloodline: dbChar.bloodline,
     origin: dbChar.origin,
@@ -503,14 +540,16 @@ export function toggleAspect(aspectId, renderCallback, char) {
     char.selectedAspects.splice(index, 1);
   } else {
     // Selecting: enforce budget limits
-    // Creation mode: max 4 aspects (prevents overpowered characters)
-    // See GAME-RULES.md § "Aspects (4 Required)"
-    if (char.mode === 'creation' && char.selectedAspects.length >= BUDGETS.aspects) {
+    const budgets = getBudgets(char);
+
+    // Creation mode: max varies by scenario (4 for young gun, 6 for old dog)
+    // See GAME-RULES.md § "Creation Scenarios"
+    if (char.mode === 'creation' && char.selectedAspects.length >= budgets.aspects) {
       return;
     }
     // Advancement mode: max 7 aspects (allows growth but maintains balance)
     // See GAME-RULES.md § "Character Advancement"
-    if (char.mode === 'advancement' && char.selectedAspects.length >= BUDGETS.maxAspectsAdvancement) {
+    if (char.mode === 'advancement' && char.selectedAspects.length >= budgets.maxAspectsAdvancement) {
       return;
     }
 
@@ -778,15 +817,16 @@ export function adjustSkill(name, delta, renderCallback, char) {
 
   if (char.mode === 'creation') {
     // Calculate total skill points spent (skills + languages, excluding Low Sour)
-    // Budget: 8 points total shared between all skills and languages
-    // See GAME-RULES.md § "Skills & Languages (8 Points Total)"
+    // Budget varies by scenario: 8 points (young gun) or 15 points (old dog)
+    // See GAME-RULES.md § "Creation Scenarios"
+    const budgets = getBudgets(char);
     const totalPoints = Object.values(char.skills).reduce((sum, v) => sum + v, 0);
     const languagePoints = Object.entries(char.languages)
       .filter(function (entry) { return entry[0] !== 'Low Sour'; }) // Low Sour doesn't count
       .reduce((sum, entry) => sum + entry[1], 0);
 
     // Prevent exceeding budget when increasing ranks
-    if (delta > 0 && totalPoints + languagePoints >= BUDGETS.skillPoints) {
+    if (delta > 0 && totalPoints + languagePoints >= budgets.skillPoints) {
       return;
     }
   }
@@ -831,15 +871,16 @@ export function adjustLanguage(name, delta, renderCallback, char) {
 
   if (char.mode === 'creation') {
     // Calculate total points spent (skills + languages, excluding Low Sour)
-    // Budget: 8 points total shared between skills and languages
-    // See GAME-RULES.md § "Skills & Languages (8 Points Total)"
+    // Budget varies by scenario: 8 points (young gun) or 15 points (old dog)
+    // See GAME-RULES.md § "Creation Scenarios"
+    const budgets = getBudgets(char);
     const skillPoints = Object.values(char.skills).reduce((sum, v) => sum + v, 0);
     const totalPoints = Object.entries(char.languages)
       .filter(function (entry) { return entry[0] !== 'Low Sour'; }) // Low Sour doesn't count
       .reduce((sum, entry) => sum + entry[1], 0);
 
     // Prevent exceeding budget when increasing ranks
-    if (delta > 0 && skillPoints + totalPoints >= BUDGETS.skillPoints) {
+    if (delta > 0 && skillPoints + totalPoints >= budgets.skillPoints) {
       return;
     }
   }
@@ -1258,6 +1299,83 @@ export function setMode(mode, renderCallback, char) {
 }
 
 /**
+ * Scenario mutations
+ */
+
+/**
+ * Set character creation scenario (old dog or young gun)
+ * This changes the aspect and skill point budgets, trimming if necessary
+ * @param {string} scenario - New scenario ("old dog" or "young gun")
+ * @param {Function} renderCallback - Function to call after mutation
+ * @param {Object} char - Character object to mutate
+ * @mutates char.scenario - Sets new scenario
+ * @mutates char.selectedAspects - May remove aspects if exceeding new budget
+ * @mutates char.skills - May reduce skills if exceeding new budget
+ * @mutates char.languages - May reduce languages if exceeding new budget
+ */
+export function setScenario(scenario, renderCallback, char) {
+  // Only allow scenario changes in creation mode
+  if (char.mode !== 'creation') return;
+
+  const oldBudget = getBudgets(char);
+  char.scenario = scenario;
+  const newBudget = getBudgets(char);
+
+  // Trim aspects if exceeding new budget
+  if (char.selectedAspects.length > newBudget.aspects) {
+    // Remove excess aspects from the end
+    char.selectedAspects = char.selectedAspects.slice(0, newBudget.aspects);
+  }
+
+  // Trim skill/language points if exceeding new budget
+  const skillPoints = Object.values(char.skills).reduce((sum, rank) => sum + rank, 0);
+  const languagePoints = Object.entries(char.languages)
+    .filter(([name]) => name !== 'Low Sour')
+    .reduce((sum, [, rank]) => sum + rank, 0);
+  const totalPoints = skillPoints + languagePoints;
+
+  if (totalPoints > newBudget.skillPoints) {
+    let pointsToRemove = totalPoints - newBudget.skillPoints;
+
+    // Remove from skills first (in reverse alphabetical order for consistency)
+    const skillNames = Object.keys(char.skills).sort().reverse();
+    for (const skillName of skillNames) {
+      if (pointsToRemove <= 0) break;
+
+      const currentRank = char.skills[skillName];
+      const reduction = Math.min(currentRank, pointsToRemove);
+      char.skills[skillName] -= reduction;
+      pointsToRemove -= reduction;
+
+      // Remove skill entirely if reduced to 0
+      if (char.skills[skillName] === 0) {
+        delete char.skills[skillName];
+      }
+    }
+
+    // Then remove from languages if still needed (excluding Low Sour)
+    const languageNames = Object.keys(char.languages)
+      .filter(name => name !== 'Low Sour')
+      .sort().reverse();
+    for (const langName of languageNames) {
+      if (pointsToRemove <= 0) break;
+
+      const currentRank = char.languages[langName];
+      const reduction = Math.min(currentRank, pointsToRemove);
+      char.languages[langName] -= reduction;
+      pointsToRemove -= reduction;
+
+      // Remove language entirely if reduced to 0
+      if (char.languages[langName] === 0) {
+        delete char.languages[langName];
+      }
+    }
+  }
+
+  renderCallback();
+}
+
+/**
  * Character generation
  */
 
@@ -1295,9 +1413,12 @@ export function generateRandomCharacter(renderCallback, char) {
     whispers: []
   };
 
+  // Get budgets based on current scenario
+  const budgets = getBudgets(char);
+
   const allAspects = getAvailableAspects(char);
   const shuffled = allAspects.slice().sort(() => Math.random() - 0.5);
-  for (let i = 0; i < Math.min(4, shuffled.length); i++) {
+  for (let i = 0; i < Math.min(budgets.aspects, shuffled.length); i++) {
     const aspect = shuffled[i];
     char.selectedAspects.push({
       id: aspect.source + '-' + aspect.name,
@@ -1309,9 +1430,9 @@ export function generateRandomCharacter(renderCallback, char) {
   }
 
   const shuffledEdges = GAME_DATA.edges.slice().sort(() => Math.random() - 0.5);
-  char.selectedEdges = shuffledEdges.slice(0, 3).map(e => e.name);
+  char.selectedEdges = shuffledEdges.slice(0, budgets.edges).map(e => e.name);
 
-  let pointsLeft = BUDGETS.skillPoints;
+  let pointsLeft = budgets.skillPoints;
   while (pointsLeft > 0) {
     const skill = GAME_DATA.skills[Math.floor(Math.random() * GAME_DATA.skills.length)];
     const current = char.skills[skill] || 0;

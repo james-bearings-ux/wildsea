@@ -3,6 +3,8 @@
  * Similar to character salvage/resources management
  */
 
+import { escapeHtmlAttr, createDataParams } from '../utils/escaping.js';
+
 /**
  * Render cargo management interface
  * @param {Object} ship - Ship object
@@ -22,13 +24,13 @@ export function renderShipCargo(ship) {
     const item = cargo[i];
     html += '<div class="cargo-row">';
     html += '<input type="text" ';
-    html += 'value="' + item.name + '" ';
+    html += `value="${escapeHtmlAttr(item.name)}" `;
     html += 'placeholder="Name your cargo..." ';
     html += 'data-action="updateCargoName" ';
-    html += 'data-params=\'{"id":"' + item.id + '"}\' ';
+    html += createDataParams({ id: item.id }) + ' ';
     html += 'class="cargo-input">';
     html += '<button data-action="removeCargo" ';
-    html += 'data-params=\'{"id":"' + item.id + '"}\' ';
+    html += createDataParams({ id: item.id }) + ' ';
     html += 'class="btn-tertiary">✕</button>';
     html += '</div>';
   }

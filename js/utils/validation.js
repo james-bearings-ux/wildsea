@@ -2,7 +2,7 @@
  * Validation utilities for character creation
  */
 
-import { BUDGETS } from '../state/character.js';
+import { getBudgets } from '../state/character.js';
 
 /**
  * Validate character is ready to transition from creation to play mode
@@ -11,35 +11,36 @@ import { BUDGETS } from '../state/character.js';
  */
 export function validateCharacterCreation(character) {
   const errors = [];
+  const budgets = getBudgets(character);
 
-  // Validate aspects
-  if (character.selectedAspects.length !== BUDGETS.aspects) {
-    errors.push(`Please select exactly ${BUDGETS.aspects} aspects`);
+  // Validate aspects (scenario-dependent)
+  if (character.selectedAspects.length !== budgets.aspects) {
+    errors.push(`Please select exactly ${budgets.aspects} aspects`);
   }
 
   // Validate edges
-  if (character.selectedEdges.length !== BUDGETS.edges) {
-    errors.push(`Please select exactly ${BUDGETS.edges} edges`);
+  if (character.selectedEdges.length !== budgets.edges) {
+    errors.push(`Please select exactly ${budgets.edges} edges`);
   }
 
-  // Validate skill/language points
+  // Validate skill/language points (scenario-dependent)
   const skillPoints = Object.values(character.skills).reduce((sum, v) => sum + v, 0);
   const languagePoints = Object.entries(character.languages)
     .filter(function (entry) { return entry[0] !== 'Low Sour'; })
     .reduce((sum, entry) => sum + entry[1], 0);
 
-  if (skillPoints + languagePoints !== BUDGETS.skillPoints) {
-    errors.push(`Please allocate all ${BUDGETS.skillPoints} skill/language points (currently allocated: ${skillPoints + languagePoints})`);
+  if (skillPoints + languagePoints !== budgets.skillPoints) {
+    errors.push(`Please allocate all ${budgets.skillPoints} skill/language points (currently allocated: ${skillPoints + languagePoints})`);
   }
 
-  // Validate resources
+  // Validate resources (same for all scenarios)
   const totalResources = character.resources.charts.length +
     character.resources.salvage.length +
     character.resources.specimens.length +
     character.resources.whispers.length;
 
-  if (totalResources > BUDGETS.resources) {
-    errors.push('A new character can have up to 6 starting resources');
+  if (totalResources > budgets.resources) {
+    errors.push(`A new character can have up to ${budgets.resources} starting resources`);
   }
 
   return {
