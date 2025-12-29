@@ -207,12 +207,12 @@
   --role-dropdown-bg: #2A2A2A;
 
   /* DM Screen */
-  --dm-bg: #2A2A2A;
+  --dm-bg: #222222;
   --dm-border: #666666;
   --dm-ship-border: #555555;
   --dm-header-hover-bg: #333333;
   --dm-placeholder-text: #777777;
-  --dm-health-bar-bg: #2A2A2A;
+  --dm-health-bar-bg: #222222;
   --dm-health-bar-border: #888888;
   --dm-health-bar-fill: #888888;
 

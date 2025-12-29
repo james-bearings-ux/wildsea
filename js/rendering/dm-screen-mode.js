@@ -185,6 +185,41 @@ function renderShipSummary(ship) {
 }
 
 /**
+ * Calculate mire status for display
+ * @param {Object} character - Character object
+ * @returns {Object} { text: string, severity: string }
+ */
+function calculateMireStatus(character) {
+  let cripplingCount = 0;
+  let activeCount = 0;
+
+  for (const mire of character.mires) {
+    if (mire.checkbox1 && mire.checkbox2) {
+      cripplingCount++;
+    } else if (mire.checkbox1 || mire.checkbox2) {
+      activeCount++;
+    }
+  }
+
+  if (cripplingCount > 0) {
+    return {
+      text: cripplingCount + 'x crippling mires',
+      severity: 'crippling'
+    };
+  } else if (activeCount > 0) {
+    return {
+      text: activeCount + 'x active mires',
+      severity: 'active'
+    };
+  } else {
+    return {
+      text: 'no active mires',
+      severity: 'none'
+    };
+  }
+}
+
+/**
  * Render character summary row
  * @param {Object} character - Character object
  * @param {boolean} expanded - Whether accordion is expanded
@@ -192,6 +227,7 @@ function renderShipSummary(ship) {
  */
 function renderCharacterSummary(character, expanded) {
   const health = calculateCharacterHealth(character);
+  const mireStatus = calculateMireStatus(character);
 
   // Build subtext: bloodline, origin, post
   const subtext = [character.bloodline, character.origin, character.post]
@@ -209,6 +245,9 @@ function renderCharacterSummary(character, expanded) {
   if (subtext) {
     html += '<div class="dm-subtext">' + subtext + '</div>';
   }
+  html += '</div>';
+  html += '<div class="dm-mire-indicator dm-mire-' + mireStatus.severity + '">';
+  html += mireStatus.text;
   html += '</div>';
   html += '<div class="dm-health">';
   html += renderHealthBar(health.current, health.max);
