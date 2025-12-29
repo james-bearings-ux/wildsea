@@ -1188,6 +1188,7 @@ function setupEventDelegation() {
                 e.stopPropagation();
                 if (ship) {
                   cycleRatingDamage(parsedParams.rating, parsedParams.index, noopRender, ship);
+                  markAllDirty();
                   scheduleRender();
                   scheduleShipSave();
                 }
@@ -1200,6 +1201,7 @@ function setupEventDelegation() {
                 e.stopPropagation();
                 if (ship) {
                   cycleUndercrewDamage(parsedParams.undercrewName, parsedParams.index, noopRender, ship);
+                  markAllDirty();
                   scheduleRender();
                   scheduleShipSave();
                 }
@@ -1209,7 +1211,8 @@ function setupEventDelegation() {
                 // Add a new cargo item to ship
                 // No params needed
                 if (ship) {
-                  addCargo(render, ship);
+                  addCargo(noopRender, ship);
+                  markAllDirty();
                   scheduleRender();
                   scheduleShipSave();
                 }
@@ -1220,6 +1223,7 @@ function setupEventDelegation() {
                 // Params: { id: cargoId }
                 if (ship) {
                   removeCargo(parsedParams.id, noopRender, ship);
+                  markAllDirty();
                   scheduleRender();
                   scheduleShipSave();
                 }
@@ -1229,7 +1233,8 @@ function setupEventDelegation() {
                 // Add a new passenger to ship
                 // No params needed
                 if (ship) {
-                  addPassenger(render, ship);
+                  addPassenger(noopRender, ship);
+                  markAllDirty();
                   scheduleRender();
                   scheduleShipSave();
                 }
@@ -1240,6 +1245,7 @@ function setupEventDelegation() {
                 // Params: { id: passengerId }
                 if (ship) {
                   removePassenger(parsedParams.id, noopRender, ship);
+                  markAllDirty();
                   scheduleRender();
                   scheduleShipSave();
                 }
@@ -1252,6 +1258,7 @@ function setupEventDelegation() {
                 // No params needed
                 if (ship) {
                   toggleJourney(noopRender, ship);
+                  markAllDirty();
                   scheduleRender();
                   scheduleShipSave();
                 }
@@ -1287,6 +1294,7 @@ function setupEventDelegation() {
                 // Params: { clockType: "range" | "danger" }
                 if (ship) {
                   setClockMax(parsedParams.clockType, parseInt(e.target.value), noopRender, ship);
+                  markAllDirty();
                   scheduleRender();
                   scheduleShipSave();
                 }
@@ -1297,6 +1305,7 @@ function setupEventDelegation() {
                 // Params: { clockType: "range" | "danger", tickIndex: number }
                 if (ship) {
                   toggleClockTick(parsedParams.clockType, parsedParams.tickIndex, noopRender, ship);
+                  markAllDirty();
                   scheduleRender();
                   scheduleShipSave();
                 }

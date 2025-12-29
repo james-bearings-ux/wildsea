@@ -5,6 +5,7 @@
 import { renderShipRatingsPlay } from '../components/ship-ratings-play.js';
 import { renderShipInventoryPlay } from '../components/ship-inventory-play.js';
 import { renderJourneyControls } from '../components/journey-clocks.js';
+import { createDataParams } from '../utils/escaping.js';
 
 /**
  * Render ship play mode
@@ -33,7 +34,7 @@ export function renderShipPlayMode(container, ship, gameData, journeyEditMode = 
   // Bottom action bar
   html += '<div class="sticky-action-bar split">';
   html += '<button data-action="exportShip">Export Ship</button>';
-  html += '<button data-action="setShipMode" data-params=\'{"mode":"creation"}\'>Ship Drydock</button>';
+  html += `<button data-action="setShipMode" ${createDataParams({ mode: 'creation' })}>Ship Drydock</button>`;
   html += '</div>';
 
   html += '</div>';

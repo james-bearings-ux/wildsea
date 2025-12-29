@@ -1247,6 +1247,11 @@ hr {
   break-inside: avoid-column;
 }
 
+/* Ship cards in play mode are read-only */
+.ship-play-container .ship-card {
+  cursor: default;
+}
+
 .ship-card-selected {
   border: 3px solid var(--ship-card-selected-border);
 }
