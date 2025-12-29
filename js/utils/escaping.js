@@ -73,7 +73,7 @@ export function escapeHtmlContent(text) {
  * // Instead of: data-params='{"id":"' + id + '"}'
  * // Use: ${createDataParams({ id: milestoneId })}
  * html += `<button ${createDataParams({ id: milestone.id })}>Delete</button>`;
- * // Results in: <button data-params='{"id":"some-id"}'>Delete</button>
+ * // Results in: <button data-params="{&quot;id&quot;:&quot;some-id&quot;}">Delete</button>
  *
  * @example
  * // Works safely with problematic characters
@@ -84,11 +84,13 @@ export function createDataParams(params) {
   // JSON.stringify handles all JavaScript/JSON escaping automatically
   const jsonString = JSON.stringify(params);
 
-  // Escape single quotes since we use single-quoted attributes: data-params='...'
-  // We use &#39; instead of &apos; for better compatibility
-  const escapedJson = jsonString.replace(/'/g, '&#39;');
+  // Escape for use in double-quoted HTML attribute
+  // This prevents any issues with quotes breaking out of the attribute
+  const escapedJson = jsonString
+    .replace(/&/g, '&amp;')
+    .replace(/"/g, '&quot;');
 
-  return `data-params='${escapedJson}'`;
+  return `data-params="${escapedJson}"`;
 }
 
 /**

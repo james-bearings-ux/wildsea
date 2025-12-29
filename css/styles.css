@@ -1247,6 +1247,11 @@ hr {
   break-inside: avoid-column;
 }
 
+/* Ship cards in play mode are read-only */
+.ship-play-container .ship-card {
+  cursor: default;
+}
+
 .ship-card-selected {
   border: 3px solid var(--ship-card-selected-border);
 }
@@ -2638,6 +2643,31 @@ hr {
   margin-top: 4px;
 }
 
+.dm-mire-indicator {
+  font-size: 14px;
+  font-weight: 500;
+  padding: 4px 12px;
+  border-radius: 4px;
+  white-space: nowrap;
+  transition: background 0.2s, color 0.2s;
+}
+
+.dm-mire-none {
+  color: var(--text-muted);
+  background: transparent;
+}
+
+.dm-mire-active {
+  color: #d97706;
+  background: rgba(217, 119, 6, 0.1);
+}
+
+.dm-mire-crippling {
+  color: #dc2626;
+  background: rgba(220, 38, 38, 0.15);
+  font-weight: 600;
+}
+
 .dm-health {
   display: flex;
   align-items: center;
@@ -2712,6 +2742,11 @@ hr {
 
   .dm-health {
     font-size: 20px;
+  }
+
+  .dm-mire-indicator {
+    font-size: 12px;
+    padding: 3px 8px;
   }
 
   .dm-accordion-header {
