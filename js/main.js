@@ -55,7 +55,9 @@ import {
   addCharacterToSession,
   removeCharacterFromSession,
   setActiveCharacter,
-  getOrCreateSharedSession
+  getOrCreateSharedSession,
+  addDiceRoll,
+  dismissAllDiceRolls
 } from './state/session.js';
 import { validateCharacterCreation } from './utils/validation.js';
 import { exportCharacter, importCharacter, exportShip, importShip } from './utils/file-handlers.js';
@@ -114,6 +116,7 @@ import { renderLoginScreen, renderCheckEmailScreen } from './components/login.js
 import { supabase } from './supabaseClient.js';
 import { startPresenceHeartbeat, stopPresenceHeartbeat, getOnlineUsers, removePresence } from './presence.js';
 import { renderPresenceBar } from './components/presence-bar.js';
+import { renderDiceRoller, fakeDiceRoll } from './components/dice-roller.js';
 
 // Debug flag - only log in development mode
 const DEBUG = import.meta.env.DEV;
@@ -123,6 +126,7 @@ let currentUser = null; // Current authenticated user
 let session = null;
 let character = null; // Cached active character
 let ship = null; // Cached active ship
+let showDiceResults = true; // Toggle visibility of dice results
 let onlineUsers = []; // List of online users in the session
 let hasPendingCharacterSave = false; // Track if character save is pending
 let hasPendingShipSave = false; // Track if ship save is pending
@@ -468,7 +472,8 @@ async function render(reloadSession = false) {
   // Check if we're viewing the DM screen
   if (session.activeView === 'dm-screen') {
     const dmScreenHtml = await renderDMScreen(session, expandedDMAccordion);
-    app.innerHTML = presenceBarHtml + navHtml + dmScreenHtml;
+    const diceRollerHtml = renderDiceRoller(session?.diceRolls || [], showDiceResults);
+    app.innerHTML = presenceBarHtml + navHtml + dmScreenHtml + diceRollerHtml;
     return;
   }
 
@@ -497,7 +502,8 @@ async function render(reloadSession = false) {
     }
 
     // Combine navigation and content
-    app.innerHTML = presenceBarHtml + navHtml + tempDiv.innerHTML;
+    const diceRollerHtml = renderDiceRoller(session?.diceRolls || [], showDiceResults);
+    app.innerHTML = presenceBarHtml + navHtml + tempDiv.innerHTML + diceRollerHtml;
     return;
   }
 
@@ -530,7 +536,8 @@ async function render(reloadSession = false) {
   }
 
   // Combine navigation and content
-  app.innerHTML = presenceBarHtml + navHtml + tempDiv.innerHTML;
+  const diceRollerHtml = renderDiceRoller(session?.diceRolls || [], showDiceResults);
+  app.innerHTML = presenceBarHtml + navHtml + tempDiv.innerHTML + diceRollerHtml;
 
   // Add role tooltip if needed (only if not already in DOM)
   if (showRoleTooltip && !document.querySelector('.role-tooltip-overlay')) {
@@ -1489,6 +1496,96 @@ function setupEventDelegation() {
                     scheduleRender();
                     scheduleSave();
                   }
+                }
+                break;
+
+              // === DICE ROLLER ACTIONS ===
+              //
+              // Multiplayer dice rolling system with optimistic updates for instant UI feedback.
+              //
+              // PATTERN:
+              // 1. Update session.diceRolls locally (optimistic)
+              // 2. Call render() immediately (user sees instant feedback)
+              // 3. Save to database in background via addDiceRoll/dismissAllDiceRolls
+              // 4. On error, rollback local state and re-render
+              //
+              // DATA FLOW:
+              // - Roll data: { id, userId, userName, diceCount, values, timestamp, visible }
+              // - Stored in session.diceRolls array (synced to database JSONB column)
+              // - Polling mechanism syncs rolls across all users in session
+              //
+              // UI STATE:
+              // - showDiceResults: boolean (toggles panel visibility, CSS-based)
+              // - Auto-expands panel when rolling dice
+              //
+              // See: js/components/dice-roller.js, js/state/session.js
+
+              case 'rollDice':
+                // Roll N dice and add results to display (multiplayer)
+                // Params: { count: number (1-6) }
+                if (parsedParams.count && session && currentUser) {
+                  const values = fakeDiceRoll(parsedParams.count);
+
+                  // Find current user's alias from online users
+                  const currentUserData = onlineUsers.find(u => u.user_email === currentUser.email);
+                  const userName = currentUserData?.user_alias || currentUser.email.split('@')[0];
+
+                  const roll = {
+                    id: 'roll-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9),
+                    userId: currentUser.id,
+                    userName: userName,
+                    diceCount: parsedParams.count,
+                    values: values,
+                    timestamp: Date.now(),
+                    visible: true
+                  };
+
+                  // Auto-expand results panel if collapsed
+                  showDiceResults = true;
+
+                  // Optimistically update UI first for instant feedback
+                  if (!session.diceRolls) {
+                    session.diceRolls = [];
+                  }
+                  session.diceRolls.push(roll);
+                  await render();
+
+                  // Then save to database in background
+                  addDiceRoll(session, roll).catch(err => {
+                    console.error('Failed to save dice roll:', err);
+                    // Remove the roll from local state if save failed
+                    const index = session.diceRolls.findIndex(r => r.id === roll.id);
+                    if (index > -1) {
+                      session.diceRolls.splice(index, 1);
+                      render();
+                    }
+                  });
+                }
+                break;
+
+              case 'toggleDiceResults':
+                // Toggle visibility of dice results panel
+                // No params needed
+                showDiceResults = !showDiceResults;
+                await render();
+                break;
+
+              case 'dismissAllRolls':
+                // Hide all dice roll results (multiplayer)
+                // No params needed
+                if (session) {
+                  // Optimistically update UI first for instant feedback
+                  if (session.diceRolls) {
+                    session.diceRolls.forEach(roll => {
+                      roll.visible = false;
+                    });
+                  }
+                  await render();
+
+                  // Then save to database in background
+                  dismissAllDiceRolls(session).catch(err => {
+                    console.error('Failed to save dismiss action:', err);
+                  });
                 }
                 break;
 

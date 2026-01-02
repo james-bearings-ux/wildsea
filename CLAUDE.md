@@ -70,6 +70,7 @@ The application is organized into modular ES6 modules:
    - `resources.js` - Resource management
    - `milestones.js` - Milestone tracking
    - `drives-mires.js` - Drives and mires rendering
+   - `dice-roller.js` - Multiplayer dice rolling system (see Dice Roller section below)
    - All components generate HTML strings via template literals
 
 5. **Utilities** (`js/utils/`)
@@ -114,6 +115,32 @@ The `character` object contains:
 - Ranks: 0-2 in creation mode, 0-3 in play/advancement modes
 - Low Sour cannot be modified in creation mode
 
+**Dice Roller (Multiplayer Feature)**:
+- Real-time multiplayer d6 pool rolling system
+- Visible to all players in the session (character view, ship view, and DM screen)
+- Pool size: 1-6 dice (click interactive stack to select)
+- Outcome determination:
+  - **Triumph**: Highest die = 6 (green)
+  - **Conflict**: Highest die = 4 or 5 (gold)
+  - **Disaster**: Highest die = 1, 2, or 3 (red)
+  - **Twist**: Any doubles present (purple outline on matching dice)
+- Roll data structure: `{ id, userId, userName, diceCount, values, timestamp, visible }`
+- Stored in `session.diceRolls` array (JSONB in database)
+- UI features:
+  - Fixed position in lower left corner
+  - Interactive dice stack (1-6 selector with hover effect)
+  - Results display newest first (closest to interactive dice)
+  - Each result shows: Outcome → Twist? → Who Rolled → Timestamp (HH:MM:SS)
+  - Top die colored by outcome, other dice dimmed (40% opacity)
+  - Collapsible panel (CSS toggle, not destroyed) to reduce screen coverage
+  - Auto-expands when rolling
+  - Reset button clears all visible rolls (only shows when expanded)
+- Performance optimization:
+  - Optimistic updates: UI updates immediately, database saves in background
+  - Results HTML always rendered but CSS-hidden when collapsed
+  - Prevents sluggish interactions and re-rendering overhead
+- Future integration: Placeholder `fakeDiceRoll()` function can be replaced with dice framework (e.g., dice-box) while maintaining same signature
+
 ### UI Interaction Pattern
 
 The application uses **event delegation** for all user interactions:
@@ -151,7 +178,8 @@ The application uses **event delegation** for all user interactions:
 │   │   ├── skills.js             # Skills and languages
 │   │   ├── resources.js          # Resources management
 │   │   ├── milestones.js         # Milestone tracking
-│   │   └── drives-mires.js       # Drives and mires
+│   │   ├── drives-mires.js       # Drives and mires
+│   │   └── dice-roller.js        # Multiplayer dice rolling system
 │   ├── utils/
 │   │   ├── validation.js         # Validation logic
 │   │   ├── file-handlers.js      # Import/export
@@ -163,9 +191,18 @@ The application uses **event delegation** for all user interactions:
 │   ├── game-constants.json       # Core game data
 │   ├── aspects.json              # All aspects (3091 lines)
 │   └── resources.json            # Starting resources
+├── supabase/
+│   └── migrations/
+│       └── 015_add_dice_rolls_to_sessions.sql  # Adds dice_rolls JSONB column
 ├── package.json                  # Dependencies and scripts
 └── CLAUDE.md                     # This file
 ```
+
+**Database Schema for Dice Roller**:
+- Migration: `supabase/migrations/015_add_dice_rolls_to_sessions.sql`
+- Adds `dice_rolls` column to `sessions` table (JSONB type)
+- Default value: `'[]'::jsonb` (empty array)
+- Stores array of roll objects with multiplayer state
 
 ## Working with Aspects
 
