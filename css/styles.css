@@ -2547,7 +2547,7 @@ hr {
    =========================== */
 
 .dm-screen-container {
-  padding: 40px;
+  padding: 40px 80px;
   max-width: 1200px;
   margin: 0 auto;
 }
