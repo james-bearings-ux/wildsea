@@ -202,7 +202,7 @@ export function renderDiceRoller(rolls = [], showResults = true) {
         <button class="dice-control-btn" data-action="toggleDiceResults" title="${showResults ? 'Hide' : 'Show'} Results">
           ${showResults ? '◀' : '▶'}
         </button>
-        ${hasVisibleRolls ? '<button class="dice-control-btn dice-control-dismiss" data-action="dismissAllRolls" title="Dismiss All">×</button>' : ''}
+        ${hasVisibleRolls ? '<button class="dice-control-btn dice-control-dismiss" data-action="dismissAllRolls" title="Reset All">× Reset</button>' : ''}
       </div>
       <div class="dice-roller-wrapper">
         ${renderDiceStack()}

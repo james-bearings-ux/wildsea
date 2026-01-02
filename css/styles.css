@@ -82,9 +82,11 @@ button {
   color: var(--text-primary);
 }
 
+/* 
 button:hover:not(:disabled) {
 	background: var(--bg-hover);
 }
+  */
 
 button:disabled {
 	opacity: 0.5;
@@ -2886,11 +2888,11 @@ hr {
 /* Overall panel wrapper with border and background */
 .dice-roller-panel {
   position: fixed;
-  bottom: 80px; /* Clear action bar */
-  left: 24px;
+  bottom: 64px; /* Clear action bar */
+  left: 4px;
   z-index: 900;
   pointer-events: none; /* Allow clicks through except on interactive elements */
-  background: var(--bg-primary);
+  background: var(--bg-secondary);
   border: 2px solid var(--border-primary);
   border-radius: 8px;
   padding: 12px;
@@ -2905,14 +2907,14 @@ hr {
 .dice-roller-controls {
   display: flex;
   gap: 6px;
-  margin-bottom: 8px;
+  margin-bottom: 24px;
   justify-content: flex-start;
 }
 
 .dice-control-btn {
-  width: 28px;
+  width: 40px;
   height: 28px;
-  padding: 0;
+  padding: 4px;
   background: var(--bg-secondary);
   color: var(--text-primary);
   border: 2px solid var(--border-primary);
@@ -2935,6 +2937,7 @@ hr {
   background: var(--danger-bg);
   color: white;
   border: none;
+  width: auto;
 }
 
 .dice-control-dismiss:hover {
@@ -2979,7 +2982,7 @@ hr {
 .dice-face {
   width: 40px;
   height: 40px;
-  background: var(--bg-secondary);
+  background: var(--bg-primary);
   border: 2px solid var(--text-primary);
   border-radius: 8px;
   display: flex;
@@ -3070,6 +3073,7 @@ hr {
   font-weight: 400;
   font-size: 12px;
   margin-bottom: 4px;
+  line-height: 1;
   color: var(--text-muted);
 }
 
