@@ -2878,3 +2878,225 @@ hr {
 .budget-list .budget-highlight strong {
   color: var(--accent);
 }
+
+/* ===========================
+   DICE ROLLER STYLES
+   =========================== */
+
+/* Overall panel wrapper with border and background */
+.dice-roller-panel {
+  position: fixed;
+  bottom: 80px; /* Clear action bar */
+  left: 24px;
+  z-index: 900;
+  pointer-events: none; /* Allow clicks through except on interactive elements */
+  background: var(--bg-primary);
+  border: 2px solid var(--border-primary);
+  border-radius: 8px;
+  padding: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.dice-roller-panel > * {
+  pointer-events: auto; /* Re-enable pointer events for child elements */
+}
+
+/* Control buttons at the top */
+.dice-roller-controls {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 8px;
+  justify-content: flex-start;
+}
+
+.dice-control-btn {
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 2px solid var(--border-primary);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+
+.dice-control-btn:hover {
+  background: var(--bg-hover);
+}
+
+.dice-control-dismiss {
+  background: var(--danger-bg);
+  color: white;
+  border: none;
+}
+
+.dice-control-dismiss:hover {
+  background: var(--danger-hover);
+}
+
+/* Inner wrapper for dice stack and results */
+.dice-roller-wrapper {
+  display: flex;
+  gap: 16px;
+  align-items: flex-end;
+}
+
+/* Interactive dice stack (selector) */
+.dice-stack {
+  display: flex;
+  flex-direction: column-reverse; /* Bottom to top: 1, 2, 3, 4, 5, 6 */
+  gap: 6px;
+}
+
+.dice-selector {
+  cursor: pointer;
+  transition: transform 0.15s ease, opacity 0.15s ease;
+  position: relative;
+}
+
+.dice-selector:hover {
+  transform: scale(1.1);
+}
+
+/* Hover effect: highlight all dice below hovered die */
+.dice-stack:has(.dice-selector:hover) .dice-selector {
+  opacity: 0.4;
+}
+
+.dice-selector:hover,
+.dice-selector:hover ~ .dice-selector {
+  opacity: 1 !important;
+}
+
+/* Die face */
+.dice-face {
+  width: 40px;
+  height: 40px;
+  background: var(--bg-secondary);
+  border: 2px solid var(--text-primary);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  font-weight: 600;
+  font-family: 'Teko', sans-serif;
+  color: var(--text-primary);
+  user-select: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Results container */
+.dice-results-container {
+  display: flex;
+  gap: 6px; /* Tighter spacing between columns */
+  align-items: flex-end;
+}
+
+/* Individual result column (minimal styling) */
+.dice-result-column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 0 4px;
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Stack of result dice */
+.dice-result-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* Outcome die coloring */
+.dice-result-stack .dice-face:first-child {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
+/* Doubles outline */
+.dice-double {
+  outline: 3px solid #a855f7; /* Purple */
+  outline-offset: 2px;
+}
+
+/* Dimmed dice (non-outcome dice in results) */
+.dice-dimmed {
+  opacity: 0.4;
+}
+
+/* Outcome labels */
+.dice-outcome-label {
+  font-family: 'Teko', sans-serif;
+  font-size: 18px;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  line-height: 1;
+  text-align: center;
+}
+
+.dice-twist-label {
+  font-family: 'Teko', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #a855f7; /* Purple */
+  line-height: 1;
+  text-align: center;
+}
+
+.dice-result-timestamp {
+  font-weight: 400;
+  font-size: 12px;
+  margin-bottom: 4px;
+  color: var(--text-muted);
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .dice-roller-panel {
+    bottom: 60px;
+    left: 12px;
+    padding: 8px;
+  }
+
+  .dice-roller-wrapper {
+    gap: 12px;
+  }
+
+  .dice-face {
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+    border: 2px solid var(--text-primary);
+  }
+
+  .dice-outcome-label {
+    font-size: 14px;
+  }
+
+  .dice-twist-label {
+    font-size: 12px;
+  }
+}

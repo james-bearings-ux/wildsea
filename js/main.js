@@ -114,6 +114,7 @@ import { renderLoginScreen, renderCheckEmailScreen } from './components/login.js
 import { supabase } from './supabaseClient.js';
 import { startPresenceHeartbeat, stopPresenceHeartbeat, getOnlineUsers, removePresence } from './presence.js';
 import { renderPresenceBar } from './components/presence-bar.js';
+import { renderDiceRoller, fakeDiceRoll } from './components/dice-roller.js';
 
 // Debug flag - only log in development mode
 const DEBUG = import.meta.env.DEV;
@@ -123,6 +124,8 @@ let currentUser = null; // Current authenticated user
 let session = null;
 let character = null; // Cached active character
 let ship = null; // Cached active ship
+let diceRolls = []; // Array of dice roll results (ephemeral, not persisted)
+let showDiceResults = true; // Toggle visibility of dice results
 let onlineUsers = []; // List of online users in the session
 let hasPendingCharacterSave = false; // Track if character save is pending
 let hasPendingShipSave = false; // Track if ship save is pending
@@ -497,7 +500,8 @@ async function render(reloadSession = false) {
     }
 
     // Combine navigation and content
-    app.innerHTML = presenceBarHtml + navHtml + tempDiv.innerHTML;
+    const diceRollerHtml = renderDiceRoller(diceRolls, showDiceResults);
+    app.innerHTML = presenceBarHtml + navHtml + tempDiv.innerHTML + diceRollerHtml;
     return;
   }
 
@@ -530,7 +534,8 @@ async function render(reloadSession = false) {
   }
 
   // Combine navigation and content
-  app.innerHTML = presenceBarHtml + navHtml + tempDiv.innerHTML;
+  const diceRollerHtml = renderDiceRoller(diceRolls, showDiceResults);
+  app.innerHTML = presenceBarHtml + navHtml + tempDiv.innerHTML + diceRollerHtml;
 
   // Add role tooltip if needed (only if not already in DOM)
   if (showRoleTooltip && !document.querySelector('.role-tooltip-overlay')) {
@@ -1490,6 +1495,53 @@ function setupEventDelegation() {
                     scheduleSave();
                   }
                 }
+                break;
+
+              // === DICE ROLLER ACTIONS ===
+
+              case 'rollDice':
+                // Roll N dice and add results to display
+                // Params: { count: number (1-6) }
+                if (parsedParams.count) {
+                  const values = fakeDiceRoll(parsedParams.count);
+                  const roll = {
+                    id: 'roll-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9),
+                    diceCount: parsedParams.count,
+                    values: values,
+                    timestamp: Date.now(),
+                    visible: true
+                  };
+                  diceRolls.push(roll);
+                  await render();
+                }
+                break;
+
+              case 'dismissRoll':
+                // Hide a dice roll result
+                // Params: { id: rollId }
+                if (parsedParams.id) {
+                  const roll = diceRolls.find(r => r.id === parsedParams.id);
+                  if (roll) {
+                    roll.visible = false;
+                    await render();
+                  }
+                }
+                break;
+
+              case 'toggleDiceResults':
+                // Toggle visibility of dice results panel
+                // No params needed
+                showDiceResults = !showDiceResults;
+                await render();
+                break;
+
+              case 'dismissAllRolls':
+                // Hide all dice roll results
+                // No params needed
+                diceRolls.forEach(roll => {
+                  roll.visible = false;
+                });
+                await render();
                 break;
 
               // === AUTHENTICATION ACTIONS ===
