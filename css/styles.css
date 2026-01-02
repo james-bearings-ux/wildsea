@@ -2909,6 +2909,10 @@ hr {
   gap: 6px;
   margin-bottom: 24px;
   justify-content: flex-start;
+
+  span {
+    padding: 2px 0;
+  }
 }
 
 .dice-control-btn {
@@ -2917,7 +2921,7 @@ hr {
   padding: 4px;
   background: var(--bg-secondary);
   color: var(--text-primary);
-  border: 2px solid var(--border-primary);
+  border: 2px solid transparent;
   border-radius: 4px;
   cursor: pointer;
   font-size: 16px;
@@ -2931,6 +2935,7 @@ hr {
 
 .dice-control-btn:hover {
   background: var(--bg-hover);
+  border: 2px solid var(--border-primary);
 }
 
 .dice-control-dismiss {
@@ -2938,10 +2943,14 @@ hr {
   color: white;
   border: none;
   width: auto;
+  padding: 4px 8px;
+  margin-left: 8px;
 }
 
 .dice-control-dismiss:hover {
   background: var(--danger-hover);
+  border-width: 0;
+
 }
 
 /* Inner wrapper for dice stack and results */
@@ -3069,7 +3078,7 @@ hr {
   text-align: center;
 }
 
-.dice-result-timestamp {
+.dice-result-timestamp, .dice-result-who {
   font-weight: 400;
   font-size: 12px;
   margin-bottom: 4px;

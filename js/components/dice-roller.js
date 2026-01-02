@@ -1,13 +1,31 @@
 /**
  * Dice roller component for Wildsea d6 pool system
  *
- * Mechanics:
+ * MULTIPLAYER FEATURE:
+ * - Dice rolls are stored in session.diceRolls array
+ * - All players in the session see each other's rolls in real-time
+ * - Uses optimistic updates for instant UI feedback
+ * - Roll data structure: { id, userId, userName, diceCount, values, timestamp, visible }
+ *
+ * MECHANICS:
  * - Pool: 1-6 d6 (Edge 1d6 + Skill/Language 1-3d6 + optional Aspect/Resource 1-2d6)
  * - Outcome based on highest die:
- *   - 6 = Triumph
- *   - 5, 4 = Conflict
- *   - 3, 2, 1 = Disaster
- * - Doubles = Twist (special condition)
+ *   - 6 = Triumph (green)
+ *   - 5, 4 = Conflict (gold)
+ *   - 3, 2, 1 = Disaster (red)
+ * - Doubles = Twist (purple outline on matching dice)
+ *
+ * UI BEHAVIOR:
+ * - Interactive dice stack in lower left (click to select pool size)
+ * - Results display to the right, newest first
+ * - Auto-expands when rolling, can be collapsed to reduce screen coverage
+ * - Reset button clears all visible rolls (only shows when expanded)
+ * - Results are CSS-toggled (not destroyed) for smooth expand/collapse
+ *
+ * INTEGRATION:
+ * - Event handlers in js/main.js: rollDice, toggleDiceResults, dismissAllRolls
+ * - State management in js/state/session.js: addDiceRoll, dismissAllDiceRolls
+ * - Rendered on all views: character, ship, DM screen
  */
 
 // Constants
@@ -20,8 +38,13 @@ const OUTCOME_COLORS = {
 
 /**
  * Determine outcome based on dice values
- * @param {number[]} values - Array of die values (should be sorted descending)
- * @returns {Object} { result: string, color: string, hasDoubles: boolean, doubleIndices: number[] }
+ *
+ * @param {number[]} values - Array of die values (should be sorted descending, highest first)
+ * @returns {Object} Outcome object with the following properties:
+ *   - result: 'triumph' | 'conflict' | 'disaster' (based on highest die)
+ *   - color: hex color code for the outcome (#10b981, #f59e0b, or #ef4444)
+ *   - hasDoubles: true if any dice have matching values
+ *   - doubleIndices: array of indices for all dice that are part of doubles
  */
 export function getOutcome(values) {
   const highest = values[0];
@@ -65,8 +88,12 @@ export function getOutcome(values) {
 
 /**
  * Fake dice roll (returns random values until we integrate a dice framework)
- * @param {number} count - Number of dice to roll
- * @returns {number[]} Array of die values, sorted descending
+ *
+ * NOTE: This is a placeholder. Future integration with a dice rolling framework
+ * (e.g., dice-box) should replace this function but maintain the same signature.
+ *
+ * @param {number} count - Number of dice to roll (1-6)
+ * @returns {number[]} Array of die values (1-6), sorted descending (highest first)
  */
 export function fakeDiceRoll(count) {
   return Array.from({ length: count }, () => Math.floor(Math.random() * 6) + 1)
@@ -75,13 +102,14 @@ export function fakeDiceRoll(count) {
 
 /**
  * Render a single die face
+ *
  * @param {number} value - Die value (1-6)
  * @param {Object} options - Rendering options
- * @param {boolean} options.isOutcome - Whether this is the outcome die (top die in results)
- * @param {boolean} options.isDouble - Whether this die is part of doubles
- * @param {boolean} options.isDimmed - Whether to dim this die (non-outcome dice)
- * @param {string} options.outcomeColor - Color for outcome die
- * @returns {string} HTML string
+ * @param {boolean} [options.isOutcome=false] - Whether this is the outcome die (gets colored background)
+ * @param {boolean} [options.isDouble=false] - Whether this die is part of doubles (gets purple outline)
+ * @param {boolean} [options.isDimmed=false] - Whether to dim this die (non-outcome dice in results, 40% opacity)
+ * @param {string} [options.outcomeColor=null] - Hex color for outcome die background
+ * @returns {string} HTML string with .dice-face element
  */
 function renderDie(value, { isOutcome = false, isDouble = false, isDimmed = false, outcomeColor = null } = {}) {
   const classes = ['dice-face'];
@@ -97,7 +125,12 @@ function renderDie(value, { isOutcome = false, isDouble = false, isDimmed = fals
 
 /**
  * Render interactive dice stack (1-6 selector)
- * @returns {string} HTML string
+ *
+ * Creates a vertical stack of clickable dice (1-6) for pool selection.
+ * Hover effect highlights the selected die and all dice below it.
+ * Click triggers rollDice action with data-params='{"count": N}'.
+ *
+ * @returns {string} HTML string with .dice-stack container
  */
 export function renderDiceStack() {
   let html = '<div class="dice-stack">';
@@ -129,8 +162,23 @@ function formatTimestamp(timestamp) {
 
 /**
  * Render a single roll result column
- * @param {Object} roll - Roll data { id, diceCount, values, timestamp, visible }
- * @returns {string} HTML string
+ *
+ * Displays a single dice roll with:
+ * 1. RESULT label (Triumph/Conflict/Disaster)
+ * 2. TWIST label (if doubles exist)
+ * 3. WHO ROLLED (player name from roll.userName)
+ * 4. TIMESTAMP (HH:MM:SS format)
+ * 5. Dice stack (sorted highest to lowest, top die colored, others dimmed)
+ *
+ * @param {Object} roll - Roll data object
+ * @param {string} roll.id - Unique roll ID
+ * @param {string} roll.userId - User ID who rolled
+ * @param {string} roll.userName - Display name/alias of user who rolled
+ * @param {number} roll.diceCount - Number of dice rolled (1-6)
+ * @param {number[]} roll.values - Die values, sorted descending
+ * @param {number} roll.timestamp - Milliseconds since epoch
+ * @param {boolean} roll.visible - Whether this roll should be shown
+ * @returns {string} HTML string with .dice-result-column element (empty if not visible)
  */
 export function renderRollColumn(roll) {
   if (!roll.visible) return '';
@@ -139,13 +187,18 @@ export function renderRollColumn(roll) {
 
   let html = `<div class="dice-result-column" data-roll-id="${roll.id}">`;
 
-  // Outcome label
+  // 1. RESULT - Outcome label
   html += `<div class="dice-outcome-label">${outcome.result.toUpperCase()}</div>`;
+
+  // 2. TWIST? - If doubles exist
   if (outcome.hasDoubles) {
     html += '<div class="dice-twist-label">TWIST</div>';
   }
 
-  // Timestamp
+  // 3. WHO ROLLED - Player name
+  html += `<div class="dice-result-who">${roll.userName}</div>`;
+
+  // 4. TIMESTAMP - Time of roll
   html += `<div class="dice-result-timestamp">${formatTimestamp(roll.timestamp)}</div>`;
 
   // Dice results
@@ -169,29 +222,20 @@ export function renderRollColumn(roll) {
 }
 
 /**
- * Render all roll results
- * @param {Array} rolls - Array of roll objects
- * @returns {string} HTML string
- */
-export function renderRollResults(rolls) {
-  if (!rolls || rolls.length === 0) return '';
-
-  let html = '<div class="dice-results-container">';
-  // Reverse array so newest rolls appear on the left (closest to interactive dice)
-  const reversedRolls = [...rolls].reverse();
-  reversedRolls.forEach(roll => {
-    html += renderRollColumn(roll);
-  });
-  html += '</div>';
-
-  return html;
-}
-
-/**
  * Render complete dice roller UI
- * @param {Array} rolls - Array of roll objects
- * @param {boolean} showResults - Whether to show results (default: true)
- * @returns {string} HTML string
+ *
+ * Main rendering function for the dice roller feature. Creates:
+ * - Control buttons (toggle show/hide, reset all)
+ * - Interactive dice stack (1-6 selector)
+ * - Results container with all roll columns (CSS-toggled, not destroyed)
+ *
+ * PERFORMANCE NOTE: Results HTML is always rendered but hidden with inline
+ * display:none when collapsed. This prevents re-rendering overhead during
+ * frequent expand/collapse operations.
+ *
+ * @param {Array} rolls - Array of roll objects (see renderRollColumn for structure)
+ * @param {boolean} [showResults=true] - Whether to show the results panel
+ * @returns {string} HTML string with .dice-roller-panel container
  */
 export function renderDiceRoller(rolls = [], showResults = true) {
   const hasVisibleRolls = rolls.some(r => r.visible);
@@ -202,11 +246,13 @@ export function renderDiceRoller(rolls = [], showResults = true) {
         <button class="dice-control-btn" data-action="toggleDiceResults" title="${showResults ? 'Hide' : 'Show'} Results">
           ${showResults ? '◀' : '▶'}
         </button>
-        ${hasVisibleRolls ? '<button class="dice-control-btn dice-control-dismiss" data-action="dismissAllRolls" title="Reset All">× Reset</button>' : ''}
+        ${hasVisibleRolls && showResults ? '<button class="dice-control-btn dice-control-dismiss" data-action="dismissAllRolls" title="Reset All">× Reset</button> <span>Applies to all players.</span>' : ''}
       </div>
       <div class="dice-roller-wrapper">
         ${renderDiceStack()}
-        ${showResults ? renderRollResults(rolls) : ''}
+        <div class="dice-results-container" style="${showResults ? '' : 'display: none;'}">
+          ${[...rolls].reverse().map(roll => renderRollColumn(roll)).join('')}
+        </div>
       </div>
     </div>
   `;

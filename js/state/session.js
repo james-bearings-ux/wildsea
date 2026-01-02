@@ -113,6 +113,7 @@ export async function getOrCreateSharedSession() {
     activeCharacterIds: characterLinks ? characterLinks.map(link => link.character_id) : [],
     activeView: activeView, // Per-user from localStorage
     activeCharacterId: activeCharacterId, // Per-user from localStorage
+    diceRolls: data.dice_rolls || [], // Shared multiplayer dice rolls
     created: new Date(data.created_at).getTime(),
     lastModified: new Date(data.updated_at).getTime()
   };
@@ -163,6 +164,7 @@ export async function loadSession() {
     activeCharacterIds: characterLinks ? characterLinks.map(link => link.character_id) : [],
     activeView: activeView, // Per-user from localStorage
     activeCharacterId: activeCharacterId, // Per-user from localStorage
+    diceRolls: data.dice_rolls || [], // Shared multiplayer dice rolls
     created: new Date(data.created_at).getTime(),
     lastModified: new Date(data.updated_at).getTime()
   };
@@ -299,5 +301,84 @@ export async function setActiveCharacter(session, characterId) {
     session.activeCharacterId = characterId;
     session.activeView = 'character';
     await saveSession(session);
+  }
+}
+
+/**
+ * Add a dice roll to the session (multiplayer)
+ *
+ * Saves the dice roll to the database. This function expects the caller to have
+ * already updated session.diceRolls locally (optimistic update pattern).
+ *
+ * USAGE PATTERN (from main.js):
+ * 1. Create roll object with { id, userId, userName, diceCount, values, timestamp, visible }
+ * 2. Push to session.diceRolls array (optimistic update)
+ * 3. Call render() to update UI immediately
+ * 4. Call addDiceRoll() to save to database in background
+ * 5. On error, remove from session.diceRolls and re-render
+ *
+ * @param {Object} session - Session object with diceRolls array
+ * @param {Object} roll - Roll data object (see js/components/dice-roller.js for structure)
+ * @returns {Promise<void>}
+ * @throws {Error} If database save fails
+ */
+export async function addDiceRoll(session, roll) {
+  // Save to database (local state should already be updated by caller)
+  const { error } = await supabase
+    .from('sessions')
+    .update({
+      dice_rolls: session.diceRolls,
+      updated_at: new Date().toISOString()
+    })
+    .eq('id', session.id);
+
+  if (error) {
+    console.error('Failed to save dice roll:', error);
+    throw error;
+  }
+}
+
+/**
+ * Dismiss all visible dice rolls (multiplayer)
+ *
+ * Marks all rolls as not visible by setting visible=false on each roll object.
+ * Like addDiceRoll, this expects the caller to update local state first
+ * (optimistic update pattern).
+ *
+ * USAGE PATTERN (from main.js):
+ * 1. Iterate through session.diceRolls and set visible=false (optimistic update)
+ * 2. Call render() to update UI immediately
+ * 3. Call dismissAllDiceRolls() to save to database in background
+ * 4. On error, log to console (no rollback needed for dismiss action)
+ *
+ * NOTE: This does not delete rolls, only hides them. They remain in the database
+ * and can be shown again by setting visible=true.
+ *
+ * @param {Object} session - Session object with diceRolls array
+ * @returns {Promise<void>}
+ * @throws {Error} If database save fails
+ */
+export async function dismissAllDiceRolls(session) {
+  // Mark all rolls as not visible
+  if (!session.diceRolls) {
+    return;
+  }
+
+  session.diceRolls.forEach(roll => {
+    roll.visible = false;
+  });
+
+  // Save to database
+  const { error } = await supabase
+    .from('sessions')
+    .update({
+      dice_rolls: session.diceRolls,
+      updated_at: new Date().toISOString()
+    })
+    .eq('id', session.id);
+
+  if (error) {
+    console.error('Failed to dismiss dice rolls:', error);
+    throw error;
   }
 }
