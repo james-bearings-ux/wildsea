@@ -494,10 +494,9 @@ hr {
 
 /* Main content wrapper */
 .content-wrapper {
-	padding: 20px;
+	padding: 20px 20px 80px 80px;
 	max-width: 1400px;
 	margin: 0 auto;
-	padding-bottom: 80px;
 }
 
 /* Form labels */
