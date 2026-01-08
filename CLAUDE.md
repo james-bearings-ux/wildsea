@@ -83,6 +83,69 @@ The application is organized into modular ES6 modules:
    - Main render function that delegates to mode-specific renderers
    - Connects all modules together
 
+### Authentication and User Roles
+
+The application uses **Supabase Authentication** with magic link (passwordless) login:
+
+**Authentication Flow:**
+- Users sign in via magic link sent to their email
+- Only whitelisted emails can access the application (email must be in `email_whitelist` table)
+- Authentication state is managed by `js/auth.js` module
+- Session persists across page reloads via Supabase client
+
+**User Roles:**
+- Two roles: `'player'` (default) and `'dm'` (dungeon master)
+- Roles are stored in the `email_whitelist` table's `role` column
+- Role determines access to certain features (e.g., DMs can reset dice rolls for all players)
+- Role is fetched once on app load and stored in `currentUserRole` global variable
+
+**Key Functions (`js/auth.js`):**
+- `sendMagicLink(email)` - Sends magic link to user's email (only if whitelisted)
+- `getCurrentUser()` - Returns current authenticated user from Supabase session
+- `getUserRole(email)` - Fetches user's role from whitelist table
+- `onAuthStateChange(callback)` - Listens for auth state changes (sign in/out)
+- `signOut()` - Signs out current user
+
+**Database Schema:**
+- Table: `email_whitelist`
+- Columns: `id`, `email`, `role`, `notes`, `created_at`
+- Function: `is_email_whitelisted(email)` - Checks if email is in whitelist
+- Function: `get_user_role(email)` - Returns user's role ('player' or 'dm')
+
+**Managing User Roles:**
+```sql
+-- Promote a user to DM
+UPDATE public.email_whitelist
+SET role = 'dm'
+WHERE email = 'example1@example.com';
+
+-- Demote a DM to player
+UPDATE public.email_whitelist
+SET role = 'player'
+WHERE email = 'example1@example.com';
+
+-- Check a user's current role
+SELECT email, role, notes
+FROM public.email_whitelist
+WHERE email = 'example1@example.com';
+```
+
+**Global State (`js/main.js`):**
+- `currentUser` - Current authenticated user object from Supabase
+- `currentUserRole` - User's role ('player' or 'dm'), fetched on app load
+- User role is passed to components that need role-based features (e.g., dice roller)
+
+**Integration Example:**
+```javascript
+// Fetch user role on app load (in loadApp function)
+if (currentUser && currentUser.email) {
+  currentUserRole = await getUserRole(currentUser.email);
+}
+
+// Pass role to components that need it
+const diceRollerHtml = renderDiceRoller(rolls, showResults, currentUserRole);
+```
+
 ### Character Data Structure
 
 The `character` object contains:
@@ -117,7 +180,8 @@ The `character` object contains:
 
 **Dice Roller (Multiplayer Feature)**:
 - Real-time multiplayer d6 pool rolling system
-- Visible to all players in the session (character view, ship view, and DM screen)
+- Visible to all players in the session (character play mode, ship play mode, and DM screen)
+- Hidden on editing screens (character creation, character advancement, ship drydock)
 - Pool size: 1-6 dice (click interactive stack to select)
 - Outcome determination:
   - **Triumph**: Highest die = 6 (green)
@@ -134,12 +198,15 @@ The `character` object contains:
   - Top die colored by outcome, other dice dimmed (40% opacity)
   - Collapsible panel (CSS toggle, not destroyed) to reduce screen coverage
   - Auto-expands when rolling
-  - Reset button clears all visible rolls (only shows when expanded)
+  - Reset button clears all visible rolls (DM-only, only shows when expanded and user role is 'dm')
+- Role-based features:
+  - `renderDiceRoller()` accepts `userRole` parameter to enable DM-only features
+  - Reset button and "Applies to all players" microcopy only visible to DMs
 - Performance optimization:
   - Optimistic updates: UI updates immediately, database saves in background
   - Results HTML always rendered but CSS-hidden when collapsed
   - Prevents sluggish interactions and re-rendering overhead
-- Future integration: Placeholder `fakeDiceRoll()` function can be replaced with dice framework (e.g., dice-box) while maintaining same signature
+- Randomness: Uses `Math.random()` for dice generation (same approach as public dice APIs)
 
 ### UI Interaction Pattern
 
@@ -186,14 +253,18 @@ The application uses **event delegation** for all user interactions:
 │   │   └── escaping.js           # HTML/XSS escaping utilities
 │   └── character-sheet.js        # LEGACY - kept for reference
 ├── css/
-│   └── styles.css                # Custom styles
+│   ├── light-mode.css            # Light theme variables
+│   ├── dark-mode.css             # Dark theme variables
+│   ├── styles.css                # Custom component styles
+│   └── print.css                 # Print-only styles (hides UI elements)
 ├── data/
 │   ├── game-constants.json       # Core game data
 │   ├── aspects.json              # All aspects (3091 lines)
 │   └── resources.json            # Starting resources
 ├── supabase/
 │   └── migrations/
-│       └── 015_add_dice_rolls_to_sessions.sql  # Adds dice_rolls JSONB column
+│       ├── 015_add_dice_rolls_to_sessions.sql  # Adds dice_rolls JSONB column
+│       └── 016_add_role_to_whitelist.sql       # Adds role column and get_user_role function
 ├── package.json                  # Dependencies and scripts
 └── CLAUDE.md                     # This file
 ```
@@ -220,6 +291,7 @@ The aspects.json file is very large (3091 lines). When working with aspects:
 - Color palette: Black (#000000), grays, and red accent (#A91D3A)
 - Key custom classes: `.aspect-card`, `.edge-card`, `.track-box`, `.budget-indicator`
 - Track box states: `.default`, `.marked`, `.burned`, `.new` (for advancement)
+- Print stylesheet: `print.css` hides interactive UI elements (presence bar, navigation, action bar, dice roller)
 
 ## Common Development Patterns
 

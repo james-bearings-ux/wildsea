@@ -100,3 +100,26 @@ export function onAuthStateChange(callback) {
     callback(session?.user || null);
   });
 }
+
+/**
+ * Get the current user's role from the whitelist
+ * @param {string} email - User's email address
+ * @returns {Promise<string>} User role ('player' or 'dm')
+ */
+export async function getUserRole(email) {
+  try {
+    const { data, error } = await supabase.rpc('get_user_role', {
+      user_email_param: email.trim().toLowerCase()
+    });
+
+    if (error) {
+      console.error('Error fetching user role:', error);
+      return 'player'; // Default to player on error
+    }
+
+    return data || 'player';
+  } catch (error) {
+    console.error('Error fetching user role:', error);
+    return 'player'; // Default to player on error
+  }
+}

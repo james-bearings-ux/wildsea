@@ -3112,3 +3112,10 @@ hr {
     font-size: 12px;
   }
 }
+
+/* Vertical breakpoint for ship play screen */
+@media (max-height: 1100px) {
+  .ship-ratings-column {
+    margin-left: 80px;
+  }
+}
