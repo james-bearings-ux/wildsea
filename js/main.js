@@ -1484,7 +1484,8 @@ function setupEventDelegation() {
                   showCustomizeModal = false;
                   selectedModalAspectId = null;
                   modalUnsavedEdits = {}; // Clear unsaved edits
-                  scheduleRender();
+                  markDirtyByAction('customizeAspect');
+                  await render();
                   scheduleSave();
                 }
                 break;
@@ -1499,7 +1500,8 @@ function setupEventDelegation() {
                   }
                   if (confirm('Reset this aspect to its original name and description?')) {
                     resetAspectCustomization(parsedParams.id, character);
-                    scheduleRender();
+                    markDirtyByAction('resetAspectCustomization');
+                    await render();
                     scheduleSave();
                   }
                 }

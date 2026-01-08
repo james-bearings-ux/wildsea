@@ -192,6 +192,8 @@ export const ACTION_TO_SECTIONS_ADVANCEMENT = {
   'toggleAspect': ['aspects-bloodline-advancement', 'aspects-origin-advancement', 'aspects-post-advancement', 'aspects-more-advancement'],
   'toggleAspectDamageType': ['aspects-bloodline-advancement', 'aspects-origin-advancement', 'aspects-post-advancement', 'aspects-more-advancement'],
   'expandAspectTrack': ['aspects-bloodline-advancement', 'aspects-origin-advancement', 'aspects-post-advancement'],
+  'customizeAspect': ['aspects-bloodline-advancement', 'aspects-origin-advancement', 'aspects-post-advancement', 'aspects-more-advancement'],
+  'resetAspectCustomization': ['aspects-bloodline-advancement', 'aspects-origin-advancement', 'aspects-post-advancement', 'aspects-more-advancement'],
 
   // Edge/Skill/Language actions - all in same section in advancement mode
   'toggleEdge': ['edges-skills-languages-advancement'],
