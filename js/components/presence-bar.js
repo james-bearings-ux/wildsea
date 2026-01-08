@@ -21,7 +21,7 @@ export function renderPresenceBar(onlineUsers) {
   const themeLabel = currentTheme === 'dark' ? 'Light' : 'Dark';
 
   return `
-    <div style="
+    <div class="presence-bar" style="
       background-color: var(--presence-bg);
       border-bottom: 1px solid var(--presence-border);
       padding: 2px 20px;

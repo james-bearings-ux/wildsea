@@ -253,14 +253,18 @@ The application uses **event delegation** for all user interactions:
 │   │   └── escaping.js           # HTML/XSS escaping utilities
 │   └── character-sheet.js        # LEGACY - kept for reference
 ├── css/
-│   └── styles.css                # Custom styles
+│   ├── light-mode.css            # Light theme variables
+│   ├── dark-mode.css             # Dark theme variables
+│   ├── styles.css                # Custom component styles
+│   └── print.css                 # Print-only styles (hides UI elements)
 ├── data/
 │   ├── game-constants.json       # Core game data
 │   ├── aspects.json              # All aspects (3091 lines)
 │   └── resources.json            # Starting resources
 ├── supabase/
 │   └── migrations/
-│       └── 015_add_dice_rolls_to_sessions.sql  # Adds dice_rolls JSONB column
+│       ├── 015_add_dice_rolls_to_sessions.sql  # Adds dice_rolls JSONB column
+│       └── 016_add_role_to_whitelist.sql       # Adds role column and get_user_role function
 ├── package.json                  # Dependencies and scripts
 └── CLAUDE.md                     # This file
 ```
@@ -287,6 +291,7 @@ The aspects.json file is very large (3091 lines). When working with aspects:
 - Color palette: Black (#000000), grays, and red accent (#A91D3A)
 - Key custom classes: `.aspect-card`, `.edge-card`, `.track-box`, `.budget-indicator`
 - Track box states: `.default`, `.marked`, `.burned`, `.new` (for advancement)
+- Print stylesheet: `print.css` hides interactive UI elements (presence bar, navigation, action bar, dice roller)
 
 ## Common Development Patterns
 

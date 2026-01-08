@@ -155,7 +155,7 @@ function renderMainGrid(character, gameData, sortedAspects) {
 function renderSecondaryGrid(character, showAddTaskForm) {
   return `
     <div class="grid-play-secondary">
-      <div class="section-group">
+      <div class="section-group resource-col">
         <div data-section="resources" class="section-group-sm">
           ${renderResources(character)}
         </div>

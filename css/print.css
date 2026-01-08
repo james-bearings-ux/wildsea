@@ -1,0 +1,80 @@
+/**
+ * Print Stylesheet
+ * Optimizes the application for printing by hiding interactive UI elements
+ */
+
+@media print {
+  /* Reduce all font sizes by 20% for better print density */
+  html {
+    font-size: 80% !important;
+  }
+
+  /* Force browsers to print background colors */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+
+  /* Hide interactive navigation and controls */
+  .presence-bar,
+  .nav-bar,
+  .sticky-action-bar,
+  .dice-roller-panel {
+    display: none !important;
+  }
+
+  /* Remove excessive padding from content wrapper */
+  .content-wrapper {
+    padding: 0 !important;
+  }
+
+  /* Narrow the edges section */
+  .grid-play-main {
+    grid-template-columns: 1fr 2fr 2fr 5fr;
+  }
+
+  /* Use flexbox layout for better printing */
+  .grid-play-secondary {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 20px !important;
+  }
+
+  /* Resources column should be full width on its own row */
+  .resource-col {
+    width: 100% !important;
+  }
+
+  /* Damage type table keeps its narrow width */
+  [data-section="damage-types"] {
+    flex: 0 0 250px !important;
+  }
+
+  .damage-type-table {
+    width: 250px !important;
+  }
+
+  /* Drives/mires column should flex to fill remaining space */
+  .grid-play-secondary > .section-group:not(.resource-col) {
+    flex: 1 !important;
+    min-width: 0 !important;
+  }
+
+  /* Stack aspect rows vertically for better text display */
+  .aspect-play-row {
+    flex-direction: column !important;
+    gap: 4px !important;
+  }
+
+  /* Allow aspect track to fill full width when stacked */
+  .aspect-play-track {
+    width: 100% !important;
+    padding-top: 0 !important;
+  }
+
+  /* Hide invisible spacer boxes in damage tracks */
+  .track-spacer {
+    display: none !important;
+  }
+}
