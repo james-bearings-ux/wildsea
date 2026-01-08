@@ -102,7 +102,7 @@ import { renderSection, ACTION_TO_SECTIONS, ACTION_TO_SECTIONS_CREATION, ACTION_
 // Realtime has infrastructure issues - using polling instead
 // import { setupSubscriptions, unsubscribeAll } from './realtime.js';
 import { startPolling, stopPolling } from './polling.js';
-import { getCurrentUser, onAuthStateChange, sendMagicLink, signOut } from './auth.js';
+import { getCurrentUser, onAuthStateChange, sendMagicLink, signOut, getUserRole } from './auth.js';
 import {
   loadCharacterCached,
   loadShipCached,
@@ -123,6 +123,7 @@ const DEBUG = import.meta.env.DEV;
 
 // Global state
 let currentUser = null; // Current authenticated user
+let currentUserRole = 'player'; // Current user's role ('player' or 'dm')
 let session = null;
 let character = null; // Cached active character
 let ship = null; // Cached active ship
@@ -472,7 +473,8 @@ async function render(reloadSession = false) {
   // Check if we're viewing the DM screen
   if (session.activeView === 'dm-screen') {
     const dmScreenHtml = await renderDMScreen(session, expandedDMAccordion);
-    const diceRollerHtml = renderDiceRoller(session?.diceRolls || [], showDiceResults);
+    // Always show dice roller on DM screen
+    const diceRollerHtml = renderDiceRoller(session?.diceRolls || [], showDiceResults, currentUserRole);
     app.innerHTML = presenceBarHtml + navHtml + dmScreenHtml + diceRollerHtml;
     return;
   }
@@ -502,7 +504,8 @@ async function render(reloadSession = false) {
     }
 
     // Combine navigation and content
-    const diceRollerHtml = renderDiceRoller(session?.diceRolls || [], showDiceResults);
+    // Hide dice roller on ship creation mode (drydock)
+    const diceRollerHtml = ship.mode === 'creation' ? '' : renderDiceRoller(session?.diceRolls || [], showDiceResults, currentUserRole);
     app.innerHTML = presenceBarHtml + navHtml + tempDiv.innerHTML + diceRollerHtml;
     return;
   }
@@ -536,7 +539,10 @@ async function render(reloadSession = false) {
   }
 
   // Combine navigation and content
-  const diceRollerHtml = renderDiceRoller(session?.diceRolls || [], showDiceResults);
+  // Hide dice roller on character creation and advancement modes (editing screens)
+  const diceRollerHtml = (character.mode === 'creation' || character.mode === 'advancement')
+    ? ''
+    : renderDiceRoller(session?.diceRolls || [], showDiceResults, currentUserRole);
   app.innerHTML = presenceBarHtml + navHtml + tempDiv.innerHTML + diceRollerHtml;
 
   // Add role tooltip if needed (only if not already in DOM)
@@ -1971,6 +1977,13 @@ async function loadApp() {
       return;
     }
     console.log('Game data loaded successfully');
+
+    // Fetch user role (only once when app loads, not on every render)
+    if (currentUser && currentUser.email) {
+      console.log('Fetching user role...');
+      currentUserRole = await getUserRole(currentUser.email);
+      console.log('User role:', currentUserRole);
+    }
 
     // Load the shared session (creates it if it doesn't exist)
     console.log('Loading shared session...');

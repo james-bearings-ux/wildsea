@@ -235,10 +235,12 @@ export function renderRollColumn(roll) {
  *
  * @param {Array} rolls - Array of roll objects (see renderRollColumn for structure)
  * @param {boolean} [showResults=true] - Whether to show the results panel
+ * @param {string} [userRole='player'] - Current user's role ('player' or 'dm')
  * @returns {string} HTML string with .dice-roller-panel container
  */
-export function renderDiceRoller(rolls = [], showResults = true) {
+export function renderDiceRoller(rolls = [], showResults = true, userRole = 'player') {
   const hasVisibleRolls = rolls.some(r => r.visible);
+  const isDM = userRole === 'dm';
 
   return `
     <div class="dice-roller-panel">
@@ -246,7 +248,7 @@ export function renderDiceRoller(rolls = [], showResults = true) {
         <button class="dice-control-btn" data-action="toggleDiceResults" title="${showResults ? 'Hide' : 'Show'} Results">
           ${showResults ? '◀' : '▶'}
         </button>
-        ${hasVisibleRolls && showResults ? '<button class="dice-control-btn dice-control-dismiss" data-action="dismissAllRolls" title="Reset All">× Reset</button> <span>Applies to all players.</span>' : ''}
+        ${hasVisibleRolls && showResults && isDM ? '<button class="dice-control-btn dice-control-dismiss" data-action="dismissAllRolls" title="Reset All">× Reset</button> <span>Applies to all players.</span>' : ''}
       </div>
       <div class="dice-roller-wrapper">
         ${renderDiceStack()}
