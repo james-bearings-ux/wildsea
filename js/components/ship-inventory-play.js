@@ -5,6 +5,7 @@
 
 import { renderShipCargo } from './ship-cargo.js';
 import { renderShipPassengers } from './ship-passengers.js';
+import { renderShipFactions } from './ship-factions.js';
 import { escapeHtmlContent, createDataParams } from '../utils/escaping.js';
 
 // Constants
@@ -247,15 +248,17 @@ function renderThreeColumnGrid(ship, allFittings, allUndercrew) {
 }
 
 /**
- * Render cargo and passengers section (two columns at bottom)
+ * Render cargo, passengers, and factions section (three columns at bottom)
  * @param {Object} ship - Ship object
- * @returns {string} HTML string for cargo/passengers
+ * @param {string} userRole - Current user's role ('dm' or 'player')
+ * @returns {string} HTML string for cargo/passengers/factions
  */
-function renderCargoPassengers(ship) {
+function renderCargoPassengersFactions(ship, userRole) {
   return `
-    <div class="ship-two-col-grid">
+    <div class="ship-three-col-grid-equal">
       ${renderShipCargo(ship)}
       ${renderShipPassengers(ship)}
+      ${renderShipFactions(ship, userRole)}
     </div>
   `;
 }
@@ -263,9 +266,10 @@ function renderCargoPassengers(ship) {
 /**
  * Render ship inventory for play mode with three columns
  * @param {Object} ship - Ship object
+ * @param {string} userRole - Current user's role ('dm' or 'player')
  * @returns {string} HTML string
  */
-export function renderShipInventoryPlay(ship) {
+export function renderShipInventoryPlay(ship, userRole = 'player') {
   const allFittings = collectAllFittings(ship);
   const allUndercrew = collectAllUndercrew(ship);
 
@@ -273,7 +277,7 @@ export function renderShipInventoryPlay(ship) {
     <div class="ship-play-container">
       ${renderThreeColumnGrid(ship, allFittings, allUndercrew)}
       <hr class="ship-separator" />
-      ${renderCargoPassengers(ship)}
+      ${renderCargoPassengersFactions(ship, userRole)}
     </div>
   `;
 }

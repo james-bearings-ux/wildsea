@@ -87,6 +87,10 @@ import {
   addPassenger,
   updatePassengerName,
   removePassenger,
+  addFaction,
+  updateFactionName,
+  updateFactionReputation,
+  removeFaction,
   toggleJourney,
   setJourneyName,
   updateClock,
@@ -498,7 +502,7 @@ async function render(reloadSession = false) {
     if (ship.mode === 'creation') {
       renderShipCreationMode(tempDiv, ship, gameData, activeShipTab, activeWizardStage);
     } else if (ship.mode === 'play') {
-      renderShipPlayMode(tempDiv, ship, gameData, journeyEditMode);
+      renderShipPlayMode(tempDiv, ship, gameData, journeyEditMode, currentUserRole);
     } else if (ship.mode === 'upgrade') {
       renderShipUpgradeMode(tempDiv, ship, gameData);
     }
@@ -1264,6 +1268,28 @@ function setupEventDelegation() {
                 }
                 break;
 
+              case 'addFaction':
+                // Add a new faction to ship
+                // No params needed
+                if (ship) {
+                  addFaction(noopRender, ship);
+                  markAllDirty();
+                  scheduleRender();
+                  scheduleShipSave();
+                }
+                break;
+
+              case 'removeFaction':
+                // Remove faction from ship
+                // Params: { id: factionId }
+                if (ship) {
+                  removeFaction(parsedParams.id, noopRender, ship);
+                  markAllDirty();
+                  scheduleRender();
+                  scheduleShipSave();
+                }
+                break;
+
               // === JOURNEY ACTIONS ===
 
               case 'toggleJourney':
@@ -1737,6 +1763,45 @@ function setupEventDelegation() {
             debounce('passenger-name-' + parsedParams.id, async () => {
               await saveShip(ship);
             });
+          }
+          return;
+        }
+
+        if (action === 'updateFactionName') {
+          // Update faction name text input
+          // Params: { id: factionId }
+          if (ship) {
+            updateFactionName(parsedParams.id, target.value, ship);
+            // Debounce faction name saves
+            debounce('faction-name-' + parsedParams.id, async () => {
+              await saveShip(ship);
+            });
+          }
+          return;
+        }
+
+        if (action === 'updateFactionReputation') {
+          // Update faction reputation checkbox
+          // Params: { id: factionId, reputation: level }
+          if (ship) {
+            // When checkbox is clicked, toggle between the level and 0
+            const faction = ship.factions?.find(f => f.id === parsedParams.id);
+            if (faction) {
+              const targetLevel = parseInt(parsedParams.reputation);
+              // If clicking on the current level, set to level below it
+              // If clicking above current level, set to that level
+              // If clicking below current level, set to that level - 1
+              if (faction.reputation === targetLevel) {
+                // Clicking on current max level, decrease by 1
+                updateFactionReputation(parsedParams.id, targetLevel - 1, noopRender, ship);
+              } else {
+                // Clicking on unchecked box, set to that level
+                updateFactionReputation(parsedParams.id, targetLevel, noopRender, ship);
+              }
+              markAllDirty();
+              scheduleRender();
+              scheduleShipSave();
+            }
           }
           return;
         }

@@ -68,6 +68,7 @@ export async function createShip(sessionId, name = 'New Ship') {
       undercrew_damage: {},
       cargo: [],
       passengers: [],
+      factions: [],
       journey: {
         active: false,
         name: '',
@@ -187,6 +188,7 @@ export async function saveShip(ship) {
       // No mapping needed (same in DB and app)
       cargo: ship.cargo,
       passengers: ship.passengers,
+      factions: ship.factions,
       journey: ship.journey,
 
       // Database metadata (auto-generated)
@@ -327,6 +329,9 @@ function convertFromDB(dbShip) {
     // Ship cargo and passengers
     cargo: dbShip.cargo || [],                               // DB: cargo (default: empty array)
     passengers: dbShip.passengers || [],                     // DB: passengers (default: empty array)
+
+    // Faction reputation tracking (name and reputation 0-3)
+    factions: dbShip.factions || [],                         // DB: factions (default: empty array)
 
     // Journey tracking (progress clocks for active journeys)
     // See GAME-RULES.md § "Journey Mechanics"
@@ -845,6 +850,83 @@ export function removePassenger(id, renderCallback, ship) {
   const index = ship.passengers.findIndex(p => p.id === id);
   if (index >= 0) {
     ship.passengers.splice(index, 1);
+    renderCallback();
+  }
+}
+
+/**
+ * Faction reputation mutations
+ */
+
+/**
+ * Add a new blank faction to ship
+ * Creates faction with unique ID, empty name, and reputation of 0
+ * @param {Function} renderCallback - Function to call after mutation
+ * @param {Object} ship - Ship object to mutate
+ * @mutates ship.factions - Pushes new faction object to array
+ */
+export function addFaction(renderCallback, ship) {
+  if (!ship.factions) {
+    ship.factions = [];
+  }
+  ship.factions.push({
+    id: Date.now().toString(),
+    name: '',
+    reputation: 0
+  });
+  renderCallback();
+}
+
+/**
+ * Update faction name
+ * @param {string} id - Faction ID
+ * @param {string} name - New faction name
+ * @param {Object} ship - Ship object to mutate
+ * @mutates faction.name - Sets new faction name
+ */
+export function updateFactionName(id, name, ship) {
+  if (!ship.factions) {
+    ship.factions = [];
+  }
+  const faction = ship.factions.find(f => f.id === id);
+  if (faction) {
+    faction.name = name;
+  }
+}
+
+/**
+ * Update faction reputation value (0-3)
+ * @param {string} id - Faction ID
+ * @param {number} reputation - New reputation value (0-3)
+ * @param {Function} renderCallback - Function to call after mutation
+ * @param {Object} ship - Ship object to mutate
+ * @mutates faction.reputation - Sets new reputation value (constrained to 0-3)
+ */
+export function updateFactionReputation(id, reputation, renderCallback, ship) {
+  if (!ship.factions) {
+    ship.factions = [];
+  }
+  const faction = ship.factions.find(f => f.id === id);
+  if (faction) {
+    faction.reputation = Math.max(0, Math.min(3, parseInt(reputation) || 0));
+    renderCallback();
+  }
+}
+
+/**
+ * Remove a faction by ID
+ * @param {string} id - Faction ID to delete
+ * @param {Function} renderCallback - Function to call after mutation
+ * @param {Object} ship - Ship object to mutate
+ * @mutates ship.factions - Removes faction from array
+ */
+export function removeFaction(id, renderCallback, ship) {
+  if (!ship.factions) {
+    ship.factions = [];
+  }
+  const index = ship.factions.findIndex(f => f.id === id);
+  if (index >= 0) {
+    ship.factions.splice(index, 1);
     renderCallback();
   }
 }
