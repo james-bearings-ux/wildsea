@@ -924,7 +924,8 @@ hr {
 }
 
 .cargo-row,
-.passenger-row {
+.passenger-row,
+.faction-row {
 	display: flex;
 	gap: 8px;
 	align-items: center;
@@ -932,7 +933,8 @@ hr {
 }
 
 .cargo-input,
-.passenger-input {
+.passenger-input,
+.faction-input {
 	flex: 1;
 	padding: 4px 8px;
 	border: none;
@@ -941,6 +943,30 @@ hr {
 	color: var(--text-primary);
 	outline: none;
 	font-size: 14px;
+}
+
+.faction-input[readonly] {
+	cursor: default;
+	opacity: 0.8;
+}
+
+.faction-reputation-checkboxes {
+	display: flex;
+	gap: 4px;
+	align-items: center;
+	flex-shrink: 0;
+}
+
+.faction-reputation-checkbox {
+	width: 16px;
+	height: 16px;
+	cursor: pointer;
+	flex-shrink: 0;
+}
+
+/* Remove checkmark character from faction reputation checkboxes */
+.faction-reputation-checkbox:checked::after {
+	content: '';
 }
 
 .resource-item-row {
@@ -1459,6 +1485,12 @@ hr {
 .ship-two-col-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.ship-three-col-grid-equal {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
   gap: 24px;
 }
 

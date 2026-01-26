@@ -20,7 +20,8 @@
       "Bash(dir:*)",
       "Bash(ls:*)",
       "Bash(netstat:*)",
-      "Bash(findstr:*)"
+      "Bash(findstr:*)",
+      "Bash(npx supabase db push:*)"
     ],
     "deny": [],
     "ask": []

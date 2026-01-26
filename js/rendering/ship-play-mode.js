@@ -13,8 +13,9 @@ import { createDataParams } from '../utils/escaping.js';
  * @param {Object} ship - Ship object
  * @param {Object} gameData - Game data
  * @param {boolean} journeyEditMode - Whether journey is in edit mode
+ * @param {string} userRole - Current user's role ('dm' or 'player')
  */
-export function renderShipPlayMode(container, ship, gameData, journeyEditMode = false) {
+export function renderShipPlayMode(container, ship, gameData, journeyEditMode = false, userRole = 'player') {
   let html = '<div class="ship-main-container" style="height: calc(100vh - 60px);">';
 
   // Main content area with ratings and inventory (inventory includes cargo)
@@ -27,7 +28,7 @@ export function renderShipPlayMode(container, ship, gameData, journeyEditMode = 
     html += renderJourneyControls(ship.journey, journeyEditMode);
   }
 
-  html += renderShipInventoryPlay(ship);
+  html += renderShipInventoryPlay(ship, userRole);
   html += '</div>';
   html += '</div>';
 
