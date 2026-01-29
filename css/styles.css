@@ -950,23 +950,35 @@ hr {
 	opacity: 0.8;
 }
 
-.faction-reputation-checkboxes {
-	display: flex;
-	gap: 4px;
-	align-items: center;
-	flex-shrink: 0;
+/* Faction reputation display (player view - read-only alias text) */
+.faction-reputation-display {
+	padding: 4px 8px;
+	font-size: 0.875rem;
+	color: var(--text-secondary);
+	white-space: nowrap;
+	min-width: 120px;
+	text-align: right;
 }
 
-.faction-reputation-checkbox {
-	width: 16px;
-	height: 16px;
+/* Faction reputation dropdown (DM view - editable) */
+.faction-reputation-select {
+	padding: 4px 8px;
+	font-size: 0.875rem;
+	border: 1px solid var(--border-color);
+	border-radius: 4px;
+	background-color: var(--bg-secondary);
+	color: var(--text-primary);
 	cursor: pointer;
-	flex-shrink: 0;
+	min-width: 140px;
 }
 
-/* Remove checkmark character from faction reputation checkboxes */
-.faction-reputation-checkbox:checked::after {
-	content: '';
+.faction-reputation-select:hover {
+	border-color: var(--accent-color);
+}
+
+.faction-reputation-select:focus {
+	outline: none;
+	border-color: var(--accent-color);
 }
 
 .resource-item-row {

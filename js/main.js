@@ -1781,27 +1781,14 @@ function setupEventDelegation() {
         }
 
         if (action === 'updateFactionReputation') {
-          // Update faction reputation checkbox
-          // Params: { id: factionId, reputation: level }
+          // Update faction reputation from dropdown
+          // Params: { id: factionId }
           if (ship) {
-            // When checkbox is clicked, toggle between the level and 0
-            const faction = ship.factions?.find(f => f.id === parsedParams.id);
-            if (faction) {
-              const targetLevel = parseInt(parsedParams.reputation);
-              // If clicking on the current level, set to level below it
-              // If clicking above current level, set to that level
-              // If clicking below current level, set to that level - 1
-              if (faction.reputation === targetLevel) {
-                // Clicking on current max level, decrease by 1
-                updateFactionReputation(parsedParams.id, targetLevel - 1, noopRender, ship);
-              } else {
-                // Clicking on unchecked box, set to that level
-                updateFactionReputation(parsedParams.id, targetLevel, noopRender, ship);
-              }
-              markAllDirty();
-              scheduleRender();
-              scheduleShipSave();
-            }
+            const newReputation = target.value === 'null' ? null : parseInt(target.value);
+            updateFactionReputation(parsedParams.id, newReputation, noopRender, ship);
+            markAllDirty();
+            scheduleRender();
+            scheduleShipSave();
           }
           return;
         }
