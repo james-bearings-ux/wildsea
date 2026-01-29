@@ -1,35 +1,66 @@
 /**
  * Ship faction reputation rendering component
- * Shows factions with checkbox reputation tracking (0-3)
+ * Shows factions with reputation scale from -3 to +3
+ * Scale: Nemesis (-3), Attack on Sight (-2), Dislike (-1), Neutral (0),
+ *        Favored (+1), Friends (+2), Family (+3), Unknown (null)
  */
 
 import { escapeHtmlAttr, createDataParams } from '../utils/escaping.js';
 
 /**
- * Render faction reputation checkboxes (1, 2, 3)
- * Similar to rating checkboxes but for reputation levels
- * @param {Object} faction - Faction object with id and reputation
- * @param {boolean} isEditable - Whether checkboxes should be editable (DM only)
- * @returns {string} HTML string for reputation checkboxes
+ * Reputation scale mapping from numerical value to alias
+ * Sorted from highest (+3) to lowest (-3), with Unknown (null) at end
  */
-function renderReputationCheckboxes(faction, isEditable = true) {
-  let html = '<div class="faction-reputation-checkboxes">';
+const REPUTATION_SCALE = [
+  { value: 3, alias: 'Family' },
+  { value: 2, alias: 'Friends' },
+  { value: 1, alias: 'Favored' },
+  { value: 0, alias: 'Neutral' },
+  { value: -1, alias: 'Dislike' },
+  { value: -2, alias: 'Attack on Sight' },
+  { value: -3, alias: 'Nemesis' },
+  { value: null, alias: 'Unknown' }
+];
 
-  // Three checkboxes for reputation levels 1, 2, 3
-  for (let level = 1; level <= 3; level++) {
-    const isChecked = faction.reputation >= level;
-    html += `<input type="checkbox" `;
-    html += `${isChecked ? 'checked' : ''} `;
-    if (isEditable) {
-      html += 'data-action="updateFactionReputation" ';
-      html += createDataParams({ id: faction.id, reputation: level }) + ' ';
-    } else {
-      html += 'disabled ';
-    }
-    html += 'class="faction-reputation-checkbox">';
+/**
+ * Get alias for a reputation value
+ * @param {number|null} reputation - Reputation value (-3 to +3) or null
+ * @returns {string} Alias string
+ */
+function getReputationAlias(reputation) {
+  const entry = REPUTATION_SCALE.find(r => r.value === reputation);
+  return entry ? entry.alias : 'Unknown';
+}
+
+/**
+ * Render reputation display for players (read-only alias text)
+ * @param {Object} faction - Faction object with id and reputation
+ * @returns {string} HTML string for reputation display
+ */
+function renderReputationDisplay(faction) {
+  const alias = getReputationAlias(faction.reputation);
+  return `<span class="faction-reputation-display">${escapeHtmlAttr(alias)}</span>`;
+}
+
+/**
+ * Render reputation dropdown for DMs (editable)
+ * @param {Object} faction - Faction object with id and reputation
+ * @returns {string} HTML string for reputation dropdown
+ */
+function renderReputationDropdown(faction) {
+  let html = '<select class="faction-reputation-select" ';
+  html += 'data-action="updateFactionReputation" ';
+  html += createDataParams({ id: faction.id }) + '>';
+
+  for (const { value, alias } of REPUTATION_SCALE) {
+    const isSelected = faction.reputation === value;
+    const optionValue = value === null ? 'null' : value;
+    html += `<option value="${optionValue}" ${isSelected ? 'selected' : ''}>`;
+    html += escapeHtmlAttr(alias);
+    html += '</option>';
   }
 
-  html += '</div>';
+  html += '</select>';
   return html;
 }
 
@@ -63,7 +94,7 @@ export function renderShipFactions(ship, userRole = 'player') {
       html += 'readonly ';
     }
     html += 'class="faction-input">';
-    html += renderReputationCheckboxes(faction, isDM);
+    html += isDM ? renderReputationDropdown(faction) : renderReputationDisplay(faction);
 
     // Only show delete button for DMs
     if (isDM) {

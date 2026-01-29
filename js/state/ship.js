@@ -860,7 +860,7 @@ export function removePassenger(id, renderCallback, ship) {
 
 /**
  * Add a new blank faction to ship
- * Creates faction with unique ID, empty name, and reputation of 0
+ * Creates faction with unique ID, empty name, and reputation of null (Unknown)
  * @param {Function} renderCallback - Function to call after mutation
  * @param {Object} ship - Ship object to mutate
  * @mutates ship.factions - Pushes new faction object to array
@@ -872,7 +872,7 @@ export function addFaction(renderCallback, ship) {
   ship.factions.push({
     id: Date.now().toString(),
     name: '',
-    reputation: 0
+    reputation: null
   });
   renderCallback();
 }
@@ -895,12 +895,12 @@ export function updateFactionName(id, name, ship) {
 }
 
 /**
- * Update faction reputation value (0-3)
+ * Update faction reputation value (-3 to +3, or null for Unknown)
  * @param {string} id - Faction ID
- * @param {number} reputation - New reputation value (0-3)
+ * @param {number|null} reputation - New reputation value (-3 to +3) or null
  * @param {Function} renderCallback - Function to call after mutation
  * @param {Object} ship - Ship object to mutate
- * @mutates faction.reputation - Sets new reputation value (constrained to 0-3)
+ * @mutates faction.reputation - Sets new reputation value (constrained to -3 to +3, or null)
  */
 export function updateFactionReputation(id, reputation, renderCallback, ship) {
   if (!ship.factions) {
@@ -908,7 +908,11 @@ export function updateFactionReputation(id, reputation, renderCallback, ship) {
   }
   const faction = ship.factions.find(f => f.id === id);
   if (faction) {
-    faction.reputation = Math.max(0, Math.min(3, parseInt(reputation) || 0));
+    if (reputation === null || reputation === 'null') {
+      faction.reputation = null;
+    } else {
+      faction.reputation = Math.max(-3, Math.min(3, parseInt(reputation) || 0));
+    }
     renderCallback();
   }
 }

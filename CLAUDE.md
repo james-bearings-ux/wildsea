@@ -208,6 +208,31 @@ The `character` object contains:
   - Prevents sluggish interactions and re-rendering overhead
 - Randomness: Uses `Math.random()` for dice generation (same approach as public dice APIs)
 
+**Faction Reputation (Ship Feature)**:
+- Tracks relationships between the crew and various factions in the world
+- Only visible in ship play mode (not during creation or drydock/upgrade modes)
+- DM-only editing: players see read-only faction names and reputation aliases
+- Reputation scale: -3 to +3 integer values, plus null for Unknown
+- Scale aliases (highest to lowest):
+  | Value | Alias |
+  |-------|-------|
+  | +3 | Family |
+  | +2 | Friends |
+  | +1 | Favored |
+  | 0 | Neutral |
+  | -1 | Dislike |
+  | -2 | Attack on Sight |
+  | -3 | Nemesis |
+  | null | Unknown |
+- Faction data structure: `{ id, name, reputation }`
+- Stored in `ship.factions` array (JSONB in database)
+- UI by role:
+  - **Players**: See faction name (read-only) + reputation alias text (e.g., "Friends", "Nemesis")
+  - **DMs**: Editable faction name input + dropdown selector with all aliases sorted highest to lowest
+- New factions default to `reputation: null` (Unknown)
+- Component: `js/components/ship-factions.js`
+- State mutations: `addFaction()`, `updateFactionName()`, `updateFactionReputation()`, `removeFaction()` in `js/state/ship.js`
+
 ### UI Interaction Pattern
 
 The application uses **event delegation** for all user interactions:
@@ -246,7 +271,8 @@ The application uses **event delegation** for all user interactions:
 │   │   ├── resources.js          # Resources management
 │   │   ├── milestones.js         # Milestone tracking
 │   │   ├── drives-mires.js       # Drives and mires
-│   │   └── dice-roller.js        # Multiplayer dice rolling system
+│   │   ├── dice-roller.js        # Multiplayer dice rolling system
+│   │   └── ship-factions.js      # Ship faction reputation component
 │   ├── utils/
 │   │   ├── validation.js         # Validation logic
 │   │   ├── file-handlers.js      # Import/export
@@ -264,7 +290,8 @@ The application uses **event delegation** for all user interactions:
 ├── supabase/
 │   └── migrations/
 │       ├── 015_add_dice_rolls_to_sessions.sql  # Adds dice_rolls JSONB column
-│       └── 016_add_role_to_whitelist.sql       # Adds role column and get_user_role function
+│       ├── 016_add_role_to_whitelist.sql       # Adds role column and get_user_role function
+│       └── 017_add_factions_to_ships.sql       # Adds factions JSONB column to ships
 ├── package.json                  # Dependencies and scripts
 └── CLAUDE.md                     # This file
 ```
@@ -274,6 +301,13 @@ The application uses **event delegation** for all user interactions:
 - Adds `dice_rolls` column to `sessions` table (JSONB type)
 - Default value: `'[]'::jsonb` (empty array)
 - Stores array of roll objects with multiplayer state
+
+**Database Schema for Faction Reputation**:
+- Migration: `supabase/migrations/017_add_factions_to_ships.sql`
+- Adds `factions` column to `ships` table (JSONB type)
+- Default value: `'[]'::jsonb` (empty array)
+- Stores array of faction objects: `{ id, name, reputation }`
+- No schema migration needed for reputation scale change (-3 to +3) since JSONB is flexible
 
 ## Working with Aspects
 
