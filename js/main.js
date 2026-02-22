@@ -67,7 +67,7 @@ import { renderAdvancementMode } from './rendering/advancement-mode.js';
 import { renderSkills, renderLanguages } from './components/skills.js';
 import { renderEdgesSkillsLanguagesRow } from './components/edges.js';
 import { renderNavigation } from './components/navigation.js';
-import { renderRoleTooltip } from './components/journey-role.js';
+import { renderRoleTooltip, renderRoleSelectorModal } from './components/journey-role.js';
 import {
   createShip,
   loadShip,
@@ -145,6 +145,7 @@ let activeWizardStage = 'design'; // Track wizard stage: 'design' | 'fittings' |
 let activePlayTab = 'resources'; // Track active tab for character play mode mobile view
 let journeyEditMode = false; // Track if journey controls are in edit mode
 let showRoleTooltip = null; // Track which role tooltip to show (role name or null)
+let showRoleSelectorModal = false; // Track if role selector modal is open (mobile)
 let showCustomizeModal = false; // Track if customization modal is open
 let selectedModalAspectId = null; // Track which aspect is selected in modal
 let modalUnsavedEdits = {}; // Track unsaved edits in customization modal { aspectId: { name, description } }
@@ -553,6 +554,11 @@ async function render(reloadSession = false) {
   // Add role tooltip if needed (only if not already in DOM)
   if (showRoleTooltip && !document.querySelector('.role-tooltip-overlay')) {
     app.insertAdjacentHTML('beforeend', renderRoleTooltip(showRoleTooltip));
+  }
+
+  // Add role selector modal if needed (mobile)
+  if (showRoleSelectorModal && !document.querySelector('.role-selector-modal-overlay')) {
+    app.insertAdjacentHTML('beforeend', renderRoleSelectorModal(character?.journeyRole || ''));
   }
 }
 
@@ -1384,6 +1390,28 @@ function setupEventDelegation() {
                 }
                 break;
 
+              // === JOURNEY ROLE SELECTOR MODAL (MOBILE) ===
+
+              case 'openRoleSelectorModal':
+                // Open role selector modal (mobile)
+                // No params needed
+                showRoleSelectorModal = true;
+                const roleSelectorModalHtml = renderRoleSelectorModal(character?.journeyRole || '');
+                if (roleSelectorModalHtml) {
+                  app.insertAdjacentHTML('beforeend', roleSelectorModalHtml);
+                }
+                break;
+
+              case 'closeRoleSelectorModal':
+                // Close role selector modal
+                // No params needed
+                showRoleSelectorModal = false;
+                const roleSelectorOverlay = document.querySelector('.role-selector-modal-overlay');
+                if (roleSelectorOverlay) {
+                  roleSelectorOverlay.remove();
+                }
+                break;
+
               // === ASPECT CUSTOMIZATION MODAL (ADVANCEMENT MODE) ===
 
               case 'openCustomizeModal':
@@ -1825,6 +1853,23 @@ function setupEventDelegation() {
           // No params needed (value from target.value - role name)
           if (character) {
             setJourneyRole(target.value, noopRender, character);
+            await render(); // Immediate render for snappy nav bar update
+            scheduleSave();
+          }
+          return;
+        }
+
+        if (action === 'setJourneyRoleFromModal') {
+          // Set character's role from the mobile modal and close it
+          // No params needed (value from target.value - role name)
+          if (character) {
+            setJourneyRole(target.value, noopRender, character);
+            // Close the modal
+            showRoleSelectorModal = false;
+            const roleSelectorOverlay = document.querySelector('.role-selector-modal-overlay');
+            if (roleSelectorOverlay) {
+              roleSelectorOverlay.remove();
+            }
             await render(); // Immediate render for snappy nav bar update
             scheduleSave();
           }
