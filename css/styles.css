@@ -402,6 +402,44 @@ input[type="checkbox"]:disabled {
 	margin-bottom: 32px;
 }
 
+/* Play mode secondary tabs - hidden on desktop */
+.play-secondary-tabs {
+  display: none;
+}
+
+.play-tab-buttons {
+  display: flex;
+  gap: 0;
+  border-bottom: 2px solid var(--border-primary);
+  margin-bottom: 16px;
+}
+
+.play-tab-btn {
+  flex: 1;
+  padding: 12px 16px;
+  border: none;
+  border-bottom: 3px solid transparent;
+  background: transparent;
+  color: var(--text-muted);
+  font-family: 'Teko', sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-bottom: -2px;
+}
+
+.play-tab-btn:hover {
+  color: var(--text-primary);
+  background: var(--bg-secondary);
+}
+
+.play-tab-btn.active {
+  color: var(--text-primary);
+  border-bottom-color: var(--text-primary);
+  background: transparent;
+}
+
 .section-group {
 	display: flex;
 	flex-direction: column;
@@ -609,6 +647,8 @@ hr {
 	background: var(--bg-primary);
 	border-top: 2px solid var(--hr-border);
 	padding: 8px 20px;
+	/* Left padding to make room for collapsed dice roller button */
+	padding-left: 64px;
 	display: flex;
 	gap: 12px;
 	z-index: 100;
@@ -2187,10 +2227,31 @@ hr {
   }
 
   /* Character header - stack vertically */
+  /* Character header - improved mobile layout */
+  .char-header {
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+  }
+
   .char-header-row {
-    flex-direction: column;
-    gap: 16px;
-    align-items: flex-start;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px 12px;
+    align-items: start;
+  }
+
+  /* Character name spans full width on mobile */
+  .char-header-row > div:first-child {
+    grid-column: 1 / -1;
+  }
+
+  .char-name-header {
+    font-size: 24px;
+  }
+
+  .char-label {
+    font-size: 11px;
+    margin-bottom: 2px;
   }
 
   /* Main grids - collapse to single column */
@@ -2201,10 +2262,34 @@ hr {
   }
 
   /* Play mode grids - collapse to single column */
-  .grid-play-main,
-  .grid-play-secondary {
+  .grid-play-main {
     grid-template-columns: 1fr;
     gap: 24px;
+  }
+
+  /* Play mode secondary - tabbed layout on mobile */
+  .play-secondary-tabs {
+    display: block;
+  }
+
+  .grid-play-secondary {
+    display: block;
+  }
+
+  .grid-play-secondary .play-tab-panel {
+    display: none;
+  }
+
+  .grid-play-secondary .play-tab-panel.active {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+  }
+
+  /* Remove border and padding from damage type table on mobile, keep constrained width */
+  .damage-type-table {
+    border: none;
+    padding: 0;
   }
 
   /* Ship grids - collapse to single column */
@@ -2301,36 +2386,6 @@ hr {
   .ship-play-container {
     overflow-y: visible;
     flex: none;
-  }
-}
-
-/* Mobile Responsiveness for Damage Types */
-@media (max-width: 640px) {
-  .dt-chip {
-    font-size: 11px;
-    padding: 3px 6px;
-  }
-
-  .damage-type-popover {
-    min-width: 200px;
-  }
-
-  .damage-type-table {
-    padding: 12px;
-    width: 220px;
-  }
-
-  .damage-type-table .badge {
-    font-size: 10px;
-    padding: 2px 6px;
-  }
-
-  .status-text {
-    font-size: 9px;
-  }
-
-  .status-none {
-    font-size: 8px;
   }
 }
 
@@ -2710,10 +2765,81 @@ hr {
 }
 
 /* Mobile Responsiveness for Journey Features */
-@media (max-width: 640px) {
+@media (max-width: 768px) {
+  .journey-controls {
+    flex-direction: column;
+    gap: 16px;
+    padding: 12px;
+    margin: 12px 8px 0;
+  }
+
+  .journey-header {
+    width: 100%;
+  }
+
+  .journey-name-container {
+    bottom: 0;
+  }
+
+  .journey-name,
+  .journey-name-input {
+    min-width: unset;
+    font-size: 32px;
+  }
+
+  .journey-clocks {
+    gap: 8px;
+  }
+
+  .clock {
+    gap: 12px;
+  }
+
+  .clock h4 {
+    width: 5em;
+    font-size: 18px;
+  }
+
   .clock-tick {
-    width: 20px;
+    width: 18px;
+    height: 18px;
+  }
+
+  .journey-toggle-container {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .journey-toggle-text {
+    font-size: 20px;
+  }
+
+  .journey-toggle {
+    width: 80px;
+    height: 30px;
+  }
+
+  .toggle-slider {
+    width: 34px;
     height: 20px;
+    top: 3px;
+    left: 3px;
+  }
+
+  .journey-toggle.active .toggle-slider {
+    left: calc(100% - 38px);
+  }
+
+  .toggle-label {
+    font-size: 11px;
+  }
+
+  .toggle-label.off {
+    right: 10px;
+  }
+
+  .toggle-label.on {
+    left: 12px;
   }
 
   .role-tooltip {
@@ -2721,15 +2847,8 @@ hr {
     padding: 16px;
   }
 
-  .journey-name,
-  .journey-name-input {
-    min-width: 120px;
-    font-size: 14px;
-  }
-
-  .clock h4 {
-    width: 100px;
-    font-size: 14px;
+  .role-selector {
+    padding: 2px 4px 2px 12px;
   }
 }
 
@@ -3097,6 +3216,36 @@ hr {
   pointer-events: auto; /* Re-enable pointer events for child elements */
 }
 
+/* Collapsed state: minimal button in action bar area (all viewports) */
+.dice-roller-panel.dice-roller-collapsed {
+  bottom: 0;
+  left: 0;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  height: auto;
+  display: flex;
+  align-items: center;
+}
+
+/* Hide dice stack and results when collapsed */
+.dice-roller-panel.dice-roller-collapsed .dice-roller-wrapper {
+  display: none;
+}
+
+/* Simplify controls when collapsed - just the button */
+.dice-roller-panel.dice-roller-collapsed .dice-roller-controls {
+  margin-bottom: 0;
+  gap: 0;
+}
+
+.dice-roller-panel.dice-roller-collapsed .dice-roller-controls span,
+.dice-roller-panel.dice-roller-collapsed .dice-control-dismiss {
+  display: none;
+}
+
 /* Control buttons at the top */
 .dice-roller-controls {
   display: flex;
@@ -3282,37 +3431,9 @@ hr {
 
 /* Mobile responsiveness for Dice Roller */
 @media (max-width: 768px) {
-  /* Collapsed state on mobile: minimal button in action bar area */
+  /* Safe area padding for collapsed state on mobile */
   .dice-roller-panel.dice-roller-collapsed {
-    bottom: 0;
-    left: 0;
-    padding: 8px 12px;
-    border: none;
-    border-radius: 0;
-    background: transparent;
-    box-shadow: none;
-    /* Align with action bar height */
-    height: auto;
-    display: flex;
-    align-items: center;
-    /* Safe area for iPhone */
     padding-bottom: max(8px, env(safe-area-inset-bottom));
-  }
-
-  /* Hide dice stack and results when collapsed on mobile */
-  .dice-roller-panel.dice-roller-collapsed .dice-roller-wrapper {
-    display: none;
-  }
-
-  /* Simplify controls when collapsed - just the button */
-  .dice-roller-panel.dice-roller-collapsed .dice-roller-controls {
-    margin-bottom: 0;
-    gap: 0;
-  }
-
-  .dice-roller-panel.dice-roller-collapsed .dice-roller-controls span,
-  .dice-roller-panel.dice-roller-collapsed .dice-control-dismiss {
-    display: none;
   }
 
   /* Expanded state on mobile: pop up above action bar */
@@ -3329,6 +3450,13 @@ hr {
 
   .dice-roller-panel.dice-roller-expanded .dice-roller-wrapper {
     gap: 12px;
+  }
+
+  /* Make results horizontally scrollable on mobile */
+  .dice-results-container {
+    overflow-x: auto;
+    max-width: calc(100vw - 100px); /* Account for dice stack and padding */
+    padding-bottom: 4px; /* Space for scrollbar */
   }
 
   .dice-face {
@@ -3352,4 +3480,70 @@ hr {
   .ship-ratings-column {
     margin-left: 80px;
   }
+}
+
+/* ===========================
+   PRESENCE BAR
+   =========================== */
+
+.presence-bar {
+  background-color: var(--presence-bg);
+  border-bottom: 1px solid var(--presence-border);
+  padding: 2px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  font-size: 14px;
+  color: var(--presence-text);
+  gap: 16px;
+}
+
+.presence-bar-btn {
+  background-color: transparent;
+  color: var(--presence-text);
+  border: 1px solid var(--presence-button-border);
+  padding: 2px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+  font-family: inherit;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.presence-bar-btn:hover {
+  border-color: var(--presence-button-hover);
+  color: var(--presence-button-hover);
+}
+
+.presence-bar-btn-signout {
+  padding: 2px 6px;
+}
+
+.presence-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.presence-online {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.presence-online-label {
+  color: var(--presence-muted);
+  font-weight: 500;
+}
+
+.presence-user {
+  margin-right: 12px;
+}
+
+.presence-empty {
+  color: #666;
 }
