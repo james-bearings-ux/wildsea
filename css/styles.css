@@ -53,11 +53,28 @@ table {
 /* ===========================
    BASE STYLES
    =========================== */
+html {
+  height: 100%;
+}
+
 body {
 	font-family: Merriweather, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 	background: var(--bg-primary);
 	color: var(--text-primary);
 	line-height: 1.5;
+  width: 100%;
+  min-height: 100%;
+}
+
+/* Prevent horizontal overflow from breaking fixed positioning */
+html, body {
+  overflow-x: hidden;
+}
+
+#app {
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
 }
     
 button, select, input, textarea {
@@ -1016,6 +1033,7 @@ hr {
   padding: 0 20px 0 0;
 }
 
+
 .nav-button {
   padding: 8px 16px;
   border-radius: 0;
@@ -1266,7 +1284,7 @@ hr {
 }
 
 .ship-tab-inactive {
-  background: transparent;
+  background: transpareappnt;
   color: var(--ship-tab-inactive-text);
   border: none;
   border-bottom: 2px solid var(--ship-tab-border);
@@ -2157,7 +2175,136 @@ hr {
   align-items: flex-start;
 }
 
-/* Mobile Responsiveness */
+/* ===========================
+   MAIN LAYOUT MOBILE BREAKPOINTS
+   =========================== */
+
+@media (max-width: 768px) {
+  /* Content wrapper - reduce padding */
+  .content-wrapper {
+    padding: 16px;
+    padding-bottom: 80px;
+  }
+
+  /* Character header - stack vertically */
+  .char-header-row {
+    flex-direction: column;
+    gap: 16px;
+    align-items: flex-start;
+  }
+
+  /* Main grids - collapse to single column */
+  .grid-2col,
+  .grid-3col,
+  .grid-4col {
+    grid-template-columns: 1fr;
+  }
+
+  /* Play mode grids - collapse to single column */
+  .grid-play-main,
+  .grid-play-secondary {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  /* Ship grids - collapse to single column */
+  .ship-three-col-grid,
+  .ship-two-col-grid,
+  .ship-three-col-grid-equal {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  /* Ship fittings - single column */
+  .ship-fittings-grid {
+    column-count: 1;
+  }
+
+  /* Ship content row - stack vertically */
+  .ship-content-row {
+    flex-direction: column;
+  }
+
+  /* Ship columns - remove min-width constraints */
+  .ship-ratings-column {
+    min-width: unset;
+    width: 100%;
+    margin: 0;
+  }
+
+  .ship-inventory-column {
+    min-width: unset;
+    max-width: unset;
+    width: 100%;
+    border-right: none;
+    border-bottom: 2px solid var(--border-primary);
+  }
+
+  /* Section group gaps - tighten on mobile */
+  .section-group {
+    gap: 24px;
+  }
+
+  .section-group-sm {
+    gap: 16px;
+  }
+
+  /* Nav bar - constrain width on mobile */
+  .nav-bar {
+    width: 100%;
+    max-width: 100vw;
+    overflow-x: hidden;
+    flex-wrap: nowrap;
+  }
+
+  /* Hide inline character buttons on mobile */
+  .nav-char-inline {
+    display: none !important;
+  }
+
+  /* Hide "Character" label on mobile nav buttons */
+  .nav-hide-mobile {
+    display: none;
+  }
+
+  /* Position dropdown from left on mobile to prevent off-screen */
+  .nav-dropdown-menu {
+    right: auto;
+    left: 0;
+  }
+
+  /* Position dropdown below nav bar on mobile using fixed positioning */
+  .nav-chars-dropdown .nav-dropdown-menu {
+    position: fixed;
+    top: 84px; /* Below presence bar (~28px) + nav bar (~56px) */
+    left: 8px;
+    right: 8px;
+    max-height: 60vh;
+    overflow-y: auto;
+  }
+
+  /* Action bar - ensure fixed positioning on mobile */
+  .sticky-action-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    padding: 8px 12px;
+    /* Left padding to make room for collapsed dice roller button */
+    padding-left: 64px;
+    /* Safe area inset for devices with home indicator (iPhone X+) */
+    padding-bottom: max(8px, env(safe-area-inset-bottom));
+  }
+
+  /* Ship play container - remove internal scroll on mobile */
+  .ship-play-container {
+    overflow-y: visible;
+    flex: none;
+  }
+}
+
+/* Mobile Responsiveness for Damage Types */
 @media (max-width: 640px) {
   .dt-chip {
     font-size: 11px;
@@ -2781,6 +2928,10 @@ hr {
     gap: 8px;
   }
 
+  .dm-name-section {
+    min-width:200px;
+  }
+
   .dm-name {
     font-size: 24px;
   }
@@ -2959,8 +3110,8 @@ hr {
 }
 
 .dice-control-btn {
-  width: 40px;
-  height: 28px;
+  width: 38px;
+  height: 38px;
   padding: 4px;
   background: var(--bg-secondary);
   color: var(--text-primary);
@@ -3129,15 +3280,54 @@ hr {
   color: var(--text-muted);
 }
 
-/* Mobile responsiveness */
+/* Mobile responsiveness for Dice Roller */
 @media (max-width: 768px) {
-  .dice-roller-panel {
-    bottom: 60px;
-    left: 12px;
-    padding: 8px;
+  /* Collapsed state on mobile: minimal button in action bar area */
+  .dice-roller-panel.dice-roller-collapsed {
+    bottom: 0;
+    left: 0;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    /* Align with action bar height */
+    height: auto;
+    display: flex;
+    align-items: center;
+    /* Safe area for iPhone */
+    padding-bottom: max(8px, env(safe-area-inset-bottom));
   }
 
-  .dice-roller-wrapper {
+  /* Hide dice stack and results when collapsed on mobile */
+  .dice-roller-panel.dice-roller-collapsed .dice-roller-wrapper {
+    display: none;
+  }
+
+  /* Simplify controls when collapsed - just the button */
+  .dice-roller-panel.dice-roller-collapsed .dice-roller-controls {
+    margin-bottom: 0;
+    gap: 0;
+  }
+
+  .dice-roller-panel.dice-roller-collapsed .dice-roller-controls span,
+  .dice-roller-panel.dice-roller-collapsed .dice-control-dismiss {
+    display: none;
+  }
+
+  /* Expanded state on mobile: pop up above action bar */
+  .dice-roller-panel.dice-roller-expanded {
+    bottom: 54px;
+    left: 4px;
+    padding: 8px;
+    /* Restore panel styling */
+    border: 2px solid var(--border-primary);
+    border-radius: 8px;
+    background: var(--bg-secondary);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  }
+
+  .dice-roller-panel.dice-roller-expanded .dice-roller-wrapper {
     gap: 12px;
   }
 
@@ -3157,8 +3347,8 @@ hr {
   }
 }
 
-/* Vertical breakpoint for ship play screen */
-@media (max-height: 1100px) {
+/* Vertical breakpoint for ship play screen - only on desktop-width screens */
+@media (max-height: 1100px) and (min-width: 769px) {
   .ship-ratings-column {
     margin-left: 80px;
   }
