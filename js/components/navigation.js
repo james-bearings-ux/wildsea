@@ -53,9 +53,8 @@ export async function renderNavigation(session) {
 
     const MAX_VISIBLE_CHARS = 5;
     const visibleCharIds = session.activeCharacterIds.slice(0, MAX_VISIBLE_CHARS);
-    const hiddenCharIds = session.activeCharacterIds.slice(MAX_VISIBLE_CHARS);
 
-    // Render first 5 characters as buttons
+    // Render first 5 characters as inline buttons (hidden on mobile via CSS)
     for (let i = 0; i < visibleCharIds.length; i++) {
       const charId = visibleCharIds[i];
       const character = await loadCharacterCached(charId, loadCharacter);
@@ -69,7 +68,7 @@ export async function renderNavigation(session) {
           : '';
 
         html += '<button data-action="switchCharacter" data-params=\'{"characterId":"' + charId + '"}\' ';
-        html += 'class="nav-button ' + activeClass + '" style="display: flex; flex-direction: column; align-items: center;">';
+        html += 'class="nav-button nav-char-inline ' + activeClass + '" style="display: flex; flex-direction: column; align-items: center;">';
         html += '<div>' + escapeHtmlContent(character.name || 'Unnamed Character') + '</div>';
         if (journeyActive && roleDisplay) {
           html += '<div class="nav-role-subtitle">' + escapeHtmlContent(roleDisplay) + '</div>';
@@ -78,49 +77,46 @@ export async function renderNavigation(session) {
       }
     }
 
-    // Add "More" dropdown if there are more than 5 characters
-    if (hiddenCharIds.length > 0) {
-      // Check if any hidden character is active
-      const isAnyHiddenActive = hiddenCharIds.includes(session.activeCharacterId) && session.activeView === 'character';
-      const moreActiveClass = isAnyHiddenActive ? 'nav-button-active' : 'nav-button-inactive';
+    // "Characters" dropdown with ALL characters (visible on all viewports)
+    const isAnyCharActive = session.activeView === 'character';
+    const charsActiveClass = isAnyCharActive ? 'nav-button-active' : 'nav-button-inactive';
 
-      html += '<div class="nav-dropdown-container">';
-      html += '<button data-action="toggleCharacterDropdown" class="nav-button ' + moreActiveClass + '">More ▾</button>';
-      html += '<div class="nav-dropdown-menu" id="characterDropdown" style="display: none;">';
+    html += '<div class="nav-dropdown-container nav-chars-dropdown">';
+    html += '<button data-action="toggleCharacterDropdown" class="nav-button ' + charsActiveClass + '">Characters ▾</button>';
+    html += '<div class="nav-dropdown-menu" id="characterDropdown" style="display: none;">';
 
-      for (let i = 0; i < hiddenCharIds.length; i++) {
-        const charId = hiddenCharIds[i];
-        const character = await loadCharacterCached(charId, loadCharacter);
-        const isActive = session.activeView === 'character' && charId === session.activeCharacterId;
+    for (let i = 0; i < session.activeCharacterIds.length; i++) {
+      const charId = session.activeCharacterIds[i];
+      const character = await loadCharacterCached(charId, loadCharacter);
+      const isActive = session.activeView === 'character' && charId === session.activeCharacterId;
 
-        if (character) {
-          const roleDisplay = character.journeyRole
-            ? character.journeyRole.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')
-            : '';
+      if (character) {
+        const roleDisplay = character.journeyRole
+          ? character.journeyRole.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')
+          : '';
 
-          html += '<button data-action="switchCharacter" data-params=\'{"characterId":"' + charId + '"}\' ';
-          html += 'class="nav-dropdown-item' + (isActive ? ' active' : '') + '">';
-          html += '<div>' + escapeHtmlContent(character.name || 'Unnamed Character') + '</div>';
-          if (journeyActive && roleDisplay) {
-            html += '<div class="nav-dropdown-role">' + escapeHtmlContent(roleDisplay) + '</div>';
-          }
-          html += '</button>';
+        html += '<button data-action="switchCharacter" data-params=\'{"characterId":"' + charId + '"}\' ';
+        html += 'class="nav-dropdown-item' + (isActive ? ' active' : '') + '">';
+        html += '<div>' + escapeHtmlContent(character.name || 'Unnamed Character') + '</div>';
+        if (journeyActive && roleDisplay) {
+          html += '<div class="nav-dropdown-role">' + escapeHtmlContent(roleDisplay) + '</div>';
         }
+        html += '</button>';
       }
-
-      html += '</div>';
-      html += '</div>';
     }
+
+    html += '</div>';
+    html += '</div>';
   }
 
   // Create character button
   html += '<button data-action="createNewCharacter" class="nav-button nav-button-minor">';
-  html += '+ New Character';
+  html += '+ New <span class="nav-hide-mobile">Character</span>';
   html += '</button>';
 
   // Import character button
   html += '<button data-action="importCharacter" class="nav-button nav-button-minor">';
-  html += '↓ Import Character';
+  html += '↓ Import <span class="nav-hide-mobile">Character</span>';
   html += '</button>';
 
   html += '</div>';

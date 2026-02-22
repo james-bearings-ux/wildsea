@@ -148,14 +148,26 @@ function renderMainGrid(character, gameData, sortedAspects) {
 
 /**
  * Render secondary play grid (resources, damage types, drives/mires/milestones/tasks)
+ * On mobile, these are presented as tabs: Resources, Damage Types, Motivations
  * @param {Object} character - Character object
  * @param {boolean} showAddTaskForm - Whether to show task form
+ * @param {string} activeTab - Active tab for mobile view ('resources', 'damage-types', 'motivations')
  * @returns {string} HTML string for secondary grid
  */
-function renderSecondaryGrid(character, showAddTaskForm) {
+function renderSecondaryGrid(character, showAddTaskForm, activeTab = 'resources') {
   return `
+    <div class="play-secondary-tabs">
+      <div class="play-tab-buttons">
+        <button class="play-tab-btn ${activeTab === 'resources' ? 'active' : ''}"
+                data-action="switchPlayTab" ${createDataParams({ tab: 'resources' })}>Resources</button>
+        <button class="play-tab-btn ${activeTab === 'damage-types' ? 'active' : ''}"
+                data-action="switchPlayTab" ${createDataParams({ tab: 'damage-types' })}>Damage Types</button>
+        <button class="play-tab-btn ${activeTab === 'motivations' ? 'active' : ''}"
+                data-action="switchPlayTab" ${createDataParams({ tab: 'motivations' })}>Motivations</button>
+      </div>
+    </div>
     <div class="grid-play-secondary">
-      <div class="section-group resource-col">
+      <div class="section-group resource-col play-tab-panel ${activeTab === 'resources' ? 'active' : ''}" data-tab="resources">
         <div data-section="resources" class="section-group-sm">
           ${renderResources(character)}
         </div>
@@ -163,10 +175,10 @@ function renderSecondaryGrid(character, showAddTaskForm) {
           ${renderNotes(character)}
         </div>
       </div>
-      <div data-section="damage-types">
+      <div data-section="damage-types" class="play-tab-panel ${activeTab === 'damage-types' ? 'active' : ''}" data-tab="damage-types">
         ${renderDamageTypeTable(character)}
       </div>
-      <div class="section-group">
+      <div class="section-group play-tab-panel ${activeTab === 'motivations' ? 'active' : ''}" data-tab="motivations">
         <div data-section="drives">${renderDrives(character)}</div>
         <div data-section="mires">${renderMires(character)}</div>
         <div data-section="milestones">${renderMilestones(character)}</div>
@@ -210,8 +222,9 @@ function renderActionBar(character, ship) {
  * @param {Object} gameData - Game data
  * @param {boolean} showAddTaskForm - Whether to show task form
  * @param {Object|null} ship - Ship object (optional)
+ * @param {string} activePlayTab - Active tab for mobile secondary grid
  */
-export function renderPlayMode(app, character, gameData, showAddTaskForm = false, ship = null) {
+export function renderPlayMode(app, character, gameData, showAddTaskForm = false, ship = null, activePlayTab = 'resources') {
   const sortedAspects = prepareSortedAspects(character);
 
   app.innerHTML = `
@@ -219,7 +232,7 @@ export function renderPlayMode(app, character, gameData, showAddTaskForm = false
       ${renderCharacterHeader(character)}
       ${renderMainGrid(character, gameData, sortedAspects)}
       <hr />
-      ${renderSecondaryGrid(character, showAddTaskForm)}
+      ${renderSecondaryGrid(character, showAddTaskForm, activePlayTab)}
     </div>
     ${renderActionBar(character, ship)}
   `;

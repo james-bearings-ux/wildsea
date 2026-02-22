@@ -131,7 +131,7 @@ let currentUserRole = 'player'; // Current user's role ('player' or 'dm')
 let session = null;
 let character = null; // Cached active character
 let ship = null; // Cached active ship
-let showDiceResults = true; // Toggle visibility of dice results
+let showDiceResults = false; // Toggle visibility of dice results (collapsed by default)
 let onlineUsers = []; // List of online users in the session
 let hasPendingCharacterSave = false; // Track if character save is pending
 let hasPendingShipSave = false; // Track if ship save is pending
@@ -142,6 +142,7 @@ let inactivityCheckInterval = null; // Interval for checking inactivity
 const INACTIVITY_THRESHOLD = 5 * 60 * 1000; // 5 minutes of inactivity
 let activeShipTab = 'size'; // Track active tab for ship creation mode
 let activeWizardStage = 'design'; // Track wizard stage: 'design' | 'fittings' | 'undercrew'
+let activePlayTab = 'resources'; // Track active tab for character play mode mobile view
 let journeyEditMode = false; // Track if journey controls are in edit mode
 let showRoleTooltip = null; // Track which role tooltip to show (role name or null)
 let showCustomizeModal = false; // Track if customization modal is open
@@ -537,7 +538,7 @@ async function render(reloadSession = false) {
   if (character.mode === 'creation') {
     renderCreationMode(tempDiv, character, gameData, showScenarioModal);
   } else if (character.mode === 'play') {
-    renderPlayMode(tempDiv, character, gameData, showAddTaskForm, ship);
+    renderPlayMode(tempDiv, character, gameData, showAddTaskForm, ship, activePlayTab);
   } else if (character.mode === 'advancement') {
     renderAdvancementMode(tempDiv, character, gameData, showCustomizeModal, selectedModalAspectId, modalUnsavedEdits, showSelectAspectModal, aspectSearchQuery, selectedAspectForAdding);
   }
@@ -1114,6 +1115,13 @@ function setupEventDelegation() {
                 await render();
                 break;
 
+              case 'switchPlayTab':
+                // Switch active tab in character play mode mobile view
+                // Params: { tab: 'resources' | 'damage-types' | 'motivations' }
+                activePlayTab = parsedParams.tab;
+                await render();
+                break;
+
               case 'selectShipPart':
                 // Select ship design element (size, frame, hull, bite, engine)
                 // Params: { partType: string, part: object }
@@ -1583,6 +1591,12 @@ function setupEventDelegation() {
                   }
                   session.diceRolls.push(roll);
                   await render();
+
+                  // Scroll to newest roll (leftmost in the container)
+                  const resultsContainer = document.querySelector('.dice-results-container');
+                  if (resultsContainer) {
+                    resultsContainer.scrollLeft = 0;
+                  }
 
                   // Then save to database in background
                   addDiceRoll(session, roll).catch(err => {
