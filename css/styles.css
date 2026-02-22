@@ -3475,13 +3475,6 @@ hr {
   }
 }
 
-/* Vertical breakpoint for ship play screen - only on desktop-width screens */
-@media (max-height: 1100px) and (min-width: 769px) {
-  .ship-ratings-column {
-    margin-left: 80px;
-  }
-}
-
 /* ===========================
    PRESENCE BAR
    =========================== */
@@ -3546,4 +3539,11 @@ hr {
 
 .presence-empty {
   color: #666;
+}
+
+/* Hide online users on mobile */
+@media (max-width: 768px) {
+  .presence-online {
+    display: none;
+  }
 }
