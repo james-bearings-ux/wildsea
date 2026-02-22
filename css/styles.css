@@ -1070,7 +1070,7 @@ hr {
   display: flex;
   background: var(--nav-bg);
   color: var(--nav-text);
-  padding: 0 20px 0 0;
+  padding: 0 8px 0 0;
 }
 
 
@@ -1172,7 +1172,7 @@ hr {
   letter-spacing: 0.5px;
   padding: 4px 8px 2px;
   border-radius: 4px;
-  margin: 8px 0;
+  margin: 8px 0 8px 4px;
   color: var(--nav-text);
   background: var(--nav-minor-bg);
 
@@ -2635,6 +2635,88 @@ hr {
   cursor: not-allowed;
 }
 
+/* Role Selector - Mobile Button */
+.role-selector-mobile-btn {
+  display: none; /* Hidden on desktop */
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  border-radius: 4px;
+  background: var(--role-selector-bg);
+  border: none;
+  color: var(--journey-text);
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+}
+
+.role-selector-mobile-btn:hover {
+  opacity: 0.85;
+}
+
+/* Role Selector Modal (Mobile) */
+.role-selector-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--bg-primary);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.role-selector-modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  border: 1px solid var(--border-secondary);
+  border-radius: 4px;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.role-selector-modal-close:hover {
+  border-color: var(--text-primary);
+}
+
+.role-selector-modal-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.role-selector-modal-label {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.role-selector-modal-dropdown {
+  font-size: 18px;
+  padding: 12px 16px;
+  border: 2px solid var(--border-secondary);
+  border-radius: 4px;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  cursor: pointer;
+  min-width: 200px;
+}
+
+.role-selector-modal-dropdown:hover {
+  border-color: var(--text-primary);
+}
+
 /* Simple Hover Tooltips */
 [data-tooltip] {
   position: relative;
@@ -2847,8 +2929,13 @@ hr {
     padding: 16px;
   }
 
-  .role-selector {
-    padding: 2px 4px 2px 12px;
+  /* Role selector: show mobile button, hide desktop selector */
+  .role-selector-mobile-btn {
+    display: flex;
+  }
+
+  .role-selector-desktop {
+    display: none;
   }
 }
 
