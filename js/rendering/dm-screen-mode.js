@@ -7,6 +7,7 @@ import { calculateShipHealth, calculateCharacterHealth } from '../utils/health-c
 import { loadShip } from '../state/ship.js';
 import { loadCharacter } from '../state/character.js';
 import { loadCharacterCached, loadShipCached } from '../cache/supabase-cache.js';
+import { generateCharacterGradient } from '../utils/character-image.js';
 
 /**
  * Render read-only drives for DM screen
@@ -236,8 +237,12 @@ function renderCharacterSummary(character, expanded) {
 
   let html = '<div class="dm-row dm-row-character">';
 
+  // Generate background gradient for character image strip
+  const backgroundGradient = generateCharacterGradient(character.name, 800, 10);
+
   // Accordion header (always visible)
   html += '<button class="dm-accordion-header" data-action="toggleDMAccordion" data-params=\'{"id":"' + character.id + '"}\'>';
+  html += '<span class="dm-character-strip" style="background: ' + backgroundGradient + ';"></span>';
   html += '<div class="dm-header-content">';
   html += '<span class="dm-accordion-icon">' + (expanded ? '▼' : '▶') + '</span>';
   html += '<div class="dm-name-section">';
