@@ -577,8 +577,8 @@ hr {
 /* Character header */
 .char-header {
 	margin: 0 -16px 32px -16px;
-	padding: 8px 16px 16px;
-	border-bottom: 2px solid #000;
+	padding: 16px;
+	border-bottom: 2px solid var(--border-primary);
 }
 
 /* Mobile role indicator - hidden on desktop */
@@ -804,12 +804,15 @@ hr {
       font-size: 32px;
       font-weight: 600;
       line-height: 1;
+      text-shadow: 1px 1px 2px var(--bg-primary);
+
     }
     
     .char-label {
       font-size: 12px;
       font-weight: 600;
-      color: var(--text-muted);
+      color: var(--text-secondary);
+      text-shadow: 1px 1px 2px var(--bg-primary);
     }
 
     /* Task styles */

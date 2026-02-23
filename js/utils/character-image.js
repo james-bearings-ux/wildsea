@@ -41,8 +41,8 @@ function seededRandom(seed) {
 function generateColor(random) {
   return {
     h: Math.floor(random() * 360),
-    s: 45 + Math.floor(random() * 50), // 5-55% saturation
-    l: 60 + Math.floor(random() * 25)  // 60-85% lightness
+    s: 45 + Math.floor(random() * 50), // 45-95% saturation
+    l: 40 + Math.floor(random() * 25)  // 60-85% lightness
   };
 }
 
@@ -54,7 +54,7 @@ function generateColor(random) {
  * @param {number} numLayers - Number of gradient layers (default 4)
  * @returns {string} CSS background property value
  */
-export function generateCharacterGradient(name, width = 300, height = 100, numLayers = 4) {
+export function generateCharacterGradient(name, width = 300, height = 100, numLayers = 3) {
   const hash = hashString(name || 'unnamed');
   const random = seededRandom(hash);
 
@@ -81,7 +81,7 @@ export function generateCharacterGradient(name, width = 300, height = 100, numLa
 
     // Size: based on width for consistency across aspect ratios
     // Base size is percentage of width, then calculate height% to appear circular
-    const baseWidthPercent = 20 + Math.floor(random() * 25); // 20-45% of width
+    const baseWidthPercent = 24 + Math.floor(random() * 30); // 24-54% of width (20% larger than 20-45%)
     const widthMultiplier = 1.0 + random() * 0.3; // 1.0-1.3x (slightly wider than tall)
 
     const ellipseWidth = baseWidthPercent * widthMultiplier;
