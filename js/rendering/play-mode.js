@@ -83,12 +83,25 @@ function renderAspectCard(aspect) {
 /**
  * Render character header with name, bloodline, origin, post
  * @param {Object} character - Character object
+ * @param {Object|null} ship - Ship object (optional, for journey mode)
  * @returns {string} HTML string for header
  */
-function renderCharacterHeader(character) {
+function renderCharacterHeader(character, ship) {
+  // Check if journey mode is active and character has a role
+  const journeyActive = ship?.journey?.active;
+  const roleDisplay = character.journeyRole
+    ? character.journeyRole.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')
+    : '';
+
+  // Mobile-only role indicator (shown when journey is active and role is set)
+  const mobileRoleIndicator = journeyActive && roleDisplay
+    ? `<div class="char-header-role-mobile">${escapeHtmlContent(roleDisplay)}</div>`
+    : '';
+
   return `
     <div data-section="character-header">
       <div class="char-header">
+        ${mobileRoleIndicator}
         <div class="char-header-row">
           <div>
             <div class="char-label">Character Name</div>
@@ -229,7 +242,7 @@ export function renderPlayMode(app, character, gameData, showAddTaskForm = false
 
   app.innerHTML = `
     <div class="content-wrapper">
-      ${renderCharacterHeader(character)}
+      ${renderCharacterHeader(character, ship)}
       ${renderMainGrid(character, gameData, sortedAspects)}
       <hr />
       ${renderSecondaryGrid(character, showAddTaskForm, activePlayTab)}
