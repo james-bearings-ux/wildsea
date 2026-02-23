@@ -1152,7 +1152,7 @@ hr {
 }
 
 .nav-dropdown-role {
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: inherit;
   font-size: 11px;
   font-weight: 600;
   color: var(--nav-role-text);
@@ -2241,7 +2241,7 @@ hr {
   /* Mobile role indicator - shown on mobile */
   .char-header-role-mobile {
     display: block;
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: inherit;
     font-size: 11px;
     font-weight: 600;
     color: var(--nav-role-text);
@@ -2816,7 +2816,7 @@ hr {
 /* Nav Bar Journey Styling */
 
 .nav-role-subtitle, .nav-journey-subtitle {
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: Inherit;
   font-size: 11px;
   font-weight: 600;
   color: var(--nav-role-text);
@@ -2836,7 +2836,7 @@ hr {
 
 .journey-name-input {
   min-width: 200px;
-  font-family: 
+  font-family: inherit;
 }
 
 /* Edit/Save Buttons */
@@ -3037,6 +3037,11 @@ hr {
   min-width: 16px;
 }
 
+.character-abstract-image {
+  flex-shrink: 0;
+  border: 1px solid var(--border-secondary);
+}
+
 .dm-name-section {
   flex: 1;
   min-width: 0;
@@ -3147,6 +3152,11 @@ hr {
   .dm-header-content {
     flex-wrap: wrap;
     gap: 8px;
+  }
+
+  /* Hide character abstract image on mobile */
+  .character-abstract-image {
+    display: none;
   }
 
   .dm-name-section {
@@ -3311,7 +3321,7 @@ hr {
   border: 2px solid var(--border-primary);
   border-radius: 8px;
   padding: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  box-shadow: rgba(0, 0, 0, 0.5) 2px 4px 12px;
 }
 
 .dice-roller-panel > * {
@@ -3547,7 +3557,7 @@ hr {
     border: 2px solid var(--border-primary);
     border-radius: 8px;
     background: var(--bg-secondary);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
   }
 
   .dice-roller-panel.dice-roller-expanded .dice-roller-wrapper {
@@ -3588,7 +3598,7 @@ hr {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  font-family: inherit;
   font-size: 14px;
   color: var(--presence-text);
   gap: 16px;

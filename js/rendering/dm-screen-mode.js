@@ -7,6 +7,7 @@ import { calculateShipHealth, calculateCharacterHealth } from '../utils/health-c
 import { loadShip } from '../state/ship.js';
 import { loadCharacter } from '../state/character.js';
 import { loadCharacterCached, loadShipCached } from '../cache/supabase-cache.js';
+import { renderCharacterImage } from '../utils/character-image.js';
 
 /**
  * Render read-only drives for DM screen
@@ -240,6 +241,7 @@ function renderCharacterSummary(character, expanded) {
   html += '<button class="dm-accordion-header" data-action="toggleDMAccordion" data-params=\'{"id":"' + character.id + '"}\'>';
   html += '<div class="dm-header-content">';
   html += '<span class="dm-accordion-icon">' + (expanded ? '▼' : '▶') + '</span>';
+  html += renderCharacterImage(character.name);
   html += '<div class="dm-name-section">';
   html += '<div class="dm-name">' + (character.name || 'Unnamed Character') + '</div>';
   if (subtext) {
