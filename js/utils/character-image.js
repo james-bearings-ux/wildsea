@@ -41,38 +41,58 @@ function seededRandom(seed) {
 function generateColor(random) {
   return {
     h: Math.floor(random() * 360),
-    s: 50 + Math.floor(random() * 30), // 50-80% saturation
-    l: 40 + Math.floor(random() * 25)  // 40-65% lightness
+    s: 45 + Math.floor(random() * 50), // 5-55% saturation
+    l: 60 + Math.floor(random() * 25)  // 60-85% lightness
   };
 }
 
 /**
  * Generate CSS for layered radial gradients
  * @param {string} name - Character name
+ * @param {number} width - Image width in pixels
+ * @param {number} height - Image height in pixels
  * @param {number} numLayers - Number of gradient layers (default 4)
  * @returns {string} CSS background property value
  */
-export function generateCharacterGradient(name, numLayers = 4) {
+export function generateCharacterGradient(name, width = 300, height = 100, numLayers = 4) {
   const hash = hashString(name || 'unnamed');
   const random = seededRandom(hash);
+
+  // Calculate aspect ratio to adjust gradient positioning
+  const aspectRatio = width / height;
+  const isWide = aspectRatio > 1;
 
   const gradients = [];
 
   for (let i = 0; i < numLayers; i++) {
     const color = generateColor(random);
 
-    // Position: spread across the image
-    const x = 10 + Math.floor(random() * 80); // 10-90%
-    const y = 10 + Math.floor(random() * 80); // 10-90%
+    // Position: spread beyond boundaries for skinny shapes
+    // For tall/skinny images, spread more horizontally (-30% to 130%)
+    // For wide images, keep within bounds (10-90%)
+    let x, y;
+    if (isWide) {
+      x = 10 + Math.floor(random() * 80); // 10-90%
+      y = -20 + Math.floor(random() * 140); // -20% to 120%
+    } else {
+      x = -30 + Math.floor(random() * 160); // -30% to 130%
+      y = 10 + Math.floor(random() * 80); // 10-90%
+    }
 
-    // Size: vary the radius
-    const size = 30 + Math.floor(random() * 50); // 30-80%
+    // Size: based on width for consistency across aspect ratios
+    // Base size is percentage of width, then calculate height% to appear circular
+    const baseWidthPercent = 20 + Math.floor(random() * 25); // 20-45% of width
+    const widthMultiplier = 1.0 + random() * 0.3; // 1.0-1.3x (slightly wider than tall)
+
+    const ellipseWidth = baseWidthPercent * widthMultiplier;
+    // Multiply by aspect ratio so height% renders same pixel size as width%
+    const ellipseHeight = baseWidthPercent * aspectRatio;
 
     // Opacity: vary transparency for layering effect
     const opacity = 0.4 + random() * 0.4; // 0.4-0.8
 
     const hsl = `hsla(${color.h}, ${color.s}%, ${color.l}%, ${opacity.toFixed(2)})`;
-    const gradient = `radial-gradient(ellipse ${size}% ${size * (0.8 + random() * 0.4)}% at ${x}% ${y}%, ${hsl} 0%, transparent 70%)`;
+    const gradient = `radial-gradient(ellipse ${ellipseWidth.toFixed(0)}% ${ellipseHeight.toFixed(0)}% at ${x}% ${y}%, ${hsl} 0%, transparent 70%)`;
 
     gradients.push(gradient);
   }
@@ -93,7 +113,7 @@ export function generateCharacterGradient(name, numLayers = 4) {
  * @returns {string} HTML string for the image element
  */
 export function renderCharacterImage(name, width = 300, height = 100) {
-  const gradient = generateCharacterGradient(name);
+  const gradient = generateCharacterGradient(name, width, height);
 
   return `<div class="character-abstract-image" style="
     width: ${width}px;

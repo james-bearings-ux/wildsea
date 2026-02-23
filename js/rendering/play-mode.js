@@ -13,6 +13,7 @@ import { renderDamageTypeTable } from '../components/damage-summary.js';
 import { highlightDamageTypesInDescription, renderDamageTypeWarning } from '../components/damage-type-selector.js';
 import { renderRoleSelector } from '../components/journey-role.js';
 import { escapeHtmlContent, createDataParams } from '../utils/escaping.js';
+import { generateCharacterGradient } from '../utils/character-image.js';
 
 // Constants
 const MAX_ASPECT_TRACK_DISPLAY = 8;
@@ -98,9 +99,12 @@ function renderCharacterHeader(character, ship) {
     ? `<div class="char-header-role-mobile">${escapeHtmlContent(roleDisplay)}</div>`
     : '';
 
+  // Generate abstract background gradient based on character name
+  const backgroundGradient = generateCharacterGradient(character.name, 800, 120);
+
   return `
     <div data-section="character-header">
-      <div class="char-header">
+      <div class="char-header" style="background: ${backgroundGradient};">
         ${mobileRoleIndicator}
         <div class="char-header-row">
           <div>

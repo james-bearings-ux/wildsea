@@ -1,6 +1,8 @@
 // js/components/journey-clocks.js
 // Journey clocks and controls components
 
+import { generateCharacterGradient } from '../utils/character-image.js';
+
 /**
  * Render a single journey clock
  * @param {string} clockType - Type of clock (progress, risk, pathfinding, riot)
@@ -67,8 +69,11 @@ export function renderJourneyClock(clockType, clockData, editMode = false) {
 export function renderJourneyControls(journeyData, editMode = false) {
   const { active, name, clocks } = journeyData;
 
+  // Generate background gradient from journey name (replaces var(--journey-controls-bg))
+  const backgroundGradient = generateCharacterGradient(name || 'journey', 600, 200);
+
   return `
-    <div class="journey-controls">
+    <div class="journey-controls" style="background: ${backgroundGradient};">
       <!-- Journey Header -->
       <div class="journey-header">
         <div class="journey-toggle-container">
