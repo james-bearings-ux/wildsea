@@ -549,7 +549,7 @@ hr {
 
 /* Main content wrapper */
 .content-wrapper {
-	padding: 20px 20px 80px 80px;
+	padding: 20px 16px 80px 16px;
 	max-width: 1400px;
 	margin: 0 auto;
 }
@@ -804,7 +804,7 @@ hr {
       font-size: 32px;
       font-weight: 600;
       line-height: 1;
-      text-shadow: 1px 1px 2px var(--bg-primary);
+      text-shadow: 1px 2px 0px var(--bg-primary), 2px 3px 3px var(--text-secondary);
 
     }
     
@@ -812,7 +812,7 @@ hr {
       font-size: 12px;
       font-weight: 600;
       color: var(--text-secondary);
-      text-shadow: 1px 1px 2px var(--bg-primary);
+      text-shadow: 1px 1px 1px var(--bg-primary);
     }
 
     /* Task styles */
@@ -2363,6 +2363,14 @@ hr {
   /* Hide inline character buttons on mobile */
   .nav-char-inline {
     display: none !important;
+  }
+
+  /* On mobile there are no inline character tabs, so the Characters dropdown
+     should always appear active when any character is being viewed */
+  .nav-chars-any-active {
+    background: var(--nav-active-bg);
+    color: var(--nav-active-text);
+    font-weight: 600;
   }
 
   /* Hide "Character" label on mobile nav buttons */
