@@ -3001,9 +3001,9 @@ hr {
 
 .dm-row {
   background: var(--dm-bg);
-  border-bottom: 2px solid var(--dm-border);
   border-radius: 0;
   overflow: hidden;
+  margin-top: 15px;
 }
 
 .dm-row-ship {
@@ -3011,7 +3011,7 @@ hr {
 }
 
 .dm-row-character {
-  border-color: var(--dm-border);
+  
 }
 
 .dm-row-empty {
@@ -3035,14 +3035,14 @@ hr {
 
 .dm-accordion-header {
   width: 100%;
-  padding: 20px 0 12px;
-  background: transparent;
+  padding: 10px 10px 10px;
   border: none;
   cursor: pointer;
   text-align: left;
   font-size: 16px;
   transition: background 0.2s;
   position: relative;
+  border-radius: 4px;
 }
 
 .dm-accordion-header:hover {
@@ -3061,14 +3061,6 @@ hr {
   min-width: 16px;
 }
 
-.dm-character-strip {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 10px;
-}
-
 .character-abstract-image {
   flex-shrink: 0;
   border: 1px solid var(--border-secondary);
@@ -3085,12 +3077,15 @@ hr {
   font-weight: 600;
   line-height: 1;
   color: var(--text-primary);
+  text-shadow: 1px 2px 0px var(--bg-primary), 2px 3px 3px var(--text-secondary);
 }
 
 .dm-subtext {
   font-size: 14px;
-  color: var(--text-muted);
+  color: var(--text-primary);
   margin-top: 4px;
+  text-shadow: 1px 1px 1px var(--bg-primary);
+
 }
 
 .dm-mire-indicator {
@@ -3103,18 +3098,19 @@ hr {
 }
 
 .dm-mire-none {
-  color: var(--text-muted);
-  background: transparent;
+  color: var(--text-primary);
+  text-shadow: 1px 1px 1px var(--bg-primary);
+  background: rgba(73,73,73,.1);
 }
 
 .dm-mire-active {
-  color: #d97706;
-  background: rgba(217, 119, 6, 0.1);
+  color: #000;
+  background: #d97706;
 }
 
 .dm-mire-crippling {
-  color: #dc2626;
-  background: rgba(220, 38, 38, 0.15);
+  color: #fff;
+  background: #d10f0f;
   font-weight: 600;
 }
 
@@ -3200,11 +3196,12 @@ hr {
   }
 
   .dm-name {
-    font-size: 24px;
+    font-size: 30px;
   }
 
   .dm-health {
     font-size: 20px;
+    margin-left: 20px;
   }
 
   .dm-mire-indicator {
@@ -3213,7 +3210,7 @@ hr {
   }
 
   .dm-accordion-header {
-    padding: 20px 0 12px;
+    padding: 20px 10px 12px;
   }
 
   .dm-character-columns {
