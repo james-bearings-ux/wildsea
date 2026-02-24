@@ -101,7 +101,7 @@ export function renderEdgesSkillsLanguagesRow(renderSkills, renderLanguages, cha
 
     return html;
   } else {
-    let html = '<div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 32px; margin-bottom: 32px;">';
+    let html = '<div class="edges-skills-languages-grid">';
     html += renderEdges(char, GAME_DATA);
     html += renderSkills(char, GAME_DATA);
     html += renderLanguages(char, GAME_DATA);

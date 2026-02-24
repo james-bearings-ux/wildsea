@@ -684,6 +684,7 @@ hr {
       background: var(--card-bg);
       cursor: pointer;
       transition: all 0.2s;
+      position: relative;
     }
 
     .aspect-card.selected {
@@ -2230,6 +2231,70 @@ hr {
 }
 
 /* ===========================
+   ADVANCEMENT MODE STYLES
+   =========================== */
+
+.advancement-aspects {
+  margin-bottom: 40px;
+}
+
+.advancement-aspects-header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+/* Reset section-header margin when inside the flex header row */
+.advancement-aspects-header .section-header {
+  margin: 0;
+}
+
+.more-aspects-section {
+  margin-top: 24px;
+}
+
+.edges-skills-languages-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 32px;
+  margin-bottom: 32px;
+}
+
+/* Name input styled to match char-name-header visually */
+.char-header-input {
+  font-family: 'Teko', sans-serif;
+  font-size: 32px;
+  font-weight: 600;
+  line-height: 1;
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid var(--border-secondary);
+  color: var(--text-primary);
+  padding: 0;
+}
+
+.char-header-input:focus {
+  outline: none;
+  border-bottom-color: var(--border-primary);
+}
+
+/* Absolutely-positioned remove button inside aspect cards */
+.aspect-card-remove {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+}
+
+/* Utility: right-align flex children */
+.justify-end {
+  justify-content: flex-end;
+}
+
+/* ===========================
    MAIN LAYOUT MOBILE BREAKPOINTS
    =========================== */
 
@@ -2289,6 +2354,18 @@ hr {
   .grid-3col,
   .grid-4col {
     grid-template-columns: 1fr;
+  }
+
+  /* Advancement mode - edges/skills/languages stack vertically */
+  .edges-skills-languages-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  /* Advancement mode - aspects header wraps to two lines */
+  .advancement-aspects-header {
+    flex-direction: column;
+    align-items: flex-start;
   }
 
   /* Play mode grids - collapse to single column */

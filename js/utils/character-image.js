@@ -112,7 +112,7 @@ export function generateCharacterGradient(name, width = 300, height = 100, numLa
   const hsl2 = `hsl(${c2.h}, ${c2.s}%, ${c2.l}%)`;
   const hsl3 = `hsl(${c3.h}, ${c3.s}%, ${c3.l}%)`;
 
-  const baseGradient = `linear-gradient(75deg, ${hsl1} 0%, ${hsl1} ${p1.toFixed(1)}%, ${hsl2} ${p1.toFixed(1)}%, ${hsl2} ${p2.toFixed(1)}%, ${hsl3} ${p2.toFixed(1)}%, ${hsl3} 100%)`;
+  const baseGradient = `linear-gradient(75deg, ${hsl1} 0%, ${hsl1} calc(${p1.toFixed(1)}% - 1px), ${hsl2} calc(${p1.toFixed(1)}% + 1px), ${hsl2} calc(${p2.toFixed(1)}% - 1px), ${hsl3} calc(${p2.toFixed(1)}% + 1px), ${hsl3} 100%)`;
   gradients.push(baseGradient);
 
   return gradients.join(', ');

@@ -15,32 +15,36 @@ import {
   renderSelectedDamageTypes,
   highlightDamageTypesInDescription
 } from '../components/damage-type-selector.js';
-import { escapeHtmlAttr, escapeHtmlContent } from '../utils/escaping.js';
+import { escapeHtmlAttr, escapeHtmlContent, createDataParams } from '../utils/escaping.js';
+import { generateCharacterGradient } from '../utils/character-image.js';
 
 /**
  * Render character header for advancement mode
  */
 export function renderAdvancementCharacterHeader(character) {
+  const backgroundGradient = generateCharacterGradient(character.name, 800, 120);
   return `
-    <div style="display: flex; gap: 48px; align-items: baseline;">
-      <div>
-        <label style="display: block; margin-bottom: 8px; font-weight: 600;">Character Name</label>
-        <input type="text" value="${escapeHtmlAttr(character.name)}"
-                data-action="onCharacterNameChange"
-                placeholder="Enter name..."
-                style="width: 300px; font-size: 16px;">
-      </div>
-      <div>
-        <div class="char-label">Bloodline</div>
-        <div class="char-name-header">${escapeHtmlContent(character.bloodline)}</div>
-      </div>
-      <div>
-        <div class="char-label">Origin</div>
-        <div class="char-name-header">${escapeHtmlContent(character.origin)}</div>
-      </div>
-      <div>
-        <div class="char-label">Post</div>
-        <div class="char-name-header">${escapeHtmlContent(character.post)}</div>
+    <div class="char-header" style="background: ${backgroundGradient};">
+      <div class="char-header-row">
+        <div>
+          <div class="char-label">Character Name</div>
+          <input type="text" value="${escapeHtmlAttr(character.name)}"
+                  data-action="onCharacterNameChange"
+                  placeholder="Enter name..."
+                  class="char-header-input">
+        </div>
+        <div>
+          <div class="char-label">Bloodline</div>
+          <div class="char-name-header">${escapeHtmlContent(character.bloodline)}</div>
+        </div>
+        <div>
+          <div class="char-label">Origin</div>
+          <div class="char-name-header">${escapeHtmlContent(character.origin)}</div>
+        </div>
+        <div>
+          <div class="char-label">Post</div>
+          <div class="char-name-header">${escapeHtmlContent(character.post)}</div>
+        </div>
       </div>
     </div>
   `;
@@ -61,11 +65,10 @@ function renderAspectCard(aspect, character, aspectsSelected) {
 
   return `
     <div class="aspect-card ${isSelected ? 'selected' : ''} ${isDisabled ? 'disabled' : ''}"
-         data-action="toggleAspect" data-params="{&quot;id&quot;:&quot;${escapedId}&quot;}"
-         style="position: relative;">
+         data-action="toggleAspect" ${createDataParams({ id })}>
       ${isSelected ? renderInteractiveTrack(selectedAspect, escapedId) : renderSmallTrack(aspect.track)}
       <div class="split">
-        <div class="aspect-name" style="margin-bottom: 4px;">${displayName}</div>
+        <div class="aspect-name">${displayName}</div>
         <div class="aspect-meta">${aspect.source} ${aspect.type}</div>
       </div>
       <div class="aspect-description">${highlightDamageTypesInDescription(selectedAspect || aspect)}</div>
@@ -139,24 +142,24 @@ export function renderMoreAspectsSection(character) {
   }
 
   return `
-    <div style="margin-top: 24px;">
+    <div class="more-aspects-section">
       <h3 class="subsection-header">More Aspects</h3>
       <div class="grid-3col">
         ${moreAspects.map(selectedAspect => {
           const escapedId = selectedAspect.id.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
           return `
-            <div class="aspect-card selected" style="position: relative;">
+            <div class="aspect-card selected">
               ${renderInteractiveTrack(selectedAspect, escapedId)}
               <div class="split">
-                <div class="aspect-name" style="margin-bottom: 4px;">${selectedAspect.name}</div>
-                <div class="aspect-meta">${selectedAspect.source} ${selectedAspect.type}</div>
+                <div class="aspect-name">${escapeHtmlContent(selectedAspect.name)}</div>
+                <div class="aspect-meta">${escapeHtmlContent(selectedAspect.source)} ${escapeHtmlContent(selectedAspect.type)}</div>
               </div>
               <div class="aspect-description">${highlightDamageTypesInDescription(selectedAspect)}</div>
               ${renderDamageTypeWarning(selectedAspect)}
               ${renderDamageTypeSelector(selectedAspect, 'advancement')}
               ${renderSelectedDamageTypes(selectedAspect, character)}
-              <button data-action="toggleAspect" data-params="{&quot;id&quot;:&quot;${escapedId}&quot;}"
-                      style="position: absolute; top: 12px; right: 12px; padding: 4px 12px; font-size: 14px; background: #DC2626; color: white; border: none;">
+              <button data-action="toggleAspect" ${createDataParams({ id: selectedAspect.id })}
+                      class="btn-danger aspect-card-remove">
                 Remove
               </button>
             </div>
@@ -171,61 +174,58 @@ export function renderAdvancementMode(app, character, gameData, showCustomizeMod
   const aspectsSelected = character.selectedAspects.length;
 
   app.innerHTML = `
-    <div style="padding: 20px; max-width: 1400px; margin: 0 auto; padding-bottom: 80px;">
-        <!-- Character Header: Editable name + read-only bloodline/origin/post -->
-        <div style="margin-bottom: 32px; padding-bottom: 24px; border-bottom: 2px solid #E5E7EB;" data-section="character-header-advancement">
+    <div class="content-wrapper">
+      <!-- Character Header: Editable name + read-only bloodline/origin/post -->
+      <div data-section="character-header-advancement">
         ${renderAdvancementCharacterHeader(character)}
-        </div>
+      </div>
 
-        <!-- Aspects Section: 3-column grid + "More" section for extra aspects -->
-        <!-- Interactive track expansion with +/- buttons, customization and selection modals -->
-        <div style="margin-bottom: 40px;">
-        <div class="flex-between" style="margin-bottom: 12px;">
-            <h2 class="section-header" style="margin: 0;">Aspects</h2>
-            <div style="display: flex; gap: 12px;">
-                <button data-action="openCustomizeModal" class="medium">Customize an Aspect</button>
-                <button data-action="openSelectAspectModal" class="medium" ${aspectsSelected >= BUDGETS.maxAspectsAdvancement ? 'disabled' : ''}>Select More Aspects</button>
-            </div>
+      <!-- Aspects Section: 3-column grid + "More" section for extra aspects -->
+      <!-- Interactive track expansion with +/- buttons, customization and selection modals -->
+      <div class="advancement-aspects">
+        <div class="advancement-aspects-header">
+          <h2 class="section-header">Aspects</h2>
+          <div class="flex-gap-md">
+            <button data-action="openCustomizeModal" class="medium">Customize an Aspect</button>
+            <button data-action="openSelectAspectModal" class="medium" ${aspectsSelected >= BUDGETS.maxAspectsAdvancement ? 'disabled' : ''}>Select More Aspects</button>
+          </div>
         </div>
         <!-- 3-column grid for Bloodline, Origin, and Post aspects -->
         <div class="grid-3col">
-            <div data-section="aspects-bloodline-advancement">
+          <div data-section="aspects-bloodline-advancement">
             ${renderBloodlineAspectsSection(character)}
-            </div>
-
-            <div data-section="aspects-origin-advancement">
+          </div>
+          <div data-section="aspects-origin-advancement">
             ${renderOriginAspectsSection(character)}
-            </div>
-
-            <div data-section="aspects-post-advancement">
+          </div>
+          <div data-section="aspects-post-advancement">
             ${renderPostAspectsSection(character)}
-            </div>
+          </div>
         </div>
 
-        <!-- Additional aspects beyond bloodline/origin/post (e.g., aspects from other sources) -->
+        <!-- Additional aspects beyond bloodline/origin/post -->
         <div data-section="aspects-more-advancement">
-        ${renderMoreAspectsSection(character)}
+          ${renderMoreAspectsSection(character)}
         </div>
-        </div>
-        <hr />
+      </div>
+      <hr />
 
-        <!-- Edges, Skills, Languages Section -->
-        <!-- Advancement mode: 3 equal columns with interactive controls, max rank 3 -->
-        <div data-section="edges-skills-languages-advancement">
+      <!-- Edges, Skills, Languages Section -->
+      <div data-section="edges-skills-languages-advancement">
         ${renderEdgesSkillsLanguagesRow(renderSkills, renderLanguages, character, gameData)}
-        </div>
-        <hr />
+      </div>
+      <hr />
 
-        <!-- Milestones Section: Track character achievements and progression -->
-        <div style="margin-bottom: 32px;" data-section="milestones-advancement">
+      <!-- Milestones Section -->
+      <div data-section="milestones-advancement">
         ${renderMilestones(character)}
-        </div>
+      </div>
     </div>
 
     <!-- Sticky Action Bar: Save or cancel changes and return to play mode -->
-    <div class="sticky-action-bar" style="display: flex; justify-content: flex-end;">
-        <button data-action="setMode" data-params='{"mode":"play"}' class="primary">Save Changes</button>
-        <button data-action="setMode" data-params='{"mode":"play"}'>Cancel</button>
+    <div class="sticky-action-bar justify-end">
+      <button data-action="setMode" data-params='{"mode":"play"}' class="primary">Save Changes</button>
+      <button data-action="setMode" data-params='{"mode":"play"}'>Cancel</button>
     </div>
 
     <!-- Conditional Modals: Only rendered when showCustomizeModal or showSelectAspectModal is true -->
