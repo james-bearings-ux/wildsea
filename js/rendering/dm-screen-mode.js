@@ -241,8 +241,7 @@ function renderCharacterSummary(character, expanded) {
   const backgroundGradient = generateCharacterGradient(character.name, 800, 10);
 
   // Accordion header (always visible)
-  html += '<button class="dm-accordion-header" data-action="toggleDMAccordion" data-params=\'{"id":"' + character.id + '"}\'>';
-  html += '<span class="dm-character-strip" style="background: ' + backgroundGradient + ';"></span>';
+  html += '<button class="dm-accordion-header" style="background: ' + backgroundGradient + ';" data-action="toggleDMAccordion" data-params=\'{"id":"' + character.id + '"}\'>';
   html += '<div class="dm-header-content">';
   html += '<span class="dm-accordion-icon">' + (expanded ? '▼' : '▶') + '</span>';
   html += '<div class="dm-name-section">';

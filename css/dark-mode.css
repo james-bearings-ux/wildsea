@@ -213,8 +213,8 @@
   --dm-header-hover-bg: #333333;
   --dm-placeholder-text: #777777;
   --dm-health-bar-bg: #222222;
-  --dm-health-bar-border: #888888;
-  --dm-health-bar-fill: #888888;
+  --dm-health-bar-border: #ffffff;
+  --dm-health-bar-fill: #e6e6e6;
 
   /* Presence bar */
   --presence-bg: #1A1A1A;
