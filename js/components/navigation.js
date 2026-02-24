@@ -79,10 +79,15 @@ export async function renderNavigation(session) {
 
     // "Characters" dropdown with ALL characters (visible on all viewports)
     const isAnyCharActive = session.activeView === 'character';
-    const charsActiveClass = isAnyCharActive ? 'nav-button-active' : 'nav-button-inactive';
+    // On desktop, the dropdown is only active when the current character isn't a key character
+    // (key characters have their own inline tab showing the active state).
+    // On mobile there are no inline tabs, so the dropdown should always show active — handled via CSS.
+    const isKeyCharActive = isAnyCharActive && visibleCharIds.includes(session.activeCharacterId);
+    const charsActiveClass = (isAnyCharActive && !isKeyCharActive) ? 'nav-button-active' : 'nav-button-inactive';
+    const charsMobileClass = isAnyCharActive ? ' nav-chars-any-active' : '';
 
     html += '<div class="nav-dropdown-container nav-chars-dropdown">';
-    html += '<button data-action="toggleCharacterDropdown" class="nav-button ' + charsActiveClass + '">Characters ▾</button>';
+    html += '<button data-action="toggleCharacterDropdown" class="nav-button ' + charsActiveClass + charsMobileClass + '">Characters ▾</button>';
     html += '<div class="nav-dropdown-menu" id="characterDropdown" style="display: none;">';
 
     for (let i = 0; i < session.activeCharacterIds.length; i++) {
