@@ -41,8 +41,8 @@ function seededRandom(seed) {
 function generateColor(random) {
   return {
     h: Math.floor(random() * 360),
-    s: 45 + Math.floor(random() * 50), // 5-55% saturation
-    l: 60 + Math.floor(random() * 25)  // 60-85% lightness
+    s: 45 + Math.floor(random() * 50), // 45-95% saturation
+    l: 40 + Math.floor(random() * 25)  // 60-85% lightness
   };
 }
 
@@ -54,7 +54,7 @@ function generateColor(random) {
  * @param {number} numLayers - Number of gradient layers (default 4)
  * @returns {string} CSS background property value
  */
-export function generateCharacterGradient(name, width = 300, height = 100, numLayers = 4) {
+export function generateCharacterGradient(name, width = 300, height = 100, numLayers = 3) {
   const hash = hashString(name || 'unnamed');
   const random = seededRandom(hash);
 
@@ -81,7 +81,7 @@ export function generateCharacterGradient(name, width = 300, height = 100, numLa
 
     // Size: based on width for consistency across aspect ratios
     // Base size is percentage of width, then calculate height% to appear circular
-    const baseWidthPercent = 20 + Math.floor(random() * 25); // 20-45% of width
+    const baseWidthPercent = 24 + Math.floor(random() * 30); // 24-54% of width (20% larger than 20-45%)
     const widthMultiplier = 1.0 + random() * 0.3; // 1.0-1.3x (slightly wider than tall)
 
     const ellipseWidth = baseWidthPercent * widthMultiplier;
@@ -97,9 +97,22 @@ export function generateCharacterGradient(name, width = 300, height = 100, numLa
     gradients.push(gradient);
   }
 
-  // Add a subtle base gradient for depth
-  const baseColor = generateColor(random);
-  const baseGradient = `linear-gradient(135deg, hsla(${baseColor.h}, ${baseColor.s}%, ${baseColor.l}%, 0.3) 0%, hsla(${(baseColor.h + 60) % 360}, ${baseColor.s}%, ${baseColor.l}%, 0.3) 100%)`;
+  // Base layer: three solid colour bands at 75 degrees
+  // c1 sets the base hue; c2 and c3 are derived from it for complementary harmony
+  const baseHue = Math.floor(random() * 360);
+  const c1 = { h: baseHue,                                           s: 45 + Math.floor(random() * 50), l: 40 + Math.floor(random() * 25) };
+  const c2 = { h: (baseHue + 30 + Math.floor(random() * 30)) % 360,  s: 45 + Math.floor(random() * 50), l: 40 + Math.floor(random() * 25) }; // analogous: 30–60° from c1
+  const c3 = { h: (baseHue + 165 + Math.floor(random() * 30)) % 360, s: 45 + Math.floor(random() * 50), l: 40 + Math.floor(random() * 25) }; // complementary: 165–195° from c1
+
+  // Two split points; ensure each band is roughly 15-45% wide
+  const p1 = 15 + random() * 30; // 15–45%
+  const p2 = Math.min(p1 + 15 + random() * 30, 85); // p1+15 to p1+45, capped at 85%
+
+  const hsl1 = `hsl(${c1.h}, ${c1.s}%, ${c1.l}%)`;
+  const hsl2 = `hsl(${c2.h}, ${c2.s}%, ${c2.l}%)`;
+  const hsl3 = `hsl(${c3.h}, ${c3.s}%, ${c3.l}%)`;
+
+  const baseGradient = `linear-gradient(75deg, ${hsl1} 0%, ${hsl1} ${p1.toFixed(1)}%, ${hsl2} ${p1.toFixed(1)}%, ${hsl2} ${p2.toFixed(1)}%, ${hsl3} ${p2.toFixed(1)}%, ${hsl3} 100%)`;
   gradients.push(baseGradient);
 
   return gradients.join(', ');
