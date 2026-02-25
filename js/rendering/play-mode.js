@@ -12,8 +12,12 @@ import { renderNotes } from '../components/notes.js';
 import { renderDamageTypeTable } from '../components/damage-summary.js';
 import { highlightDamageTypesInDescription, renderDamageTypeWarning } from '../components/damage-type-selector.js';
 import { renderRoleSelector } from '../components/journey-role.js';
+import { renderDiceRoller } from '../components/dice-roller.js';
 import { escapeHtmlContent, createDataParams } from '../utils/escaping.js';
 import { generateCharacterGradient } from '../utils/character-image.js';
+
+// Icons (inline SVG so currentColor inherits from button's CSS color)
+const downloadIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor"><path d="M480-320 280-520l56-58 104 104v-326h80v326l104-104 56 58-200 200ZM240-160q-33 0-56.5-23.5T160-240v-120h80v120h480v-120h80v120q0 33-23.5 56.5T720-160H240Z"/></svg>`;
 
 // Constants
 const MAX_ASPECT_TRACK_DISPLAY = 8;
@@ -96,7 +100,7 @@ function renderCharacterHeader(character, ship) {
 
   // Mobile-only role indicator (shown when journey is active and role is set)
   const mobileRoleIndicator = journeyActive && roleDisplay
-    ? `<div class="char-header-role-mobile">${escapeHtmlContent(roleDisplay)}</div>`
+    ? `<button type="button" class="char-header-role-mobile" data-action="openRoleSelectorModal" aria-label="Change journey role">${escapeHtmlContent(roleDisplay)}</button>`
     : '';
 
   // Generate abstract background gradient based on character name
@@ -206,27 +210,29 @@ function renderSecondaryGrid(character, showAddTaskForm, activeTab = 'resources'
 }
 
 /**
- * Render sticky action bar with delete, export, role selector, advancement
+ * Render sticky action bar: dice roller | journey role | advancement + export + delete
  * @param {Object} character - Character object
  * @param {Object|null} ship - Ship object (optional)
+ * @param {Array} diceRolls - Current dice rolls from session
+ * @param {boolean} showDiceResults - Whether dice results panel is expanded
+ * @param {string} userRole - Current user's role ('player' or 'dm')
  * @returns {string} HTML string for action bar
  */
-function renderActionBar(character, ship) {
+function renderActionBar(character, ship, diceRolls, showDiceResults, userRole) {
   const roleSelector = ship && ship.journey && ship.journey.active
     ? renderRoleSelector(character.journeyRole, ship.journey.active)
     : '';
 
   return `
-    <div class="sticky-action-bar flex-between">
-      <div class="flex-gap-md">
-        <button ${createDataParams({ characterId: character.id })} data-action="removeCharacter" class="btn-danger">Delete</button>
-        <button data-action="exportCharacter">Export</button>
-      </div>
+    <div class="sticky-action-bar">
+      ${renderDiceRoller(diceRolls, showDiceResults, userRole)}
       <div class="flex flex-1 justify-center">
         ${roleSelector}
       </div>
-      <div>
+      <div class="flex-gap-md">
         <button data-action="setMode" ${createDataParams({ mode: 'advancement' })}>Advancement</button>
+        <button data-action="exportCharacter" title="Export Character" aria-label="Export Character">${downloadIcon}</button>
+        <button ${createDataParams({ characterId: character.id })} data-action="removeCharacter" class="btn-danger">Delete</button>
       </div>
     </div>
   `;
@@ -240,8 +246,11 @@ function renderActionBar(character, ship) {
  * @param {boolean} showAddTaskForm - Whether to show task form
  * @param {Object|null} ship - Ship object (optional)
  * @param {string} activePlayTab - Active tab for mobile secondary grid
+ * @param {Array} diceRolls - Current dice rolls from session
+ * @param {boolean} showDiceResults - Whether dice results panel is expanded
+ * @param {string} userRole - Current user's role ('player' or 'dm')
  */
-export function renderPlayMode(app, character, gameData, showAddTaskForm = false, ship = null, activePlayTab = 'resources') {
+export function renderPlayMode(app, character, gameData, showAddTaskForm = false, ship = null, activePlayTab = 'resources', diceRolls = [], showDiceResults = true, userRole = 'player') {
   const sortedAspects = prepareSortedAspects(character);
 
   app.innerHTML = `
@@ -251,6 +260,6 @@ export function renderPlayMode(app, character, gameData, showAddTaskForm = false
       <hr />
       ${renderSecondaryGrid(character, showAddTaskForm, activePlayTab)}
     </div>
-    ${renderActionBar(character, ship)}
+    ${renderActionBar(character, ship, diceRolls, showDiceResults, userRole)}
   `;
 }

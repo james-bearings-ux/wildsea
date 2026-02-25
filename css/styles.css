@@ -658,15 +658,15 @@ hr {
 	background: var(--bg-primary);
 	border-top: 2px solid var(--hr-border);
 	padding: 8px 20px;
-	/* Left padding to make room for collapsed dice roller button */
-	padding-left: 64px;
 	display: flex;
+	align-items: center;
 	gap: 8px;
 	z-index: 100;
+	overflow: visible;
 }
 
 .sticky-action-bar button {
-	padding: 8px 12px;
+	padding: 8px 10px;
 }
 
 .font-teko {
@@ -856,30 +856,6 @@ hr {
       gap: 4px;
       align-items: center;
     }
-
-    .clock-tick {
-      width: 20px;
-      height: 20px;
-      border: 2px solid var(--clock-tick-border);
-      border-radius: 50%;
-      cursor: pointer;
-      transition: all 0.15s ease;
-      background: var(--clock-tick-bg);
-    }
-
-    .clock-tick.filled {
-      background: var(--clock-tick-filled-bg);
-    }
-
-    .clock-tick:hover {
-      transform: scale(1.1);
-      border-color: var(--clock-tick-hover-border);
-    }
-
-    .clock-tick.filled:hover {
-      background: var(--clock-tick-filled-hover-bg);
-    }
-
 
     .text-input {
       border: none;
@@ -1194,6 +1170,13 @@ hr {
   &:hover:not(:disabled) {
     background: var(--nav-minor-hover-bg);
   }
+}
+
+.nav-button-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
 }
 
 
@@ -2326,6 +2309,7 @@ hr {
     position: absolute;
     border: 1px solid white;
     right: 16px;
+    cursor: pointer;
   }
 
   .char-header-row {
@@ -2491,8 +2475,6 @@ hr {
     right: 0;
     width: 100%;
     padding: 8px 12px;
-    /* Left padding to make room for collapsed dice roller button */
-    padding-left: 64px;
     /* Safe area inset for devices with home indicator (iPhone X+) */
     padding-bottom: max(8px, env(safe-area-inset-bottom));
   }
@@ -2651,6 +2633,8 @@ hr {
 
 .journey-header span {
   color: var(--text-primary);
+  text-shadow: 1px 1px 1px var(--bg-primary);
+
 }
 
 /* Journey Clock Ticks */
@@ -2679,20 +2663,30 @@ hr {
 .clock-tick {
   width: 20px;
   height: 20px;
-  border: 2px solid var(--journey-clock-border);
+  border: 2px solid var(--clock-tick-border);
   border-radius: 50%;
   cursor: pointer;
-  transition: all 0.2s;
-  background-color: transparent;
+  transition: all 0.15s ease;
+  background: transparent;
+  box-shadow: inset 1px 1px 0px var(--clock-tick-filled-bg);
+}
+
+/* Task clock ticks have an explicit background on unfilled state */
+.task-clock .clock-tick {
+  background: var(--clock-tick-bg);
+}
+
+.clock-tick.filled {
+  background: var(--clock-tick-filled-bg);
 }
 
 .clock-tick:hover {
   transform: scale(1.1);
-  box-shadow: 0 2px 4px rgba(40, 40, 40, 0.3);
+  border-color: var(--clock-tick-hover-border);
 }
 
-.clock-tick.filled {
-  background-color: var(--journey-clock-filled);
+.clock-tick.filled:hover {
+  background: var(--clock-tick-filled-hover-bg);
 }
 
 /* Clock Max Select Dropdown */
@@ -2931,7 +2925,7 @@ hr {
   font-weight: 400;
   font-size: 64px;
   line-height: 1;
-  text-shadow: 2px 2px 2px rgba(0, 0, 0, .3);
+  text-shadow: 1px 2px 0px var(--bg-primary), 2px 3px 3px var(--text-secondary);
 }
 
 .journey-name-input {
@@ -3696,6 +3690,48 @@ hr {
   .dice-twist-label {
     font-size: 12px;
   }
+}
+
+/* ===========================
+   DICE ROLLER IN ACTION BAR
+   (character play mode only — overrides the fixed-position floating panel)
+   =========================== */
+
+.sticky-action-bar .dice-roller-panel,
+.sticky-action-bar .dice-roller-panel.dice-roller-collapsed,
+.sticky-action-bar .dice-roller-panel.dice-roller-expanded {
+  position: static;
+  bottom: auto;
+  left: auto;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  padding: 0;
+  z-index: auto;
+}
+
+/* Controls row sits flush in the action bar - no bottom margin */
+.sticky-action-bar .dice-roller-panel .dice-roller-controls {
+  margin-bottom: 0;
+}
+
+/* Restore dice control button's own padding — .sticky-action-bar button overrides it otherwise */
+.sticky-action-bar .dice-control-btn {
+  padding: 4px;
+}
+
+/* Expanded: wrapper pops above the action bar */
+.sticky-action-bar .dice-roller-panel.dice-roller-expanded .dice-roller-wrapper {
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  background: var(--bg-secondary);
+  border: 2px solid var(--border-primary);
+  border-radius: 8px;
+  padding: 12px;
+  box-shadow: rgba(0, 0, 0, 0.5) 2px -4px 12px;
+  z-index: 200;
 }
 
 /* ===========================

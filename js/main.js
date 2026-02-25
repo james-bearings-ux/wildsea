@@ -504,15 +504,14 @@ async function render(reloadSession = false) {
     if (ship.mode === 'creation') {
       renderShipCreationMode(tempDiv, ship, gameData, activeShipTab, activeWizardStage);
     } else if (ship.mode === 'play') {
-      renderShipPlayMode(tempDiv, ship, gameData, journeyEditMode, currentUserRole);
+      renderShipPlayMode(tempDiv, ship, gameData, journeyEditMode, currentUserRole, session?.diceRolls || [], showDiceResults);
     } else if (ship.mode === 'upgrade') {
       renderShipUpgradeMode(tempDiv, ship, gameData);
     }
 
     // Combine navigation and content
-    // Hide dice roller on ship creation mode (drydock)
-    const diceRollerHtml = ship.mode === 'creation' ? '' : renderDiceRoller(session?.diceRolls || [], showDiceResults, currentUserRole);
-    app.innerHTML = presenceBarHtml + navHtml + tempDiv.innerHTML + diceRollerHtml;
+    // Ship play mode includes the dice roller inside its action bar; hide it on all other ship modes
+    app.innerHTML = presenceBarHtml + navHtml + tempDiv.innerHTML;
     return;
   }
 
@@ -539,17 +538,14 @@ async function render(reloadSession = false) {
   if (character.mode === 'creation') {
     renderCreationMode(tempDiv, character, gameData, showScenarioModal);
   } else if (character.mode === 'play') {
-    renderPlayMode(tempDiv, character, gameData, showAddTaskForm, ship, activePlayTab);
+    renderPlayMode(tempDiv, character, gameData, showAddTaskForm, ship, activePlayTab, session?.diceRolls || [], showDiceResults, currentUserRole);
   } else if (character.mode === 'advancement') {
     renderAdvancementMode(tempDiv, character, gameData, showCustomizeModal, selectedModalAspectId, modalUnsavedEdits, showSelectAspectModal, aspectSearchQuery, selectedAspectForAdding);
   }
 
   // Combine navigation and content
-  // Hide dice roller on character creation and advancement modes (editing screens)
-  const diceRollerHtml = (character.mode === 'creation' || character.mode === 'advancement')
-    ? ''
-    : renderDiceRoller(session?.diceRolls || [], showDiceResults, currentUserRole);
-  app.innerHTML = presenceBarHtml + navHtml + tempDiv.innerHTML + diceRollerHtml;
+  // Play mode includes the dice roller inside its action bar; hide it on creation and advancement
+  app.innerHTML = presenceBarHtml + navHtml + tempDiv.innerHTML;
 
   // Add role tooltip if needed (only if not already in DOM)
   if (showRoleTooltip && !document.querySelector('.role-tooltip-overlay')) {

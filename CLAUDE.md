@@ -76,6 +76,8 @@ The application is organized into modular ES6 modules:
 5. **Utilities** (`js/utils/`)
    - `validation.js` - Character creation validation rules
    - `file-handlers.js` - Import/export functionality
+   - `escaping.js` - HTML/XSS escaping utilities
+   - `character-image.js` - Deterministic abstract image generator for character headers
 
 6. **Entry Point** (`js/main.js`)
    - Application initialization
@@ -233,6 +235,41 @@ The `character` object contains:
 - Component: `js/components/ship-factions.js`
 - State mutations: `addFaction()`, `updateFactionName()`, `updateFactionReputation()`, `removeFaction()` in `js/state/ship.js`
 
+### Character Abstract Images
+
+Each character gets a unique, deterministic abstract image generated from their name. The image is used as a decorative header in play mode, advancement mode, and the DM screen.
+
+**How it works:**
+- The character's name is hashed to a 32-bit integer (`hashString`)
+- That hash seeds a linear congruential generator (`seededRandom`) so the same name always produces the same image
+- The generator produces 3 radial gradient layers (coloured ellipses at random positions and sizes) composited over a base of 3 solid colour bands at 75°
+- Base band colours are harmonious: c1 is a random hue, c2 is analogous (30–60° away), c3 is near-complementary (165–195° away)
+
+**Key design decisions:**
+- Gradient positions adapt to the image's aspect ratio: wide images keep centres within bounds; tall/narrow images spread centres beyond the edges so the whole surface is covered
+- Ellipse heights are multiplied by the aspect ratio so a given percentage looks the same number of pixels tall as it is wide (appears circular)
+- Saturation 45–95%, lightness 40–65% — avoids washed-out or overly dark results
+- The name `'unnamed'` is used as a fallback when `name` is empty
+
+**Exported functions (`js/utils/character-image.js`):**
+- `generateCharacterGradient(name, width, height, numLayers)` — returns a CSS `background` value (comma-joined gradient list); used directly when the caller controls the container element
+- `renderCharacterImage(name, width, height)` — returns a full `<div>` HTML string with inline styles; convenience wrapper for components that just need to drop in an image
+
+**Usage pattern:**
+```javascript
+import { generateCharacterGradient } from '../utils/character-image.js';
+
+// Apply to an existing container (most common — callers set their own size/class)
+const backgroundGradient = generateCharacterGradient(character.name, 800, 120);
+html += `<div class="character-header" style="background: ${backgroundGradient};">`;
+```
+
+**Where used:**
+- `js/rendering/play-mode.js` — character play header (800×120)
+- `js/rendering/advancement-mode.js` — advancement header (800×120)
+- `js/rendering/dm-screen-mode.js` — per-character block header (800×10, thin accent strip)
+- `js/components/journey-clocks.js` — journey clock background (600×200)
+
 ### UI Interaction Pattern
 
 The application uses **event delegation** for all user interactions:
@@ -276,7 +313,8 @@ The application uses **event delegation** for all user interactions:
 │   ├── utils/
 │   │   ├── validation.js         # Validation logic
 │   │   ├── file-handlers.js      # Import/export
-│   │   └── escaping.js           # HTML/XSS escaping utilities
+│   │   ├── escaping.js           # HTML/XSS escaping utilities
+│   │   └── character-image.js    # Deterministic abstract image generator
 │   └── character-sheet.js        # LEGACY - kept for reference
 ├── css/
 │   ├── light-mode.css            # Light theme variables

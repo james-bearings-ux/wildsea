@@ -94,7 +94,7 @@
   --task-progress-text: #999999;
   --clock-tick-border: #888888;
   --clock-tick-bg: #2A2A2A;
-  --clock-tick-filled-bg: #888888;
+  --clock-tick-filled-bg: #000000;
   --clock-tick-hover-border: #A91D3A;
   --clock-tick-filled-hover-bg: #A91D3A;
 
@@ -119,7 +119,7 @@
   --nav-dropdown-item-border: #333333;
   --nav-dropdown-hover-bg: #2A2A2A;
   --nav-role-text: #10b574;
-  --nav-minor-bg: #2A2A2A;
+  --nav-minor-bg: #555555;
   --nav-minor-hover-bg: #006e1c;
 
   /* Ship styles */
@@ -193,16 +193,14 @@
 
   /* Journey */
   --journey-bg: linear-gradient(45deg, #0d2219, #2b5a75);
-  --journey-text: #E5E5E5;
+  --journey-text: #000000;
   --journey-toggle-bg: rgba(0, 0, 0, 0.5);
   --journey-toggle-border: rgba(255, 255, 255, 0.2);
-  --journey-toggle-active-bg: rgba(255, 255, 255, 0.15);
+  --journey-toggle-active-bg: rgba(0, 37, 5, 0.377);
   --journey-toggle-active-border: rgba(255, 255, 255, 0.3);
-  --journey-slider-bg: linear-gradient(135deg, #888888 0%, #666666 100%);
+  --journey-slider-bg: linear-gradient(135deg, #313131 0%, #202020 100%);
   --journey-slider-shadow: 0 2px 8px rgba(0, 0, 0, 0.5), 0 1px 3px rgba(0, 0, 0, 0.3);
   --journey-clock-text: #E5E5E5;
-  --journey-clock-border: #888888;
-  --journey-clock-filled: #888888;
   --role-selector-bg: #0c9c5e;
   --role-dropdown-bg: #2A2A2A;
 
