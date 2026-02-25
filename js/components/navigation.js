@@ -13,6 +13,7 @@ import { escapeHtmlContent } from '../utils/escaping.js';
  * @returns {Promise<string>} HTML string for navigation bar
  */
 export async function renderNavigation(session) {
+  const base = import.meta.env.BASE_URL;
   let html = '<div class="nav-bar split">';
 
   // Left side: DM and Ship buttons
@@ -115,13 +116,13 @@ export async function renderNavigation(session) {
   }
 
   // Create character button
-  html += '<button data-action="createNewCharacter" class="nav-button nav-button-minor">';
-  html += '+ New <span class="nav-hide-mobile">Character</span>';
+  html += '<button data-action="createNewCharacter" class="nav-button nav-button-minor nav-button-icon" title="New Character" aria-label="New Character">';
+  html += '<img src="' + base + 'images/person-add.svg" alt="" width="20" height="20">';
   html += '</button>';
 
   // Import character button
-  html += '<button data-action="importCharacter" class="nav-button nav-button-minor">';
-  html += '↓ Import <span class="nav-hide-mobile">Character</span>';
+  html += '<button data-action="importCharacter" class="nav-button nav-button-minor nav-button-icon" title="Import Character" aria-label="Import Character">';
+  html += '<img src="' + base + 'images/upload.svg" alt="" width="20" height="20">';
   html += '</button>';
 
   html += '</div>';
