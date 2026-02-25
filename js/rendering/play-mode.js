@@ -16,6 +16,9 @@ import { renderDiceRoller } from '../components/dice-roller.js';
 import { escapeHtmlContent, createDataParams } from '../utils/escaping.js';
 import { generateCharacterGradient } from '../utils/character-image.js';
 
+// Icons (inline SVG so currentColor inherits from button's CSS color)
+const downloadIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor"><path d="M480-320 280-520l56-58 104 104v-326h80v326l104-104 56 58-200 200ZM240-160q-33 0-56.5-23.5T160-240v-120h80v120h480v-120h80v120q0 33-23.5 56.5T720-160H240Z"/></svg>`;
+
 // Constants
 const MAX_ASPECT_TRACK_DISPLAY = 8;
 const DAMAGE_STATE_SYMBOLS = {
@@ -228,7 +231,7 @@ function renderActionBar(character, ship, diceRolls, showDiceResults, userRole) 
       </div>
       <div class="flex-gap-md">
         <button data-action="setMode" ${createDataParams({ mode: 'advancement' })}>Advancement</button>
-        <button data-action="exportCharacter" title="Export Character" aria-label="Export Character"><img src="${import.meta.env.BASE_URL}images/download.svg" alt="" width="20" height="20"></button>
+        <button data-action="exportCharacter" title="Export Character" aria-label="Export Character">${downloadIcon}</button>
         <button ${createDataParams({ characterId: character.id })} data-action="removeCharacter" class="btn-danger">Delete</button>
       </div>
     </div>

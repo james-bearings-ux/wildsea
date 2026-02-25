@@ -857,30 +857,6 @@ hr {
       align-items: center;
     }
 
-    .clock-tick {
-      width: 20px;
-      height: 20px;
-      border: 2px solid var(--clock-tick-border);
-      border-radius: 50%;
-      cursor: pointer;
-      transition: all 0.15s ease;
-      background: var(--clock-tick-bg);
-    }
-
-    .clock-tick.filled {
-      background: var(--clock-tick-filled-bg);
-    }
-
-    .clock-tick:hover {
-      transform: scale(1.1);
-      border-color: var(--clock-tick-hover-border);
-    }
-
-    .clock-tick.filled:hover {
-      background: var(--clock-tick-filled-hover-bg);
-    }
-
-
     .text-input {
       border: none;
       border-bottom: 2px solid var(--input-border);
@@ -2657,6 +2633,8 @@ hr {
 
 .journey-header span {
   color: var(--text-primary);
+  text-shadow: 1px 1px 1px var(--bg-primary);
+
 }
 
 /* Journey Clock Ticks */
@@ -2685,20 +2663,30 @@ hr {
 .clock-tick {
   width: 20px;
   height: 20px;
-  border: 2px solid var(--journey-clock-border);
+  border: 2px solid var(--clock-tick-border);
   border-radius: 50%;
   cursor: pointer;
-  transition: all 0.2s;
-  background-color: transparent;
+  transition: all 0.15s ease;
+  background: transparent;
+  box-shadow: inset 1px 1px 0px var(--clock-tick-filled-bg);
+}
+
+/* Task clock ticks have an explicit background on unfilled state */
+.task-clock .clock-tick {
+  background: var(--clock-tick-bg);
+}
+
+.clock-tick.filled {
+  background: var(--clock-tick-filled-bg);
 }
 
 .clock-tick:hover {
   transform: scale(1.1);
-  box-shadow: 0 2px 4px rgba(40, 40, 40, 0.3);
+  border-color: var(--clock-tick-hover-border);
 }
 
-.clock-tick.filled {
-  background-color: var(--journey-clock-filled);
+.clock-tick.filled:hover {
+  background: var(--clock-tick-filled-hover-bg);
 }
 
 /* Clock Max Select Dropdown */
@@ -2937,7 +2925,7 @@ hr {
   font-weight: 400;
   font-size: 64px;
   line-height: 1;
-  text-shadow: 2px 2px 2px rgba(0, 0, 0, .3);
+  text-shadow: 1px 2px 0px var(--bg-primary), 2px 3px 3px var(--text-secondary);
 }
 
 .journey-name-input {
@@ -3726,6 +3714,11 @@ hr {
 /* Controls row sits flush in the action bar - no bottom margin */
 .sticky-action-bar .dice-roller-panel .dice-roller-controls {
   margin-bottom: 0;
+}
+
+/* Restore dice control button's own padding — .sticky-action-bar button overrides it otherwise */
+.sticky-action-bar .dice-control-btn {
+  padding: 4px;
 }
 
 /* Expanded: wrapper pops above the action bar */

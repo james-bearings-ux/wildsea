@@ -504,15 +504,14 @@ async function render(reloadSession = false) {
     if (ship.mode === 'creation') {
       renderShipCreationMode(tempDiv, ship, gameData, activeShipTab, activeWizardStage);
     } else if (ship.mode === 'play') {
-      renderShipPlayMode(tempDiv, ship, gameData, journeyEditMode, currentUserRole);
+      renderShipPlayMode(tempDiv, ship, gameData, journeyEditMode, currentUserRole, session?.diceRolls || [], showDiceResults);
     } else if (ship.mode === 'upgrade') {
       renderShipUpgradeMode(tempDiv, ship, gameData);
     }
 
     // Combine navigation and content
-    // Hide dice roller on ship creation mode (drydock)
-    const diceRollerHtml = ship.mode === 'creation' ? '' : renderDiceRoller(session?.diceRolls || [], showDiceResults, currentUserRole);
-    app.innerHTML = presenceBarHtml + navHtml + tempDiv.innerHTML + diceRollerHtml;
+    // Ship play mode includes the dice roller inside its action bar; hide it on all other ship modes
+    app.innerHTML = presenceBarHtml + navHtml + tempDiv.innerHTML;
     return;
   }
 
