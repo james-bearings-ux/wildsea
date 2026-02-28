@@ -162,23 +162,11 @@ The `character` object contains:
 
 ### Key Game Mechanics
 
-**Creation Mode Budgets** (defined in `BUDGETS` constant):
-- 4 aspects (from bloodline, origin, and post)
-- 3 edges (from 7 available)
-- 8 points total for skills and languages (Low Sour language starts at 3)
-- Skills and languages max at rank 2 during creation
+For full game rules (budgets, aspects, skills, damage types, ship mechanics, etc.) see **[GAME-RULES.md](./GAME-RULES.md)**.
 
-**Aspect System**:
-- Each aspect has a track size (2-5 boxes)
-- In play mode: boxes cycle through 3 states: default → marked → burned
-- In advancement mode: tracks can be expanded from base size up to 5
+Implementation notes:
 - Aspect IDs are constructed as `${source}-${name}` where source is the bloodline/origin/post
-
-**Skills & Languages**:
-- 17 skills total
-- 9 languages total (Low Sour is default at rank 3)
-- Ranks: 0-2 in creation mode, 0-3 in play/advancement modes
-- Low Sour cannot be modified in creation mode
+- Creation budgets are defined in the `BUDGETS` constant in `js/state/character.js`
 
 **Dice Roller (Multiplayer Feature)**:
 - Real-time multiplayer d6 pool rolling system
@@ -211,21 +199,9 @@ The `character` object contains:
 - Randomness: Uses `Math.random()` for dice generation (same approach as public dice APIs)
 
 **Faction Reputation (Ship Feature)**:
-- Tracks relationships between the crew and various factions in the world
 - Only visible in ship play mode (not during creation or drydock/upgrade modes)
 - DM-only editing: players see read-only faction names and reputation aliases
-- Reputation scale: -3 to +3 integer values, plus null for Unknown
-- Scale aliases (highest to lowest):
-  | Value | Alias |
-  |-------|-------|
-  | +3 | Family |
-  | +2 | Friends |
-  | +1 | Favored |
-  | 0 | Neutral |
-  | -1 | Dislike |
-  | -2 | Attack on Sight |
-  | -3 | Nemesis |
-  | null | Unknown |
+- Reputation scale: -3 to +3 integers plus null (Unknown) — see GAME-RULES.md for the alias table
 - Faction data structure: `{ id, name, reputation }`
 - Stored in `ship.factions` array (JSONB in database)
 - UI by role:
@@ -365,6 +341,17 @@ The aspects.json file is very large (3091 lines). When working with aspects:
 - Track box states: `.default`, `.marked`, `.burned`, `.new` (for advancement)
 - Print stylesheet: `print.css` hides interactive UI elements (presence bar, navigation, action bar, dice roller)
 
+### Theming
+
+The app supports **light** and **dark** themes:
+- Theme files: `css/light-mode.css` and `css/dark-mode.css`
+- Applied via `data-theme="light"` or `data-theme="dark"` attribute on `<html>`
+- All colors use CSS custom properties (e.g. `--bg-primary`, `--text-primary`, `--border-primary`)
+- Theme persisted in `localStorage` under the key `'theme'`; defaults to `'light'`
+- Toggle handled by the `toggleTheme` action in `main.js` event delegation; UI toggle is in `presence-bar.js`
+- **Inline SVG icons** use `currentColor` so they adapt automatically to the theme
+- **External SVG images** (e.g. `<img src="...svg">`) must use explicit colors; use white/light fills for icons on dark button backgrounds
+
 ## Common Development Patterns
 
 **Adding new character properties:**
@@ -391,6 +378,23 @@ The aspects.json file is very large (3091 lines). When working with aspects:
 - Import only what you need from each module
 - Avoid circular dependencies (pass functions as parameters if needed)
 - Components return HTML strings, state modules mutate data
+
+## Documentation
+
+Keep `CLAUDE.md` up to date as the codebase evolves. Update it proactively when making changes — don't wait to be asked.
+
+**Update CLAUDE.md when:**
+- Adding new components, utilities, or modules (add to File Organization and relevant architecture sections)
+- Changing data structures (character, ship, session, etc.)
+- Adding new features with their own patterns or conventions (e.g. new role-based behaviors, new UI interaction patterns)
+- Changing the theming system, build setup, or authentication flow
+- Removing files or deprecated patterns (remove stale references)
+
+**Update GAME-RULES.md when:**
+- Game rule constants change (budgets, rank limits, track sizes, etc.)
+- New game mechanics are implemented (new resource types, new modes, etc.)
+
+Keep entries concise — CLAUDE.md is a reference, not a tutorial. Link to GAME-RULES.md for game rule details rather than duplicating them here.
 
 ## Character Escaping and XSS Prevention
 
