@@ -22,7 +22,8 @@
       "Bash(netstat:*)",
       "Bash(findstr:*)",
       "Bash(npx supabase db push:*)",
-      "Bash(mv:*)"
+      "Bash(mv:*)",
+      "Bash(git pull origin main)"
     ],
     "deny": [],
     "ask": []
