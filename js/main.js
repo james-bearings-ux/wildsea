@@ -1123,11 +1123,13 @@ function setupEventDelegation() {
                 if (parsedParams && parsedParams.id) {
                   const npcIdx = npcs.findIndex(n => n.id === parsedParams.id);
                   if (npcIdx !== -1) {
-                    npcs[npcIdx] = { ...npcs[npcIdx], revealed: !npcs[npcIdx].revealed };
-                    await supabase
+                    const newRevealed = !npcs[npcIdx].revealed;
+                    npcs[npcIdx] = { ...npcs[npcIdx], revealed: newRevealed };
+                    const { error: revealError } = await supabase
                       .from('npcs')
-                      .update({ revealed: npcs[npcIdx].revealed })
+                      .update({ revealed: newRevealed })
                       .eq('id', parsedParams.id);
+                    if (revealError) console.error('[NPC] toggleNPCRevealed failed:', revealError);
                     await render();
                   }
                 }
@@ -1137,8 +1139,10 @@ function setupEventDelegation() {
                 // Delete an NPC from Supabase and local cache
                 // Params: { id: npcId }
                 if (parsedParams && parsedParams.id) {
-                  npcs = npcs.filter(n => n.id !== parsedParams.id);
-                  await supabase.from('npcs').delete().eq('id', parsedParams.id);
+                  const deleteId = parsedParams.id;
+                  npcs = npcs.filter(n => n.id !== deleteId);
+                  const { error: deleteError } = await supabase.from('npcs').delete().eq('id', deleteId);
+                  if (deleteError) console.error('[NPC] deleteNPC failed:', deleteError);
                   await render();
                 }
                 break;
@@ -1881,17 +1885,22 @@ function setupEventDelegation() {
           // Update a text/select field on an NPC (DM only)
           // Params: { id: npcId, field: fieldName }
           if (parsedParams && parsedParams.id && parsedParams.field) {
-            const npcIdx = npcs.findIndex(n => n.id === parsedParams.id);
+            const npcId = parsedParams.id;
+            const npcField = parsedParams.field;
+            const npcValue = target.value; // Capture immediately before any async/debounce
+            const npcIdx = npcs.findIndex(n => n.id === npcId);
             if (npcIdx !== -1) {
-              npcs[npcIdx] = { ...npcs[npcIdx], [parsedParams.field]: target.value };
+              npcs[npcIdx] = { ...npcs[npcIdx], [npcField]: npcValue };
               // Debounce Supabase update for text fields; immediate for select (status)
-              const debounceKey = `npc-${parsedParams.id}-${parsedParams.field}`;
+              const debounceDelay = target.tagName === 'SELECT' ? 0 : 600;
+              const debounceKey = `npc-${npcId}-${npcField}`;
               debounce(debounceKey, async () => {
-                await supabase
+                const { error: fieldError } = await supabase
                   .from('npcs')
-                  .update({ [parsedParams.field]: target.value })
-                  .eq('id', parsedParams.id);
-              }, target.tagName === 'SELECT' ? 0 : 600);
+                  .update({ [npcField]: npcValue })
+                  .eq('id', npcId);
+                if (fieldError) console.error('[NPC] updateNPCField failed:', npcField, fieldError);
+              }, debounceDelay);
             }
           }
           return;
