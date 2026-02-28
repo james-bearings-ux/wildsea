@@ -1890,7 +1890,6 @@ function setupEventDelegation() {
             const npcField = parsedParams.field;
             const npcValue = target.value; // Capture immediately before any async/debounce
             const npcIdx = npcs.findIndex(n => n.id === npcId);
-            console.log('[NPC] updateNPCField', { npcId, npcField, npcValue, found: npcIdx !== -1 });
             if (npcIdx !== -1) {
               npcs[npcIdx] = { ...npcs[npcIdx], [npcField]: npcValue };
               // Debounce Supabase update for text fields; immediate for select (status)
@@ -1902,7 +1901,6 @@ function setupEventDelegation() {
                   .update({ [npcField]: npcValue })
                   .eq('id', npcId);
                 if (fieldError) console.error('[NPC] updateNPCField failed:', npcField, fieldError);
-                else console.log('[NPC] updateNPCField saved:', npcField);
               }, debounceDelay);
             }
           }
