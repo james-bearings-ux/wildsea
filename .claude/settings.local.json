@@ -21,7 +21,8 @@
       "Bash(ls:*)",
       "Bash(netstat:*)",
       "Bash(findstr:*)",
-      "Bash(npx supabase db push:*)"
+      "Bash(npx supabase db push:*)",
+      "Bash(mv:*)"
     ],
     "deny": [],
     "ask": []
