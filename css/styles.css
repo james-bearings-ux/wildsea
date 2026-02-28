@@ -666,7 +666,17 @@ hr {
 }
 
 .sticky-action-bar button {
-	padding: 8px 10px;
+	padding: 0px 10px;
+  min-height: 44px;
+  min-width: 44px;
+}
+
+.sticky-action-bar button.btn-icon-only {
+  padding: 0px;
+
+  svg, img {
+    opacity: 0.6;
+  }
 }
 
 .font-teko {
@@ -2745,14 +2755,14 @@ hr {
 }
 
 /* Role Selector - Mobile Button */
-.role-selector-mobile-btn {
+.sticky-action-bar button.role-selector-mobile-btn {
   display: none; /* Hidden on desktop */
   width: 38px;
   height: 38px;
-  padding: 0;
+  padding: 2px;
   border-radius: 4px;
   background: var(--role-selector-bg);
-  border: none;
+  border: 2px solid var(--border-secondary);
   color: var(--journey-text);
   cursor: pointer;
   align-items: center;
@@ -3039,7 +3049,7 @@ hr {
   }
 
   /* Role selector: show mobile button, hide desktop selector */
-  .role-selector-mobile-btn {
+  .sticky-action-bar button.role-selector-mobile-btn {
     display: flex;
   }
 
@@ -3481,7 +3491,7 @@ hr {
   padding: 4px;
   background: var(--bg-secondary);
   color: var(--text-primary);
-  border: 2px solid transparent;
+  border: 2px solid var(--border-secondary);
   border-radius: 4px;
   cursor: pointer;
   font-size: 16px;
@@ -3718,7 +3728,7 @@ hr {
 
 /* Restore dice control button's own padding — .sticky-action-bar button overrides it otherwise */
 .sticky-action-bar .dice-control-btn {
-  padding: 4px;
+  padding: 2px;
 }
 
 /* Expanded: wrapper pops above the action bar */
