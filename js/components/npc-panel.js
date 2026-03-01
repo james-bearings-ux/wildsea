@@ -9,6 +9,25 @@ import { escapeHtmlAttr, escapeHtmlContent, createDataParams } from '../utils/es
 
 const STATUS_OPTIONS = ['alive', 'dead', 'missing', 'unknown'];
 
+const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
+
+/**
+ * Returns true if the NPC was first seen (or created) within the past 30 days.
+ * first_seen is a text date string from the sync; falls back to created_at for manual adds.
+ */
+function isNewNPC(npc) {
+  const cutoff = Date.now() - THIRTY_DAYS_MS;
+  if (npc.first_seen) {
+    const d = Date.parse(npc.first_seen);
+    if (!isNaN(d)) return d >= cutoff;
+  }
+  if (npc.created_at) {
+    const d = Date.parse(npc.created_at);
+    if (!isNaN(d)) return d >= cutoff;
+  }
+  return false;
+}
+
 const STATUS_LABELS = {
   alive: 'Alive',
   dead: 'Dead',
@@ -58,12 +77,15 @@ export function renderNPCPanel(npcs, userRole, { sortBy = 'name', sortDir = 'asc
 
   let html = '<div class="npc-panel">';
 
-  // Header: search bar + count
+  // Header: search bar + count + add button (DM only)
   html += '<div class="npc-panel-header">';
   html += `<input type="text" class="npc-search" placeholder="Search NPCs…" value="${escapeHtmlAttr(search)}" data-action="searchNPCs" aria-label="Search NPCs">`;
   html += `<span class="npc-count">${filtered.length} NPC${filtered.length !== 1 ? 's' : ''}`;
   if (search) html += ` matching "${escapeHtmlContent(search)}"`;
   html += '</span>';
+  if (isDM) {
+    html += '<button class="btn-secondary npc-add-btn" data-action="addNPC">+ Add NPC</button>';
+  }
   html += '</div>';
 
   if (npcs.length === 0) {
@@ -116,10 +138,11 @@ export function renderNPCPanel(npcs, userRole, { sortBy = 'name', sortDir = 'asc
     }
 
     // Name
+    const newBadge = isNewNPC(npc) ? '<span class="npc-new-badge">NEW</span>' : '';
     if (isDM) {
-      html += `<td class="npc-td npc-td-name"><input type="text" class="npc-input" value="${escapeHtmlAttr(npc.name || '')}" placeholder="Name" data-action="updateNPCField" ${createDataParams({ id: npc.id, field: 'name' })}></td>`;
+      html += `<td class="npc-td npc-td-name"><div class="npc-name-cell"><input type="text" class="npc-input" value="${escapeHtmlAttr(npc.name || '')}" placeholder="Name" data-action="updateNPCField" ${createDataParams({ id: npc.id, field: 'name' })}>${newBadge}</div></td>`;
     } else {
-      html += `<td class="npc-td npc-td-name">${escapeHtmlContent(npc.name || '')}</td>`;
+      html += `<td class="npc-td npc-td-name">${escapeHtmlContent(npc.name || '')}${newBadge}</td>`;
     }
 
     // Location

@@ -1136,6 +1136,30 @@ function setupEventDelegation() {
                 }
                 break;
 
+              case 'addNPC': {
+                // Insert a new blank NPC row (DM only)
+                // Pick a unique placeholder name against the in-memory cache
+                let newNPCName = 'New NPC';
+                let nameCounter = 1;
+                while (npcs.some(n => (n.name || '').toLowerCase() === newNPCName.toLowerCase())) {
+                  nameCounter++;
+                  newNPCName = `New NPC ${nameCounter}`;
+                }
+                const { data: insertedNPC, error: insertError } = await supabase
+                  .from('npcs')
+                  .insert({ name: newNPCName, status: 'unknown', revealed: false })
+                  .select()
+                  .single();
+                if (insertError) {
+                  console.error('[NPC] addNPC failed:', insertError);
+                } else {
+                  npcs.push(insertedNPC);
+                  npcsLoadedAt = Date.now();
+                }
+                await render();
+                break;
+              }
+
               case 'deleteNPC':
                 // Delete an NPC from Supabase and local cache
                 // Params: { id: npcId }
