@@ -211,6 +211,23 @@ Implementation notes:
 - Component: `js/components/ship-factions.js`
 - State mutations: `addFaction()`, `updateFactionName()`, `updateFactionReputation()`, `removeFaction()` in `js/state/ship.js`
 
+**NPC Panel (DM Screen)**:
+- Accessible via the NPCs tab on the DM screen (tab bar: Dashboard | NPCs)
+- Single role-aware component: `js/components/npc-panel.js`
+- DM view: inline editable table (name, location, faction, status dropdown, description textarea), eye toggle to reveal/hide from players, delete button, Add NPC button
+- Player view: read-only table showing only revealed NPCs, with status badges
+- NPC data structure: `{ id, name, location, faction, status, description, first_seen, last_seen, revealed, source_page_ids, created_at }`
+- Stored in the `npcs` Supabase table (not per-session — shared across the campaign)
+- `status` values: `alive | dead | missing | unknown`
+- `revealed`: false = DM only, true = visible to players (RLS-enforced)
+- **NEW badge**: NPCs whose `first_seen` (or `created_at` for manual adds) is within the past 30 days get a teal NEW badge inline after their name. Recalculated on every render.
+- **Manual add**: DMs can click "+ Add NPC" to insert a blank row directly. Name defaults to "New NPC" (auto-increments if that name exists). All fields editable inline after creation.
+- **Notion sync**: automated weekly sync via `scripts/npc-sync.js` + GitHub Actions (`.github/workflows/npc-sync.yml`). Two-pass extraction: explicit `(NPC)` tags first, then Claude inference from session notes. `revealed` is sticky — sync never auto-hides a revealed NPC.
+- NPC state in `main.js`: `npcs`, `npcsLoadedAt`, `NPCS_CACHE_TTL` (60s), `npcSortBy`, `npcSortDir`, `npcSearch`
+- Click actions: `switchDMTab`, `toggleNPCRevealed`, `addNPC`, `deleteNPC`, `sortNPCTable`
+- Change/input actions: `updateNPCField` (600ms debounce for text, immediate for select), `searchNPCs` (200ms debounce)
+- RLS: all four NPC policies use `get_user_role(auth.email()) = 'dm'` (SECURITY DEFINER) — do not use raw `EXISTS` subqueries against `email_whitelist` as that table's own RLS blocks them
+
 ### Character Abstract Images
 
 Each character gets a unique, deterministic abstract image generated from their name. The image is used as a decorative header in play mode, advancement mode, and the DM screen.
