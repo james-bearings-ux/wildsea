@@ -1168,6 +1168,12 @@ hr {
   font-weight: 600;
 }
 
+.nav-button-stacked {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 .nav-button-minor {
   font-size: 16px;
   letter-spacing: 0.5px;
@@ -3064,7 +3070,7 @@ hr {
 
 .dm-screen-container {
   padding: 40px 80px;
-  max-width: 1200px;
+  max-width: 900px;
   margin: 0 auto;
 }
 
@@ -3105,7 +3111,7 @@ hr {
 .dm-ship-static {
   border-bottom: 2px solid var(--dm-border);
   border-radius: 0;
-  padding: 14px 0 16px 32px;
+  padding: 14px 10px 16px 42px;
 }
 
 .dm-ship-static .dm-header-content {
@@ -3128,7 +3134,7 @@ hr {
 }
 
 .dm-accordion-header:hover {
-  border: 2px solid var(--border-primary);
+  border: 2px solid var(--dm-health-bar-border);
 }
 
 .dm-header-content {
@@ -3228,7 +3234,7 @@ hr {
 }
 
 .dm-accordion-body {
-  padding: 20px 0 20px 32px;
+  padding: 20px 10px 20px 42px;
   background: var(--dm-bg);
   border-top: 1px solid var(--border-tertiary);
 }
@@ -3250,57 +3256,6 @@ hr {
   min-width: 0;
 }
 
-/* Mobile responsiveness for DM screen */
-@media (max-width: 768px) {
-  .dm-screen-container {
-    padding: 20px;
-  }
-
-  .dm-screen-title {
-    font-size: 36px;
-  }
-
-  .dm-header-content {
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-
-  /* Hide character abstract image on mobile */
-  .character-abstract-image {
-    display: none;
-  }
-
-  .dm-ship-static {
-    padding: 12px 0 12px;
-  }
-
-  .dm-name-section {
-    min-width:200px;
-  }
-
-  .dm-name {
-    font-size: 30px;
-  }
-
-  .dm-health {
-    font-size: 20px;
-    margin-left: 20px;
-  }
-
-  .dm-mire-indicator {
-    font-size: 12px;
-    padding: 3px 8px;
-  }
-
-  .dm-accordion-header {
-    padding: 20px 10px 12px;
-  }
-
-  .dm-character-columns {
-    grid-template-columns: 1fr;
-    gap: 16px;
-  }
-}
 
 /* ===========================
    DM SCREEN OUTER + TABS
@@ -3342,7 +3297,7 @@ hr {
 }
 
 .dm-npcs-container {
-  padding: 40px 60px;
+  padding: 40px 80px;
 }
 
 /* ===========================
@@ -3455,6 +3410,7 @@ hr {
 
 .npc-th-description {
   width: 35%;
+  min-width: 250px;
 }
 
 .npc-th-actions {
@@ -3617,6 +3573,54 @@ hr {
 .npc-status-unknown {
   background: var(--bg-tertiary);
   color: var(--text-muted);
+}
+
+
+/* Mobile responsiveness for DM screen */
+@media (max-width: 768px) {
+  .dm-screen-container, .dm-npcs-container {
+    padding: 20px;
+  }
+
+  .dm-screen-title {
+    font-size: 36px;
+  }
+
+  .dm-header-content {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .dm-ship-static {
+    padding: 12px 0 12px;
+  }
+
+  .dm-name-section {
+    min-width:200px;
+  }
+
+  .dm-name {
+    font-size: 30px;
+  }
+
+  .dm-health {
+    font-size: 20px;
+    margin-left: 20px;
+  }
+
+  .dm-mire-indicator {
+    font-size: 12px;
+    padding: 3px 8px;
+  }
+
+  .dm-accordion-header {
+    padding: 20px 10px 12px;
+  }
+
+  .dm-character-columns {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
 }
 
 /* ===========================

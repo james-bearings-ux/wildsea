@@ -31,7 +31,8 @@ export async function renderNavigation(session) {
     const journeyActive = ship && ship.journey && ship.journey.active;
     const journeyName = ship && ship.journey ? ship.journey.name : '';
 
-    html += '<button data-action="switchToShip" class="nav-button ' + activeClass + '" style="display: flex; flex-direction: column; align-items: center;">';
+    const shipStackedClass = journeyActive ? ' nav-button-stacked' : '';
+    html += '<button data-action="switchToShip" class="nav-button ' + activeClass + shipStackedClass + '">';
     html += '<div>' + (ship ? (ship.name || 'Ship') : 'Ship') + '</div>';
     if (journeyActive && journeyName) {
       html += '<div class="nav-journey-subtitle">' + journeyName + '</div>';
@@ -68,8 +69,9 @@ export async function renderNavigation(session) {
           ? character.journeyRole.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')
           : '';
 
+        const charStackedClass = journeyActive ? ' nav-button-stacked' : '';
         html += '<button data-action="switchCharacter" data-params=\'{"characterId":"' + charId + '"}\' ';
-        html += 'class="nav-button nav-char-inline ' + activeClass + '" style="display: flex; flex-direction: column; align-items: center;">';
+        html += 'class="nav-button nav-char-inline ' + activeClass + charStackedClass + '">';
         html += '<div>' + escapeHtmlContent(character.name || 'Unnamed Character') + '</div>';
         if (journeyActive && roleDisplay) {
           html += '<div class="nav-role-subtitle">' + escapeHtmlContent(roleDisplay) + '</div>';

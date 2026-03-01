@@ -23,7 +23,14 @@
       "Bash(findstr:*)",
       "Bash(npx supabase db push:*)",
       "Bash(mv:*)",
-      "Bash(git pull origin main)"
+      "Bash(git pull origin main)",
+      "WebSearch",
+      "Bash(grep:*)",
+      "Bash(node:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(npx vite:*)",
+      "Bash(git:*)"
     ],
     "deny": [],
     "ask": []
