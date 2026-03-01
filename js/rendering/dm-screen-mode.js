@@ -8,6 +8,7 @@ import { loadShip } from '../state/ship.js';
 import { loadCharacter } from '../state/character.js';
 import { loadCharacterCached, loadShipCached } from '../cache/supabase-cache.js';
 import { generateCharacterGradient } from '../utils/character-image.js';
+import { renderNPCPanel } from '../components/npc-panel.js';
 
 /**
  * Render read-only drives for DM screen
@@ -105,43 +106,65 @@ function renderTasksReadOnly(character) {
 }
 
 /**
- * Render DM screen with ship and character summaries
+ * Render DM screen with tabs: Dashboard and NPCs
  * @param {Object} session - Current session object
  * @param {string|null} expandedAccordion - ID of expanded accordion (null if all collapsed)
+ * @param {string} activeDMTab - Active tab: 'dashboard' | 'npcs'
+ * @param {Array} npcs - NPC data from Supabase
+ * @param {string} userRole - Current user's role ('dm' or 'player')
+ * @param {Object} npcState - { sortBy, sortDir, search }
  * @returns {Promise<string>} HTML string
  */
-export async function renderDMScreen(session, expandedAccordion = null) {
-  let html = '<div class="dm-screen-container">';
+export async function renderDMScreen(session, expandedAccordion = null, activeDMTab = 'dashboard', npcs = [], userRole = 'player', npcState = {}) {
+  let html = '<div class="dm-screen-outer">';
 
-  html += '<h1 class="dm-screen-title">DM Screen</h1>';
-
-  // Ship summary row
-  if (session.activeShipId) {
-    const ship = await loadShipCached(session.activeShipId, loadShip);
-    if (ship) {
-      html += renderShipSummary(ship);
-    }
-  } else {
-    html += '<div class="dm-row dm-row-empty">';
-    html += '<div class="dm-summary">No ship in session</div>';
-    html += '</div>';
-  }
-
-  // Character summary rows
-  if (session.activeCharacterIds && session.activeCharacterIds.length > 0) {
-    for (const charId of session.activeCharacterIds) {
-      const character = await loadCharacterCached(charId, loadCharacter);
-      if (character) {
-        html += renderCharacterSummary(character, expandedAccordion === charId);
-      }
-    }
-  } else {
-    html += '<div class="dm-row dm-row-empty">';
-    html += '<div class="dm-summary">No characters in session</div>';
-    html += '</div>';
-  }
-
+  // Tab bar
+  html += '<div class="dm-tabs">';
+  html += `<button class="dm-tab${activeDMTab === 'dashboard' ? ' dm-tab-active' : ''}" data-action="switchDMTab" data-params='{"tab":"dashboard"}'>Dashboard</button>`;
+  html += `<button class="dm-tab${activeDMTab === 'npcs' ? ' dm-tab-active' : ''}" data-action="switchDMTab" data-params='{"tab":"npcs"}'>NPCs</button>`;
   html += '</div>';
+
+  if (activeDMTab === 'npcs') {
+    // NPCs tab — full-width content area
+    html += '<div class="dm-npcs-container">';
+    html += '<h1 class="dm-screen-title">NPCs</h1>';
+    html += renderNPCPanel(npcs, userRole, npcState);
+    html += '</div>';
+  } else {
+    // Dashboard tab — constrained-width, existing content
+    html += '<div class="dm-screen-container">';
+    html += '<h1 class="dm-screen-title">DM Screen</h1>';
+
+    // Ship summary row
+    if (session.activeShipId) {
+      const ship = await loadShipCached(session.activeShipId, loadShip);
+      if (ship) {
+        html += renderShipSummary(ship);
+      }
+    } else {
+      html += '<div class="dm-row dm-row-empty">';
+      html += '<div class="dm-summary">No ship in session</div>';
+      html += '</div>';
+    }
+
+    // Character summary rows
+    if (session.activeCharacterIds && session.activeCharacterIds.length > 0) {
+      for (const charId of session.activeCharacterIds) {
+        const character = await loadCharacterCached(charId, loadCharacter);
+        if (character) {
+          html += renderCharacterSummary(character, expandedAccordion === charId);
+        }
+      }
+    } else {
+      html += '<div class="dm-row dm-row-empty">';
+      html += '<div class="dm-summary">No characters in session</div>';
+      html += '</div>';
+    }
+
+    html += '</div>'; // dm-screen-container
+  }
+
+  html += '</div>'; // dm-screen-outer
 
   return html;
 }

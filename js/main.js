@@ -159,6 +159,13 @@ let loginEmail = ''; // Store email for check-email screen
 let loginMessage = ''; // Status message for login screen
 let dirtySections = new Set(); // Track which sections need re-rendering
 let expandedDMAccordion = null; // Track which DM screen accordion is expanded (ship id or character id or null)
+let activeDMTab = 'dashboard'; // Active DM screen tab: 'dashboard' | 'npcs'
+let npcs = []; // Cached NPC data (loaded from Supabase when DM screen is shown)
+let npcsLoadedAt = 0; // Timestamp when npcs was last loaded
+const NPCS_CACHE_TTL = 60000; // 60 seconds before refreshing NPC list
+let npcSortBy = 'name'; // NPC table sort column
+let npcSortDir = 'asc'; // NPC table sort direction
+let npcSearch = ''; // NPC search query
 
 // Debounce timers for text inputs
 const debounceTimers = new Map();
@@ -478,7 +485,21 @@ async function render(reloadSession = false) {
 
   // Check if we're viewing the DM screen
   if (session.activeView === 'dm-screen') {
-    const dmScreenHtml = await renderDMScreen(session, expandedDMAccordion);
+    // Load NPCs if cache is stale
+    const now = Date.now();
+    if (now - npcsLoadedAt > NPCS_CACHE_TTL) {
+      const { data: npcData } = await supabase.from('npcs').select('*').order('name');
+      npcs = npcData || [];
+      npcsLoadedAt = now;
+    }
+    const dmScreenHtml = await renderDMScreen(
+      session,
+      expandedDMAccordion,
+      activeDMTab,
+      npcs,
+      currentUserRole,
+      { sortBy: npcSortBy, sortDir: npcSortDir, search: npcSearch }
+    );
     // Always show dice roller on DM screen
     const diceRollerHtml = renderDiceRoller(session?.diceRolls || [], showDiceResults, currentUserRole);
     app.innerHTML = presenceBarHtml + navHtml + dmScreenHtml + diceRollerHtml;
@@ -1081,6 +1102,62 @@ function setupEventDelegation() {
                 if (parsedParams && parsedParams.id) {
                   // Toggle accordion: if already expanded, collapse it; otherwise expand it
                   expandedDMAccordion = expandedDMAccordion === parsedParams.id ? null : parsedParams.id;
+                  await render();
+                }
+                break;
+
+              case 'switchDMTab':
+                // Switch active DM screen tab
+                // Params: { tab: 'dashboard' | 'npcs' }
+                if (parsedParams && parsedParams.tab) {
+                  activeDMTab = parsedParams.tab;
+                  // Do NOT reset npcsLoadedAt here — the 60s TTL cache preserves
+                  // in-memory optimistic updates across tab switches. Resetting here
+                  // would cause a Supabase reload that races with pending debounced saves.
+                  await render();
+                }
+                break;
+
+              case 'toggleNPCRevealed':
+                // Toggle the revealed flag on an NPC
+                // Params: { id: npcId }
+                if (parsedParams && parsedParams.id) {
+                  const npcIdx = npcs.findIndex(n => n.id === parsedParams.id);
+                  if (npcIdx !== -1) {
+                    const newRevealed = !npcs[npcIdx].revealed;
+                    npcs[npcIdx] = { ...npcs[npcIdx], revealed: newRevealed };
+                    const { error: revealError } = await supabase
+                      .from('npcs')
+                      .update({ revealed: newRevealed })
+                      .eq('id', parsedParams.id);
+                    if (revealError) console.error('[NPC] toggleNPCRevealed failed:', revealError);
+                    await render();
+                  }
+                }
+                break;
+
+              case 'deleteNPC':
+                // Delete an NPC from Supabase and local cache
+                // Params: { id: npcId }
+                if (parsedParams && parsedParams.id) {
+                  const deleteId = parsedParams.id;
+                  npcs = npcs.filter(n => n.id !== deleteId);
+                  const { error: deleteError } = await supabase.from('npcs').delete().eq('id', deleteId);
+                  if (deleteError) console.error('[NPC] deleteNPC failed:', deleteError);
+                  await render();
+                }
+                break;
+
+              case 'sortNPCTable':
+                // Change NPC table sort column/direction
+                // Params: { field: columnName }
+                if (parsedParams && parsedParams.field) {
+                  if (npcSortBy === parsedParams.field) {
+                    npcSortDir = npcSortDir === 'asc' ? 'desc' : 'asc';
+                  } else {
+                    npcSortBy = parsedParams.field;
+                    npcSortDir = 'asc';
+                  }
                   await render();
                 }
                 break;
@@ -1805,6 +1882,31 @@ function setupEventDelegation() {
           return;
         }
 
+        if (action === 'updateNPCField') {
+          // Update a text/select field on an NPC (DM only)
+          // Params: { id: npcId, field: fieldName }
+          if (parsedParams && parsedParams.id && parsedParams.field) {
+            const npcId = parsedParams.id;
+            const npcField = parsedParams.field;
+            const npcValue = target.value; // Capture immediately before any async/debounce
+            const npcIdx = npcs.findIndex(n => n.id === npcId);
+            if (npcIdx !== -1) {
+              npcs[npcIdx] = { ...npcs[npcIdx], [npcField]: npcValue };
+              // Debounce Supabase update for text fields; immediate for select (status)
+              const debounceDelay = target.tagName === 'SELECT' ? 0 : 600;
+              const debounceKey = `npc-${npcId}-${npcField}`;
+              debounce(debounceKey, async () => {
+                const { error: fieldError } = await supabase
+                  .from('npcs')
+                  .update({ [npcField]: npcValue })
+                  .eq('id', npcId);
+                if (fieldError) console.error('[NPC] updateNPCField failed:', npcField, fieldError);
+              }, debounceDelay);
+            }
+          }
+          return;
+        }
+
         if (action === 'updateFactionName') {
           // Update faction name text input
           // Params: { id: factionId }
@@ -2016,6 +2118,15 @@ function setupEventDelegation() {
   // Input event delegation for live character count updates and search
   app.addEventListener('input', function (e) {
     const target = e.target;
+
+    // Handle NPC search input (live filtering)
+    if (target.getAttribute('data-action') === 'searchNPCs') {
+      npcSearch = target.value;
+      debounce('npc-search', async () => {
+        await render();
+      }, 200);
+      return;
+    }
 
     // Handle aspect search input
     if (target.id === 'aspect-search-input') {
