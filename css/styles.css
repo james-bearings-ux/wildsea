@@ -99,6 +99,14 @@ button {
   color: var(--text-primary);
 }
 
+strong {
+  font-weight: bold;
+}
+
+ul li, ol li {
+  margin-bottom: 8px;
+}
+
 /* 
 button:hover:not(:disabled) {
 	background: var(--bg-hover);
@@ -2246,6 +2254,16 @@ hr {
   margin-bottom: 12px;
 }
 
+.advancement-instructions {
+  display: flex;
+  gap: 40px;
+  padding: 20px 0;
+}
+
+.advancement-column {
+  
+}
+
 /* Reset section-header margin when inside the flex header row */
 .advancement-aspects-header .section-header {
   margin: 0;
@@ -3296,8 +3314,15 @@ hr {
   border-bottom-color: var(--accent);
 }
 
-.dm-npcs-container {
+.dm-npcs-container,
+.dm-resources-container {
   padding: 40px 80px;
+}
+
+.res-empty {
+  color: var(--text-secondary);
+  font-style: italic;
+  padding: 16px 0;
 }
 
 /* ===========================
@@ -3432,7 +3457,6 @@ hr {
 
 .npc-td-name {
   font-weight: 500;
-  white-space: nowrap;
 }
 
 .npc-td-status {
@@ -3578,7 +3602,7 @@ hr {
 
 /* Mobile responsiveness for DM screen */
 @media (max-width: 768px) {
-  .dm-screen-container, .dm-npcs-container {
+  .dm-screen-container, .dm-npcs-container, .dm-resources-container {
     padding: 20px;
   }
 

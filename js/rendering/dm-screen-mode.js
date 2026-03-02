@@ -9,6 +9,7 @@ import { loadCharacter } from '../state/character.js';
 import { loadCharacterCached, loadShipCached } from '../cache/supabase-cache.js';
 import { generateCharacterGradient } from '../utils/character-image.js';
 import { renderNPCPanel } from '../components/npc-panel.js';
+import { renderResourcesPanel } from '../components/resources-panel.js';
 
 /**
  * Render read-only drives for DM screen
@@ -109,19 +110,21 @@ function renderTasksReadOnly(character) {
  * Render DM screen with tabs: Dashboard and NPCs
  * @param {Object} session - Current session object
  * @param {string|null} expandedAccordion - ID of expanded accordion (null if all collapsed)
- * @param {string} activeDMTab - Active tab: 'dashboard' | 'npcs'
+ * @param {string} activeDMTab - Active tab: 'dashboard' | 'npcs' | 'resources'
  * @param {Array} npcs - NPC data from Supabase
  * @param {string} userRole - Current user's role ('dm' or 'player')
  * @param {Object} npcState - { sortBy, sortDir, search }
+ * @param {Object} resourceState - { sortBy, sortDir }
  * @returns {Promise<string>} HTML string
  */
-export async function renderDMScreen(session, expandedAccordion = null, activeDMTab = 'dashboard', npcs = [], userRole = 'player', npcState = {}) {
+export async function renderDMScreen(session, expandedAccordion = null, activeDMTab = 'dashboard', npcs = [], userRole = 'player', npcState = {}, resourceState = {}) {
   let html = '<div class="dm-screen-outer">';
 
   // Tab bar
   html += '<div class="dm-tabs">';
   html += `<button class="dm-tab${activeDMTab === 'dashboard' ? ' dm-tab-active' : ''}" data-action="switchDMTab" data-params='{"tab":"dashboard"}'>Dashboard</button>`;
   html += `<button class="dm-tab${activeDMTab === 'npcs' ? ' dm-tab-active' : ''}" data-action="switchDMTab" data-params='{"tab":"npcs"}'>NPCs</button>`;
+  html += `<button class="dm-tab${activeDMTab === 'resources' ? ' dm-tab-active' : ''}" data-action="switchDMTab" data-params='{"tab":"resources"}'>Resources</button>`;
   html += '</div>';
 
   if (activeDMTab === 'npcs') {
@@ -129,6 +132,17 @@ export async function renderDMScreen(session, expandedAccordion = null, activeDM
     html += '<div class="dm-npcs-container">';
     html += '<h1 class="dm-screen-title">NPCs</h1>';
     html += renderNPCPanel(npcs, userRole, npcState);
+    html += '</div>';
+  } else if (activeDMTab === 'resources') {
+    // Resources tab — aggregated view of all character resources
+    const characters = [];
+    for (const charId of session.activeCharacterIds || []) {
+      const character = await loadCharacterCached(charId, loadCharacter);
+      if (character) characters.push(character);
+    }
+    html += '<div class="dm-resources-container">';
+    html += '<h1 class="dm-screen-title">Resources</h1>';
+    html += renderResourcesPanel(characters, resourceState.sortBy, resourceState.sortDir);
     html += '</div>';
   } else {
     // Dashboard tab — constrained-width, existing content

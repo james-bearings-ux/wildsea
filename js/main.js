@@ -159,13 +159,15 @@ let loginEmail = ''; // Store email for check-email screen
 let loginMessage = ''; // Status message for login screen
 let dirtySections = new Set(); // Track which sections need re-rendering
 let expandedDMAccordion = null; // Track which DM screen accordion is expanded (ship id or character id or null)
-let activeDMTab = 'dashboard'; // Active DM screen tab: 'dashboard' | 'npcs'
+let activeDMTab = 'dashboard'; // Active DM screen tab: 'dashboard' | 'npcs' | 'resources'
 let npcs = []; // Cached NPC data (loaded from Supabase when DM screen is shown)
 let npcsLoadedAt = 0; // Timestamp when npcs was last loaded
 const NPCS_CACHE_TTL = 60000; // 60 seconds before refreshing NPC list
 let npcSortBy = 'name'; // NPC table sort column
 let npcSortDir = 'asc'; // NPC table sort direction
 let npcSearch = ''; // NPC search query
+let resourceSortBy = 'character'; // Resources table sort column
+let resourceSortDir = 'asc'; // Resources table sort direction
 
 // Debounce timers for text inputs
 const debounceTimers = new Map();
@@ -498,7 +500,8 @@ async function render(reloadSession = false) {
       activeDMTab,
       npcs,
       currentUserRole,
-      { sortBy: npcSortBy, sortDir: npcSortDir, search: npcSearch }
+      { sortBy: npcSortBy, sortDir: npcSortDir, search: npcSearch },
+      { sortBy: resourceSortBy, sortDir: resourceSortDir }
     );
     // Always show dice roller on DM screen
     const diceRollerHtml = renderDiceRoller(session?.diceRolls || [], showDiceResults, currentUserRole);
@@ -1181,6 +1184,20 @@ function setupEventDelegation() {
                   } else {
                     npcSortBy = parsedParams.field;
                     npcSortDir = 'asc';
+                  }
+                  await render();
+                }
+                break;
+
+              case 'sortResourceTable':
+                // Change resources table sort column/direction
+                // Params: { col: columnName }
+                if (parsedParams && parsedParams.col) {
+                  if (resourceSortBy === parsedParams.col) {
+                    resourceSortDir = resourceSortDir === 'asc' ? 'desc' : 'asc';
+                  } else {
+                    resourceSortBy = parsedParams.col;
+                    resourceSortDir = 'asc';
                   }
                   await render();
                 }

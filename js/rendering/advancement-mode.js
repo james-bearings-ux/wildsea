@@ -180,6 +180,25 @@ export function renderAdvancementMode(app, character, gameData, showCustomizeMod
         ${renderAdvancementCharacterHeader(character)}
       </div>
 
+      <div>
+        <h1 class="dm-screen-title">Advancement</h1>
+        <p><strong>Using a task with a minor milestone marks 1 box, and using a task with a major milestone marks 3 boxes.</strong></p>
+        <div class="advancement-instructions">
+          <ul class="advancement-column">
+            <li><strong>3-Track Projects</strong></li>
+            <li>Add a box to an aspect’s track</li>
+            <li>Develop an aspect (often a balance of a new minor ability in return for 1 less box)</li>
+            <li>Gain a new skill rank</li>
+            <li>Gain a new language rank</li>
+          </ul>
+          <ul class="advancement-column">
+            <li><strong>6-Track Projects</strong></li>
+            <li>Gain a new aspect (limit: 7 total)</li>
+            <li>Combine two aspects (a way to make room for new aspects)</li>
+          </ul>
+        </div>
+      </div>
+
       <!-- Aspects Section: 3-column grid + "More" section for extra aspects -->
       <!-- Interactive track expansion with +/- buttons, customization and selection modals -->
       <div class="advancement-aspects">
