@@ -98,20 +98,15 @@ async function getPageContent(blockId, parentIsUnchecked = false) {
         }
       }
 
-      if (!isUnchecked) {
-        const line = blockToText(block);
-        if (line !== null) filteredLines.push(line);
+      // Always include block text in filteredLines (checked or unchecked) so
+      // Claude can describe hidden NPCs. Revealed status is tracked separately.
+      const line = blockToText(block);
+      if (line !== null) filteredLines.push(line);
 
-        if (block.has_children && block.type !== 'child_page') {
-          const child = await getPageContent(block.id, parentIsUnchecked);
-          filteredLines.push(...child.filteredLines);
-          child.revealedNPCNames.forEach(n => revealedNPCNames.add(n));
-          child.hiddenNPCNames.forEach(n => hiddenNPCNames.add(n));
-        }
-      } else if (block.has_children) {
-        // Unchecked — recurse only to collect (NPC) tags, not filtered text
-        const child = await getPageContent(block.id, true);
-        child.revealedNPCNames.forEach(n => hiddenNPCNames.add(n)); // demote to hidden
+      if (block.has_children && block.type !== 'child_page') {
+        const child = await getPageContent(block.id, parentIsUnchecked || isUnchecked);
+        filteredLines.push(...child.filteredLines);
+        child.revealedNPCNames.forEach(n => isUnchecked ? hiddenNPCNames.add(n) : revealedNPCNames.add(n));
         child.hiddenNPCNames.forEach(n => hiddenNPCNames.add(n));
       }
     }
@@ -330,24 +325,24 @@ async function upsertNPCs(npcs, pageId) {
   for (const npc of npcs) {
     if (!npc.name?.trim()) continue;
 
-    // Case-insensitive name lookup
+    // Case-insensitive name lookup — fetch all fields so we can preserve existing data
     const { data: existing } = await supabase
       .from('npcs')
-      .select('id, source_page_ids, first_seen')
+      .select('id, source_page_ids, first_seen, location, description, status, faction, last_seen, revealed')
       .ilike('name', npc.name.trim())
       .maybeSingle();
 
     if (existing) {
-      // Update existing — preserve revealed flag unless NPC has now been seen in play
+      // Only fill fields that are currently null — never overwrite existing data
       const sourceIds = existing.source_page_ids || [];
       if (!sourceIds.includes(pageId)) sourceIds.push(pageId);
 
       const update = {
-        location: npc.location || null,
-        description: npc.description || null,
-        status: npc.status || 'unknown',
-        faction: npc.faction || null,
-        last_seen: npc.last_seen || null,
+        location: existing.location || npc.location || null,
+        description: existing.description || npc.description || null,
+        status: existing.status || npc.status || 'unknown',
+        faction: existing.faction || npc.faction || null,
+        last_seen: existing.last_seen || npc.last_seen || null,
         source_page_ids: sourceIds,
       };
 
