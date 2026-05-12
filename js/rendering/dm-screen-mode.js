@@ -10,6 +10,7 @@ import { loadCharacterCached, loadShipCached } from '../cache/supabase-cache.js'
 import { generateCharacterGradient } from '../utils/character-image.js';
 import { renderNPCPanel } from '../components/npc-panel.js';
 import { renderResourcesPanel } from '../components/resources-panel.js';
+import { renderAspectsPanel } from '../components/aspects-panel.js';
 
 /**
  * Render read-only drives for DM screen
@@ -110,14 +111,15 @@ function renderTasksReadOnly(character) {
  * Render DM screen with tabs: Dashboard and NPCs
  * @param {Object} session - Current session object
  * @param {string|null} expandedAccordion - ID of expanded accordion (null if all collapsed)
- * @param {string} activeDMTab - Active tab: 'dashboard' | 'npcs' | 'resources'
+ * @param {string} activeDMTab - Active tab: 'dashboard' | 'npcs' | 'resources' | 'aspects'
  * @param {Array} npcs - NPC data from Supabase
  * @param {string} userRole - Current user's role ('dm' or 'player')
  * @param {Object} npcState - { sortBy, sortDir, search }
  * @param {Object} resourceState - { sortBy, sortDir }
+ * @param {Object} aspectState - { filters, sortBy, sortDir }
  * @returns {Promise<string>} HTML string
  */
-export async function renderDMScreen(session, expandedAccordion = null, activeDMTab = 'dashboard', npcs = [], userRole = 'player', npcState = {}, resourceState = {}) {
+export async function renderDMScreen(session, expandedAccordion = null, activeDMTab = 'dashboard', npcs = [], userRole = 'player', npcState = {}, resourceState = {}, aspectState = {}) {
   let html = '<div class="dm-screen-outer">';
 
   // Tab bar
@@ -125,6 +127,7 @@ export async function renderDMScreen(session, expandedAccordion = null, activeDM
   html += `<button class="dm-tab${activeDMTab === 'dashboard' ? ' dm-tab-active' : ''}" data-action="switchDMTab" data-params='{"tab":"dashboard"}'>Dashboard</button>`;
   html += `<button class="dm-tab${activeDMTab === 'npcs' ? ' dm-tab-active' : ''}" data-action="switchDMTab" data-params='{"tab":"npcs"}'>NPCs</button>`;
   html += `<button class="dm-tab${activeDMTab === 'resources' ? ' dm-tab-active' : ''}" data-action="switchDMTab" data-params='{"tab":"resources"}'>Resources</button>`;
+  html += `<button class="dm-tab${activeDMTab === 'aspects' ? ' dm-tab-active' : ''}" data-action="switchDMTab" data-params='{"tab":"aspects"}'>Aspects</button>`;
   html += '</div>';
 
   if (activeDMTab === 'npcs') {
@@ -143,6 +146,12 @@ export async function renderDMScreen(session, expandedAccordion = null, activeDM
     html += '<div class="dm-resources-container">';
     html += '<h1 class="dm-screen-title">Resources</h1>';
     html += renderResourcesPanel(characters, resourceState.sortBy, resourceState.sortDir);
+    html += '</div>';
+  } else if (activeDMTab === 'aspects') {
+    // Aspects tab — full game aspects reference with filters
+    html += '<div class="dm-aspects-container">';
+    html += '<h1 class="dm-screen-title">Aspects</h1>';
+    html += renderAspectsPanel(aspectState.filters, aspectState.sortBy, aspectState.sortDir);
     html += '</div>';
   } else {
     // Dashboard tab — constrained-width, existing content

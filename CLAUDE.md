@@ -344,8 +344,8 @@ The application uses **event delegation** for all user interactions:
 
 The aspects.json file is very large (3091 lines). When working with aspects:
 - Use offset/limit parameters when reading the file
-- Aspect structure: `{ name, type, track, description }`
-- Types: "Trait" or "Gear"
+- Aspect structure: `{ name, type, track, description }` — new aspects also carry `new: true`
+- Types: "Trait", "Gear", "Companion", "Complex Trait", "Complex Gear", "Complex Companion"
 - Track sizes range from 2-5
 - Aspects are organized under keys matching bloodlines, origins, and posts
 

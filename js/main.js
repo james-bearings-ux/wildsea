@@ -168,6 +168,9 @@ let npcSortDir = 'asc'; // NPC table sort direction
 let npcSearch = ''; // NPC search query
 let resourceSortBy = 'character'; // Resources table sort column
 let resourceSortDir = 'asc'; // Resources table sort direction
+let aspectSortBy = 'source'; // Aspects table sort column
+let aspectSortDir = 'asc'; // Aspects table sort direction
+let aspectFilters = { bloodline: '', origin: '', post: '' }; // Aspects filter state
 
 // Debounce timers for text inputs
 const debounceTimers = new Map();
@@ -501,7 +504,8 @@ async function render(reloadSession = false) {
       npcs,
       currentUserRole,
       { sortBy: npcSortBy, sortDir: npcSortDir, search: npcSearch },
-      { sortBy: resourceSortBy, sortDir: resourceSortDir }
+      { sortBy: resourceSortBy, sortDir: resourceSortDir },
+      { filters: aspectFilters, sortBy: aspectSortBy, sortDir: aspectSortDir }
     );
     // Always show dice roller on DM screen
     const diceRollerHtml = renderDiceRoller(session?.diceRolls || [], showDiceResults, currentUserRole);
@@ -1198,6 +1202,20 @@ function setupEventDelegation() {
                   } else {
                     resourceSortBy = parsedParams.col;
                     resourceSortDir = 'asc';
+                  }
+                  await render();
+                }
+                break;
+
+              case 'sortAspectTable':
+                // Change aspects table sort column/direction
+                // Params: { col: columnName }
+                if (parsedParams && parsedParams.col) {
+                  if (aspectSortBy === parsedParams.col) {
+                    aspectSortDir = aspectSortDir === 'asc' ? 'desc' : 'asc';
+                  } else {
+                    aspectSortBy = parsedParams.col;
+                    aspectSortDir = 'asc';
                   }
                   await render();
                 }
@@ -2148,6 +2166,15 @@ function setupEventDelegation() {
             // No params needed (value from target.value)
             selectedModalAspectId = target.value;
             await render();
+            break;
+
+          case 'filterAspects':
+            // Update aspect filter for a given category
+            // Params: { filterType: 'bloodline' | 'origin' | 'post' }
+            if (parsedParams && parsedParams.filterType) {
+              aspectFilters = { ...aspectFilters, [parsedParams.filterType]: target.value };
+              await render();
+            }
             break;
         }
       } catch (error) {
