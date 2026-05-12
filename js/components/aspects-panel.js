@@ -44,7 +44,8 @@ export function renderAspectsPanel(filters = {}, sortBy = 'source', sortDir = 'a
         track: aspect.track ?? '',
         description: aspect.description || '',
         source,
-        category: categoryOf[source] || ''
+        category: categoryOf[source] || '',
+        isNew: aspect.new === true,
       });
     }
   }
@@ -110,6 +111,7 @@ export function renderAspectsPanel(filters = {}, sortBy = 'source', sortDir = 'a
   html += '<th class="npc-th npc-th-description">Description</th>';
   html += renderSortHeader('Track', 'track', sortBy, sortDir);
   html += renderSortHeader('Source', 'source', sortBy, sortDir);
+  html += '<th class="npc-th">New</th>';
   html += '</tr></thead>';
 
   html += '<tbody>';
@@ -120,6 +122,7 @@ export function renderAspectsPanel(filters = {}, sortBy = 'source', sortDir = 'a
     html += `<td class="npc-td npc-td-description">${escapeHtmlContent(row.description)}</td>`;
     html += `<td class="npc-td aspects-td-track">${escapeHtmlContent(String(row.track))}</td>`;
     html += `<td class="npc-td">${escapeHtmlContent(row.source)}</td>`;
+    html += `<td class="npc-td">${row.isNew ? '<span class="npc-new-badge">New</span>' : ''}</td>`;
     html += '</tr>';
   }
   html += '</tbody>';
