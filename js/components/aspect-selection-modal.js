@@ -5,6 +5,7 @@
 
 import { renderSmallTrack } from './aspects.js';
 import { highlightDamageTypesInDescription } from './damage-type-selector.js';
+import { createDataParams } from '../utils/escaping.js';
 
 /**
  * Get all aspects from game data as a flat list
@@ -142,14 +143,13 @@ export function renderAspectSelectionModal(character, gameData, searchQuery = ''
     filteredAspects.forEach(aspect => {
       const isSelected = aspectToShow && aspect.name === aspectToShow.name && aspect.source === aspectToShow.source;
       const aspectId = aspect.source + '-' + aspect.name;
-      const escapedId = aspectId.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
 
       // Check if already selected by character
       const alreadyAdded = character.selectedAspects.some(a => a.id === aspectId);
 
       html += `        <div class="aspect-search-result ${isSelected ? 'selected' : ''} ${alreadyAdded ? 'disabled' : ''}" `;
       html += `             data-action="selectAspectForAdding" `;
-      html += `             data-params='{"aspectId":"${escapedId}"}' `;
+      html += `             ${createDataParams({ aspectId })} `;
       html += `             style="padding: 12px; border-bottom: 1px solid #E5E7EB; cursor: pointer;">`;
       html += `          <div style="font-weight: 600; margin-bottom: 4px;">${aspect.name}</div>`;
       html += `          <div style="font-size: 12px; color: #6B7280;">${aspect.source} • ${aspect.type}</div>`;
@@ -196,12 +196,11 @@ export function renderAspectSelectionModal(character, gameData, searchQuery = ''
   // Only show Add button if an aspect is selected and not already added
   if (aspectToShow) {
     const aspectId = aspectToShow.source + '-' + aspectToShow.name;
-    const escapedId = aspectId.replace(/'/g, "\\'");
     const alreadyAdded = character.selectedAspects.some(a => a.id === aspectId);
 
     html += '        <button ';
     html += `                data-action="addSelectedAspect" `;
-    html += `                data-params='{"aspectId":"${escapedId}"}' `;
+    html += `                ${createDataParams({ aspectId })} `;
     html += (alreadyAdded ? ' disabled' : '');
     html += '>';
     html += alreadyAdded ? 'Already Added' : 'Add Aspect';

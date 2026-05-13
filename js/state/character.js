@@ -1434,12 +1434,11 @@ export function generateRandomCharacter(renderCallback, char) {
 
   let pointsLeft = budgets.skillPoints;
   while (pointsLeft > 0) {
-    const skill = GAME_DATA.skills[Math.floor(Math.random() * GAME_DATA.skills.length)];
-    const current = char.skills[skill] || 0;
-    if (current < 2) {
-      char.skills[skill] = current + 1;
-      pointsLeft--;
-    }
+    const available = GAME_DATA.skills.filter(s => (char.skills[s.name] || 0) < 2);
+    if (available.length === 0) break;
+    const skillObj = available[Math.floor(Math.random() * available.length)];
+    char.skills[skillObj.name] = (char.skills[skillObj.name] || 0) + 1;
+    pointsLeft--;
   }
 
   renderCallback();
