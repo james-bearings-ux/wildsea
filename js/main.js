@@ -698,6 +698,10 @@ function setupEventDelegation() {
                 // Toggle aspect selection in creation/advancement mode
                 // Params: { id: "Bloodline-AspectName" }
                 if (character) {
+                  const isCurrentlySelected = character.selectedAspects.some(a => a.id === parsedParams.id);
+                  if (isCurrentlySelected && character.mode === 'advancement') {
+                    if (!confirm('Are you sure you want to deselect this aspect?')) break;
+                  }
                   toggleAspect(parsedParams.id, noopRender, character);
                   markDirtyByAction('toggleAspect');
                   scheduleRender();

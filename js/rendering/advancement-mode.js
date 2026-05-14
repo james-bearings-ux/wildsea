@@ -74,7 +74,7 @@ function renderAspectCard(aspect, character, aspectsSelected) {
       ${isSelected && selectedAspect ? renderDamageTypeWarning(selectedAspect) : ''}
       ${isSelected && selectedAspect ? renderDamageTypeSelector(selectedAspect, 'advancement') : ''}
       ${isSelected && selectedAspect ? renderSelectedDamageTypes(selectedAspect, character) : ''}
-      ${isSelected ? `<button data-action="openCustomizeModal" ${createDataParams({ id })} class="aspect-card-remove medium">Customize</button>` : ''}
+      ${isSelected ? `<button data-action="openCustomizeModal" ${createDataParams({ id })} class="aspect-card-remove">Customize</button>` : ''}
     </div>
   `;
 }
