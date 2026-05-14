@@ -209,7 +209,7 @@ export function parseDamageTypesFromDescription(description) {
 
   // Pattern: "resistant/resistance to <damage type> damage" (fixed, no choice)
   // Handles multi-word damage types
-  const resistancePattern = /resistan(?:t|ce) to ((?:[a-z]+(?:\s+[a-z]+)*(?:\s+(?:and|or)\s+)?)+)\s+damage/i;
+  const resistancePattern = /resistan(?:t|ce) to ([^.]+?)\s+damage/i;
   const resistanceMatch = description.match(resistancePattern);
 
   if (resistanceMatch) {
@@ -256,7 +256,7 @@ export function parseDamageTypesFromDescription(description) {
   }
 
   // Pattern: "weakness/weak to <damage type(s)>" - handles multi-word types and comma-separated lists
-  const weaknessPattern = /weak(?:ness)? to ((?:[a-z]+(?:\s+[a-z]+)*(?:,\s*| and | or )?)+?)(?: damage|\s*\.|$)/i;
+  const weaknessPattern = /weak(?:ness)? to ([^.]+?)(?:\s+damage|\s*\.|$)/i;
   const weaknessMatch = description.match(weaknessPattern);
 
   if (weaknessMatch) {
@@ -277,7 +277,7 @@ export function parseDamageTypesFromDescription(description) {
   }
 
   // Pattern: "immune to (the )(harmful )?effects of X" - specific pattern for "effects of"
-  const immunityEffectsPattern = /immune to (?:the )?(?:harmful )?(?:usual )?effects of ((?:[a-z]+(?:\s+[a-z]+)*(?:,\s*| and | or )?)+?)(?:\.|$|,)/i;
+  const immunityEffectsPattern = /immune to (?:the )?(?:harmful |usual )?effects of ([^.,]+)/i;
   const immunityEffectsMatch = description.match(immunityEffectsPattern);
 
   if (immunityEffectsMatch) {
@@ -302,7 +302,7 @@ export function parseDamageTypesFromDescription(description) {
 
   // Pattern: "immune to <damage type(s)>" - handles multi-word hazards and comma-separated lists
   // Stops at "damage", "effects", or end of sentence to avoid capturing extra text
-  const immunityPattern = /immune to ((?:(?!effects|damage|designed)[a-z]+(?:\s+(?!effects|damage|designed)[a-z]+)*(?:,\s*| and | or )?)+?)(?:\s+(?:damage|effects)|\s*\.|$)/i;
+  const immunityPattern = /immune to ([^.]+?)(?:\s+(?:damage|effects)|\s*\.|$)/i;
   const immunityMatch = description.match(immunityPattern);
 
   if (immunityMatch) {
