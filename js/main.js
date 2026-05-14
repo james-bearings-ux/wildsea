@@ -1548,9 +1548,9 @@ function setupEventDelegation() {
 
               case 'openCustomizeModal':
                 // Open modal to customize aspect names and descriptions
-                // No params needed
+                // Optional params: { id } to pre-select a specific aspect
                 showCustomizeModal = true;
-                selectedModalAspectId = null; // Default to first aspect
+                selectedModalAspectId = parsedParams.id || null;
                 await render();
                 break;
 

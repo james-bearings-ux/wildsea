@@ -37,20 +37,6 @@ export function renderAspectCustomizationModal(character, selectedAspectId = nul
   // Body
   html += '    <div class="modal-body">';
 
-  // Dropdown to select aspect
-  html += '      <div class="modal-aspect-dropdown">';
-  html += '        <label for="modal-aspect-select">Select Aspect:</label>';
-  html += '        <select id="modal-aspect-select" class="select-input" ';
-  html += '                data-action="selectAspectInModal" style="width: 100%;">';
-
-  character.selectedAspects.forEach(aspect => {
-    const selected = aspect.id === aspectToShow ? ' selected' : '';
-    html += `          <option value="${aspect.id}"${selected}>${aspect.name}</option>`;
-  });
-
-  html += '        </select>';
-  html += '      </div>';
-
   // Aspect card with editable fields
   html += '      <div class="modal-aspect-card">';
 

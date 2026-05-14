@@ -74,6 +74,7 @@ function renderAspectCard(aspect, character, aspectsSelected) {
       ${isSelected && selectedAspect ? renderDamageTypeWarning(selectedAspect) : ''}
       ${isSelected && selectedAspect ? renderDamageTypeSelector(selectedAspect, 'advancement') : ''}
       ${isSelected && selectedAspect ? renderSelectedDamageTypes(selectedAspect, character) : ''}
+      ${isSelected ? `<button data-action="openCustomizeModal" ${createDataParams({ id })} class="aspect-card-remove medium">Customize</button>` : ''}
     </div>
   `;
 }
@@ -203,7 +204,6 @@ export function renderAdvancementMode(app, character, gameData, showCustomizeMod
         <div class="advancement-aspects-header">
           <h2 class="section-header">Aspects</h2>
           <div class="flex-gap-md">
-            <button data-action="openCustomizeModal" class="medium">Customize an Aspect</button>
             <button data-action="openSelectAspectModal" class="medium" ${aspectsSelected >= BUDGETS.maxAspectsAdvancement ? 'disabled' : ''}>Select More Aspects</button>
           </div>
         </div>
