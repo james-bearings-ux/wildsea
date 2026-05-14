@@ -3,6 +3,7 @@
  */
 
 import { renderInteractiveTrack } from './aspects.js';
+import { createDataParams } from '../utils/escaping.js';
 
 /**
  * Render the aspect customization modal
@@ -21,8 +22,6 @@ export function renderAspectCustomizationModal(character, selectedAspectId = nul
 
   const currentAspect = character.selectedAspects.find(a => a.id === aspectToShow);
   if (!currentAspect) return '';
-
-  const escapedId = currentAspect.id.replace(/'/g, "\\'");
 
   // Check for unsaved edits for this aspect
   const unsavedEdits = modalUnsavedEdits[aspectToShow] || {};
@@ -71,7 +70,7 @@ export function renderAspectCustomizationModal(character, selectedAspectId = nul
   html += '        </div>';
 
   // Track (non-editable in modal)
-  html += renderInteractiveTrack(currentAspect, escapedId);
+  html += renderInteractiveTrack(currentAspect, currentAspect.id);
 
   // Editable description - use unsaved edit if available
   const descValue = unsavedEdits.description !== undefined ? unsavedEdits.description : (currentAspect.description || '');
@@ -94,14 +93,14 @@ export function renderAspectCustomizationModal(character, selectedAspectId = nul
   html += '    <div class="modal-footer">';
   html += '      <div class="modal-footer-left">';
   html += '        <button data-action="resetAspectCustomization" ';
-  html += `                data-params='{"id":"${escapedId}"}'>`;
+  html += '                ' + createDataParams({ id: currentAspect.id }) + '>';
   html += '          Reset Changes';
   html += '        </button>';
   html += '      </div>';
   html += '      <div class="modal-footer-right">';
   html += '        <button data-action="closeCustomizeModal">Cancel</button>';
   html += '        <button data-action="saveAspectCustomization" ';
-  html += `                data-params='{"id":"${escapedId}"}'>`;
+  html += '                ' + createDataParams({ id: currentAspect.id }) + '>';
   html += '          Save';
   html += '        </button>';
   html += '      </div>';

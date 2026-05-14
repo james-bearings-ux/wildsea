@@ -55,7 +55,6 @@ export function renderAdvancementCharacterHeader(character) {
  */
 function renderAspectCard(aspect, character, aspectsSelected) {
   const id = aspect.source + '-' + aspect.name;
-  const escapedId = id.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
   const selectedAspect = character.selectedAspects.find(a => a.id === id);
   const isSelected = !!selectedAspect;
   const isDisabled = !isSelected && aspectsSelected >= BUDGETS.maxAspectsAdvancement;
@@ -66,7 +65,7 @@ function renderAspectCard(aspect, character, aspectsSelected) {
   return `
     <div class="aspect-card ${isSelected ? 'selected' : ''} ${isDisabled ? 'disabled' : ''}"
          data-action="toggleAspect" ${createDataParams({ id })}>
-      ${isSelected ? renderInteractiveTrack(selectedAspect, escapedId) : renderSmallTrack(aspect.track)}
+      ${isSelected ? renderInteractiveTrack(selectedAspect, id) : renderSmallTrack(aspect.track)}
       <div class="split">
         <div class="aspect-name">${displayName}</div>
         <div class="aspect-meta">${aspect.source} ${aspect.type}</div>
@@ -146,10 +145,9 @@ export function renderMoreAspectsSection(character) {
       <h3 class="subsection-header">More Aspects</h3>
       <div class="grid-3col">
         ${moreAspects.map(selectedAspect => {
-          const escapedId = selectedAspect.id.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
           return `
             <div class="aspect-card selected">
-              ${renderInteractiveTrack(selectedAspect, escapedId)}
+              ${renderInteractiveTrack(selectedAspect, selectedAspect.id)}
               <div class="split">
                 <div class="aspect-name">${escapeHtmlContent(selectedAspect.name)}</div>
                 <div class="aspect-meta">${escapeHtmlContent(selectedAspect.source)} ${escapeHtmlContent(selectedAspect.type)}</div>
