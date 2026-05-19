@@ -85,10 +85,10 @@ function renderTasksReadOnly(character) {
     for (let i = 0; i < character.tasks.length; i++) {
       const task = character.tasks[i];
 
-      html += '<div class="task-row" style="margin-bottom: 8px;">';
-      html += '<div style="flex: 1; display: flex; align-items: center; gap: 12px;">';
+      html += '<div class="task-row">';
       html += '<div class="task-name">' + (task.name || 'Unnamed Task') + '</div>';
 
+      html += '<div class="task-status">';
       // Render clock (non-interactive)
       html += '<div class="task-clock">';
       for (let j = 0; j < task.maxTicks; j++) {
@@ -96,9 +96,9 @@ function renderTasksReadOnly(character) {
         html += '<div class="clock-tick ' + (filled ? 'filled' : '') + '"></div>';
       }
       html += '</div>';
-
       html += '<div class="task-progress">' + task.currentTicks + '/' + task.maxTicks + '</div>';
       html += '</div>';
+
       html += '</div>';
     }
   }

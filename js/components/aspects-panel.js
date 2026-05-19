@@ -106,23 +106,23 @@ export function renderAspectsPanel(filters = {}, sortBy = 'source', sortDir = 'a
   html += '<div class="npc-table-wrapper">';
   html += '<table class="npc-table">';
   html += '<thead><tr>';
+  html += '<th class="npc-th">New</th>';
   html += renderSortHeader('Aspect Name', 'name', sortBy, sortDir);
   html += renderSortHeader('Type', 'type', sortBy, sortDir);
   html += '<th class="npc-th npc-th-description">Description</th>';
   html += renderSortHeader('Track', 'track', sortBy, sortDir);
   html += renderSortHeader('Source', 'source', sortBy, sortDir);
-  html += '<th class="npc-th">New</th>';
   html += '</tr></thead>';
 
   html += '<tbody>';
   for (const row of rows) {
     html += '<tr class="npc-row">';
+    html += `<td class="npc-td">${row.isNew ? '<span class="npc-new-badge">New</span>' : ''}</td>`;
     html += `<td class="npc-td npc-td-name">${escapeHtmlContent(row.name)}</td>`;
     html += `<td class="npc-td">${escapeHtmlContent(row.type)}</td>`;
     html += `<td class="npc-td npc-td-description">${escapeHtmlContent(row.description)}</td>`;
     html += `<td class="npc-td aspects-td-track">${escapeHtmlContent(String(row.track))}</td>`;
     html += `<td class="npc-td">${escapeHtmlContent(row.source)}</td>`;
-    html += `<td class="npc-td">${row.isNew ? '<span class="npc-new-badge">New</span>' : ''}</td>`;
     html += '</tr>';
   }
   html += '</tbody>';

@@ -30,7 +30,8 @@
       "Bash(git add:*)",
       "Bash(git commit:*)",
       "Bash(npx vite:*)",
-      "Bash(git:*)"
+      "Bash(git:*)",
+      "Bash(gh run:*)"
     ],
     "deny": [],
     "ask": []

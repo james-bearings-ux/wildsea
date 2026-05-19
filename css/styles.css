@@ -842,13 +842,18 @@ hr {
 
     /* Task styles */
     .task-row {
-      display: flex;
-      align-items: center;
+      display: block;
       gap: 8px;
       padding: 8px;
       border: 1px solid var(--task-border);
       border-radius: 4px;
       background: var(--task-bg);
+      margin-bottom: 4px;
+    }
+
+    .task-status {
+      display: flex;
+      align-items: center;
     }
 
     .task-row.editing {
@@ -859,6 +864,7 @@ hr {
       font-weight: 400;
       font-size: 14px;
       color: var(--task-text);
+      margin-bottom: 8px;
     }
 
     .task-progress {
@@ -3303,6 +3309,12 @@ hr {
   color: var(--text-muted);
   letter-spacing: 0.02em;
   transition: color 0.15s, border-color 0.15s;
+}
+
+@media (max-width: 768px) {
+  .dm-tab {
+    padding: 10px 10px 8px;
+  }
 }
 
 .dm-tab:hover {

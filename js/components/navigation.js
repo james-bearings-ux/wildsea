@@ -22,7 +22,7 @@ export async function renderNavigation(session) {
   // DM Screen button
   const isDMActive = session.activeView === 'dm-screen';
   const dmActiveClass = isDMActive ? 'nav-button-active' : 'nav-button-inactive';
-  html += '<button data-action="switchToDMScreen" class="nav-button ' + dmActiveClass + '">DM</button>';
+  html += '<button data-action="switchToDMScreen" class="nav-button ' + dmActiveClass + '">Data</button>';
 
   if (session.activeShipId) {
     const ship = await loadShipCached(session.activeShipId, loadShip);
