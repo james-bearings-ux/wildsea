@@ -140,14 +140,14 @@ async function pollSessionCharacters(sessionId, lastChecked, onUpdate) {
 
 /**
  * Start polling for changes
+ * All four checks fire concurrently in a single interval via Promise.all.
  * @param {string} sessionId - The session ID to watch
  * @param {Function} onUpdate - Callback when changes detected
- * @param {number} interval - Polling interval in milliseconds (default 3000ms)
+ * @param {number} interval - Polling interval in milliseconds (default 10000ms)
  */
-export function startPolling(sessionId, onUpdate, interval = 3000) {
+export function startPolling(sessionId, onUpdate, interval = 10000) {
   if (DEBUG) console.log('[POLLING] Starting polling for session:', sessionId);
 
-  // Initialize last checked timestamps
   const now = Date.now();
   let lastChecks = {
     session: now,
@@ -156,32 +156,22 @@ export function startPolling(sessionId, onUpdate, interval = 3000) {
     sessionCharacters: { lastChecked: now, lastCount: undefined }
   };
 
-  // Create polling intervals
-  const sessionInterval = setInterval(async () => {
-    lastChecks.session = await pollSession(sessionId, lastChecks.session, onUpdate);
+  // Single interval — all four polls fire concurrently each tick
+  const combinedInterval = setInterval(async () => {
+    const [newSession, newCharacters, newShips, newSessionChars] = await Promise.all([
+      pollSession(sessionId, lastChecks.session, onUpdate),
+      pollCharacters(sessionId, lastChecks.characters, onUpdate),
+      pollShips(sessionId, lastChecks.ships, onUpdate),
+      pollSessionCharacters(sessionId, lastChecks.sessionCharacters, onUpdate)
+    ]);
+
+    lastChecks.session = newSession;
+    lastChecks.characters = newCharacters;
+    lastChecks.ships = newShips;
+    lastChecks.sessionCharacters = newSessionChars;
   }, interval);
 
-  const charactersInterval = setInterval(async () => {
-    lastChecks.characters = await pollCharacters(sessionId, lastChecks.characters, onUpdate);
-  }, interval);
-
-  const shipsInterval = setInterval(async () => {
-    lastChecks.ships = await pollShips(sessionId, lastChecks.ships, onUpdate);
-  }, interval);
-
-  const sessionCharactersInterval = setInterval(async () => {
-    lastChecks.sessionCharacters = await pollSessionCharacters(
-      sessionId,
-      lastChecks.sessionCharacters,
-      onUpdate
-    );
-  }, interval);
-
-  // Store intervals for cleanup
-  pollingIntervals.push(sessionInterval);
-  pollingIntervals.push(charactersInterval);
-  pollingIntervals.push(shipsInterval);
-  pollingIntervals.push(sessionCharactersInterval);
+  pollingIntervals.push(combinedInterval);
 
   if (DEBUG) console.log('[POLLING] Polling started - checking every', interval, 'ms');
 }
