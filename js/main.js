@@ -132,7 +132,9 @@ let session = null;
 let character = null; // Cached active character
 let ship = null; // Cached active ship
 let showDiceResults = false; // Toggle visibility of dice results (collapsed by default)
-let onlineUsers = []; // List of online users in the session
+let onlineUsers = []; // List of online users in the session (cached, refreshed by presenceCheckInterval)
+let cachedUserId = null; // Supabase auth user ID — resolved once at startup
+let cachedUserAlias = null; // Display name — resolved once at startup
 let hasPendingCharacterSave = false; // Track if character save is pending
 let hasPendingShipSave = false; // Track if ship save is pending
 let isPollingActive = false; // Track if polling is currently running
@@ -277,8 +279,8 @@ async function resumeAfterInactivity() {
     console.log('[INACTIVITY] User returned - resuming activity');
 
     // Restart presence heartbeat
-    if (session && currentUser) {
-      startPresenceHeartbeat(session.id, currentUser.email);
+    if (session && cachedUserId) {
+      startPresenceHeartbeat(session.id, cachedUserId, currentUser.email, cachedUserAlias);
     }
 
     // Check if polling should resume
@@ -294,12 +296,13 @@ async function managePollingBasedOnPresence() {
   if (!session) return;
 
   const users = await getOnlineUsers(session.id);
+  onlineUsers = users; // Keep cached value current for render()
   const shouldPoll = users.length > 1;
 
   if (shouldPoll && !isPollingActive) {
     // Multiple users detected - start polling
     console.log(`[POLLING] Another user joined - starting polling (${users.length} users online)`);
-    startPolling(session.id, () => render(true), 5000);
+    startPolling(session.id, () => render(true));
     isPollingActive = true;
   } else if (!shouldPoll && isPollingActive) {
     // Back to solo - stop polling
@@ -480,9 +483,6 @@ async function render(reloadSession = false) {
     app.innerHTML = '<div style="padding: 20px;">No session found. Reloading...</div>';
     return;
   }
-
-  // Fetch online users
-  onlineUsers = await getOnlineUsers(session.id);
 
   // Render presence bar and navigation
   const presenceBarHtml = renderPresenceBar(onlineUsers);
@@ -1830,8 +1830,8 @@ function setupEventDelegation() {
                 // No params needed
                 if (confirm('Are you sure you want to sign out?')) {
                   // Clean up presence
-                  if (session) {
-                    await removePresence(session.id);
+                  if (session && cachedUserId) {
+                    await removePresence(session.id, cachedUserId);
                   }
                   stopPresenceHeartbeat();
                   stopPolling();
@@ -2297,15 +2297,20 @@ async function loadApp() {
       ship = await loadShipCached(session.activeShipId, loadShip);
     }
 
+    // Resolve userId and alias once so heartbeat ticks are a single DB write each
+    cachedUserId = currentUser.id;
+    const { data: aliasData } = await supabase.rpc('get_user_alias', { user_email_param: currentUser.email });
+    cachedUserAlias = aliasData || currentUser.email.split('@')[0];
+
     console.log('Setting up polling-based sync...');
 
     // Check how many users are online to optimize polling
-    const initialOnlineUsers = await getOnlineUsers(session.id);
+    onlineUsers = await getOnlineUsers(session.id);
 
-    if (initialOnlineUsers.length > 1) {
+    if (onlineUsers.length > 1) {
       // Multiple users online - start polling for multiplayer sync
-      console.log(`[POLLING] Starting polling - ${initialOnlineUsers.length} users online`);
-      startPolling(session.id, () => render(true), 5000);
+      console.log(`[POLLING] Starting polling - ${onlineUsers.length} users online`);
+      startPolling(session.id, () => render(true));
       isPollingActive = true;
     } else {
       // Solo play - skip polling to save egress
@@ -2316,7 +2321,7 @@ async function loadApp() {
 
     // Start presence heartbeat
     console.log('Starting presence heartbeat...');
-    startPresenceHeartbeat(session.id, currentUser.email);
+    startPresenceHeartbeat(session.id, cachedUserId, currentUser.email, cachedUserAlias);
 
     // Check presence every 30 seconds to dynamically manage polling
     presenceCheckInterval = setInterval(async () => {
@@ -2446,8 +2451,8 @@ async function init() {
       }
 
       // Try to remove presence (may not complete due to page unload)
-      if (session) {
-        removePresence(session.id);
+      if (session && cachedUserId) {
+        removePresence(session.id, cachedUserId);
       }
     });
 
