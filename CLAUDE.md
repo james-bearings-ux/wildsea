@@ -398,6 +398,12 @@ The app supports **light** and **dark** themes:
 
 ## Documentation
 
+Architectural and performance decisions are recorded as ADRs in `docs/decisions/`
+(see its `README.md`). CLAUDE.md and GAME-RULES.md describe how things work today;
+ADRs explain *why* and include an "Auditing a diff against this" checklist — consult
+them when reviewing changes to sync, caching, persistence, or the render path. Add a
+new ADR when making a decision that constrains future code or trades something off.
+
 Keep `CLAUDE.md` up to date as the codebase evolves. Update it proactively when making changes — don't wait to be asked.
 
 **Update CLAUDE.md when:**
