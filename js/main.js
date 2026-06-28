@@ -103,8 +103,7 @@ import { renderShipUpgradeMode } from './rendering/ship-upgrade-mode.js';
 import { renderDMScreen } from './rendering/dm-screen-mode.js';
 import { switchToShip, switchToDMScreen, setActiveShip } from './state/session.js';
 import { renderSection, ACTION_TO_SECTIONS, ACTION_TO_SECTIONS_CREATION, ACTION_TO_SECTIONS_ADVANCEMENT } from './rendering/sections.js';
-// Realtime has infrastructure issues - using polling instead
-// import { setupSubscriptions, unsubscribeAll } from './realtime.js';
+// Multiplayer sync uses polling, not Supabase Realtime — see docs/decisions/0001-polling-based-multiplayer-sync.md
 import { startPolling, stopPolling } from './polling.js';
 import { getCurrentUser, onAuthStateChange, sendMagicLink, signOut, getUserRole } from './auth.js';
 import {

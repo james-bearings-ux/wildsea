@@ -308,7 +308,6 @@ The application uses **event delegation** for all user interactions:
 │   │   ├── file-handlers.js      # Import/export
 │   │   ├── escaping.js           # HTML/XSS escaping utilities
 │   │   └── character-image.js    # Deterministic abstract image generator
-│   └── character-sheet.js        # LEGACY - kept for reference
 ├── css/
 │   ├── light-mode.css            # Light theme variables
 │   ├── dark-mode.css             # Dark theme variables
