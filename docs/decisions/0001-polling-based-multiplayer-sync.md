@@ -12,7 +12,8 @@ which was the original approach.
 
 Supabase Realtime proved unreliable in this deployment — see the disabled import
 in `js/main.js` (`// Realtime has infrastructure issues - using polling instead`)
-and the now-unused `js/realtime.js`. We needed a sync mechanism that works on
+and the historical `js/realtime.js` implementation (removed as dead code during
+cleanup — see issue #64). We needed a sync mechanism that works on
 GitHub Pages hosting against the Supabase free tier, where **egress is the scarce
 resource** and websocket reliability is not in our control.
 
