@@ -135,6 +135,8 @@ let showDiceResults = false; // Toggle visibility of dice results (collapsed by 
 let onlineUsers = []; // List of online users in the session (cached, refreshed by presenceCheckInterval)
 let cachedUserId = null; // Supabase auth user ID — resolved once at startup
 let cachedUserAlias = null; // Display name — resolved once at startup
+let crewRoster = new Map(); // characterId -> { name, journeyRole } — lightweight roster for synchronous nav rendering
+let shipSummary = null; // { id, name, journeyActive, journeyName } — lightweight ship info for nav
 let hasPendingCharacterSave = false; // Track if character save is pending
 let hasPendingShipSave = false; // Track if ship save is pending
 let isPollingActive = false; // Track if polling is currently running
@@ -425,6 +427,19 @@ async function smartRender() {
 }
 
 /**
+ * Update only the dice roller panel in place, avoiding a full document re-render.
+ * The dice roller has a single stable root (.dice-roller-panel) inside #app, and
+ * event handling is delegated on #app, so swapping its outerHTML is safe.
+ * Returns false if the panel isn't currently in the DOM (caller should full-render).
+ */
+function updateDiceRollerInPlace() {
+  const panel = document.querySelector('.dice-roller-panel');
+  if (!panel) return false;
+  panel.outerHTML = renderDiceRoller(session?.diceRolls || [], showDiceResults, currentUserRole);
+  return true;
+}
+
+/**
  * Render login screen
  */
 function renderLogin() {
@@ -434,6 +449,72 @@ function renderLogin() {
     app.innerHTML = renderCheckEmailScreen(loginEmail);
   } else {
     app.innerHTML = renderLoginScreen(loginMessage, loginEmail);
+  }
+}
+
+/**
+ * Refresh the lightweight crew roster and ship summary used by the nav bar.
+ * Fetches all crew names/roles in a SINGLE batched query (plus one for the ship)
+ * instead of the nav loading each character individually on every render.
+ * Call this only when crew membership or remote data may have changed
+ * (app load, add/remove/import character, poll-triggered updates) — NOT per interaction.
+ */
+async function refreshCrewRoster() {
+  if (!session) return;
+
+  const ids = session.activeCharacterIds || [];
+  if (ids.length > 0) {
+    const { data, error } = await supabase
+      .from('characters')
+      .select('id, name, journey_role')
+      .in('id', ids);
+    if (!error && data) {
+      const next = new Map();
+      data.forEach(c => next.set(c.id, { name: c.name, journeyRole: c.journey_role || '' }));
+      crewRoster = next;
+    }
+  } else {
+    crewRoster = new Map();
+  }
+
+  if (session.activeShipId) {
+    const { data: s, error: se } = await supabase
+      .from('ships')
+      .select('id, name, journey')
+      .eq('id', session.activeShipId)
+      .single();
+    if (!se && s) {
+      shipSummary = {
+        id: s.id,
+        name: s.name,
+        journeyActive: !!(s.journey && s.journey.active),
+        journeyName: (s.journey && s.journey.name) || ''
+      };
+    }
+  } else {
+    shipSummary = null;
+  }
+}
+
+/**
+ * Overlay the in-memory active character/ship onto the roster snapshot just before
+ * rendering the nav. Guarantees the active entity's name/role/journey reflect live
+ * local edits without any database query (other crew come from refreshCrewRoster).
+ */
+function syncActiveIntoRoster() {
+  if (character && character.id) {
+    crewRoster.set(character.id, {
+      name: character.name,
+      journeyRole: character.journeyRole || ''
+    });
+  }
+  if (ship && ship.id) {
+    shipSummary = {
+      id: ship.id,
+      name: ship.name,
+      journeyActive: !!(ship.journey && ship.journey.active),
+      journeyName: (ship.journey && ship.journey.name) || ''
+    };
   }
 }
 
@@ -477,6 +558,9 @@ async function render(reloadSession = false) {
       if (DEBUG) console.log('[RENDER] Reloading active ship:', session.activeShipId);
       ship = await loadShipCached(session.activeShipId, loadShip);
     }
+
+    // Remote changes may have altered crew names/roles or ship journey — refresh the nav roster
+    await refreshCrewRoster();
   }
 
   if (!session) {
@@ -485,8 +569,10 @@ async function render(reloadSession = false) {
   }
 
   // Render presence bar and navigation
+  // Nav renders synchronously from the in-memory roster (no per-render DB lookups)
+  syncActiveIntoRoster();
   const presenceBarHtml = renderPresenceBar(onlineUsers);
-  const navHtml = await renderNavigation(session);
+  const navHtml = renderNavigation(session, crewRoster, shipSummary);
 
   // Check if we're viewing the DM screen
   if (session.activeView === 'dm-screen') {
@@ -1008,6 +1094,8 @@ function setupEventDelegation() {
                 // Open file dialog to import character from JSON
                 // No params needed
                 await importCharacter(session, render);
+                await refreshCrewRoster();
+                await render();
                 break;
 
               // === DRIVES & MIRES ===
@@ -1056,6 +1144,7 @@ function setupEventDelegation() {
                     if (character && character.id === parsedParams.characterId) {
                       character = null;
                     }
+                    await refreshCrewRoster();
                     await render();
                   }
                 }
@@ -1070,6 +1159,7 @@ function setupEventDelegation() {
                   await setActiveCharacter(session, newCharacter.id);
                   // Cache the new character
                   character = newCharacter;
+                  await refreshCrewRoster();
                   await render();
                 }
                 break;
@@ -1754,7 +1844,8 @@ function setupEventDelegation() {
                     session.diceRolls = [];
                   }
                   session.diceRolls.push(roll);
-                  await render();
+                  // Update only the dice roller (hot path) instead of a full re-render
+                  if (!updateDiceRollerInPlace()) await render();
 
                   // Scroll to newest roll (leftmost in the container)
                   const resultsContainer = document.querySelector('.dice-results-container');
@@ -1779,7 +1870,7 @@ function setupEventDelegation() {
                 // Toggle visibility of dice results panel
                 // No params needed
                 showDiceResults = !showDiceResults;
-                await render();
+                if (!updateDiceRollerInPlace()) await render();
                 break;
 
               case 'dismissAllRolls':
@@ -1792,7 +1883,7 @@ function setupEventDelegation() {
                       roll.visible = false;
                     });
                   }
-                  await render();
+                  if (!updateDiceRollerInPlace()) await render();
 
                   // Then save to database in background
                   dismissAllDiceRolls(session).catch(err => {
@@ -2341,6 +2432,9 @@ async function loadApp() {
         markUserActive();
       }, { passive: true });
     });
+
+    // Populate the nav roster once up front (single batched query)
+    await refreshCrewRoster();
 
     console.log('Rendering...');
     await render();

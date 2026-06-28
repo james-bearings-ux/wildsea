@@ -156,19 +156,27 @@ export function startPolling(sessionId, onUpdate, interval = 10000) {
     sessionCharacters: { lastChecked: now, lastCount: undefined }
   };
 
-  // Single interval — all four polls fire concurrently each tick
+  // Single interval — all four polls fire concurrently each tick.
+  // Change detections are coalesced: each poller flags `changed` instead of
+  // triggering onUpdate directly, so a tick fires at most ONE onUpdate (one
+  // full render + cache revalidation) even when several tables changed at once.
   const combinedInterval = setInterval(async () => {
+    let changed = false;
+    const markChanged = () => { changed = true; };
+
     const [newSession, newCharacters, newShips, newSessionChars] = await Promise.all([
-      pollSession(sessionId, lastChecks.session, onUpdate),
-      pollCharacters(sessionId, lastChecks.characters, onUpdate),
-      pollShips(sessionId, lastChecks.ships, onUpdate),
-      pollSessionCharacters(sessionId, lastChecks.sessionCharacters, onUpdate)
+      pollSession(sessionId, lastChecks.session, markChanged),
+      pollCharacters(sessionId, lastChecks.characters, markChanged),
+      pollShips(sessionId, lastChecks.ships, markChanged),
+      pollSessionCharacters(sessionId, lastChecks.sessionCharacters, markChanged)
     ]);
 
     lastChecks.session = newSession;
     lastChecks.characters = newCharacters;
     lastChecks.ships = newShips;
     lastChecks.sessionCharacters = newSessionChars;
+
+    if (changed) onUpdate();
   }, interval);
 
   pollingIntervals.push(combinedInterval);
