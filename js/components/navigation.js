@@ -1,19 +1,24 @@
 /**
  * Navigation bar component for character/ship switching
+ *
+ * Renders synchronously from an in-memory crew roster and ship summary supplied
+ * by main.js. It performs NO database/cache lookups — the roster is refreshed by
+ * the caller only when crew membership or remote data actually changes (see
+ * refreshCrewRoster in main.js), keeping the nav off the per-interaction critical path.
  */
 
-import { loadCharacter } from '../state/character.js';
-import { loadShip } from '../state/ship.js';
-import { loadCharacterCached, loadShipCached } from '../cache/supabase-cache.js';
 import { escapeHtmlContent } from '../utils/escaping.js';
 
 /**
  * Render the navigation bar
  * @param {Object} session - Current session object
- * @returns {Promise<string>} HTML string for navigation bar
+ * @param {Map<string, {name: string, journeyRole: string}>} crewRoster - id -> roster entry
+ * @param {{name: string, journeyActive: boolean, journeyName: string}|null} shipSummary - active ship summary
+ * @returns {string} HTML string for navigation bar
  */
-export async function renderNavigation(session) {
+export function renderNavigation(session, crewRoster = new Map(), shipSummary = null) {
   const base = import.meta.env.BASE_URL;
+  const journeyActive = !!(shipSummary && shipSummary.journeyActive);
   let html = '<div class="nav-bar split">';
 
   // Left side: DM and Ship buttons
@@ -25,17 +30,16 @@ export async function renderNavigation(session) {
   html += '<button data-action="switchToDMScreen" class="nav-button ' + dmActiveClass + '">Data</button>';
 
   if (session.activeShipId) {
-    const ship = await loadShipCached(session.activeShipId, loadShip);
     const isActive = session.activeView === 'ship';
     const activeClass = isActive ? 'nav-button-active' : 'nav-button-inactive';
-    const journeyActive = ship && ship.journey && ship.journey.active;
-    const journeyName = ship && ship.journey ? ship.journey.name : '';
+    const journeyName = shipSummary ? shipSummary.journeyName : '';
+    const shipName = (shipSummary && shipSummary.name) ? shipSummary.name : 'Ship';
 
     const shipStackedClass = journeyActive ? ' nav-button-stacked' : '';
     html += '<button data-action="switchToShip" class="nav-button ' + activeClass + shipStackedClass + '">';
-    html += '<div>' + (ship ? (ship.name || 'Ship') : 'Ship') + '</div>';
+    html += '<div>' + escapeHtmlContent(shipName) + '</div>';
     if (journeyActive && journeyName) {
-      html += '<div class="nav-journey-subtitle">' + journeyName + '</div>';
+      html += '<div class="nav-journey-subtitle">' + escapeHtmlContent(journeyName) + '</div>';
     }
     html += '</button>';
   } else {
@@ -49,30 +53,26 @@ export async function renderNavigation(session) {
 
   // Character buttons
   if (session.activeCharacterIds.length > 0) {
-    // Load ship to check journey status
-    const ship = session.activeShipId ? await loadShipCached(session.activeShipId, loadShip) : null;
-    const journeyActive = ship && ship.journey && ship.journey.active;
-
     const MAX_VISIBLE_CHARS = 5;
     const visibleCharIds = session.activeCharacterIds.slice(0, MAX_VISIBLE_CHARS);
 
     // Render first 5 characters as inline buttons (hidden on mobile via CSS)
     for (let i = 0; i < visibleCharIds.length; i++) {
       const charId = visibleCharIds[i];
-      const character = await loadCharacterCached(charId, loadCharacter);
+      const entry = crewRoster.get(charId);
       // Character is only active if we're in character view AND it's the active character
       const isActive = session.activeView === 'character' && charId === session.activeCharacterId;
 
-      if (character) {
+      if (entry) {
         const activeClass = isActive ? 'nav-button-active' : 'nav-button-inactive';
-        const roleDisplay = character.journeyRole
-          ? character.journeyRole.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')
+        const roleDisplay = entry.journeyRole
+          ? entry.journeyRole.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')
           : '';
 
         const charStackedClass = journeyActive ? ' nav-button-stacked' : '';
         html += '<button data-action="switchCharacter" data-params=\'{"characterId":"' + charId + '"}\' ';
         html += 'class="nav-button nav-char-inline ' + activeClass + charStackedClass + '">';
-        html += '<div>' + escapeHtmlContent(character.name || 'Unnamed Character') + '</div>';
+        html += '<div>' + escapeHtmlContent(entry.name || 'Unnamed Character') + '</div>';
         if (journeyActive && roleDisplay) {
           html += '<div class="nav-role-subtitle">' + escapeHtmlContent(roleDisplay) + '</div>';
         }
@@ -95,17 +95,17 @@ export async function renderNavigation(session) {
 
     for (let i = 0; i < session.activeCharacterIds.length; i++) {
       const charId = session.activeCharacterIds[i];
-      const character = await loadCharacterCached(charId, loadCharacter);
+      const entry = crewRoster.get(charId);
       const isActive = session.activeView === 'character' && charId === session.activeCharacterId;
 
-      if (character) {
-        const roleDisplay = character.journeyRole
-          ? character.journeyRole.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')
+      if (entry) {
+        const roleDisplay = entry.journeyRole
+          ? entry.journeyRole.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')
           : '';
 
         html += '<button data-action="switchCharacter" data-params=\'{"characterId":"' + charId + '"}\' ';
         html += 'class="nav-dropdown-item' + (isActive ? ' active' : '') + '">';
-        html += '<div>' + escapeHtmlContent(character.name || 'Unnamed Character') + '</div>';
+        html += '<div>' + escapeHtmlContent(entry.name || 'Unnamed Character') + '</div>';
         if (journeyActive && roleDisplay) {
           html += '<div class="nav-dropdown-role">' + escapeHtmlContent(roleDisplay) + '</div>';
         }
