@@ -427,6 +427,19 @@ async function smartRender() {
 }
 
 /**
+ * Update only the dice roller panel in place, avoiding a full document re-render.
+ * The dice roller has a single stable root (.dice-roller-panel) inside #app, and
+ * event handling is delegated on #app, so swapping its outerHTML is safe.
+ * Returns false if the panel isn't currently in the DOM (caller should full-render).
+ */
+function updateDiceRollerInPlace() {
+  const panel = document.querySelector('.dice-roller-panel');
+  if (!panel) return false;
+  panel.outerHTML = renderDiceRoller(session?.diceRolls || [], showDiceResults, currentUserRole);
+  return true;
+}
+
+/**
  * Render login screen
  */
 function renderLogin() {
@@ -1831,7 +1844,8 @@ function setupEventDelegation() {
                     session.diceRolls = [];
                   }
                   session.diceRolls.push(roll);
-                  await render();
+                  // Update only the dice roller (hot path) instead of a full re-render
+                  if (!updateDiceRollerInPlace()) await render();
 
                   // Scroll to newest roll (leftmost in the container)
                   const resultsContainer = document.querySelector('.dice-results-container');
@@ -1856,7 +1870,7 @@ function setupEventDelegation() {
                 // Toggle visibility of dice results panel
                 // No params needed
                 showDiceResults = !showDiceResults;
-                await render();
+                if (!updateDiceRollerInPlace()) await render();
                 break;
 
               case 'dismissAllRolls':
@@ -1869,7 +1883,7 @@ function setupEventDelegation() {
                       roll.visible = false;
                     });
                   }
-                  await render();
+                  if (!updateDiceRollerInPlace()) await render();
 
                   // Then save to database in background
                   dismissAllDiceRolls(session).catch(err => {
