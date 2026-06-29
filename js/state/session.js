@@ -305,6 +305,30 @@ export async function setActiveCharacter(session, characterId) {
 }
 
 /**
+ * Maximum number of dice rolls retained in the session row. The dice_rolls JSONB
+ * array is re-written on every roll and read on every session load/poll, so it must
+ * not grow unbounded over a campaign. Visible rolls beyond this cap (oldest first)
+ * are dropped on write.
+ */
+const MAX_DICE_ROLLS = 50;
+
+/**
+ * Prune the dice rolls array before persisting:
+ * - drop dismissed rolls (visible === false) — there is no "un-dismiss" UI, so a
+ *   hidden roll is dead weight
+ * - keep only the most recent MAX_DICE_ROLLS (the array is in append order)
+ * @param {Array} rolls
+ * @returns {Array} pruned rolls
+ */
+function pruneDiceRolls(rolls) {
+  if (!Array.isArray(rolls)) return [];
+  const visible = rolls.filter(r => r && r.visible);
+  return visible.length > MAX_DICE_ROLLS
+    ? visible.slice(visible.length - MAX_DICE_ROLLS)
+    : visible;
+}
+
+/**
  * Add a dice roll to the session (multiplayer)
  *
  * Saves the dice roll to the database. This function expects the caller to have
@@ -323,6 +347,11 @@ export async function setActiveCharacter(session, characterId) {
  * @throws {Error} If database save fails
  */
 export async function addDiceRoll(session, roll) {
+  // Prune before persisting so the array stays bounded (drops dismissed rolls and
+  // caps to the most recent MAX_DICE_ROLLS). The just-added roll is visible, so it
+  // is always retained. Mutates session.diceRolls so local state matches the DB.
+  session.diceRolls = pruneDiceRolls(session.diceRolls);
+
   // Save to database (local state should already be updated by caller)
   const { error } = await supabase
     .from('sessions')
@@ -351,22 +380,25 @@ export async function addDiceRoll(session, roll) {
  * 3. Call dismissAllDiceRolls() to save to database in background
  * 4. On error, log to console (no rollback needed for dismiss action)
  *
- * NOTE: This does not delete rolls, only hides them. They remain in the database
- * and can be shown again by setting visible=true.
+ * NOTE: Dismissed rolls are removed entirely. There is no "un-dismiss" UI, so
+ * keeping hidden rolls around only bloats the session row; dismiss therefore
+ * clears the array (see pruneDiceRolls).
  *
  * @param {Object} session - Session object with diceRolls array
  * @returns {Promise<void>}
  * @throws {Error} If database save fails
  */
 export async function dismissAllDiceRolls(session) {
-  // Mark all rolls as not visible
   if (!session.diceRolls) {
     return;
   }
 
+  // Mark all rolls hidden, then prune — which drops every now-hidden roll, leaving
+  // an empty array. This both clears the display and shrinks the persisted row.
   session.diceRolls.forEach(roll => {
     roll.visible = false;
   });
+  session.diceRolls = pruneDiceRolls(session.diceRolls);
 
   // Save to database
   const { error } = await supabase
