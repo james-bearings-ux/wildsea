@@ -403,6 +403,9 @@ ADRs explain *why* and include an "Auditing a diff against this" checklist — c
 them when reviewing changes to sync, caching, persistence, or the render path. Add a
 new ADR when making a decision that constrains future code or trades something off.
 
+Longer-form design references and how-to guides live in `docs/guides/` (e.g. the
+planned local session-notes pipeline).
+
 Keep `CLAUDE.md` up to date as the codebase evolves. Update it proactively when making changes — don't wait to be asked.
 
 **Update CLAUDE.md when:**
