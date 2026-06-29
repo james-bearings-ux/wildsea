@@ -121,6 +121,7 @@ import { supabase } from './supabaseClient.js';
 import { startPresenceHeartbeat, stopPresenceHeartbeat, getOnlineUsers, removePresence } from './presence.js';
 import { renderPresenceBar } from './components/presence-bar.js';
 import { renderDiceRoller, fakeDiceRoll } from './components/dice-roller.js';
+import { renderNPCPanel } from './components/npc-panel.js';
 
 // Debug flag - only log in development mode
 const DEBUG = import.meta.env.DEV;
@@ -436,6 +437,37 @@ function updateDiceRollerInPlace() {
   const panel = document.querySelector('.dice-roller-panel');
   if (!panel) return false;
   panel.outerHTML = renderDiceRoller(session?.diceRolls || [], showDiceResults, currentUserRole);
+  return true;
+}
+
+/**
+ * Update only the NPC panel in place (DM screen NPCs tab), avoiding a full
+ * re-render of the entire DM screen on every search keystroke / sort click.
+ * Preserves focus and caret position of the search input across the swap so
+ * typing in the search box isn't interrupted.
+ * Returns false if the panel isn't currently in the DOM (caller should full-render).
+ */
+function updateNPCPanelInPlace() {
+  const panel = document.querySelector('.npc-panel');
+  if (!panel) return false;
+
+  // Preserve search-input focus + caret across the outerHTML swap
+  const active = document.activeElement;
+  const searchFocused = !!(active && active.classList && active.classList.contains('npc-search'));
+  const caretStart = searchFocused ? active.selectionStart : null;
+  const caretEnd = searchFocused ? active.selectionEnd : null;
+
+  panel.outerHTML = renderNPCPanel(npcs, currentUserRole, { sortBy: npcSortBy, sortDir: npcSortDir, search: npcSearch });
+
+  if (searchFocused) {
+    const newSearch = document.querySelector('.npc-search');
+    if (newSearch) {
+      newSearch.focus();
+      if (caretStart !== null) {
+        try { newSearch.setSelectionRange(caretStart, caretEnd); } catch (e) { /* non-text input */ }
+      }
+    }
+  }
   return true;
 }
 
@@ -1283,7 +1315,7 @@ function setupEventDelegation() {
                     npcSortBy = parsedParams.field;
                     npcSortDir = 'asc';
                   }
-                  await render();
+                  if (!updateNPCPanelInPlace()) await render();
                 }
                 break;
 
@@ -2285,8 +2317,8 @@ function setupEventDelegation() {
     // Handle NPC search input (live filtering)
     if (target.getAttribute('data-action') === 'searchNPCs') {
       npcSearch = target.value;
-      debounce('npc-search', async () => {
-        await render();
+      debounce('npc-search', () => {
+        if (!updateNPCPanelInPlace()) render();
       }, 200);
       return;
     }
