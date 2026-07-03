@@ -1,0 +1,12 @@
+{
+  "_comment": "Copy to <DATA_ROOT>/roster.json (gitignored) and fill in. Canonical names + aliases for entity resolution in stage 3 — this is what fixes ASR proper-noun errors and merges 'first name vs last name vs nickname' into one entity. Longer term, build this from the app's npcs table + character sheets, keeping this file as a nicknames supplement.",
+  "gm": "GM Name",
+  "characters": [
+    { "name": "Character One", "player": "Player One", "aliases": [], "note": "optional: deliberate spelling quirks" },
+    { "name": "Character Two Full Name", "player": "Player Two", "aliases": ["Short Name"] }
+  ],
+  "npcs": [
+    { "name": "Full NPC Name", "aliases": ["First Name", "Last Name"], "note": "one NPC the table calls by different names" },
+    { "name": "Nicknamed NPC", "aliases": ["The Nickname"] }
+  ]
+}

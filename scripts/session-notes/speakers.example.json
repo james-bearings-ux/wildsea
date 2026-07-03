@@ -1,0 +1,8 @@
+{
+  "_comment": "Copy to <DATA_ROOT>/speakers.json (gitignored) and fill in your table. Maps Craig Discord handles to speakers. Craig track files are named '<n>-<discord>.aac'; the numeric prefix can change per recording, so key on the stable Discord handle (strip the leading 'N-' and '.aac').",
+  "speakers": {
+    "gm_discord_handle": { "player": "GM Name", "character": null, "role": "dm", "display": "GM Name (DM)" },
+    "player_one_handle": { "player": "Player One", "character": "Character One", "role": "player", "display": "Player One / Character One" },
+    "player_two_handle": { "player": "Player Two", "character": "Character Two", "role": "player", "display": "Player Two / Character Two" }
+  }
+}
