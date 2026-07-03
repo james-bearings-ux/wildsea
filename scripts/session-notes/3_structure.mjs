@@ -58,6 +58,8 @@ ENTITY RESOLUTION — these names refer to the SAME entity. Merge every mention 
 ${aliasResolution}
 Spelling is not the only issue here: different people at the table may call the same character by a different name (first name vs last name vs nickname). Collapse them into one entity — do NOT create separate NPC entries for aliases of the same person.
 
+The exact spellings and parenthetical notes in the roster above are AUTHORITATIVE. Some names are spelled in deliberately unusual ways — reproduce them EXACTLY and never "correct" a roster name to a more common or expected spelling, even when the ASR transcript consistently uses the common form.
+
 Wildsea setting terms are frequently mangled by ASR — normalize to canonical spellings, e.g. Tzelicrae (often heard "Zellicray"/"Zellacrae"), Gau ("Gao"), plus Ardent, Ektus, Ketra, Ironbound, Itzenko, Mothryn.
 
 ASR CAVEATS you must handle:
