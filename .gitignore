@@ -25,3 +25,7 @@ node_modules/
 
 # Build output
 dist/
+
+# Session audio working area (large/binary Craig tracks + regenerable transcripts;
+# session notes' system of record is Notion). See docs/guides/session-notes-pipeline.md
+audio-processing/
