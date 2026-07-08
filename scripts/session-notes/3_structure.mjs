@@ -69,18 +69,22 @@ ASR CAVEATS you must handle:
 
 Produce clean Markdown with EXACTLY these sections:
 # Session Notes — ${SESSION_DATE}
-## Summary
-3–5 sentences on what happened this session.
+## Recap
+An evocative, read-aloud recap — past tense, third person, ~120–150 words — the kind the GM would read aloud to open the next session. Vivid and dramatic, centered on the crew's actions, discoveries, and the mood of the session. This is the session's teaser, not a dry summary.
 ## What Happened
 Chronological bullet beats of the in-fiction events.
 ## NPCs
 One bullet per NPC. On first mention write the name as "Name (NPC)". One line each: who/what they are and how they appeared.
 ## Locations & Things
 Notable places, objects, creatures, ships.
-## Resources & Mechanics
-Rolls of note, resources gained/spent, drives/mires touched, clocks/tracks advanced.
+## Resources
+A descriptive log of resources the crew gained, spent, crafted, or used this session — Wildsea resources (charts, salvage, specimens, whispers), cargo, and notable items. A narrative record of what changed, NOT an authoritative tally (players track their own totals): report only what the transcript states and never invent quantities.
+## Mechanics
+Notable rolls and their outcomes, drives/mires touched, and milestones or journey clocks advanced.
 ## Threads & Hooks
 Unresolved questions, foreshadowing, things to follow up next session.
+## Quotes & Memorable Moments
+The session's funniest, most memorable, or most gloriously absurd lines and moments — wordplay, over-the-top bits, running jokes. Quote people where you can and keep it faithful to what was actually said; do not sanitize the ridiculousness or over-explain the joke.
 ## Table Notes
 Brief: scheduling and out-of-character decisions only.
 
@@ -94,7 +98,7 @@ console.log(`Structuring ${segments.length} segments (~${Math.round(transcriptTe
 
 const stream = anthropic.messages.stream({
   model: 'claude-sonnet-4-6',
-  max_tokens: 16000,
+  max_tokens: 32000, // headroom for adaptive thinking + the full notes (streaming, so no timeout risk)
   thinking: { type: 'adaptive' },
   system,
   messages: [{
@@ -118,7 +122,15 @@ try {
 } catch (e) {
   console.warn('\n[meta] could not parse locales:', e.message);
 }
-const sumMatch = notes.match(/##\s*Summary\s*\n+([\s\S]*?)(?:\n+---|\n+##\s)/);
+// Guard: never write empty/near-empty notes (e.g. thinking ate the whole token
+// budget) — fail loudly so run.mjs stops before stage 4 publishes over a good page.
+if (notes.trim().length < 200) {
+  console.error(`\nERROR: model returned no usable notes (stop_reason: ${final.stop_reason}, output_tokens: ${final.usage.output_tokens}). ` +
+    `If output hit max_tokens, thinking likely consumed the budget — raise max_tokens. notes.md NOT written.`);
+  process.exit(1);
+}
+
+const sumMatch = notes.match(/##\s*Recap\s*\n+([\s\S]*?)(?:\n+---|\n+##\s)/);
 const summary = (sumMatch ? sumMatch[1] : '').trim();
 
 fs.writeFileSync(path.join(SESSION_DIR, 'notes.md'), notes.trimEnd() + '\n', 'utf8');
