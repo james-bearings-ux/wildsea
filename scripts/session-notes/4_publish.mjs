@@ -21,13 +21,25 @@ const meta = readJson(path.join(SESSION_DIR, 'notes.meta.json'));
 
 // ---- markdown -> Notion blocks ----
 const MAX = 2000; // Notion rich_text char limit per object
+// Notion has no markdown parser: inline emphasis must be expressed as rich_text
+// annotations. Tokenize **bold**, *italic*, and `code` (bold matched before
+// italic so ** wins over *); everything else is plain text.
+function pushChunks(out, content, annotations) {
+  for (let i = 0; i < content.length; i += MAX)
+    out.push({ type: 'text', text: { content: content.slice(i, i + MAX) }, annotations });
+}
 function richText(str) {
   const out = [];
-  str.split(/(\*\*)/).reduce((bold, tok) => {
-    if (tok === '**') return !bold;
-    if (tok) for (let i = 0; i < tok.length; i += MAX) out.push({ type: 'text', text: { content: tok.slice(i, i + MAX) }, annotations: { bold } });
-    return bold;
-  }, false);
+  const re = /\*\*(.+?)\*\*|\*(.+?)\*|`(.+?)`/g;
+  let last = 0, m;
+  while ((m = re.exec(str))) {
+    if (m.index > last) pushChunks(out, str.slice(last, m.index), {});
+    if (m[1] !== undefined) pushChunks(out, m[1], { bold: true });
+    else if (m[2] !== undefined) pushChunks(out, m[2], { italic: true });
+    else pushChunks(out, m[3], { code: true });
+    last = re.lastIndex;
+  }
+  if (last < str.length) pushChunks(out, str.slice(last), {});
   return out.length ? out : [{ type: 'text', text: { content: '' } }];
 }
 function mdToBlocks(md) {
