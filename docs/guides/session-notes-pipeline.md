@@ -1,11 +1,25 @@
 # Guide: Local session-notes pipeline (design)
 
-**Status:** Design only — not yet implemented. Awaiting a first Craig recording (target: game session 2026-07-01).
-**Last updated:** 2026-06-28
+**Status:** Implemented and in use (first live session 2026-07-01).
+**Last updated:** 2026-07-08
 
-This guide captures the proposed architecture for turning a recorded game session into
-structured campaign notes. It is a design reference to build against, not documentation
-of existing code.
+This guide captures the architecture behind turning a recorded game session into
+structured campaign notes — the *why* and the seams. For the step-by-step run
+instructions, see the runbook: [running-session-notes.md](./running-session-notes.md).
+
+## Running it
+
+Drop the Craig per-speaker `.aac` files into a dated folder and run one command:
+
+```
+audio-processing/2026-07-08/1-<handle>.aac ...
+node scripts/session-notes/run.mjs 2026-07-08
+```
+
+That chains transcribe → structure → publish (Whisper locally, then Claude, then a
+Notion upsert). Full flow, variations (`--from 3`), and setup live in the
+[runbook](./running-session-notes.md) and
+[scripts/session-notes/README.md](../../scripts/session-notes/README.md).
 
 ## Goal
 

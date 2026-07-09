@@ -38,6 +38,26 @@ const aliasResolution = [...roster.characters, ...roster.npcs]
   .map(e => `- ${[e.name, ...e.aliases].join(' = ')}  → always use "${e.name}"`)
   .join('\n');
 
+// Deterministic backstop: the system prompt asks the model to honor roster
+// spellings, but strong priors (e.g. "Beowulf" for the character "Beowolf") can
+// still override that. For any roster entry with a `forbid` list, hard-replace
+// those variants with the canonical name so spelling fidelity does not depend on
+// model goodwill. (Aliases are NOT force-replaced — collapsing first/last/nick
+// names into one entity is a semantic call left to the model.)
+function enforceRoster(text, roster) {
+  const fixes = [];
+  for (const e of [...roster.characters, ...roster.npcs]) {
+    for (const bad of e.forbid || []) {
+      const re = new RegExp(`\\b${bad.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'gi');
+      let n = 0;
+      text = text.replace(re, () => (n++, e.name));
+      if (n) fixes.push(`${bad}→${e.name} (${n})`);
+    }
+  }
+  if (fixes.length) console.warn(`\n[roster] enforced canonical spellings: ${fixes.join(', ')}`);
+  return text;
+}
+
 const mmss = sec => {
   const m = Math.floor(sec / 60), s = Math.floor(sec % 60);
   return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
@@ -114,7 +134,8 @@ stream.on('text', t => process.stdout.write(t));
 const final = await stream.finalMessage();
 const fullText = final.content.filter(b => b.type === 'text').map(b => b.text).join('\n');
 
-const [notes, metaRaw = ''] = fullText.split('<<<META>>>');
+const [rawNotes, metaRaw = ''] = fullText.split('<<<META>>>');
+const notes = enforceRoster(rawNotes, roster);
 let locales = [];
 try {
   const json = metaRaw.replace(/```json|```/g, '').trim();
