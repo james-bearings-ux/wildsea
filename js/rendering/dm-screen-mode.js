@@ -1,125 +1,31 @@
 /**
  * DM Screen rendering mode
- * Displays prioritized summary of ship and character status
+ * Routes between the DM screen tabs (Dashboard / NPCs / Resources / Aspects).
+ * The Dashboard body is delegated to js/components/dm-dashboard.js.
  */
 
-import { calculateShipHealth, calculateCharacterHealth } from '../utils/health-calculations.js';
 import { loadShip } from '../state/ship.js';
 import { loadCharacter } from '../state/character.js';
 import { loadCharacterCached, loadShipCached } from '../cache/supabase-cache.js';
-import { generateCharacterGradient } from '../utils/character-image.js';
 import { renderNPCPanel } from '../components/npc-panel.js';
 import { renderResourcesPanel } from '../components/resources-panel.js';
 import { renderAspectsPanel } from '../components/aspects-panel.js';
+import { renderDashboard } from '../components/dm-dashboard.js';
 
 /**
- * Render read-only drives for DM screen
- * Reuses drive-input styling but displays as read-only divs
- * @param {Object} character - Character object
- * @returns {string} HTML string
- */
-function renderDrivesReadOnly(character) {
-  let html = '<div><h2 class="section-header">Drives</h2>';
-  html += '<div class="flex-col gap-md">';
-
-  for (let i = 0; i < character.drives.length; i++) {
-    const drive = character.drives[i];
-    const displayText = drive || '<span style="color: #9CA3AF; font-style: italic;">No drive set</span>';
-    html += '<div class="drive-input" style="cursor: default;">';
-    html += displayText;
-    html += '</div>';
-  }
-
-  html += '</div></div>';
-  return html;
-}
-
-/**
- * Render read-only mires for DM screen
- * Reuses mire-row styling but non-interactive
- * @param {Object} character - Character object
- * @returns {string} HTML string
- */
-function renderMiresReadOnly(character) {
-  let html = '<div><h2 class="section-header">Mires</h2>';
-  html += '<div class="flex-col gap-md">';
-
-  for (let i = 0; i < character.mires.length; i++) {
-    const mire = character.mires[i];
-    html += '<div class="mire-row">';
-
-    // First track box
-    const state1 = mire.checkbox1 ? 'marked' : '';
-    const stateChar1 = mire.checkbox1 ? '/' : '';
-    html += '<div class="track-box ' + state1 + '">' + stateChar1 + '</div>';
-
-    // Second track box
-    const state2 = mire.checkbox2 ? 'marked' : '';
-    const stateChar2 = mire.checkbox2 ? '/' : '';
-    html += '<div class="track-box ' + state2 + '">' + stateChar2 + '</div>';
-
-    // Mire text
-    const displayText = mire.text || '<span style="color: #9CA3AF; font-style: italic;">No mire set</span>';
-    html += '<div class="mire-input" style="cursor: default;">';
-    html += displayText;
-    html += '</div>';
-    html += '</div>';
-  }
-
-  html += '</div></div>';
-  return html;
-}
-
-/**
- * Render read-only tasks for DM screen
- * Reuses task-row styling but hides buttons
- * @param {Object} character - Character object
- * @returns {string} HTML string
- */
-function renderTasksReadOnly(character) {
-  let html = '<div><h2 class="section-header">Tasks</h2>';
-
-  if (character.tasks.length === 0) {
-    html += '<div style="color: #9CA3AF; font-style: italic; padding: 12px 0;">No tasks</div>';
-  } else {
-    for (let i = 0; i < character.tasks.length; i++) {
-      const task = character.tasks[i];
-
-      html += '<div class="task-row">';
-      html += '<div class="task-name">' + (task.name || 'Unnamed Task') + '</div>';
-
-      html += '<div class="task-status">';
-      // Render clock (non-interactive)
-      html += '<div class="task-clock">';
-      for (let j = 0; j < task.maxTicks; j++) {
-        const filled = j < task.currentTicks;
-        html += '<div class="clock-tick ' + (filled ? 'filled' : '') + '"></div>';
-      }
-      html += '</div>';
-      html += '<div class="task-progress">' + task.currentTicks + '/' + task.maxTicks + '</div>';
-      html += '</div>';
-
-      html += '</div>';
-    }
-  }
-
-  html += '</div>';
-  return html;
-}
-
-/**
- * Render DM screen with tabs: Dashboard and NPCs
+ * Render DM screen with tabs: Dashboard, NPCs, Resources, Aspects
  * @param {Object} session - Current session object
- * @param {string|null} expandedAccordion - ID of expanded accordion (null if all collapsed)
+ * @param {string|null} expandedAccordion - Reserved (unused by the tabular dashboard)
  * @param {string} activeDMTab - Active tab: 'dashboard' | 'npcs' | 'resources' | 'aspects'
  * @param {Array} npcs - NPC data from Supabase
  * @param {string} userRole - Current user's role ('dm' or 'player')
  * @param {Object} npcState - { sortBy, sortDir, search }
  * @param {Object} resourceState - { sortBy, sortDir }
  * @param {Object} aspectState - { filters, sortBy, sortDir }
+ * @param {string} dashboardMode - Dashboard mode: 'rp' | 'exploration' | 'combat'
  * @returns {Promise<string>} HTML string
  */
-export async function renderDMScreen(session, expandedAccordion = null, activeDMTab = 'dashboard', npcs = [], userRole = 'player', npcState = {}, resourceState = {}, aspectState = {}) {
+export async function renderDMScreen(session, expandedAccordion = null, activeDMTab = 'dashboard', npcs = [], userRole = 'player', npcState = {}, resourceState = {}, aspectState = {}, dashboardMode = 'rp') {
   let html = '<div class="dm-screen-outer">';
 
   // Tab bar
@@ -154,170 +60,24 @@ export async function renderDMScreen(session, expandedAccordion = null, activeDM
     html += renderAspectsPanel(aspectState.filters, aspectState.sortBy, aspectState.sortDir);
     html += '</div>';
   } else {
-    // Dashboard tab — constrained-width, existing content
+    // Dashboard tab — full-width, mode-driven crew overview
+    const characters = [];
+    for (const charId of session.activeCharacterIds || []) {
+      const character = await loadCharacterCached(charId, loadCharacter);
+      if (character) characters.push(character);
+    }
+    let ship = null;
+    if (session.activeShipId) {
+      ship = await loadShipCached(session.activeShipId, loadShip);
+    }
+
     html += '<div class="dm-screen-container">';
     html += '<h1 class="dm-screen-title">DM Screen</h1>';
-
-    // Ship summary row
-    if (session.activeShipId) {
-      const ship = await loadShipCached(session.activeShipId, loadShip);
-      if (ship) {
-        html += renderShipSummary(ship);
-      }
-    } else {
-      html += '<div class="dm-row dm-row-empty">';
-      html += '<div class="dm-summary">No ship in session</div>';
-      html += '</div>';
-    }
-
-    // Character summary rows
-    if (session.activeCharacterIds && session.activeCharacterIds.length > 0) {
-      for (const charId of session.activeCharacterIds) {
-        const character = await loadCharacterCached(charId, loadCharacter);
-        if (character) {
-          html += renderCharacterSummary(character, expandedAccordion === charId);
-        }
-      }
-    } else {
-      html += '<div class="dm-row dm-row-empty">';
-      html += '<div class="dm-summary">No characters in session</div>';
-      html += '</div>';
-    }
-
-    html += '</div>'; // dm-screen-container
+    html += renderDashboard(ship, characters, dashboardMode);
+    html += '</div>';
   }
 
   html += '</div>'; // dm-screen-outer
-
-  return html;
-}
-
-/**
- * Render health bar visual
- * @param {number} current - Current health
- * @param {number} max - Max health
- * @returns {string} HTML string for health bar
- */
-function renderHealthBar(current, max) {
-  const percentage = max > 0 ? (current / max) * 100 : 0;
-
-  let html = '<div class="dm-health-bar-container">';
-  html += '<div class="dm-health-bar-fill" style="width: ' + percentage + '%;"></div>';
-  html += '</div>';
-
-  return html;
-}
-
-/**
- * Render ship summary row (static, no accordion)
- * @param {Object} ship - Ship object
- * @returns {string} HTML string
- */
-function renderShipSummary(ship) {
-  const health = calculateShipHealth(ship);
-
-  let html = '<div class="dm-row dm-ship-static">';
-  html += '<div class="dm-header-content">';
-  html += '<div class="dm-name-section">';
-  html += '<div class="dm-name">' + (ship.name || 'Unnamed Ship') + '</div>';
-  html += '</div>';
-  html += '<div class="dm-health">';
-  html += renderHealthBar(health.current, health.max);
-  html += '<span class="dm-health-value">' + health.current + '/' + health.max + '</span>';
-  html += '</div>';
-  html += '</div>';
-  html += '</div>';
-
-  return html;
-}
-
-/**
- * Calculate mire status for display
- * @param {Object} character - Character object
- * @returns {Object} { text: string, severity: string }
- */
-function calculateMireStatus(character) {
-  let cripplingCount = 0;
-  let activeCount = 0;
-
-  for (const mire of character.mires) {
-    if (mire.checkbox1 && mire.checkbox2) {
-      cripplingCount++;
-    } else if (mire.checkbox1 || mire.checkbox2) {
-      activeCount++;
-    }
-  }
-
-  if (cripplingCount > 0) {
-    return {
-      text: cripplingCount + 'x crippling mires',
-      severity: 'crippling'
-    };
-  } else if (activeCount > 0) {
-    return {
-      text: activeCount + 'x active mires',
-      severity: 'active'
-    };
-  } else {
-    return {
-      text: 'no active mires',
-      severity: 'none'
-    };
-  }
-}
-
-/**
- * Render character summary row
- * @param {Object} character - Character object
- * @param {boolean} expanded - Whether accordion is expanded
- * @returns {string} HTML string
- */
-function renderCharacterSummary(character, expanded) {
-  const health = calculateCharacterHealth(character);
-  const mireStatus = calculateMireStatus(character);
-
-  // Build subtext: bloodline, origin, post
-  const subtext = [character.bloodline, character.origin, character.post]
-    .filter(Boolean)
-    .join(', ');
-
-  let html = '<div class="dm-row dm-row-character">';
-
-  // Generate background gradient for character image strip
-  const backgroundGradient = generateCharacterGradient(character.name, 800, 10);
-
-  // Accordion header (always visible)
-  html += '<button class="dm-accordion-header" style="background: ' + backgroundGradient + ';" data-action="toggleDMAccordion" data-params=\'{"id":"' + character.id + '"}\'>';
-  html += '<div class="dm-header-content">';
-  html += '<span class="dm-accordion-icon">' + (expanded ? '▼' : '▶') + '</span>';
-  html += '<div class="dm-name-section">';
-  html += '<div class="dm-name">' + (character.name || 'Unnamed Character') + '</div>';
-  if (subtext) {
-    html += '<div class="dm-subtext">' + subtext + '</div>';
-  }
-  html += '</div>';
-  html += '<div class="dm-mire-indicator dm-mire-' + mireStatus.severity + '">';
-  html += mireStatus.text;
-  html += '</div>';
-  html += '<div class="dm-health">';
-  html += renderHealthBar(health.current, health.max);
-  html += '<span class="dm-health-value">' + health.current + '/' + health.max + '</span>';
-  html += '</div>';
-  html += '</div>';
-  html += '</button>';
-
-  // Accordion body (only visible when expanded)
-  if (expanded) {
-    html += '<div class="dm-accordion-body">';
-    html += '<div class="dm-character-columns">';
-    html += '<div class="dm-character-column">' + renderDrivesReadOnly(character) + '</div>';
-    html += '<div class="dm-character-column">' + renderMiresReadOnly(character) + '</div>';
-    html += '<div class="dm-character-column">' + renderTasksReadOnly(character) + '</div>';
-    html += '</div>';
-    html += '</div>';
-  }
-
-  html += '</div>';
 
   return html;
 }
