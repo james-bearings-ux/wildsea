@@ -164,6 +164,7 @@ let loginMessage = ''; // Status message for login screen
 let dirtySections = new Set(); // Track which sections need re-rendering
 let expandedDMAccordion = null; // Track which DM screen accordion is expanded (ship id or character id or null)
 let activeDMTab = 'dashboard'; // Active DM screen tab: 'dashboard' | 'npcs' | 'resources'
+let dashboardMode = 'rp'; // Dashboard tab mode: 'rp' | 'exploration' | 'combat'
 let npcs = []; // Cached NPC data (loaded from Supabase when DM screen is shown)
 let npcsLoadedAt = 0; // Timestamp when npcs was last loaded
 const NPCS_CACHE_TTL = 60000; // 60 seconds before refreshing NPC list
@@ -622,7 +623,8 @@ async function render(reloadSession = false) {
       currentUserRole,
       { sortBy: npcSortBy, sortDir: npcSortDir, search: npcSearch },
       { sortBy: resourceSortBy, sortDir: resourceSortDir },
-      { filters: aspectFilters, sortBy: aspectSortBy, sortDir: aspectSortDir }
+      { filters: aspectFilters, sortBy: aspectSortBy, sortDir: aspectSortDir },
+      dashboardMode
     );
     // Always show dice roller on DM screen
     const diceRollerHtml = renderDiceRoller(session?.diceRolls || [], showDiceResults, currentUserRole);
@@ -1246,6 +1248,15 @@ function setupEventDelegation() {
                   // Do NOT reset npcsLoadedAt here — the 60s TTL cache preserves
                   // in-memory optimistic updates across tab switches. Resetting here
                   // would cause a Supabase reload that races with pending debounced saves.
+                  await render();
+                }
+                break;
+
+              case 'switchDashboardMode':
+                // Switch the Dashboard tab's mode (rp | exploration | combat)
+                // Params: { mode: 'rp' | 'exploration' | 'combat' }
+                if (parsedParams && parsedParams.mode) {
+                  dashboardMode = parsedParams.mode;
                   await render();
                 }
                 break;

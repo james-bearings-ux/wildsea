@@ -71,6 +71,7 @@ The application is organized into modular ES6 modules:
    - `milestones.js` - Milestone tracking
    - `drives-mires.js` - Drives and mires rendering
    - `dice-roller.js` - Multiplayer dice rolling system (see Dice Roller section below)
+   - `dm-dashboard.js` - DM screen Dashboard tab body with three modes (see DM Dashboard section below)
    - All components generate HTML strings via template literals
 
 5. **Utilities** (`js/utils/`)
@@ -211,6 +212,14 @@ Implementation notes:
 - Component: `js/components/ship-factions.js`
 - State mutations: `addFaction()`, `updateFactionName()`, `updateFactionReputation()`, `removeFaction()` in `js/state/ship.js`
 
+**DM Dashboard (DM Screen)**:
+- The Dashboard tab body (`js/components/dm-dashboard.js`, exported `renderDashboard(ship, characters, mode)`); `js/rendering/dm-screen-mode.js` is now just the tab router and delegates the dashboard to it.
+- Full-width (the old 900px `.dm-screen-container` cap was removed so it matches the NPCs/Resources/Aspects tabs).
+- Three modes via a segmented control: **RP** (tabular, one row per character: health, drives, mires, tasks), **Exploration** (a skills matrix + a languages matrix — characters as rows, abilities as rotated column headers, ranks as filled dots 0–3), **Combat** (health + defenses resist/immune/weak + damage dealt by range CQ/LR/UR, as colored `--dt-*` chips).
+- Data via existing helpers only (no new logic): `getGameData().skills`/`.languages`, `char.skills`/`char.languages`, `calculateCharacterHealth`/`calculateShipHealth`, `getCharacterDamageTypes(char)`.
+- Mode state in `main.js`: `dashboardMode` ('rp' default); action `switchDashboardMode` re-renders. The DM screen renders via full `innerHTML`, so no smart-render wiring.
+- Phase 2 (not built): associate a player with a default character to float "who's online" to the top of each mode — today there is no player↔character link.
+
 **NPC Panel (DM Screen)**:
 - Accessible via the NPCs tab on the DM screen (tab bar: Dashboard | NPCs)
 - Single role-aware component: `js/components/npc-panel.js`
@@ -302,6 +311,7 @@ The application uses **event delegation** for all user interactions:
 │   │   ├── milestones.js         # Milestone tracking
 │   │   ├── drives-mires.js       # Drives and mires
 │   │   ├── dice-roller.js        # Multiplayer dice rolling system
+│   │   ├── dm-dashboard.js       # DM screen Dashboard (RP/Exploration/Combat modes)
 │   │   └── ship-factions.js      # Ship faction reputation component
 │   ├── utils/
 │   │   ├── validation.js         # Validation logic

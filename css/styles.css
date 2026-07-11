@@ -3094,8 +3094,6 @@ hr {
 
 .dm-screen-container {
   padding: 40px 80px;
-  max-width: 900px;
-  margin: 0 auto;
 }
 
 .dm-screen-container .section-header {
@@ -3330,6 +3328,266 @@ hr {
 .dm-resources-container,
 .dm-aspects-container {
   padding: 40px 80px;
+}
+
+/* ===========================
+   DM DASHBOARD (RP / Exploration / Combat)
+   =========================== */
+
+.dashboard-mode-switch {
+  display: inline-flex;
+  margin-bottom: 24px;
+  border: 1px solid var(--border-primary);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.dash-mode-btn {
+  padding: 8px 22px;
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  border: none;
+  border-right: 1px solid var(--border-primary);
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.dash-mode-btn:last-child { border-right: none; }
+.dash-mode-btn:hover { background: var(--bg-tertiary); }
+
+.dash-mode-btn-active,
+.dash-mode-btn-active:hover {
+  background: var(--nav-active-bg);
+  color: var(--nav-active-text);
+}
+
+.dash-ship-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-primary);
+  border-radius: 6px;
+}
+
+.dash-ship-name {
+  font-weight: 600;
+  font-size: 18px;
+  color: var(--text-primary);
+}
+
+.dash-scroll {
+  overflow-x: auto;
+  width: 100%;
+}
+
+/* Tabular views (RP + Combat) */
+.dash-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.dash-table th,
+.dash-table td {
+  text-align: left;
+  padding: 10px 12px;
+  vertical-align: top;
+  border-bottom: 1px solid var(--border-primary);
+}
+
+.dash-table th {
+  color: var(--text-muted);
+  font-weight: 600;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+.dash-table tbody tr:nth-child(even) {
+  background: var(--bg-secondary);
+}
+
+.dash-char {
+  display: flex;
+  align-items: stretch;
+}
+
+.dash-accent {
+  display: inline-block;
+  width: 6px;
+  min-height: 34px;
+  border-radius: 3px;
+  margin-right: 10px;
+  flex: none;
+}
+
+.dash-char-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.dash-char-name {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.dash-char-sub {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.dash-line {
+  margin-bottom: 4px;
+}
+
+.dash-task-prog {
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.dash-empty {
+  color: var(--text-muted);
+}
+
+.dash-mire {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 4px;
+}
+
+.dash-box {
+  width: 15px;
+  height: 15px;
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  line-height: 1;
+  border: 1px solid var(--track-box-border);
+  background: var(--track-box-bg);
+  border-radius: 3px;
+  color: var(--text-primary);
+}
+
+.dash-box.marked {
+  background: var(--track-box-marked-bg);
+  border-color: var(--track-box-marked-border);
+}
+
+/* Damage-type chips (combat mode) */
+.dash-chip {
+  display: inline-block;
+  padding: 1px 7px;
+  margin: 1px 1px;
+  border-radius: 4px;
+  font-size: 12px;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+
+.dash-chip.resist {
+  background: var(--dt-resistance-bg);
+  border-color: var(--dt-resistance-border);
+  color: var(--dt-resistance-text);
+}
+
+.dash-chip.immune {
+  background: var(--dt-immune-bg);
+  border-color: var(--dt-immune-border);
+  color: var(--dt-immune-text);
+}
+
+.dash-chip.weak {
+  background: var(--dt-weakness-bg);
+  border-color: var(--dt-weakness-border);
+  color: var(--dt-weakness-text);
+}
+
+.dash-chip.deal {
+  background: var(--dt-dealing-bg);
+  border-color: var(--dt-dealing-border);
+  color: var(--dt-dealing-text);
+}
+
+/* Exploration matrices (skills + languages) */
+.dash-subhead {
+  font-family: 'Teko', sans-serif;
+  font-size: 26px;
+  font-weight: 600;
+  margin: 20px 0 8px;
+  color: var(--text-primary);
+}
+
+.skill-matrix {
+  border-collapse: collapse;
+}
+
+.skill-matrix td,
+.skill-matrix th {
+  border: 1px solid var(--border-primary);
+}
+
+.skill-matrix .vhead {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  white-space: nowrap;
+  vertical-align: bottom;
+  height: 120px;
+  padding: 8px 4px;
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.skill-matrix .sm-corner {
+  position: sticky;
+  left: 0;
+  z-index: 2;
+  background: var(--bg-primary);
+}
+
+.skill-matrix .sm-char {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  background: var(--bg-primary);
+  padding: 6px 14px;
+  white-space: nowrap;
+  font-weight: 600;
+  color: var(--text-primary);
+  border-right: 2px solid var(--border-primary);
+}
+
+.skill-matrix tbody tr:nth-child(even) td { background: var(--bg-secondary); }
+.skill-matrix tbody tr:nth-child(even) .sm-char { background: var(--bg-secondary); }
+
+.skill-matrix .sm-cell {
+  text-align: center;
+  padding: 6px 8px;
+}
+
+.rank-dots {
+  display: inline-flex;
+  gap: 3px;
+}
+
+.rank-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: 1px solid var(--track-box-border);
+  background: var(--track-box-bg);
+}
+
+.rank-dot.filled {
+  background: var(--track-box-marked-bg);
+  border-color: var(--track-box-marked-border);
 }
 
 .res-empty {
