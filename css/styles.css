@@ -3620,7 +3620,7 @@ hr {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: var(--success-text);
+  background: #5BC991; /* fixed green — reads clearly on both light and dark backgrounds */
   flex: none;
 }
 
