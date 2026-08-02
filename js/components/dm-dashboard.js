@@ -16,17 +16,19 @@ import { calculateCharacterHealth, calculateShipHealth } from '../utils/health-c
 import { getCharacterDamageTypes } from '../state/character.js';
 import { generateCharacterGradient } from '../utils/character-image.js';
 import { escapeHtmlContent } from '../utils/escaping.js';
+import { createDataParams } from '../utils/escaping.js';
 
 const DASH = '<span class="dash-empty">—</span>';
 
 /**
  * Render the whole dashboard body (mode switch + the active mode's view).
  * @param {Object|null} ship - Active ship (for the health row), or null
- * @param {Array} characters - Active characters
+ * @param {Array} characters - Active characters (pre-sorted by the caller)
  * @param {string} mode - 'rp' | 'exploration' | 'combat'
+ * @param {Set<string>} onlineCharacterIds - ids of characters an online player controls
  * @returns {string} HTML string
  */
-export function renderDashboard(ship, characters, mode = 'rp') {
+export function renderDashboard(ship, characters, mode = 'rp', onlineCharacterIds = new Set()) {
   let html = '<div class="dashboard">';
   html += renderModeSwitch(mode);
 
@@ -37,13 +39,13 @@ export function renderDashboard(ship, characters, mode = 'rp') {
   }
 
   if (mode === 'exploration') {
-    html += renderExplorationMode(characters);
+    html += renderExplorationMode(characters, onlineCharacterIds);
   } else if (mode === 'combat') {
     html += renderShipRow(ship);
-    html += renderCombatMode(characters);
+    html += renderCombatMode(characters, onlineCharacterIds);
   } else {
     html += renderShipRow(ship);
-    html += renderRPMode(characters);
+    html += renderRPMode(characters, onlineCharacterIds);
   }
 
   html += '</div>';
@@ -82,13 +84,18 @@ function renderShipRow(ship) {
   return html;
 }
 
-function renderCharCell(character) {
+function renderCharCell(character, onlineCharacterIds = new Set()) {
   const gradient = generateCharacterGradient(character.name, 40, 40);
   const subtext = [character.bloodline, character.origin, character.post].filter(Boolean).join(', ');
+  const online = onlineCharacterIds.has(character.id);
   let html = '<div class="dash-char">';
   html += '<span class="dash-accent" style="background: ' + gradient + ';"></span>';
   html += '<span class="dash-char-text">';
-  html += '<span class="dash-char-name">' + escapeHtmlContent(character.name || 'Unnamed Character') + '</span>';
+  html += '<span class="dash-char-name-row">';
+  if (online) html += '<span class="dash-online-dot" title="Online"></span>';
+  html += '<button class="dash-char-link" data-action="switchCharacter" ' + createDataParams({ characterId: character.id }) + '>';
+  html += escapeHtmlContent(character.name || 'Unnamed Character') + '</button>';
+  html += '</span>';
   if (subtext) html += '<span class="dash-char-sub">' + escapeHtmlContent(subtext) + '</span>';
   html += '</span></div>';
   return html;
@@ -96,13 +103,13 @@ function renderCharCell(character) {
 
 /* ---------------- RP mode ---------------- */
 
-function renderRPMode(characters) {
+function renderRPMode(characters, onlineCharacterIds) {
   let html = '<div class="dash-scroll"><table class="dash-table dash-rp">';
   html += '<thead><tr><th>Character</th><th>Health</th><th>Drives</th><th>Mires</th><th>Tasks</th></tr></thead><tbody>';
   for (const character of characters) {
     const health = calculateCharacterHealth(character);
     html += '<tr>';
-    html += '<td class="dash-char-cell">' + renderCharCell(character) + '</td>';
+    html += '<td class="dash-char-cell">' + renderCharCell(character, onlineCharacterIds) + '</td>';
     html += '<td>' + renderHealthBar(health.current, health.max) + '</td>';
     html += '<td>' + renderDrivesCell(character) + '</td>';
     html += '<td>' + renderMiresCell(character) + '</td>';
@@ -140,16 +147,16 @@ function renderTasksCell(character) {
 
 /* ---------------- exploration mode ---------------- */
 
-function renderExplorationMode(characters) {
+function renderExplorationMode(characters, onlineCharacterIds) {
   const GAME = getGameData();
   let html = '<h3 class="dash-subhead">Skills</h3>';
-  html += renderMatrix(characters, GAME.skills, (c, name) => (c.skills && c.skills[name]) || 0);
+  html += renderMatrix(characters, GAME.skills, (c, name) => (c.skills && c.skills[name]) || 0, onlineCharacterIds);
   html += '<h3 class="dash-subhead">Languages</h3>';
-  html += renderMatrix(characters, GAME.languages, (c, name) => (c.languages && c.languages[name]) || 0);
+  html += renderMatrix(characters, GAME.languages, (c, name) => (c.languages && c.languages[name]) || 0, onlineCharacterIds);
   return html;
 }
 
-function renderMatrix(characters, items, getRank) {
+function renderMatrix(characters, items, getRank, onlineCharacterIds = new Set()) {
   let html = '<div class="dash-scroll"><table class="skill-matrix"><thead><tr><th class="sm-corner"></th>';
   for (const item of items) {
     const name = item.name || item;
@@ -157,7 +164,11 @@ function renderMatrix(characters, items, getRank) {
   }
   html += '</tr></thead><tbody>';
   for (const character of characters) {
-    html += '<tr><td class="sm-char">' + escapeHtmlContent(character.name || 'Unnamed Character') + '</td>';
+    const online = onlineCharacterIds.has(character.id);
+    html += '<tr><td class="sm-char">';
+    if (online) html += '<span class="dash-online-dot" title="Online"></span>';
+    html += '<button class="dash-char-link" data-action="switchCharacter" ' + createDataParams({ characterId: character.id }) + '>';
+    html += escapeHtmlContent(character.name || 'Unnamed Character') + '</button></td>';
     for (const item of items) {
       const name = item.name || item;
       html += '<td class="sm-cell">' + renderRankDots(getRank(character, name)) + '</td>';
@@ -179,7 +190,7 @@ function renderRankDots(rank) {
 
 /* ---------------- combat mode ---------------- */
 
-function renderCombatMode(characters) {
+function renderCombatMode(characters, onlineCharacterIds) {
   let html = '<div class="dash-scroll"><table class="dash-table dash-combat">';
   html += '<thead><tr><th>Character</th><th>Health</th><th>Resist</th><th>Immune</th><th>Weak</th>';
   html += '<th>Close (CQ)</th><th>Long (LR)</th><th>Ultra (UR)</th></tr></thead><tbody>';
@@ -187,7 +198,7 @@ function renderCombatMode(characters) {
     const health = calculateCharacterHealth(character);
     const dt = getCharacterDamageTypes(character);
     html += '<tr>';
-    html += '<td class="dash-char-cell">' + renderCharCell(character) + '</td>';
+    html += '<td class="dash-char-cell">' + renderCharCell(character, onlineCharacterIds) + '</td>';
     html += '<td>' + renderHealthBar(health.current, health.max) + '</td>';
     html += '<td>' + renderChips(dt.resistance, 'resist') + '</td>';
     html += '<td>' + renderChips(dt.immunity, 'immune') + '</td>';

@@ -121,6 +121,7 @@ import { startPresenceHeartbeat, stopPresenceHeartbeat, getOnlineUsers, removePr
 import { renderPresenceBar } from './components/presence-bar.js';
 import { renderDiceRoller, fakeDiceRoll } from './components/dice-roller.js';
 import { renderNPCPanel } from './components/npc-panel.js';
+import { loadPlayers, addPlayer as addPlayerRow, updatePlayerCharacter, removePlayer as removePlayerRow } from './state/players.js';
 
 // Debug flag - only log in development mode
 const DEBUG = import.meta.env.DEV;
@@ -163,8 +164,11 @@ let loginEmail = ''; // Store email for check-email screen
 let loginMessage = ''; // Status message for login screen
 let dirtySections = new Set(); // Track which sections need re-rendering
 let expandedDMAccordion = null; // Track which DM screen accordion is expanded (ship id or character id or null)
-let activeDMTab = 'dashboard'; // Active DM screen tab: 'dashboard' | 'npcs' | 'resources'
+let activeDMTab = 'dashboard'; // Active DM screen tab: 'dashboard' | 'npcs' | 'resources' | 'aspects' | 'players'
 let dashboardMode = 'rp'; // Dashboard tab mode: 'rp' | 'exploration' | 'combat'
+let players = []; // Player↔character mapping rows (loaded when the DM screen is shown)
+let playersLoadedAt = 0; // Timestamp when players was last loaded
+let onlineUsersRefreshedAt = 0; // Timestamp of the last DM-screen presence refresh
 let npcs = []; // Cached NPC data (loaded from Supabase when DM screen is shown)
 let npcsLoadedAt = 0; // Timestamp when npcs was last loaded
 const NPCS_CACHE_TTL = 60000; // 60 seconds before refreshing NPC list
@@ -615,6 +619,29 @@ async function render(reloadSession = false) {
       npcs = npcData || [];
       npcsLoadedAt = now;
     }
+    // Load the player↔character mapping. Readable by any authenticated user (see
+    // migration 023) so online-pinning works for players too; writes stay DM-only.
+    if (now - playersLoadedAt > NPCS_CACHE_TTL) {
+      players = await loadPlayers();
+      playersLoadedAt = now;
+    }
+    // Refresh presence for the DM screen (TTL-gated): the app-wide onlineUsers only
+    // updates on the 30s presence tick and doesn't re-render, so it goes stale here.
+    if (now - onlineUsersRefreshedAt > 15000) {
+      onlineUsers = await getOnlineUsers(session.id);
+      onlineUsersRefreshedAt = now;
+    }
+    // Resolve which characters an online player controls (for alpha-sort pinning).
+    // Always count the current viewer as online — they may not be in their own
+    // presence snapshot yet (heartbeat is written after the initial fetch at load).
+    const onlineEmails = new Set((onlineUsers || []).map(u => (u.user_email || '').toLowerCase()));
+    if (currentUser && currentUser.email) onlineEmails.add(currentUser.email.toLowerCase());
+    const emailToCharacter = new Map(players.map(p => [(p.email || '').toLowerCase(), p.character_id]));
+    const onlineCharacterIds = new Set();
+    for (const email of onlineEmails) {
+      const charId = emailToCharacter.get(email);
+      if (charId) onlineCharacterIds.add(charId);
+    }
     const dmScreenHtml = await renderDMScreen(
       session,
       expandedDMAccordion,
@@ -624,7 +651,7 @@ async function render(reloadSession = false) {
       { sortBy: npcSortBy, sortDir: npcSortDir, search: npcSearch },
       { sortBy: resourceSortBy, sortDir: resourceSortDir },
       { filters: aspectFilters, sortBy: aspectSortBy, sortDir: aspectSortDir },
-      dashboardMode
+      { mode: dashboardMode, players, onlineCharacterIds, onlineEmails }
     );
     // Always show dice roller on DM screen
     const diceRollerHtml = renderDiceRoller(session?.diceRolls || [], showDiceResults, currentUserRole);
@@ -1258,6 +1285,36 @@ function setupEventDelegation() {
                 if (parsedParams && parsedParams.mode) {
                   dashboardMode = parsedParams.mode;
                   await render();
+                }
+                break;
+
+              case 'addPlayer': {
+                // Add a player (by email) to the player↔character map (DM-only)
+                const input = document.getElementById('addPlayerEmail');
+                const email = input ? input.value.trim() : '';
+                if (email) {
+                  const { error } = await addPlayerRow(email);
+                  if (error) {
+                    alert(error.code === '23505' ? 'That player is already in the list.' : 'Could not add player.');
+                  } else {
+                    players = await loadPlayers();
+                    playersLoadedAt = Date.now();
+                    await render();
+                  }
+                }
+                break;
+              }
+
+              case 'removePlayer':
+                // Remove a player from the map (DM-only)
+                // Params: { id }
+                if (parsedParams && parsedParams.id) {
+                  const { error } = await removePlayerRow(parsedParams.id);
+                  if (!error) {
+                    players = await loadPlayers();
+                    playersLoadedAt = Date.now();
+                    await render();
+                  }
                 }
                 break;
 
@@ -2099,6 +2156,23 @@ function setupEventDelegation() {
                 if (fieldError) console.error('[NPC] updateNPCField failed:', npcField, fieldError);
               }, debounceDelay);
             }
+          }
+          return;
+        }
+
+        if (action === 'updatePlayerCharacter') {
+          // Assign (or clear) a character for a player row (DM only)
+          // Params: { id: playerRowId }; value from the <select>
+          if (parsedParams && parsedParams.id) {
+            const characterId = target.value || null;
+            const idx = players.findIndex(p => p.id === parsedParams.id);
+            if (idx !== -1) {
+              players[idx] = { ...players[idx], character_id: characterId };
+            }
+            const { error: pcErr } = await updatePlayerCharacter(parsedParams.id, characterId);
+            if (pcErr) console.error('[PLAYERS] updatePlayerCharacter failed:', pcErr);
+            // Re-render so the dashboard's online-pinning reflects the new mapping.
+            await render();
           }
           return;
         }
