@@ -226,8 +226,8 @@ Implementation notes:
 - Associates each player (login email) with a character, driving the dashboard's online-pinning. Tab button + route are DM-gated (`userRole === 'dm'`).
 - Component `js/components/players-panel.js` (`renderPlayersPanel(players, characters, userRole, onlineEmails)`): "+ Add player" email input, then a table of Email / Character `<select>` / Online dot / remove.
 - State module `js/state/players.js`: `loadPlayers`, `addPlayer(email)`, `updatePlayerCharacter(id, characterId)`, `removePlayer(id)`.
-- Backed by the **`player_characters`** table (migration `022_create_player_characters.sql`): `{ id, email (unique, lowercased), character_id → characters ON DELETE SET NULL, created_at, updated_at }`. DM-only RLS on all four ops via `get_user_role(auth.email()) = 'dm'` (same pattern as npcs 021).
-- `main.js` state: `players`, `playersLoadedAt` (60s TTL, loaded only for DMs). Actions: `addPlayer`, `removePlayer` (click), `updatePlayerCharacter` (select change). Online→character resolution: map `onlineUsers[].user_email` → `players` row → `character_id`.
+- Backed by the **`player_characters`** table (migration `022_create_player_characters.sql`): `{ id, email (unique, lowercased), character_id → characters ON DELETE SET NULL, created_at, updated_at }`. RLS: **SELECT open to any authenticated user** (migration `023`, so online-pinning works for players too), **INSERT/UPDATE/DELETE DM-only** via `get_user_role(auth.email()) = 'dm'` (npcs 021 pattern). The Players *tab* is still UI-gated to DMs.
+- `main.js` state: `players`, `playersLoadedAt` (60s TTL, loaded for all viewers). Actions: `addPlayer`, `removePlayer` (click), `updatePlayerCharacter` (select change). Online→character resolution: map `onlineUsers[].user_email` → `players` row → `character_id`.
 - Deferred: applying the same alpha-sort + online-only logic to the main nav bar character tabs.
 
 **NPC Panel (DM Screen)**:

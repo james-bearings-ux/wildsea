@@ -618,8 +618,9 @@ async function render(reloadSession = false) {
       npcs = npcData || [];
       npcsLoadedAt = now;
     }
-    // Load the player↔character mapping (DM-only; RLS returns nothing for players).
-    if (currentUserRole === 'dm' && now - playersLoadedAt > NPCS_CACHE_TTL) {
+    // Load the player↔character mapping. Readable by any authenticated user (see
+    // migration 023) so online-pinning works for players too; writes stay DM-only.
+    if (now - playersLoadedAt > NPCS_CACHE_TTL) {
       players = await loadPlayers();
       playersLoadedAt = now;
     }

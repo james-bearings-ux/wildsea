@@ -3,7 +3,9 @@
  *
  * Associates a player's login email with a default character so the DM screen can
  * pin online players' characters to the top. Backed by the `player_characters`
- * table (DM-only RLS — see migration 022); all calls no-op for non-DMs via RLS.
+ * table: SELECT is open to any authenticated user (migration 023) so pinning works
+ * for players too; INSERT/UPDATE/DELETE are DM-only (migration 022) and no-op for
+ * non-DMs via RLS.
  */
 
 import { supabase } from '../supabaseClient.js';
