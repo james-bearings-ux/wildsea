@@ -3610,7 +3610,6 @@ hr {
 }
 
 .dash-char-link:hover {
-  color: var(--nav-active-bg);
   text-decoration: underline;
 }
 
