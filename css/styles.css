@@ -3624,6 +3624,13 @@ hr {
   flex: none;
 }
 
+/* Presence dot in the nav Characters dropdown (indicates online across the full list) */
+.nav-dropdown-name {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
 /* Players tab */
 .dm-players-container {
   padding: 40px 80px;

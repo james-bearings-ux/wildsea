@@ -117,10 +117,15 @@ export function renderNavigation(session, crewRoster = new Map(), shipSummary = 
 
       if (entry) {
         const roleDisplay = roleLabel(entry);
+        // Presence dot: indicates online players' characters across the FULL list,
+        // including those past the inline 5-cap.
+        const onlineDot = onlineCharacterIds.has(charId)
+          ? '<span class="dash-online-dot" title="Online"></span>'
+          : '';
 
         html += '<button data-action="switchCharacter" data-params=\'{"characterId":"' + charId + '"}\' ';
         html += 'class="nav-dropdown-item' + (isActive ? ' active' : '') + '">';
-        html += '<div>' + escapeHtmlContent(entry.name || 'Unnamed Character') + '</div>';
+        html += '<div class="nav-dropdown-name">' + onlineDot + escapeHtmlContent(entry.name || 'Unnamed Character') + '</div>';
         if (journeyActive && roleDisplay) {
           html += '<div class="nav-dropdown-role">' + escapeHtmlContent(roleDisplay) + '</div>';
         }
