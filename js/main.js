@@ -166,8 +166,9 @@ let dirtySections = new Set(); // Track which sections need re-rendering
 let expandedDMAccordion = null; // Track which DM screen accordion is expanded (ship id or character id or null)
 let activeDMTab = 'dashboard'; // Active DM screen tab: 'dashboard' | 'npcs' | 'resources' | 'aspects' | 'players'
 let dashboardMode = 'rp'; // Dashboard tab mode: 'rp' | 'exploration' | 'combat'
-let players = []; // Player↔character mapping rows (DM-only; loaded when DM views the DM screen)
+let players = []; // Player↔character mapping rows (loaded when the DM screen is shown)
 let playersLoadedAt = 0; // Timestamp when players was last loaded
+let onlineUsersRefreshedAt = 0; // Timestamp of the last DM-screen presence refresh
 let npcs = []; // Cached NPC data (loaded from Supabase when DM screen is shown)
 let npcsLoadedAt = 0; // Timestamp when npcs was last loaded
 const NPCS_CACHE_TTL = 60000; // 60 seconds before refreshing NPC list
@@ -624,8 +625,17 @@ async function render(reloadSession = false) {
       players = await loadPlayers();
       playersLoadedAt = now;
     }
+    // Refresh presence for the DM screen (TTL-gated): the app-wide onlineUsers only
+    // updates on the 30s presence tick and doesn't re-render, so it goes stale here.
+    if (now - onlineUsersRefreshedAt > 15000) {
+      onlineUsers = await getOnlineUsers(session.id);
+      onlineUsersRefreshedAt = now;
+    }
     // Resolve which characters an online player controls (for alpha-sort pinning).
+    // Always count the current viewer as online — they may not be in their own
+    // presence snapshot yet (heartbeat is written after the initial fetch at load).
     const onlineEmails = new Set((onlineUsers || []).map(u => (u.user_email || '').toLowerCase()));
+    if (currentUser && currentUser.email) onlineEmails.add(currentUser.email.toLowerCase());
     const emailToCharacter = new Map(players.map(p => [(p.email || '').toLowerCase(), p.character_id]));
     const onlineCharacterIds = new Set();
     for (const email of onlineEmails) {
