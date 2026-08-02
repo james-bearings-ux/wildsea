@@ -14,9 +14,12 @@ import { escapeHtmlContent } from '../utils/escaping.js';
  * @param {Object} session - Current session object
  * @param {Map<string, {name: string, journeyRole: string}>} crewRoster - id -> roster entry
  * @param {{name: string, journeyActive: boolean, journeyName: string}|null} shipSummary - active ship summary
+ * @param {{onlineCharacterIds: Set<string>, currentUserCharacterId: string|null}} navOnline
+ *   - onlineCharacterIds: characters controlled by a signed-in player; currentUserCharacterId: the viewer's own character
  * @returns {string} HTML string for navigation bar
  */
-export function renderNavigation(session, crewRoster = new Map(), shipSummary = null) {
+export function renderNavigation(session, crewRoster = new Map(), shipSummary = null, navOnline = {}) {
+  const { onlineCharacterIds = new Set(), currentUserCharacterId = null } = navOnline;
   const base = import.meta.env.BASE_URL;
   const journeyActive = !!(shipSummary && shipSummary.journeyActive);
   let html = '<div class="nav-bar split">';
@@ -52,11 +55,26 @@ export function renderNavigation(session, crewRoster = new Map(), shipSummary = 
   html += '<div style="display: flex; gap: 4px; align-items: stretch;">';
 
   // Character buttons
-  if (session.activeCharacterIds.length > 0) {
+  const allCharIds = session.activeCharacterIds || [];
+  if (allCharIds.length > 0) {
     const MAX_VISIBLE_CHARS = 5;
-    const visibleCharIds = session.activeCharacterIds.slice(0, MAX_VISIBLE_CHARS);
+    const nameOf = id => (crewRoster.get(id) ? crewRoster.get(id).name || '' : '');
+    const byName = (a, b) => nameOf(a).localeCompare(nameOf(b), undefined, { sensitivity: 'base' });
+    const roleLabel = entry => entry.journeyRole
+      ? entry.journeyRole.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')
+      : '';
 
-    // Render first 5 characters as inline buttons (hidden on mobile via CSS)
+    // Inline list: only online players' characters, alpha-sorted, with the current
+    // user's character pinned first (so it's always visible within the cap). Can be
+    // empty (e.g. the DM is the only one signed in).
+    let inlineIds = allCharIds.filter(id => onlineCharacterIds.has(id) && crewRoster.has(id));
+    inlineIds.sort(byName);
+    if (currentUserCharacterId && inlineIds.includes(currentUserCharacterId)) {
+      inlineIds = [currentUserCharacterId, ...inlineIds.filter(id => id !== currentUserCharacterId)];
+    }
+    const visibleCharIds = inlineIds.slice(0, MAX_VISIBLE_CHARS);
+
+    // Render inline buttons (hidden on mobile via CSS)
     for (let i = 0; i < visibleCharIds.length; i++) {
       const charId = visibleCharIds[i];
       const entry = crewRoster.get(charId);
@@ -65,9 +83,7 @@ export function renderNavigation(session, crewRoster = new Map(), shipSummary = 
 
       if (entry) {
         const activeClass = isActive ? 'nav-button-active' : 'nav-button-inactive';
-        const roleDisplay = entry.journeyRole
-          ? entry.journeyRole.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')
-          : '';
+        const roleDisplay = roleLabel(entry);
 
         const charStackedClass = journeyActive ? ' nav-button-stacked' : '';
         html += '<button data-action="switchCharacter" data-params=\'{"characterId":"' + charId + '"}\' ';
@@ -80,10 +96,11 @@ export function renderNavigation(session, crewRoster = new Map(), shipSummary = 
       }
     }
 
-    // "Characters" dropdown with ALL characters (visible on all viewports)
+    // "Characters" dropdown with ALL characters, alpha-sorted (unaffected by presence).
+    const sortedAllIds = allCharIds.slice().sort(byName);
     const isAnyCharActive = session.activeView === 'character';
-    // On desktop, the dropdown is only active when the current character isn't a key character
-    // (key characters have their own inline tab showing the active state).
+    // On desktop, the dropdown is only active when the current character isn't shown
+    // as an inline tab (inline tabs show their own active state).
     // On mobile there are no inline tabs, so the dropdown should always show active — handled via CSS.
     const isKeyCharActive = isAnyCharActive && visibleCharIds.includes(session.activeCharacterId);
     const charsActiveClass = (isAnyCharActive && !isKeyCharActive) ? 'nav-button-active' : 'nav-button-inactive';
@@ -93,15 +110,13 @@ export function renderNavigation(session, crewRoster = new Map(), shipSummary = 
     html += '<button data-action="toggleCharacterDropdown" class="nav-button ' + charsActiveClass + charsMobileClass + '">Characters ▾</button>';
     html += '<div class="nav-dropdown-menu" id="characterDropdown" style="display: none;">';
 
-    for (let i = 0; i < session.activeCharacterIds.length; i++) {
-      const charId = session.activeCharacterIds[i];
+    for (let i = 0; i < sortedAllIds.length; i++) {
+      const charId = sortedAllIds[i];
       const entry = crewRoster.get(charId);
       const isActive = session.activeView === 'character' && charId === session.activeCharacterId;
 
       if (entry) {
-        const roleDisplay = entry.journeyRole
-          ? entry.journeyRole.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')
-          : '';
+        const roleDisplay = roleLabel(entry);
 
         html += '<button data-action="switchCharacter" data-params=\'{"characterId":"' + charId + '"}\' ';
         html += 'class="nav-dropdown-item' + (isActive ? ' active' : '') + '">';

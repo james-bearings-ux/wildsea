@@ -166,9 +166,9 @@ let dirtySections = new Set(); // Track which sections need re-rendering
 let expandedDMAccordion = null; // Track which DM screen accordion is expanded (ship id or character id or null)
 let activeDMTab = 'dashboard'; // Active DM screen tab: 'dashboard' | 'npcs' | 'resources' | 'aspects' | 'players'
 let dashboardMode = 'rp'; // Dashboard tab mode: 'rp' | 'exploration' | 'combat'
-let players = []; // Player↔character mapping rows (loaded when the DM screen is shown)
+let players = []; // Player↔character mapping rows (loaded at startup, refreshed on the presence tick)
 let playersLoadedAt = 0; // Timestamp when players was last loaded
-let onlineUsersRefreshedAt = 0; // Timestamp of the last DM-screen presence refresh
+let lastOnlineCharKey = ''; // Last online-characters signature; presence tick re-renders when it changes
 let npcs = []; // Cached NPC data (loaded from Supabase when DM screen is shown)
 let npcsLoadedAt = 0; // Timestamp when npcs was last loaded
 const NPCS_CACHE_TTL = 60000; // 60 seconds before refreshing NPC list
@@ -296,6 +296,28 @@ async function resumeAfterInactivity() {
 }
 
 /**
+ * Resolve presence + the player↔character mapping into what the nav / DM screen need:
+ * the set of characters controlled by a signed-in player, and the current viewer's
+ * own character. Pure over the in-memory `onlineUsers` + `players` caches (no DB I/O),
+ * so it's safe to call on every render. The current user is always counted online.
+ * @returns {{onlineEmails: Set<string>, onlineCharacterIds: Set<string>, currentUserCharacterId: string|null}}
+ */
+function computeNavOnline() {
+  const onlineEmails = new Set((onlineUsers || []).map(u => (u.user_email || '').toLowerCase()));
+  if (currentUser && currentUser.email) onlineEmails.add(currentUser.email.toLowerCase());
+  const emailToCharacter = new Map(players.map(p => [(p.email || '').toLowerCase(), p.character_id]));
+  const onlineCharacterIds = new Set();
+  for (const email of onlineEmails) {
+    const charId = emailToCharacter.get(email);
+    if (charId) onlineCharacterIds.add(charId);
+  }
+  const currentUserCharacterId = (currentUser && currentUser.email)
+    ? (emailToCharacter.get(currentUser.email.toLowerCase()) || null)
+    : null;
+  return { onlineEmails, onlineCharacterIds, currentUserCharacterId };
+}
+
+/**
  * Manage polling based on user presence
  * Starts polling when multiple users are online, stops when solo
  */
@@ -304,6 +326,10 @@ async function managePollingBasedOnPresence() {
 
   const users = await getOnlineUsers(session.id);
   onlineUsers = users; // Keep cached value current for render()
+  // Keep the player↔character mapping fresh so a DM assigning characters mid-session
+  // propagates to other clients' nav (small table; one query per 30s tick).
+  players = await loadPlayers();
+  playersLoadedAt = Date.now();
   const shouldPoll = users.length > 1;
 
   if (shouldPoll && !isPollingActive) {
@@ -316,6 +342,14 @@ async function managePollingBasedOnPresence() {
     console.log('[POLLING] Back to solo play - stopping polling to save bandwidth');
     stopPolling();
     isPollingActive = false;
+  }
+
+  // Re-render when who's-online (resolved to characters) changes, so the nav's inline
+  // list and the DM dashboard pinning stay current without polling on every view.
+  const key = [...computeNavOnline().onlineCharacterIds].sort().join(',');
+  if (key !== lastOnlineCharKey) {
+    lastOnlineCharKey = key;
+    await render();
   }
 }
 
@@ -605,10 +639,12 @@ async function render(reloadSession = false) {
   }
 
   // Render presence bar and navigation
-  // Nav renders synchronously from the in-memory roster (no per-render DB lookups)
+  // Nav renders synchronously from in-memory caches (no per-render DB lookups):
+  // the roster, plus onlineUsers + players (refreshed on the 30s presence tick).
   syncActiveIntoRoster();
+  const navOnline = computeNavOnline();
   const presenceBarHtml = renderPresenceBar(onlineUsers);
-  const navHtml = renderNavigation(session, crewRoster, shipSummary);
+  const navHtml = renderNavigation(session, crewRoster, shipSummary, navOnline);
 
   // Check if we're viewing the DM screen
   if (session.activeView === 'dm-screen') {
@@ -619,29 +655,6 @@ async function render(reloadSession = false) {
       npcs = npcData || [];
       npcsLoadedAt = now;
     }
-    // Load the player↔character mapping. Readable by any authenticated user (see
-    // migration 023) so online-pinning works for players too; writes stay DM-only.
-    if (now - playersLoadedAt > NPCS_CACHE_TTL) {
-      players = await loadPlayers();
-      playersLoadedAt = now;
-    }
-    // Refresh presence for the DM screen (TTL-gated): the app-wide onlineUsers only
-    // updates on the 30s presence tick and doesn't re-render, so it goes stale here.
-    if (now - onlineUsersRefreshedAt > 15000) {
-      onlineUsers = await getOnlineUsers(session.id);
-      onlineUsersRefreshedAt = now;
-    }
-    // Resolve which characters an online player controls (for alpha-sort pinning).
-    // Always count the current viewer as online — they may not be in their own
-    // presence snapshot yet (heartbeat is written after the initial fetch at load).
-    const onlineEmails = new Set((onlineUsers || []).map(u => (u.user_email || '').toLowerCase()));
-    if (currentUser && currentUser.email) onlineEmails.add(currentUser.email.toLowerCase());
-    const emailToCharacter = new Map(players.map(p => [(p.email || '').toLowerCase(), p.character_id]));
-    const onlineCharacterIds = new Set();
-    for (const email of onlineEmails) {
-      const charId = emailToCharacter.get(email);
-      if (charId) onlineCharacterIds.add(charId);
-    }
     const dmScreenHtml = await renderDMScreen(
       session,
       expandedDMAccordion,
@@ -651,7 +664,7 @@ async function render(reloadSession = false) {
       { sortBy: npcSortBy, sortDir: npcSortDir, search: npcSearch },
       { sortBy: resourceSortBy, sortDir: resourceSortDir },
       { filters: aspectFilters, sortBy: aspectSortBy, sortDir: aspectSortDir },
-      { mode: dashboardMode, players, onlineCharacterIds, onlineEmails }
+      { mode: dashboardMode, players, onlineCharacterIds: navOnline.onlineCharacterIds, onlineEmails: navOnline.onlineEmails }
     );
     // Always show dice roller on DM screen
     const diceRollerHtml = renderDiceRoller(session?.diceRolls || [], showDiceResults, currentUserRole);
@@ -2513,6 +2526,13 @@ async function loadApp() {
 
     // Check how many users are online to optimize polling
     onlineUsers = await getOnlineUsers(session.id);
+
+    // Load the player↔character mapping up front so the nav's inline character list
+    // (online players' characters) is correct on first render. Readable by any
+    // authenticated user (migration 023); writes are DM-only.
+    players = await loadPlayers();
+    playersLoadedAt = Date.now();
+    lastOnlineCharKey = [...computeNavOnline().onlineCharacterIds].sort().join(',');
 
     if (onlineUsers.length > 1) {
       // Multiple users online - start polling for multiplayer sync
