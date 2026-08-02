@@ -3537,7 +3537,7 @@ hr {
   writing-mode: vertical-rl;
   transform: rotate(180deg);
   white-space: nowrap;
-  vertical-align: bottom;
+  vertical-align: middle;
   height: 120px;
   padding: 8px 4px;
   color: var(--text-muted);
@@ -3574,13 +3574,12 @@ hr {
 
 .rank-dots {
   display: inline-flex;
-  gap: 3px;
+  gap: 2px;
 }
 
 .rank-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
+  width: 4px;
+  height: 16px;
   border: 1px solid var(--track-box-border);
   background: var(--track-box-bg);
 }

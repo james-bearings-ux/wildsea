@@ -3,12 +3,7 @@
     "allow": [
       "Bash(npm run dev)",
       "Bash(node parse-aspects.js)",
-      "Bash(node -e \"const fs = require(''fs''); const data = JSON.parse(fs.readFileSync(''public/data/aspects.json'', ''utf8'')); console.log(JSON.stringify(data.Crash.find(a => a.name === ''Padded Boilersuit''), null, 2));\")",
-      "Bash(node -e \"const fs = require(''fs''); const data = JSON.parse(fs.readFileSync(''public/data/aspects.json'', ''utf8'')); const aspect = data.Crash.find(a => a.name === ''Padded Boilersuit''); console.log(JSON.stringify(aspect, null, 2));\")",
-      "Bash(node -e \"const fs = require(''fs''); const data = JSON.parse(fs.readFileSync(''public/data/aspects.json'', ''utf8'')); const aspect = data.Hacker.find(a => a.name === ''Petalcrusher''); console.log(JSON.stringify(aspect, null, 2));\")",
       "Bash(timeout /t 3 /nobreak)",
-      "Bash(node -e \"const fs = require(''fs''); const data = JSON.parse(fs.readFileSync(''public/data/aspects.json'', ''utf8'')); const aspect = data.Ektus.find(a => a.name === ''Old Ore Piercings''); console.log(JSON.stringify(aspect, null, 2));\")",
-      "Bash(node -e \"const fs = require(''fs''); const data = JSON.parse(fs.readFileSync(''public/data/aspects.json'', ''utf8'')); const aspect = data.Ketra.find(a => a.name === ''Old Ore Piercings''); console.log(JSON.stringify(aspect, null, 2));\")",
       "Bash(node -e:*)",
       "Bash(node test-immunity-pattern.js:*)",
       "Bash(node test-parsing-updated.js:*)",
@@ -31,7 +26,19 @@
       "Bash(git commit:*)",
       "Bash(npx vite:*)",
       "Bash(git:*)",
-      "Bash(gh run:*)"
+      "Bash(gh run:*)",
+      "Bash(npm run *)",
+      "PowerShell($g = \\(Get-Command gh -ErrorAction SilentlyContinue\\); if \\($g\\) { \"FOUND: $\\($g.Source\\)\"; gh auth status; \"---\"; gh repo view --json nameWithOwner,url | Out-String; \"---LABELS---\"; gh label list } else { \"gh NOT FOUND\"; \"REMOTE:\"; git remote -v })",
+      "PowerShell(npm run build 2>&1)",
+      "PowerShell(& \"C:\\\\Users\\\\james\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-james-Documents-wildsea\\\\235d6a53-e235-4922-b29f-6963bb72bb9a\\\\scratchpad\\\\pr-60.ps1\")",
+      "PowerShell(winget install --id Python.Python.3.12 -e --accept-package-agreements --accept-source-agreements --disable-interactivity 2>&1)",
+      "PowerShell(winget install --id Gyan.FFmpeg -e --accept-package-agreements --accept-source-agreements --disable-interactivity 2>&1)",
+      "Bash(node -e ' *)",
+      "Bash(python -c ' *)",
+      "Bash(git checkout *)",
+      "Bash(git commit *)",
+      "Bash(git push *)",
+      "Bash(git add *)"
     ],
     "deny": [],
     "ask": []
