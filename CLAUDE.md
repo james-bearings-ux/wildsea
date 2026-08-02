@@ -227,8 +227,11 @@ Implementation notes:
 - Component `js/components/players-panel.js` (`renderPlayersPanel(players, characters, userRole, onlineEmails)`): "+ Add player" email input, then a table of Email / Character `<select>` / Online dot / remove.
 - State module `js/state/players.js`: `loadPlayers`, `addPlayer(email)`, `updatePlayerCharacter(id, characterId)`, `removePlayer(id)`.
 - Backed by the **`player_characters`** table (migration `022_create_player_characters.sql`): `{ id, email (unique, lowercased), character_id → characters ON DELETE SET NULL, created_at, updated_at }`. RLS: **SELECT open to any authenticated user** (migration `023`, so online-pinning works for players too), **INSERT/UPDATE/DELETE DM-only** via `get_user_role(auth.email()) = 'dm'` (npcs 021 pattern). The Players *tab* is still UI-gated to DMs.
-- `main.js` state: `players`, `playersLoadedAt` (60s TTL, loaded for all viewers). Actions: `addPlayer`, `removePlayer` (click), `updatePlayerCharacter` (select change). Online→character resolution: map `onlineUsers[].user_email` → `players` row → `character_id`.
-- Deferred: applying the same alpha-sort + online-only logic to the main nav bar character tabs.
+- `main.js` state: `players`, `playersLoadedAt` (loaded at startup, refreshed on the 30s presence tick). Actions: `addPlayer`, `removePlayer` (click), `updatePlayerCharacter` (select change). Online→character resolution lives in `computeNavOnline()` (pure over the `onlineUsers` + `players` caches): map `onlineUsers[].user_email` (+ the current viewer) → `players` row → `character_id`, yielding `{ onlineEmails, onlineCharacterIds, currentUserCharacterId }`.
+
+**Nav bar character list (phase 3)**:
+- The nav's **inline** character tabs show only **online players'** characters (`onlineCharacterIds`), alpha-sorted, with the **current user's** character pinned first, capped at `MAX_VISIBLE_CHARS = 5` (so the viewer's own is always visible). The list can be empty (e.g. the DM alone). The **"Characters ▾" dropdown** is unchanged in scope: **all** characters, alpha-sorted, regardless of who's online. See `js/components/navigation.js` (`renderNavigation(session, crewRoster, shipSummary, navOnline)`).
+- Freshness: `renderNavigation` stays DB-free (renders from the `crewRoster` + `computeNavOnline()` caches). `managePollingBasedOnPresence` (30s tick) refreshes `onlineUsers` + `players` and re-renders **only when the resolved online-character set changes** (`lastOnlineCharKey`), so presence changes propagate without per-interaction queries.
 
 **NPC Panel (DM Screen)**:
 - Accessible via the NPCs tab on the DM screen (tab bar: Dashboard | NPCs)
