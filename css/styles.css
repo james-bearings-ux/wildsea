@@ -3590,6 +3590,103 @@ hr {
   border-color: var(--track-box-marked-border);
 }
 
+/* Character name as a link to its sheet (RP / Combat / Exploration) */
+.dash-char-name-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.dash-char-link {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  font-weight: 600;
+  color: var(--text-primary);
+  cursor: pointer;
+  text-align: left;
+}
+
+.dash-char-link:hover {
+  color: var(--nav-active-bg);
+  text-decoration: underline;
+}
+
+.skill-matrix .sm-char .dash-char-link { font-weight: 600; }
+
+.dash-online-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--success-text);
+  flex: none;
+}
+
+/* Players tab */
+.dm-players-container {
+  padding: 40px 80px;
+}
+
+.players-add {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+  max-width: 520px;
+}
+
+.players-add-input {
+  flex: 1;
+  padding: 8px 12px;
+  background: var(--input-bg);
+  border: 1px solid var(--input-border);
+  border-radius: 6px;
+  color: var(--text-primary);
+  font-size: 14px;
+}
+
+.players-add-btn {
+  padding: 8px 16px;
+  background: var(--nav-active-bg);
+  color: var(--nav-active-text);
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.players-add-btn:hover { opacity: 0.9; }
+
+.players-email {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.players-select {
+  padding: 6px 10px;
+  background: var(--select-bg);
+  border: 1px solid var(--select-border);
+  border-radius: 6px;
+  color: var(--select-text);
+  font-size: 14px;
+  min-width: 200px;
+}
+
+.players-remove {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 1;
+  padding: 4px 8px;
+}
+
+.players-remove:hover { color: var(--danger-hover, #dc2626); }
+
 .res-empty {
   color: var(--text-secondary);
   font-style: italic;
@@ -3908,7 +4005,7 @@ hr {
 
 /* Mobile responsiveness for DM screen */
 @media (max-width: 768px) {
-  .dm-screen-container, .dm-npcs-container, .dm-resources-container, .dm-aspects-container {
+  .dm-screen-container, .dm-npcs-container, .dm-resources-container, .dm-aspects-container, .dm-players-container {
     padding: 20px;
   }
 

@@ -218,7 +218,17 @@ Implementation notes:
 - Three modes via a segmented control: **RP** (tabular, one row per character: health, drives, mires, tasks), **Exploration** (a skills matrix + a languages matrix — characters as rows, abilities as rotated column headers, ranks as filled dots 0–3), **Combat** (health + defenses resist/immune/weak + damage dealt by range CQ/LR/UR, as colored `--dt-*` chips).
 - Data via existing helpers only (no new logic): `getGameData().skills`/`.languages`, `char.skills`/`char.languages`, `calculateCharacterHealth`/`calculateShipHealth`, `getCharacterDamageTypes(char)`.
 - Mode state in `main.js`: `dashboardMode` ('rp' default); action `switchDashboardMode` re-renders. The DM screen renders via full `innerHTML`, so no smart-render wiring.
-- Phase 2 (not built): associate a player with a default character to float "who's online" to the top of each mode — today there is no player↔character link.
+- **Sorting (phase 2):** characters are alpha-sorted by name, with characters controlled by an **online** player pinned to the top (`sortCharacters()` in `dm-screen-mode.js`; stable two-pass). Pinned rows get a `.dash-online-dot`.
+- **Name links (phase 2):** each character name is a `.dash-char-link` button (`data-action="switchCharacter"`) that opens that character's sheet — reuses the existing nav action.
+- `renderDashboard(ship, characters, mode, onlineCharacterIds)` — characters arrive pre-sorted; `renderDMScreen` now takes a `dashboardState` object `{ mode, players, onlineCharacterIds, onlineEmails }`.
+
+**Players Tab (DM Screen, DM-only — phase 2)**:
+- Associates each player (login email) with a character, driving the dashboard's online-pinning. Tab button + route are DM-gated (`userRole === 'dm'`).
+- Component `js/components/players-panel.js` (`renderPlayersPanel(players, characters, userRole, onlineEmails)`): "+ Add player" email input, then a table of Email / Character `<select>` / Online dot / remove.
+- State module `js/state/players.js`: `loadPlayers`, `addPlayer(email)`, `updatePlayerCharacter(id, characterId)`, `removePlayer(id)`.
+- Backed by the **`player_characters`** table (migration `022_create_player_characters.sql`): `{ id, email (unique, lowercased), character_id → characters ON DELETE SET NULL, created_at, updated_at }`. DM-only RLS on all four ops via `get_user_role(auth.email()) = 'dm'` (same pattern as npcs 021).
+- `main.js` state: `players`, `playersLoadedAt` (60s TTL, loaded only for DMs). Actions: `addPlayer`, `removePlayer` (click), `updatePlayerCharacter` (select change). Online→character resolution: map `onlineUsers[].user_email` → `players` row → `character_id`.
+- Deferred: applying the same alpha-sort + online-only logic to the main nav bar character tabs.
 
 **NPC Panel (DM Screen)**:
 - Accessible via the NPCs tab on the DM screen (tab bar: Dashboard | NPCs)
@@ -298,7 +308,8 @@ The application uses **event delegation** for all user interactions:
 │   ├── data/
 │   │   └── loader.js             # Game data loading utilities
 │   ├── state/
-│   │   └── character.js          # Character state and mutations
+│   │   ├── character.js          # Character state and mutations
+│   │   └── players.js            # Player↔character mapping CRUD (DM screen)
 │   ├── rendering/
 │   │   ├── creation-mode.js      # Creation mode UI
 │   │   ├── play-mode.js          # Play mode UI
@@ -312,6 +323,7 @@ The application uses **event delegation** for all user interactions:
 │   │   ├── drives-mires.js       # Drives and mires
 │   │   ├── dice-roller.js        # Multiplayer dice rolling system
 │   │   ├── dm-dashboard.js       # DM screen Dashboard (RP/Exploration/Combat modes)
+│   │   ├── players-panel.js      # DM screen Players tab (player↔character mapping)
 │   │   └── ship-factions.js      # Ship faction reputation component
 │   ├── utils/
 │   │   ├── validation.js         # Validation logic
