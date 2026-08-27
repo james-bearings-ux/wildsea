@@ -42,7 +42,10 @@ export function renderDashboard(ship, characters, mode = 'rp', onlineCharacterId
     html += renderExplorationMode(characters, onlineCharacterIds);
   } else if (mode === 'combat') {
     html += renderShipRow(ship);
-    html += renderCombatMode(characters, onlineCharacterIds);
+    // Journey roles only matter while a journey is underway — on dry land they're
+    // noise, so they're hidden (same gate the nav bar's role subtitles use).
+    const journeyActive = !!(ship && ship.journey && ship.journey.active);
+    html += renderCombatMode(characters, onlineCharacterIds, journeyActive);
   } else {
     html += renderShipRow(ship);
     html += renderRPMode(characters, onlineCharacterIds);
@@ -84,10 +87,18 @@ function renderShipRow(ship) {
   return html;
 }
 
-function renderCharCell(character, onlineCharacterIds = new Set()) {
+/** "deck-hand" -> "Deck Hand" (same formatting the nav bar uses). */
+function roleLabel(character) {
+  return character.journeyRole
+    ? character.journeyRole.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')
+    : '';
+}
+
+function renderCharCell(character, onlineCharacterIds = new Set(), showRole = false) {
   const gradient = generateCharacterGradient(character.name, 40, 40);
   const subtext = [character.bloodline, character.origin, character.post].filter(Boolean).join(', ');
   const online = onlineCharacterIds.has(character.id);
+  const role = showRole ? roleLabel(character) : '';
   let html = '<div class="dash-char">';
   html += '<span class="dash-accent" style="background: ' + gradient + ';"></span>';
   html += '<span class="dash-char-text">';
@@ -96,6 +107,7 @@ function renderCharCell(character, onlineCharacterIds = new Set()) {
   html += '<button class="dash-char-link" data-action="switchCharacter" ' + createDataParams({ characterId: character.id }) + '>';
   html += escapeHtmlContent(character.name || 'Unnamed Character') + '</button>';
   html += '</span>';
+  if (role) html += '<span class="dash-char-role">' + escapeHtmlContent(role) + '</span>';
   if (subtext) html += '<span class="dash-char-sub">' + escapeHtmlContent(subtext) + '</span>';
   html += '</span></div>';
   return html;
@@ -190,7 +202,7 @@ function renderRankDots(rank) {
 
 /* ---------------- combat mode ---------------- */
 
-function renderCombatMode(characters, onlineCharacterIds) {
+function renderCombatMode(characters, onlineCharacterIds, journeyActive = false) {
   let html = '<div class="dash-scroll"><table class="dash-table dash-combat">';
   html += '<thead><tr><th>Character</th><th>Health</th><th>Resist</th><th>Immune</th><th>Weak</th>';
   html += '<th>Close (CQ)</th><th>Long (LR)</th><th>Ultra (UR)</th></tr></thead><tbody>';
@@ -198,7 +210,7 @@ function renderCombatMode(characters, onlineCharacterIds) {
     const health = calculateCharacterHealth(character);
     const dt = getCharacterDamageTypes(character);
     html += '<tr>';
-    html += '<td class="dash-char-cell">' + renderCharCell(character, onlineCharacterIds) + '</td>';
+    html += '<td class="dash-char-cell">' + renderCharCell(character, onlineCharacterIds, journeyActive) + '</td>';
     html += '<td>' + renderHealthBar(health.current, health.max) + '</td>';
     html += '<td>' + renderChips(dt.resistance, 'resist') + '</td>';
     html += '<td>' + renderChips(dt.immunity, 'immune') + '</td>';
