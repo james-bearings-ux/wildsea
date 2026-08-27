@@ -8,5 +8,11 @@
   "npcs": [
     { "name": "Full NPC Name", "aliases": ["First Name", "Last Name"], "note": "one NPC the table calls by different names" },
     { "name": "Nicknamed NPC", "aliases": ["The Nickname"] }
+  ],
+  "ship": "The Crew's Ship Name",
+  "_things_comment": "Non-person entities: ships, places, signature gear, creatures. Same alias/forbid handling as npcs. The 'note' is the disambiguation lever — say what a thing IS when the transcript could mistake it for something else (a deck weapon vs. the ship it is mounted on).",
+  "things": [
+    { "name": "The Crew's Ship Name", "kind": "ship", "aliases": ["Ship Nickname"], "note": "the crew's own ship" },
+    { "name": "Signature Weapon", "kind": "weapon", "aliases": [], "note": "a weapon mounted on the crew's ship — it is gear, never the ship itself and never a character" }
   ]
 }

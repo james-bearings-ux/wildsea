@@ -3440,6 +3440,14 @@ hr {
   color: var(--text-secondary);
 }
 
+/* Journey role under the character name (combat view) — matches .nav-role-subtitle */
+.dash-char-role {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--nav-role-text);
+  line-height: 1.2;
+}
+
 .dash-line {
   margin-bottom: 4px;
 }
