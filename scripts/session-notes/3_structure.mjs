@@ -33,7 +33,14 @@ const pcLines = roster.characters
 const npcLines = roster.npcs
   .map(n => `- ${n.name}${aliasClause(n)}${noteClause(n)}`)
   .join('\n');
-const aliasResolution = [...roster.characters, ...roster.npcs]
+// Ships, vehicles, signature gear, places — non-person entities the table names
+// constantly and ASR mangles just as badly as people's names. Notes here are the
+// main lever for disambiguation (e.g. a weapon that is NOT the ship it sits on).
+const things = roster.things || [];
+const thingLines = things
+  .map(t => `- ${t.name}${t.kind ? ` (${t.kind})` : ''}${aliasClause(t)}${noteClause(t)}`)
+  .join('\n');
+const aliasResolution = [...roster.characters, ...roster.npcs, ...things]
   .filter(e => e.aliases && e.aliases.length)
   .map(e => `- ${[e.name, ...e.aliases].join(' = ')}  → always use "${e.name}"`)
   .join('\n');
@@ -46,7 +53,7 @@ const aliasResolution = [...roster.characters, ...roster.npcs]
 // names into one entity is a semantic call left to the model.)
 function enforceRoster(text, roster) {
   const fixes = [];
-  for (const e of [...roster.characters, ...roster.npcs]) {
+  for (const e of [...roster.characters, ...roster.npcs, ...(roster.things || [])]) {
     for (const bad of e.forbid || []) {
       const re = new RegExp(`\\b${bad.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'gi');
       let n = 0;
@@ -73,7 +80,12 @@ ${pcLines}
 
 KNOWN NPCs (use these exact spellings):
 ${npcLines}
-
+${roster.ship ? `
+THE CREW'S SHIP: ${roster.ship}. This is the vessel the crew sails and lives aboard. No other named thing in this campaign is the crew's ship — if the transcript seems to call something else "the ship" or "our ship", that is an ASR/context error or the crew talking about a different vessel entirely. Never promote a weapon, an engine, a piece of gear, or an NPC's vessel to being the crew's ship.
+` : ''}${thingLines ? `
+SHIPS, PLACES & NOTABLE THINGS (use these exact spellings; the parenthetical notes say WHAT each one is — respect them and do not confuse one for another, especially a piece of gear versus the ship carrying it):
+${thingLines}
+` : ''}
 ENTITY RESOLUTION — these names refer to the SAME entity. Merge every mention and always use the canonical name:
 ${aliasResolution}
 Spelling is not the only issue here: different people at the table may call the same character by a different name (first name vs last name vs nickname). Collapse them into one entity — do NOT create separate NPC entries for aliases of the same person.

@@ -18,7 +18,7 @@ Code is committed here. **Data and live config live in the gitignored data root*
 <DATA_ROOT>/
   .venv/                     # Python venv for faster-whisper (see setup)
   speakers.json              # Craig handle -> speaker      (gitignored: real names/handles)
-  roster.json                # canonical names + aliases    (gitignored: real names)
+  roster.json                # canonical names, aliases, ship/things (gitignored: real names)
   notion-config.json         # { databaseId, dataSourceId } (written by create-db.mjs)
   <YYYY-MM-DD>/              # one folder per session
     1-<handle>.aac ...       # Craig per-speaker tracks (you drop these in)

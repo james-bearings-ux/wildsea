@@ -70,6 +70,18 @@ def build_glossary():
     if skills:
         parts.append("Skills: " + ", ".join(c for c in skills if c) + ".")
     parts.append("Terms: the Wildsea, aspects, mires, drives, spark, salvage, whispers, charts.")
+    # Campaign proper nouns from the roster: the crew's ship plus named ships,
+    # places and gear. Biases ASR toward the right spelling so stage 3 has less
+    # to correct.
+    try:
+        roster = json.loads((DATA_ROOT / "roster.json").read_text(encoding="utf-8"))
+        named = [t["name"] for t in roster.get("things", []) if t.get("name")]
+        if roster.get("ship") and roster["ship"] not in named:
+            named.insert(0, roster["ship"])
+        if named:
+            parts.append("Ships, places and gear: " + ", ".join(named) + ".")
+    except Exception as e:
+        print("could not load roster for glossary:", e, flush=True)
     return " ".join(parts)
 
 GLOSSARY = build_glossary()

@@ -44,6 +44,12 @@ aliases (first name / last name / nickname → one entity). When a new recurring
 shows up mangled or inconsistent, add it there and re-run `--from 3` — that roster is the
 lever that fixes ASR name errors.
 
+The roster covers non-people too: `ship` names the crew's own vessel (the prompt states
+outright that nothing else is "the ship"), and `things` lists ships, places, and signature
+gear with a `kind` and a `note`. Use the `note` to say what something **is** whenever the
+transcript could confuse it with something else — that's what stops a deck weapon from
+being written up as the ship carrying it.
+
 ## One-time setup (new machine / starting fresh)
 
 Full detail in [scripts/session-notes/README.md](../../scripts/session-notes/README.md). In brief:
